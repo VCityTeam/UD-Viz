@@ -71,7 +71,7 @@ The browser package contains several "example" applications that showcase differ
 npm run debug-examples
 ```
 
-- Run a watched routine [debugExamples.js](../../../bin/debugExamples.js) with [nodemon](https://www.npmjs.com/package/nodemon).
+- Run a watched routine [debug.js](../../../bin/debug.js) with [nodemon](https://www.npmjs.com/package/nodemon).
 
 ## Continuous Integration (Travis CI)
 

@@ -10,7 +10,7 @@
     "build-shared": "npm run build --prefix ./packages/shared",
     "build-browser": "npm run build --prefix ./packages/browser",
     "build-node": "npm run build --prefix ./packages/node",
-    "debug-examples": "cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms ./bin/debugExamples.js -e js,css,html",
+    "debug-examples": "cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms ./bin/debug.js -e js,css,html",
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\" ",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\"  --fix",
@@ -24,7 +24,7 @@
     "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs": "rm -rf ./docs/html && node ./bin/docScriptTag.js include && npm run docs-browser ; npm run docs-node ; npm run docs-shared ; npm run docs-home && node ./bin/docScriptTag.js",
     "dev-docs": "nodemon --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms --exec npm run docs",
-    "back-end-examples": "cross-env NODE_ENV=production node ./bin/backEndExamples.js",
+    "back-end-examples": "cross-env NODE_ENV=production node ./bin/backEnd.js",
     "start": "npm run build-browser && npm run back-end-examples"
   },
   "workspaces": [

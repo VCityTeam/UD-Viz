@@ -17,7 +17,7 @@ exec('npm run build-debug --prefix ./packages/browser')
   .then(() => {
     const child = spawn(
       'cross-env NODE_ENV=development node',
-      ['./bin/backEndExamples.js'],
+      ['./bin/backEnd.js'],
       {
         shell: true,
       }

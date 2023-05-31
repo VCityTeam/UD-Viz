@@ -31,21 +31,19 @@ const main = async function () {
   );
   console.info(browserUnitTestResult.stdout);
 
-  // Examples (TODO website ? => https://github.com/VCityTeam/UD-Viz/issues/648) functional test
+  // Functional test
   console.info('\nFunctional test of examples');
-  const backEndFork = cp.fork(
-    path.resolve(__dirname, '../bin/backEndExamples.js')
-  );
+  const backEndFork = cp.fork(path.resolve(__dirname, '../bin/backEnd.js'));
 
   backEndFork.on('error', () => {
     throw new Error('backend examples error');
   });
 
-  const runExamples = () => {
+  const runWebsiteFrontEnd = () => {
     return new Promise((resolve) => {
       backEndFork.on('message', async (message) => {
         if (message == Constant.MESSAGE.READY) {
-          console.log('Examples Back-end is ready');
+          console.log('Back-end is ready');
           // index.html
           await Test.html('.', Constant.DEFAULT_PORT);
           await Test.html('./examples', Constant.DEFAULT_PORT);
@@ -54,7 +52,7 @@ const main = async function () {
       });
     });
   };
-  await runExamples();
+  await runWebsiteFrontEnd();
   backEndFork.kill();
 
   // game
@@ -68,7 +66,7 @@ const main = async function () {
     throw new Error('backend game tutorial error');
   });
 
-  const runFrontEnd = () => {
+  const runTutorialsFrontEnd = () => {
     return new Promise((resolve) => {
       gameBackEndFork.on('message', async (backEndMessage) => {
         if (backEndMessage == Constant.MESSAGE.READY) {
@@ -80,7 +78,7 @@ const main = async function () {
     });
   };
 
-  await runFrontEnd();
+  await runTutorialsFrontEnd();
 
   gameBackEndFork.kill();
 };

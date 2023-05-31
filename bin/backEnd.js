@@ -11,7 +11,7 @@ const { stringReplace } = require('string-replace-middleware');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const runMode = NODE_ENV === 'production' ? 'release' : 'debug';
 
-console.log('Examples back-end start on mode', runMode);
+console.log('Back-end start on mode', runMode);
 
 const app = new udvizNode.express();
 app.use(
@@ -82,10 +82,10 @@ gameSocketService
         },
       }),
     ],
-    './bin/gameThreadChildExamples.js'
+    './bin/gameThreadChild.js'
   )
   .then(() => {
-    console.log('Examples Game SocketService initialized');
+    console.log('Game SocketService initialized');
     // if can send message to parent notify it
     if (process.send) {
       process.send(Constant.MESSAGE.READY);
