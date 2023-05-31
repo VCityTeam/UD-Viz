@@ -24,8 +24,8 @@
     "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
     "docs": "rm -rf ./docs/html && node ./bin/docScriptTag.js include && npm run docs-browser ; npm run docs-node ; npm run docs-shared ; npm run docs-home && node ./bin/docScriptTag.js",
     "dev-docs": "nodemon --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms --exec npm run docs",
-    "back-end-examples": "cross-env NODE_ENV=production node ./bin/backEnd.js",
-    "start": "npm run build-browser && npm run back-end-examples"
+    "back-end": "cross-env NODE_ENV=production node ./bin/backEnd.js",
+    "start": "npm run build-browser && npm run back-end"
   },
   "workspaces": [
     "packages/*"
