@@ -2,6 +2,9 @@ See [Contributing.md](./Contributing.md) for details on how to contribute to UD-
 
 The following people have contributed to UD-Viz:
 
+See the **VCity Team Members** page [here](https://projet.liris.cnrs.fr/vcity/general/team/).
+
+Commiters:
 
 - [LIRIS](https://liris.cnrs.fr/):
   - [Adrien Hernandez](https://github.com/AdrienHrdz) (AdrienHrdz)
