@@ -58,9 +58,9 @@
           parent.style.width = 'fit-content';
           parent.style.position = 'relative';
           parent.style.zIndex = 2;
-          parent.appendChild(sparqlWidget.html());
+          parent.appendChild(sparqlWidget.domElement);
 
-          frame3DPlanar.appendToUI(parent);
+          frame3DPlanar.domElementUI.appendChild(parent);
         });
     </script>
     SCRIPT_TAG_RELOAD

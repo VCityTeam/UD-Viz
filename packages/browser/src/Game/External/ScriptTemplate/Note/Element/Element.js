@@ -11,18 +11,18 @@ import { SocketService } from '../SocketService/SocketService';
 export class Element extends ExternalScriptBase {
   init() {
     // html message note
-    this.noteMessageHtml = document.createElement('div');
-    this.noteMessageHtml.classList.add('note_message');
-    this.noteMessageHtml.innerHTML = this.variables.message;
+    this.noteMessageDomElement = document.createElement('div');
+    this.noteMessageDomElement.classList.add('note_message');
+    this.noteMessageDomElement.innerHTML = this.variables.message;
 
     // close note button
     const closeNoteButton = document.createElement('button');
     closeNoteButton.innerHTML = 'Close';
-    this.noteMessageHtml.appendChild(closeNoteButton);
+    this.noteMessageDomElement.appendChild(closeNoteButton);
 
     closeNoteButton.onclick = (event) => {
       event.stopImmediatePropagation();
-      this.noteMessageHtml.remove();
+      this.noteMessageDomElement.remove();
     };
 
     this.containerButtons = document.createElement('div');
@@ -87,13 +87,13 @@ export class Element extends ExternalScriptBase {
   }
 
   displayNoteMessageHtml() {
-    this.context.frame3D.appendToUI(this.noteMessageHtml);
+    this.context.frame3D.domElementUI.appendChild(this.noteMessageDomElement);
   }
 
   tick() {
-    if (this.noteMessageHtml.parentElement) {
+    if (this.noteMessageDomElement.parentElement) {
       moveHtmlToWorldPosition(
-        this.noteMessageHtml,
+        this.noteMessageDomElement,
         this.object3D.getWorldPosition(new THREE.Vector3()),
         this.context.frame3D.camera
       );
@@ -101,7 +101,7 @@ export class Element extends ExternalScriptBase {
   }
 
   onRemove() {
-    this.noteMessageHtml.remove();
+    this.noteMessageDomElement.remove();
     this.containerButtons.remove();
   }
 

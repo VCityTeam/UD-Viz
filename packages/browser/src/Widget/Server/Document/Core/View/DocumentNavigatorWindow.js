@@ -16,7 +16,7 @@ export class DocumentNavigatorWindow {
     this.provider = provider;
 
     /** @type {HTMLElement} */
-    this.rootHtml = null;
+    this.domElement = null;
 
     /** @type {HTMLElement} */
     this.documentListContainer = null;
@@ -87,22 +87,14 @@ export class DocumentNavigatorWindow {
     );
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
-  }
-
   initHtml() {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('root-document-navigator');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('root-document-navigator');
 
     {
       // document list container
       this.documentListContainer = document.createElement('div');
-      this.rootHtml.appendChild(this.documentListContainer);
+      this.domElement.appendChild(this.documentListContainer);
       {
         // label document count
         const labelDocCount = document.createElement('h3');
@@ -125,7 +117,7 @@ export class DocumentNavigatorWindow {
 
       // filter displayable element
       const displayableFilters = createDisplayable('Filters');
-      this.rootHtml.appendChild(displayableFilters.parent);
+      this.domElement.appendChild(displayableFilters.parent);
       this.displayableFiltersContainer = displayableFilters.container;
       {
         const displayableAttributes = createDisplayable('Attributes');

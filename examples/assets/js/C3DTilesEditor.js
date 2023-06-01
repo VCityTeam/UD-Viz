@@ -39,7 +39,7 @@ const C3DTilesEditor = class {
     const inputFile = document.createElement('input');
     inputFile.setAttribute('type', 'file');
     inputFile.setAttribute('accept', '.glb, .gltf');
-    this.frame3DPlanar.ui.appendChild(inputFile);
+    this.frame3DPlanar.domElementUI.appendChild(inputFile);
     inputFile.onchange = async (e) => {
       const gltf = await udvizBrowser.readFileAsGltf(e);
 
@@ -71,7 +71,7 @@ const C3DTilesEditor = class {
     const addButtonMode = (mode) => {
       const buttonMode = document.createElement('button');
       buttonMode.innerText = mode;
-      this.frame3DPlanar.ui.appendChild(buttonMode);
+      this.frame3DPlanar.domElementUI.appendChild(buttonMode);
 
       buttonMode.onclick = () => {
         this.transformControls.setMode(mode);
@@ -84,7 +84,7 @@ const C3DTilesEditor = class {
     // result
     const dowloadButton = document.createElement('button');
     dowloadButton.innerText = 'Download transform';
-    this.frame3DPlanar.ui.appendChild(dowloadButton);
+    this.frame3DPlanar.domElementUI.appendChild(dowloadButton);
     dowloadButton.onclick = () => {
       if (!this.object3D) {
         alert('no object3D loaded');

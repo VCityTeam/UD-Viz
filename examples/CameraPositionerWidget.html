@@ -44,7 +44,7 @@
 
           // //// CAMERA POSITIONER
           const cameraPosition = new udvizBrowser.Widget.CameraPositioner(
-            frame3DPlanar.getItownsView()
+            frame3DPlanar.itownsView
           );
 
           const parent = document.createElement('div');
@@ -52,8 +52,8 @@
           parent.style.width = 'fit-content';
           parent.style.position = 'relative';
           parent.style.zIndex = 2;
-          parent.appendChild(cameraPosition.html());
-          frame3DPlanar.appendToUI(parent);
+          parent.appendChild(cameraPosition.domElement);
+          frame3DPlanar.domElementUI.appendChild(parent);
         });
     </script>
     SCRIPT_TAG_RELOAD

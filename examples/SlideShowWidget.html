@@ -49,7 +49,7 @@
           // /// SLIDESHOW MODULE
           // 3D Setup
           const slideShow = new udvizBrowser.Widget.SlideShow(
-            frame3DPlanar.getItownsView(),
+            frame3DPlanar.itownsView,
             configs['slide_show'],
             extent
           );
@@ -63,17 +63,17 @@
           parent.style.width = 'fit-content';
           parent.style.position = 'relative';
           parent.style.zIndex = 2;
-          parent.appendChild(slideShow.html());
+          parent.appendChild(slideShow.domElement);
 
-          frame3DPlanar.appendToUI(parent);
+          frame3DPlanar.domElementUI.appendChild(parent);
 
           const hideUIListener = (event) => {
             if (event.key.toLowerCase() != 's') return;
 
-            if (slideShow.html().style.display == 'none') {
-              slideShow.html().style.display = '';
+            if (slideShow.domElement.style.display == 'none') {
+              slideShow.domElement.style.display = '';
             } else {
-              slideShow.html().style.display = 'none';
+              slideShow.domElement.style.display = 'none';
             }
           };
 

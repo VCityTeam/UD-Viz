@@ -38,7 +38,7 @@
 
           // //// BaseMap Widget
           const baseMap = new udvizBrowser.Widget.BaseMap(
-            frame3DPlanar.getItownsView(),
+            frame3DPlanar.itownsView,
             [
               {
                 layer: configs['base_maps'][0],
@@ -53,9 +53,9 @@
             extent
           );
 
-          baseMap.rootHtml.style.position = 'relative';
-          baseMap.rootHtml.style.zIndex = 2;
-          frame3DPlanar.appendToUI(baseMap.html());
+          baseMap.domElement.style.position = 'relative';
+          baseMap.domElement.style.zIndex = 2;
+          frame3DPlanar.domElementUI.appendChild(baseMap.domElement);
         });
     </script>
     SCRIPT_TAG_RELOAD

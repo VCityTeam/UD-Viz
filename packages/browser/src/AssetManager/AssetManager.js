@@ -150,7 +150,7 @@ export class AssetManager {
     this.conf = config;
     /** @type {LoadingView}*/
     const loadingView = new LoadingView();
-    parentDiv.appendChild(loadingView.html());
+    parentDiv.appendChild(loadingView.domElement);
 
     /** @type {Promise[]} */
     const promises = [];
@@ -204,7 +204,7 @@ export class AssetManager {
 
     return new Promise((resolve) => {
       Promise.all(promises).then(function () {
-        loadingView.dispose();
+        loadingView.domElement.remove();
         resolve();
       });
     });
@@ -220,13 +220,13 @@ class LoadingView {
    */
   constructor() {
     /** @type {HTMLDivElement} */
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('assetsLoadingView');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('assetsLoadingView');
 
     /** @type {HTMLDivElement} */
     this.parentLoadingBar = document.createElement('div');
     this.parentLoadingBar.classList.add('parent_loading_bar_asset');
-    this.rootHtml.appendChild(this.parentLoadingBar);
+    this.domElement.appendChild(this.parentLoadingBar);
 
     /** @type {HTMLDivElement} */
     const label = document.createElement('label');
@@ -239,21 +239,6 @@ class LoadingView {
      *
       @type {Object<string,HTMLDivElement>} */
     this.loadingBars = {};
-  }
-
-  /**
-   *
-   * @returns {HTMLDivElement} the element root html of this view
-   */
-  html() {
-    return this.rootHtml;
-  }
-
-  /**
-   * Removes the root HTML element from the view. {@link LoadingView}
-   */
-  dispose() {
-    this.rootHtml.remove();
   }
 
   /**

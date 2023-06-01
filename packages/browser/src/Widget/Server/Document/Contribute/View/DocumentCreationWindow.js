@@ -23,8 +23,8 @@ export class DocumentCreationWindow {
     documentVisualizer,
     parentElementVisualizer
   ) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     this.parentElementVisualizer = parentElementVisualizer;
 
@@ -110,13 +110,9 @@ export class DocumentCreationWindow {
     this._initForm();
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
   dispose() {
     this.positioner.dispose();
-    this.rootHtml.remove();
+    this.domElement.remove();
     this._exitEditMode();
     this.documentVisualizer.dispose();
   }
@@ -158,14 +154,16 @@ export class DocumentCreationWindow {
    * @private
    */
   _startPositioningDocument() {
-    this.rootHtml.appendChild(this.positioner.html());
+    this.domElement.appendChild(this.positioner.domElement);
 
     this._enterEditMode();
 
     const fileReader = new FileReader();
     fileReader.onload = () => {
       this.documentVisualizer.setImageSrc(fileReader.result);
-      this.parentElementVisualizer.appendChild(this.documentVisualizer.html());
+      this.parentElementVisualizer.appendChild(
+        this.documentVisualizer.domElement
+      );
     };
     fileReader.readAsDataURL(this.docImageElement.files[0]);
   }
@@ -299,7 +297,7 @@ export class DocumentCreationWindow {
   }
 
   get buttonPositionElement() {
-    return findChildByID(this.rootHtml, this.buttonPositionId);
+    return findChildByID(this.domElement, this.buttonPositionId);
   }
 
   get buttonCreateId() {
@@ -307,7 +305,7 @@ export class DocumentCreationWindow {
   }
 
   get buttonCreateElement() {
-    return findChildByID(this.rootHtml, this.buttonCreateId);
+    return findChildByID(this.domElement, this.buttonCreateId);
   }
 
   get formId() {
@@ -315,7 +313,7 @@ export class DocumentCreationWindow {
   }
 
   get formElement() {
-    return findChildByID(this.rootHtml, this.formId);
+    return findChildByID(this.domElement, this.formId);
   }
 
   get docTitleId() {
@@ -323,7 +321,7 @@ export class DocumentCreationWindow {
   }
 
   get docTitleElement() {
-    return findChildByID(this.rootHtml, this.docTitleId);
+    return findChildByID(this.domElement, this.docTitleId);
   }
 
   get docImageId() {
@@ -331,7 +329,7 @@ export class DocumentCreationWindow {
   }
 
   get docImageElement() {
-    return findChildByID(this.rootHtml, this.docImageId);
+    return findChildByID(this.domElement, this.docImageId);
   }
 
   get sourceId() {
@@ -339,7 +337,7 @@ export class DocumentCreationWindow {
   }
 
   get sourceElement() {
-    return findChildByID(this.rootHtml, this.sourceId);
+    return findChildByID(this.domElement, this.sourceId);
   }
 
   get docRightsHolderId() {
@@ -347,7 +345,7 @@ export class DocumentCreationWindow {
   }
 
   get docRightsHolderElement() {
-    return findChildByID(this.rootHtml, this.docRightsHolderId);
+    return findChildByID(this.domElement, this.docRightsHolderId);
   }
 
   get descriptionId() {
@@ -355,7 +353,7 @@ export class DocumentCreationWindow {
   }
 
   get descriptionElement() {
-    return findChildByID(this.rootHtml, this.descriptionId);
+    return findChildByID(this.domElement, this.descriptionId);
   }
 
   get pubDateId() {
@@ -363,7 +361,7 @@ export class DocumentCreationWindow {
   }
 
   get pubDateElement() {
-    return findChildByID(this.rootHtml, this.pubDateId);
+    return findChildByID(this.domElement, this.pubDateId);
   }
 
   get refDateId() {
@@ -371,6 +369,6 @@ export class DocumentCreationWindow {
   }
 
   get refDateElement() {
-    return findChildByID(this.rootHtml, this.refDateId);
+    return findChildByID(this.domElement, this.refDateId);
   }
 }

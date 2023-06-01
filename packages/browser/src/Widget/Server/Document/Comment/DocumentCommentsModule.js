@@ -33,7 +33,7 @@ export class DocumentCommentsModule {
     provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => {
-        this.commentsWindow.dispose();
+        this.commentsWindow.domElement.remove();
       }
     );
   }

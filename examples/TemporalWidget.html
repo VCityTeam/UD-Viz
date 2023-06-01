@@ -65,7 +65,9 @@
 
           temporalDateSelector.domElement.style.zIndex = 2;
           temporalDateSelector.domElement.style.position = 'relative';
-          frame3DPlanar.appendToUI(temporalDateSelector.domElement);
+          frame3DPlanar.domElementUI.appendChild(
+            temporalDateSelector.domElement
+          );
         });
     </script>
     SCRIPT_TAG_RELOAD

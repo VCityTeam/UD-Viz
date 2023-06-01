@@ -55,10 +55,10 @@
               extent,
               configs['geocoding_server']
             ),
-            frame3DPlanar.getItownsView()
+            frame3DPlanar.itownsView
           );
 
-          frame3DPlanar.appendToUI(geocodingView.html());
+          frame3DPlanar.domElementUI.appendChild(geocodingView.domElement);
         });
     </script>
     SCRIPT_TAG_RELOAD

@@ -20,8 +20,8 @@ export class CameraPositioner extends EventSender {
       () => this._updateFieldsFromCamera()
     );
 
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     // callbacks
     this.formElement.onsubmit = () => {
@@ -35,21 +35,6 @@ export class CameraPositioner extends EventSender {
 
     // Event for position registering
     this.registerEvent(CameraPositioner.EVENT_POSITION_SUBMITTED);
-  }
-
-  /**
-   *
-   * @returns {HTMLElement} - html
-   */
-  html() {
-    return this.rootHtml;
-  }
-
-  /**
-   * remove html from DOM
-   */
-  dispose() {
-    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -92,7 +77,7 @@ export class CameraPositioner extends EventSender {
    * Updates the form fields from the camera position.
    */
   _updateFieldsFromCamera() {
-    if (this.rootHtml.parentElement) {
+    if (this.domElement.parentElement) {
       // html is present in DOM update fields
       const camera = this.itownsView.camera.camera3D;
       const position = camera.position;
@@ -162,7 +147,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get buttonValidateElement() {
-    return findChildByID(this.rootHtml, this.buttonValidateId);
+    return findChildByID(this.domElement, this.buttonValidateId);
   }
 
   get buttonTravelId() {
@@ -170,7 +155,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get buttonTravelElement() {
-    return findChildByID(this.rootHtml, this.buttonTravelId);
+    return findChildByID(this.domElement, this.buttonTravelId);
   }
 
   get formId() {
@@ -178,7 +163,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get formElement() {
-    return findChildByID(this.rootHtml, this.formId);
+    return findChildByID(this.domElement, this.formId);
   }
 
   get positionXId() {
@@ -186,7 +171,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get positionXElement() {
-    return findChildByID(this.rootHtml, this.positionXId);
+    return findChildByID(this.domElement, this.positionXId);
   }
 
   get positionYId() {
@@ -194,7 +179,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get positionYElement() {
-    return findChildByID(this.rootHtml, this.positionYId);
+    return findChildByID(this.domElement, this.positionYId);
   }
 
   get positionZId() {
@@ -202,7 +187,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get positionZElement() {
-    return findChildByID(this.rootHtml, this.positionZId);
+    return findChildByID(this.domElement, this.positionZId);
   }
 
   get quaternionXId() {
@@ -210,7 +195,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get quaternionXElement() {
-    return findChildByID(this.rootHtml, this.quaternionXId);
+    return findChildByID(this.domElement, this.quaternionXId);
   }
 
   get quaternionYId() {
@@ -218,7 +203,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get quaternionYElement() {
-    return findChildByID(this.rootHtml, this.quaternionYId);
+    return findChildByID(this.domElement, this.quaternionYId);
   }
 
   get quaternionZId() {
@@ -226,7 +211,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get quaternionZElement() {
-    return findChildByID(this.rootHtml, this.quaternionZId);
+    return findChildByID(this.domElement, this.quaternionZId);
   }
 
   get quaternionWId() {
@@ -234,7 +219,7 @@ export class CameraPositioner extends EventSender {
   }
 
   get quaternionWElement() {
-    return findChildByID(this.rootHtml, this.quaternionWId);
+    return findChildByID(this.domElement, this.quaternionWId);
   }
 
   // //////////

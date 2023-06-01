@@ -59,7 +59,7 @@
 
           // quick fix but css needs to be remove from documents view TODO ISSUE
           const addToUI = (el) => {
-            frame3DPlanar.ui.appendChild(el);
+            frame3DPlanar.domElementUI.appendChild(el);
             el.style.position = 'relative';
             el.style.zIndex = 2;
           };
@@ -80,9 +80,9 @@
           toggleAuthView.innerText = 'Show Authentification';
           addToUI(toggleAuthView);
           toggleAuthView.onclick = () => {
-            if (!authenticationView.html().parentElement) {
-              addToUI(authenticationView.html());
-              authenticationView.rootHtml.style.position = 'absolute';
+            if (!authenticationView.domElement.parentElement) {
+              addToUI(authenticationView.domElement);
+              authenticationView.domElement.style.position = 'absolute';
             }
           };
 
@@ -95,7 +95,9 @@
           const parentNavigator = document.createElement('div');
           parentNavigator.style.width = '200px';
           parentNavigator.style.backgroundColor = 'white';
-          parentNavigator.appendChild(documentCore.view.navigatorWindow.html());
+          parentNavigator.appendChild(
+            documentCore.view.navigatorWindow.domElement
+          );
 
           addToUI(parentNavigator);
 
@@ -105,24 +107,29 @@
           parentInspector.style.right = '0px';
           parentInspector.style.top = '0px';
           parentInspector.style.backgroundColor = 'white';
-          parentInspector.appendChild(documentCore.view.inspectorWindow.html());
+          parentInspector.appendChild(
+            documentCore.view.inspectorWindow.domElement
+          );
 
           addToUI(parentInspector);
 
           // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
           const visualizerView =
             new udvizBrowser.Widget.Server.Document.VisualizerView(
-              frame3DPlanar.getItownsView(),
+              frame3DPlanar.itownsView,
               documentCore.provider
             );
 
           const visualizeButton = document.createElement('button');
           visualizeButton.innerText = 'Visualize';
+          visualizerView.domElement.style.zIndex = 5;
           visualizeButton.onclick = async () => {
             await visualizerView.startTravelToDisplayedDocument();
-            addToUI(visualizerView.html());
+            addToUI(visualizerView.domElement);
           };
-          documentCore.view.inspectorWindow.html().appendChild(visualizeButton);
+          documentCore.view.inspectorWindow.domElement.appendChild(
+            visualizeButton
+          );
 
           const parentBottomRight = document.createElement('div');
           parentBottomRight.style.position = 'absolute';
@@ -138,10 +145,10 @@
               documentCore.provider,
               visualizerView,
               requestService,
-              frame3DPlanar.getItownsView(),
-              frame3DPlanar.getItownsView().controls,
+              frame3DPlanar.itownsView,
+              frame3DPlanar.itownsView.controls,
               configs['spatial_multimedia_db_server'],
-              frame3DPlanar.ui
+              frame3DPlanar.domElementUI
             );
 
           const updateButton = document.createElement('button');
@@ -150,10 +157,12 @@
             await documentContribute.updateWindow.updateFromDisplayedDocument();
             udvizBrowser.clearChildren(parentBottomRight);
             parentBottomRight.appendChild(
-              documentContribute.updateWindow.html()
+              documentContribute.updateWindow.domElement
             );
           };
-          documentCore.view.inspectorWindow.html().appendChild(updateButton);
+          documentCore.view.inspectorWindow.domElement.appendChild(
+            updateButton
+          );
 
           const deleteButton = document.createElement('button');
           deleteButton.innerText = 'Delete';
@@ -172,14 +181,16 @@
               alert(e);
             }
           };
-          documentCore.view.inspectorWindow.html().appendChild(deleteButton);
+          documentCore.view.inspectorWindow.domElement.appendChild(
+            deleteButton
+          );
 
           const createDocumentButton = document.createElement('button');
           createDocumentButton.innerText = 'Create new document';
           createDocumentButton.onclick = () => {
             udvizBrowser.clearChildren(parentBottomRight);
             parentBottomRight.appendChild(
-              documentContribute.creationWindow.html()
+              documentContribute.creationWindow.domElement
             );
           };
           documentCore.view.navigatorWindow.documentListContainer.appendChild(
@@ -192,11 +203,11 @@
               documentCore.provider,
               requestService,
               configs['spatial_multimedia_db_server'],
-              documentCore.view.inspectorWindow.html()
+              documentCore.view.inspectorWindow.domElement
             );
 
           documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
-            documentValidation.validationView.html()
+            documentValidation.validationView.domElement
           );
 
           // DOCUMENT COMMENTS
@@ -213,11 +224,13 @@
             udvizBrowser.clearChildren(parentBottomRight);
             await documentComment.commentsWindow.getComments();
             parentBottomRight.appendChild(
-              documentComment.commentsWindow.html()
+              documentComment.commentsWindow.domElement
             );
           };
 
-          documentCore.view.inspectorWindow.html().appendChild(commentButton);
+          documentCore.view.inspectorWindow.domElement.appendChild(
+            commentButton
+          );
         });
     </script>
     SCRIPT_TAG_RELOAD

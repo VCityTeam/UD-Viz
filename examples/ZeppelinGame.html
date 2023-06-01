@@ -126,7 +126,8 @@
         init() {
           this.ui = document.createElement('div');
           this.ui.style.zIndex = 98; // le neuf et le 8
-          this.context.frame3D.appendToUI(this.ui);
+          this.ui.style.position = 'absolute';
+          this.context.frame3D.domElementUI.appendChild(this.ui);
           this.updateUI();
 
           this.cameraManager = this.context.findExternalScriptWithID(

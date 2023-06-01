@@ -113,7 +113,7 @@
                   this.variables.camera_angle
                 );
 
-                const scene = this.context.frame3D.getScene();
+                const scene = this.context.frame3D.scene;
                 if (!this.context.frame3D.itownsView)
                   throw new Error('this script works with Frame3DPlanar');
                 const worldOrigin = this.context.object3D.position;
@@ -404,9 +404,9 @@
               });
 
               // create custom render pass
-              const renderer = game.frame3DPlanar.getRenderer();
-              const camera = game.frame3DPlanar.getCamera();
-              const scene = game.frame3DPlanar.getScene();
+              const renderer = game.frame3DPlanar.renderer;
+              const camera = game.frame3DPlanar.camera;
+              const scene = game.frame3DPlanar.scene;
 
               const edgeDetectionComposer = new udvizBrowser.EffectComposer(
                 renderer,
@@ -434,7 +434,7 @@
 
               // update variables on resize
               const updateResize = function () {
-                const size = game.frame3DPlanar.getSize();
+                const size = game.frame3DPlanar.size;
                 renderTargetFX.setSize(size.x, size.y);
 
                 sobelPass.uniforms.resolution.value = new THREE.Vector2(

@@ -450,7 +450,7 @@ export class Context {
         const audioComp = child.getComponent(Game.Component.Audio.TYPE);
         // Position in world referential
         if (audioComp) {
-          const camera = this.frame3D.getCamera();
+          const camera = this.frame3D.camera;
           const cameraMatWorldInverse = camera.matrixWorldInverse;
           audioComp.getController().tick(cameraMatWorldInverse);
         }

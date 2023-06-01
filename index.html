@@ -103,7 +103,6 @@
       createContainer('Widget');
       createContainer('Game');
       createContainer('GUI');
-      createContainer('THREEUtil');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
@@ -149,11 +148,11 @@
       );
 
       addProjectElement(
-        'Billboard',
+        'DomElement3D',
         'Frame3D',
-        './examples/Billboard.html',
-        'This example implements a billboard (ie an embeded html content in a 3D view).',
-        './examples/assets/img/mosaic/billboard.png'
+        './examples/dom_element_3D.html',
+        'This example implements a dom element 3D (ie an embeded html content in a 3D view).',
+        './examples/assets/img/mosaic/dom_element_3D.png'
       );
 
       addProjectElement(
@@ -170,14 +169,6 @@
         './examples/3DTilesPointCloud.html',
         'This example shows a 3DTiles PointCloud',
         './examples/assets/img/mosaic/3DTilesPointCloud.png'
-      );
-
-      addProjectElement(
-        'Fit Extent',
-        'THREEUtil',
-        './examples/FitExtent.html',
-        'This example implements the THREEUtil function cameraFitRectangle where rectangle to fit is the itowns extent ',
-        './examples/assets/img/mosaic/fit_extent.png'
       );
 
       addProjectElement(

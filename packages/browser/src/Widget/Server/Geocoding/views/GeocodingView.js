@@ -15,9 +15,9 @@ export class GeocodingView {
    * @param {import('itowns').PlanarView} planarView The iTowns view.
    */
   constructor(geocodingService, planarView) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.setAttribute('id', this.viewId);
-    this.rootHtml.innerHTML = this.innerHtmlContent;
+    this.domElement = document.createElement('div');
+    this.domElement.setAttribute('id', this.viewId);
+    this.domElement.innerHTML = this.innerHtmlContent;
 
     this.geocodingService = geocodingService;
     this.planarView = planarView;
@@ -56,15 +56,11 @@ export class GeocodingView {
     `;
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
   /**
-   * Dispose the view.
+   * Remove domElement and the meshes added in scene
    */
   dispose() {
-    this.rootHtml.remove();
+    this.domElement.remove();
     this.removePins();
   }
 
@@ -191,7 +187,7 @@ export class GeocodingView {
   }
 
   get viewElement() {
-    return findChildByID(this.rootHtml, this.viewId);
+    return findChildByID(this.domElement, this.viewId);
   }
 
   get formId() {
@@ -199,7 +195,7 @@ export class GeocodingView {
   }
 
   get formElement() {
-    return findChildByID(this.rootHtml, this.formId);
+    return findChildByID(this.domElement, this.formId);
   }
 
   get searchInputId() {
@@ -207,7 +203,7 @@ export class GeocodingView {
   }
 
   get searchInputElement() {
-    return findChildByID(this.rootHtml, this.searchInputId);
+    return findChildByID(this.domElement, this.searchInputId);
   }
 
   get centeredDivId() {
@@ -215,7 +211,7 @@ export class GeocodingView {
   }
 
   get centeredDivElement() {
-    return findChildByID(this.rootHtml, this.centeredDivId);
+    return findChildByID(this.domElement, this.centeredDivId);
   }
 
   get errorMessageBoxId() {
@@ -231,6 +227,6 @@ export class GeocodingView {
   }
 
   get creditElement() {
-    return findChildByID(this.rootHtml, this.creditId);
+    return findChildByID(this.domElement, this.creditId);
   }
 }

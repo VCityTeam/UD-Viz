@@ -18,7 +18,7 @@ export class DocumentInspectorWindow {
     this.provider = provider;
 
     /** @type {HTMLElement} */
-    this.rootHtml = null;
+    this.domElement = null;
 
     /** @type {HTMLElement} */
     this.docTitleElement = null;
@@ -55,31 +55,23 @@ export class DocumentInspectorWindow {
     );
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
-  }
-
   initHtml() {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('root-document-inspector');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('root-document-inspector');
 
     {
       // title
       this.docTitleElement = document.createElement('div');
-      this.rootHtml.appendChild(this.docTitleElement);
+      this.domElement.appendChild(this.docTitleElement);
 
       // image
       this.docImageElement = document.createElement('img');
       this.docImageElement.title = 'CTRL + Click to open the image';
-      this.rootHtml.appendChild(this.docImageElement);
+      this.domElement.appendChild(this.docImageElement);
 
       // displayable details
       const displayableDetails = createDisplayable('Details');
-      this.rootHtml.appendChild(displayableDetails.parent);
+      this.domElement.appendChild(displayableDetails.parent);
       {
         const addDetailsField = (label) => {
           // title

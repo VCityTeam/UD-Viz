@@ -56,7 +56,7 @@ export class SlideShow {
      * Root html of slideshow view 
      *
       @type {HTMLElement} */
-    this.rootHtml = null;
+    this.domElement = null;
 
     // Ids
     this.coordinatesInputVectorID = null;
@@ -126,7 +126,7 @@ export class SlideShow {
 
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
     this.callbacksHTMLEl.forEach((element) => {
-      const htmlElement = findChildByID(this.rootHtml, element.id);
+      const htmlElement = findChildByID(this.domElement, element.id);
       htmlElement.addEventListener(element.event, element.cb.bind(this));
     });
     this.matchExtent();
@@ -137,10 +137,6 @@ export class SlideShow {
       this.notifyChangeEachFrame();
     };
     tick();
-  }
-
-  html() {
-    return this.rootHtml;
   }
 
   addListeners() {
@@ -158,7 +154,7 @@ export class SlideShow {
   }
 
   dispose() {
-    this.rootHtml.remove();
+    this.domElement.remove();
     this.stopLoopSlideShow();
     if (this.plane) {
       this.plane.removeFromParent();
@@ -404,35 +400,35 @@ export class SlideShow {
     return newTextureFile;
   }
 
-  /** Create all HTMLElements and fill `this.rootHtml`*/
+  /** Create all HTMLElements and fill `this.domElement`*/
   initHtml() {
-    const rootHtml = document.createElement('div');
+    const domElement = document.createElement('div');
     const coordinatesElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Coordinates',
       100
     );
-    rootHtml.appendChild(coordinatesElement.title);
+    domElement.appendChild(coordinatesElement.title);
     this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
-    rootHtml.appendChild(coordinatesElement.inputVector);
+    domElement.appendChild(coordinatesElement.inputVector);
 
     const rotationElement = this.createInputVector(
       ['X', 'Y', 'Z'],
       'Rotation',
       0.1
     );
-    rootHtml.appendChild(rotationElement.title);
+    domElement.appendChild(rotationElement.title);
     this.rotationInputVectorID = rotationElement.inputVector.id;
-    rootHtml.appendChild(rotationElement.inputVector);
+    domElement.appendChild(rotationElement.inputVector);
 
     const sizeElement = this.createInputVector(
       ['Height', 'Width'],
       'Size',
       100
     );
-    rootHtml.appendChild(sizeElement.title);
+    domElement.appendChild(sizeElement.title);
     this.sizeInputVectorID = sizeElement.inputVector.id;
-    rootHtml.appendChild(sizeElement.inputVector);
+    domElement.appendChild(sizeElement.inputVector);
 
     const matchExtentButton = document.createElement('button');
     matchExtentButton.id = '_button_match_extent';
@@ -442,10 +438,10 @@ export class SlideShow {
       id: matchExtentButton.id,
       cb: this.matchExtent,
     });
-    rootHtml.appendChild(matchExtentButton);
+    domElement.appendChild(matchExtentButton);
 
     const aspectRatioDiv = document.createElement('div');
-    rootHtml.appendChild(aspectRatioDiv);
+    domElement.appendChild(aspectRatioDiv);
 
     const aspectRatioCheckbox = document.createElement('input');
     aspectRatioCheckbox.id = 'aspectRatio';
@@ -472,7 +468,7 @@ export class SlideShow {
     aspectRatioDiv.appendChild(labelAspectRatio);
 
     const loopDiv = document.createElement('div');
-    rootHtml.appendChild(loopDiv);
+    domElement.appendChild(loopDiv);
 
     const loopCheckbox = document.createElement('input');
     loopCheckbox.id = 'loopSlideShow';
@@ -497,7 +493,7 @@ export class SlideShow {
     loopDiv.appendChild(labelLoopSlideShow);
 
     const durationLoopInSecDiv = document.createElement('div');
-    rootHtml.appendChild(durationLoopInSecDiv);
+    domElement.appendChild(durationLoopInSecDiv);
 
     const durationLoopInSecInput = document.createElement('input');
     durationLoopInSecInput.id = 'durationLoopInputSlideShow';
@@ -534,7 +530,7 @@ export class SlideShow {
 
     const slideSelect = document.createElement('select');
     slideSelect.id = 'slideSelect';
-    rootHtml.appendChild(slideSelect);
+    domElement.appendChild(slideSelect);
 
     const unsetOptionSlide = document.createElement('option');
     unsetOptionSlide.value = 'null';
@@ -559,7 +555,7 @@ export class SlideShow {
       });
     }
 
-    this.rootHtml = rootHtml;
+    this.domElement = domElement;
   }
 
   /**
@@ -864,38 +860,38 @@ export class SlideShow {
   // DOM GETTERS
   /* Return coordinates HTMLElements (inputs+labels) */
   get coordinatesInputVectorDOM() {
-    return findChildByID(this.rootHtml, this.coordinatesInputVectorID);
+    return findChildByID(this.domElement, this.coordinatesInputVectorID);
   }
 
   /* Return rotation HTMLElement (inputs+labels)*/
   get rotationInputVectorDOM() {
-    return findChildByID(this.rootHtml, this.rotationInputVectorID);
+    return findChildByID(this.domElement, this.rotationInputVectorID);
   }
 
   /* Return size HTMLElement (inputs+labels)*/
   get sizeInputVectorDOM() {
-    return findChildByID(this.rootHtml, this.sizeInputVectorID);
+    return findChildByID(this.domElement, this.sizeInputVectorID);
   }
 
   /* Return apspect ratio HTMLElement (checkbox)*/
   get aspectRatioCheckboxDOM() {
-    return findChildByID(this.rootHtml, this.aspectRatioCheckboxID);
+    return findChildByID(this.domElement, this.aspectRatioCheckboxID);
   }
 
   get counterLoopTimeDivDOM() {
-    return findChildByID(this.rootHtml, this.counterLoopTimeDivID);
+    return findChildByID(this.domElement, this.counterLoopTimeDivID);
   }
 
   get loopCheckboxDOM() {
-    return findChildByID(this.rootHtml, this.loopSlideShowCheckboxID);
+    return findChildByID(this.domElement, this.loopSlideShowCheckboxID);
   }
 
   get slideSelectDOM() {
-    return findChildByID(this.rootHtml, this.slideSelectID);
+    return findChildByID(this.domElement, this.slideSelectID);
   }
 
   get innerContentHtml() {
-    return this.rootHtml.outerHTML;
+    return this.domElement.outerHTML;
   }
 
   get iCurrentTextureFile() {

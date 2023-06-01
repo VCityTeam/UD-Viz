@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
 import { checkParentChild } from '../../HTMLUtil';
-import { Billboard } from '../Component/Billboard';
+import { DomElement3D } from '../DomElement3D';
 
 import './Frame3DBase.css';
 
@@ -9,12 +9,12 @@ import './Frame3DBase.css';
 export class Frame3DBase {
   /**
    * Basic Frame3D wrap different html element to handle CSS3D rendering {@link CSS3DRenderer}.
-   * It's possible to add {@link Billboard} to this.
+   * It's possible to add {@link DomElement3D} to this.
    * Composed with {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer}.
    *
    * @param {object} options - options to configure frame3Dbase
-   * @param {HTMLElement} [options.htmlParent=document.body] - html parent element of root html frame3DBase
-   * @param {boolean} [options.catchEventsCSS3D=false] - event are catch by css3D element (ie {@link Billboard})
+   * @param {HTMLElement} [options.parentDomElement=document.body] - dom parent element of domElement frame3DBase
+   * @param {boolean} [options.catchEventsCSS3D=false] - event are catch by css3D element (ie {@link DomElement3D})
    * @param {boolean} [init3D=true] - {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer} should be init
    */
   constructor(options = {}, init3D = true) {
@@ -22,41 +22,41 @@ export class Frame3DBase {
      * root html 
      *
       @type {HTMLDivElement} */
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('root_Frame3DBase');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('root_Frame3DBase');
 
     // Add to DOM
-    if (options.htmlParent instanceof HTMLElement) {
-      options.htmlParent.appendChild(this.rootHtml);
+    if (options.parentDomElement instanceof HTMLElement) {
+      options.parentDomElement.appendChild(this.domElement);
     } else {
-      document.body.appendChild(this.rootHtml);
+      document.body.appendChild(this.domElement);
     }
 
     /**
      * root webgl (where canvas is added)
      *
       @type {HTMLDivElement}  */
-    this.rootWebGL = document.createElement('div');
-    this.rootWebGL.classList.add('webGL_Frame3DBase');
+    this.domElementWebGL = document.createElement('div');
+    this.domElementWebGL.classList.add('webGL_Frame3DBase');
 
     /**
      * root css (where css3Delement are added)
      *
       @type {HTMLDivElement}  */
-    this.rootCss = document.createElement('div');
-    this.rootCss.classList.add('css_Frame3DBase');
+    this.domElementCss = document.createElement('div');
+    this.domElementCss.classList.add('css_Frame3DBase');
 
     /** 
      * where ui element should be added (note that you have to handle manually z-index element composing ui, should it be automatically ?) 
      *  
      @type {HTMLDivElement}*/
-    this.ui = document.createElement('div');
-    this.ui.classList.add('ui_Frame3DBase');
+    this.domElementUI = document.createElement('div');
+    this.domElementUI.classList.add('ui_Frame3DBase');
 
     // add dom layer
-    this.rootHtml.appendChild(this.ui);
-    this.rootHtml.appendChild(this.rootCss);
-    this.rootHtml.appendChild(this.rootWebGL);
+    this.domElement.appendChild(this.domElementUI);
+    this.domElement.appendChild(this.domElementCss);
+    this.domElement.appendChild(this.domElementWebGL);
 
     /**
      * reference resize listener to remove it on dispose
@@ -109,10 +109,10 @@ export class Frame3DBase {
     this.css3DScene = null;
 
     /**
-     * current billboards in frame3D
+     * current domElements 3D in frame3D
      *
-      @type {Billboard[]} */
-    this.billboards = [];
+      @type {DomElement3D[]} */
+    this.domElement3DArray = [];
 
     // Default catch events
     const catchEventsCSS3D = options.catchEventsCSS3D || false;
@@ -134,7 +134,7 @@ export class Frame3DBase {
 
       this.scene = new THREE.Scene();
       const canvas = document.createElement('canvas');
-      this.rootWebGL.appendChild(canvas);
+      this.domElementWebGL.appendChild(canvas);
       this.renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         antialias: true,
@@ -159,44 +159,6 @@ export class Frame3DBase {
   }
 
   /**
-   * Resize with css html element
-   *
-   * @param {THREE.Vector2} min coordinate min in pixel
-   * @param {THREE.Vector2} max coordinate max in pixel
-   */
-  setDisplaySize(min = new THREE.Vector2(), max = new THREE.Vector2()) {
-    const top = min.y;
-    const left = min.x;
-    const bottom = max.y;
-    const right = max.x;
-
-    [this.rootWebGL, this.rootCss].forEach(function (el) {
-      el.style.top = top + 'px';
-      el.style.left = left + 'px';
-      el.style.bottom = bottom + 'px';
-      el.style.right = right + 'px';
-    });
-
-    this.onResize();
-  }
-
-  /**
-   *
-   * @param {HTMLElement} el - html element to add to ui
-   */
-  appendToUI(el) {
-    this.ui.appendChild(el);
-  }
-
-  /**
-   *
-   * @returns {HTMLDivElement} - frame3DBase root html
-   */
-  html() {
-    return this.rootHtml;
-  }
-
-  /**
    * Init the css3D renderer
    */
   initCSS3D() {
@@ -204,7 +166,7 @@ export class Frame3DBase {
     this.css3DRenderer = new CSS3DRenderer();
 
     // Add html el
-    this.rootCss.appendChild(this.css3DRenderer.domElement);
+    this.domElementCss.appendChild(this.css3DRenderer.domElement);
 
     // Create a new scene for the css3D renderer
     this.css3DScene = new THREE.Scene();
@@ -213,23 +175,23 @@ export class Frame3DBase {
     const raycaster = new THREE.Raycaster();
 
     // check if enter css3D event
-    this.rootWebGL.onmousedown = (event) => {
+    this.domElementWebGL.onmousedown = (event) => {
       if (this.isCatchingEventsCSS3D()) return;
-      if (checkParentChild(event.target, this.ui)) return; // Do not propagate if it's the ui that has been clicked
+      if (checkParentChild(event.target, this.domElementUI)) return; // Do not propagate if it's the ui that has been clicked
 
-      const el = this.rootWebGL;
+      const el = this.domElementWebGL;
 
       const mouse = new THREE.Vector2(
         -1 + (2 * event.offsetX) / (el.clientWidth - parseInt(el.offsetLeft)),
         1 - (2 * event.offsetY) / (el.clientHeight - parseInt(el.offsetTop))
       );
 
-      raycaster.setFromCamera(mouse, this.getCamera());
+      raycaster.setFromCamera(mouse, this.camera);
 
-      for (let index = 0; index < this.billboards.length; index++) {
-        const element = this.billboards[index];
+      for (let index = 0; index < this.domElement3DArray.length; index++) {
+        const element = this.domElement3DArray[index];
 
-        const i = raycaster.intersectObject(element.getMaskObject());
+        const i = raycaster.intersectObject(element.maskObject);
         if (i.length) {
           this.catchEventsCSS3D(true);
           element.select(true);
@@ -239,10 +201,10 @@ export class Frame3DBase {
     };
 
     // check if enter canvas webgl event
-    this.rootCss.onmousedown = (event) => {
+    this.domElementCss.onmousedown = (event) => {
       if (!this.isCatchingEventsCSS3D()) return;
 
-      let onBillboard = false;
+      let onDomElement3D = false;
 
       // compatible chrome & firefox
       const path = event.path || (event.composedPath && event.composedPath());
@@ -250,17 +212,17 @@ export class Frame3DBase {
       if (path.length) {
         const firstHoverEl = path[0];
 
-        for (let index = 0; index < this.billboards.length; index++) {
-          const element = this.billboards[index];
-          if (element.getHtml() == firstHoverEl) {
-            onBillboard = true;
+        for (let index = 0; index < this.domElement3DArray.length; index++) {
+          const element = this.domElement3DArray[index];
+          if (element.domElement == firstHoverEl) {
+            onDomElement3D = true;
             break;
           }
         }
       }
-      if (!onBillboard) {
+      if (!onDomElement3D) {
         this.catchEventsCSS3D(false);
-        this.billboards.forEach(function (b) {
+        this.domElement3DArray.forEach(function (b) {
           b.select(false);
         });
       }
@@ -277,7 +239,7 @@ export class Frame3DBase {
    */
   renderCSS3D() {
     if (!this.isRendering || !this.css3DRenderer) return;
-    this.css3DRenderer.render(this.css3DScene, this.getCamera());
+    this.css3DRenderer.render(this.css3DScene, this.camera);
   }
 
   /**
@@ -309,7 +271,7 @@ export class Frame3DBase {
    * @returns {boolean} - false if root webgl is catching events, true if it's root css
    */
   isCatchingEventsCSS3D() {
-    return this.rootWebGL.style.pointerEvents === 'none';
+    return this.domElementWebGL.style.pointerEvents === 'none';
   }
 
   /**
@@ -318,34 +280,34 @@ export class Frame3DBase {
    */
   catchEventsCSS3D(value) {
     if (value) {
-      this.rootWebGL.style.pointerEvents = 'none';
+      this.domElementWebGL.style.pointerEvents = 'none';
     } else {
-      this.rootWebGL.style.pointerEvents = '';
+      this.domElementWebGL.style.pointerEvents = '';
     }
   }
 
   /**
    *
-   * @param {Billboard} billboard - billboard to add in frame3D
+   * @param {DomElement3D} domElement3D - domElement3D to add in frame3D
    */
-  appendBillboard(billboard) {
+  appendDomElement3D(domElement3D) {
     if (!this.css3DRenderer) this.initCSS3D();
 
-    this.getScene().add(billboard.getMaskObject());
-    this.css3DScene.add(billboard.getCss3DObject());
-    this.billboards.push(billboard);
+    this.scene.add(domElement3D.maskObject);
+    this.css3DScene.add(domElement3D.css3DObject);
+    this.domElement3DArray.push(domElement3D);
   }
 
   /**
    *
-   * @param {Billboard} billboard - billboard to remove
+   * @param {DomElement3D} domElement3D - domElement3D to remove
    */
-  removeBillboard(billboard) {
-    this.scene.remove(billboard.getMaskObject());
-    this.css3DScene.remove(billboard.getCss3DObject());
+  removeDomElement3D(domElement3D) {
+    this.scene.remove(domElement3D.maskObject);
+    this.css3DScene.remove(domElement3D.css3DObject);
 
-    const index = this.billboards.indexOf(billboard);
-    this.billboards.splice(index, 1);
+    const index = this.domElement3DArray.indexOf(domElement3D);
+    this.domElement3DArray.splice(index, 1);
   }
 
   /**
@@ -354,14 +316,6 @@ export class Frame3DBase {
    */
   setIsRendering(value) {
     this.isRendering = value;
-  }
-
-  /**
-   *
-   * @returns {THREE.Vector2} - size of frame3D
-   */
-  getSize() {
-    return this.size;
   }
 
   /**
@@ -390,9 +344,9 @@ export class Frame3DBase {
    * update `this.size`
    */
   updateSize() {
-    let offsetLeft = parseInt(this.rootWebGL.style.left);
+    let offsetLeft = parseInt(this.domElementWebGL.style.left);
     if (isNaN(offsetLeft)) offsetLeft = 0;
-    let offsetTop = parseInt(this.rootWebGL.style.top);
+    let offsetTop = parseInt(this.domElementWebGL.style.top);
     if (isNaN(offsetTop)) offsetTop = 0;
 
     this.size.x = window.innerWidth - offsetLeft;
@@ -404,43 +358,11 @@ export class Frame3DBase {
    */
   dispose() {
     window.removeEventListener('resize', this.resizeListener);
-    this.html().remove();
+    this.domElement.remove();
 
     this.listeners[Frame3DBase.EVENT.DISPOSE].forEach((listener) => {
       listener();
     });
-  }
-
-  /**
-   *
-   * @returns {THREE.PerspectiveCamera} - camera 3D
-   */
-  getCamera() {
-    return this.camera;
-  }
-
-  /**
-   *
-   * @returns {THREE.Scene} - scene 3D
-   */
-  getScene() {
-    return this.scene;
-  }
-
-  /**
-   *
-   * @returns {THREE.WebGLRenderer} - renderer 3D
-   */
-  getRenderer() {
-    return this.renderer;
-  }
-
-  /**
-   *
-   * @returns {HTMLDivElement} - root webgl
-   */
-  getRootWebGL() {
-    return this.rootWebGL;
   }
 }
 
