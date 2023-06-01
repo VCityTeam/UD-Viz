@@ -21,7 +21,7 @@ Developing UD-Viz applications requires knowledge about :
 When using [Visual Studio Code](https://code.visualstudio.com/), you can install the following extentions to make your life easier:
 
 - [eslint](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code) - allows you e.g. to automatically fix the coding style e.g. [when saving a file](https://www.digitalocean.com/community/tutorials/linting-and-formatting-with-eslint-in-vs-code).
-- [Prettier](https://prettier.io/) - JS, JSON, CSS, and HTML formatter.
+- [Prettier ESLint](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint) - JS, JSON, CSS, and HTML formatter.
 - [Mintlify](https://marketplace.visualstudio.com/items?itemName=mintlify.document) - AI-powered documentation generator. (may require rewriting by a human)
 
 ### Tips for Windows developers
