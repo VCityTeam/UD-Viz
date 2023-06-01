@@ -2,7 +2,6 @@
  * @file Set of functions to mainpulate files
  */
 
-import * as jquery from 'jquery';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -26,53 +25,47 @@ export function downloadObjectAsJson(exportObj, exportName) {
 /**
  * Request a json file on a distant server
  *
- * @param {string} filePath - on the distant server
+ * @param {string} url - on the distant server
  * @returns {Promise} - promise resolving when .json loaded and pass it as first param
  */
-export function loadJSON(filePath) {
+export function loadJSON(url) {
   return new Promise((resolve, reject) => {
-    jquery.ajax({
-      type: 'GET',
-      url: filePath,
-      datatype: 'json',
-      success: (data) => {
-        resolve(data);
-      },
-      error: (e) => {
-        console.error(e);
-        reject();
-      },
-    });
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onload = () => {
+      if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      }
+    };
+    xhr.onerror = reject;
+    xhr.send();
   });
 }
 
 /**
  * Request a text file on a distant server
  *
- * @param {string} filePath - on the distant server
+ * @param {string} url - on the distant server
  * @returns {Promise} - promise resolving when file loaded and pass it as first param
  */
-export function loadTextFile(filePath) {
+export function loadTextFile(url) {
   return new Promise((resolve, reject) => {
-    jquery.ajax({
-      type: 'GET',
-      url: filePath,
-      datatype: 'text',
-      success: (data) => {
-        resolve(data);
-      },
-      error: (e) => {
-        console.error(e);
-        reject();
-      },
-    });
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.onload = () => {
+      if (xhr.readyState == 4 && xhr.status >= 200 && xhr.status < 300) {
+        resolve(xhr.responseText);
+      }
+    };
+    xhr.onerror = reject;
+    xhr.send();
   });
 }
 
 /**
  * Load multiples .json files
  *
- * @param {string[]} arrayPath - path of .json files to loaded
+ * @param {string[]} urlArray - path of .json files to loaded
  * @returns {Promise} - promise reolving when .json files loaded, each .json file can be access by the filename
  * @example
  * loadMultipleJSON(["./some_folder/filename1.json","./another_folder/filename2.json"])
@@ -81,15 +74,15 @@ export function loadTextFile(filePath) {
  *    const contentFilename2 = configs["filename2"]
  * })
  */
-export function loadMultipleJSON(arrayPath) {
+export function loadMultipleJSON(urlArray) {
   return new Promise((resolve, reject) => {
     const promises = [];
     const result = {};
 
-    arrayPath.forEach((path) => {
+    urlArray.forEach((url) => {
       promises.push(
-        this.loadJSON(path).then((jsonResult) => {
-          const key = this.computeFileNameFromPath(path);
+        this.loadJSON(url).then((jsonResult) => {
+          const key = this.computeFileNameFromPath(url);
           if (result[key]) throw new Error('conflict same key');
           result[key] = jsonResult;
         })

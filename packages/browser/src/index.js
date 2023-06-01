@@ -48,10 +48,6 @@ import * as itowns from 'itowns';
 import * as itownsWidgets from 'itowns/widgets';
 export { itowns, itownsWidgets };
 
-// Jquery => should be peerDep for lib purpose
-import * as jquery from 'jquery';
-export { jquery };
-
 // THREE
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
