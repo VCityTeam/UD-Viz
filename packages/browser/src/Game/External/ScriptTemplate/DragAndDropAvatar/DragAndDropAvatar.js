@@ -91,7 +91,7 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     this.dragAndDropElement.draggable = true;
 
     /** @type {HTMLElement} */
-    this.domElement = this.context.userData.dragAndDropAvatarRootHtml;
+    this.domElement = this.context.userData.dragAndDropAvatarDomElement;
 
     // append drag and drop element
     this.appendToHtml(this.dragAndDropElement);

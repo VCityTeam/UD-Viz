@@ -780,7 +780,7 @@ const ShowRoom = class {
       );
 
     // tell to the drag and drop external script where to add its html
-    singleProcessPlanar.externalGameContext.userData.dragAndDropAvatarRootHtml =
+    singleProcessPlanar.externalGameContext.userData.dragAndDropAvatarDomElement =
       domElement;
 
     singleProcessPlanar.start();
