@@ -16,8 +16,8 @@ export class BaseMap {
    */
   constructor(itownsView, baseMapLayersConfigs, appExtent) {
     /** @type {HTMLElement} */
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     /** @type {object} */
     this.baseMapLayersConfigs = baseMapLayersConfigs;
@@ -27,21 +27,6 @@ export class BaseMap {
 
     this.createLayers(appExtent);
     this.displayLayersImage();
-  }
-
-  /**
-   *
-   * @returns {HTMLElement} - root html
-   */
-  html() {
-    return this.rootHtml;
-  }
-
-  /**
-   * Remove root html from DOM
-   */
-  dispose() {
-    this.rootHtml.remove();
   }
 
   /**
@@ -121,6 +106,6 @@ export class BaseMap {
   }
 
   get baseDivElement() {
-    return findChildByID(this.rootHtml, this.baseDivId);
+    return findChildByID(this.domElement, this.baseDivId);
   }
 }

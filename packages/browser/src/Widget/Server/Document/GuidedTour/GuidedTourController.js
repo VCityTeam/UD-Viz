@@ -157,27 +157,27 @@ export class GuidedTourController {
   // =============================================================================
   toggleGuidedTourButtons(active) {
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourPreviousTourButton'
     ).style.display = active ? 'block' : 'none';
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourNextTourButton'
     ).style.display = active ? 'block' : 'none';
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourPreviousStepButton'
     ).style.display = active ? 'none' : 'block';
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourNextStepButton'
     ).style.display = active ? 'none' : 'block';
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourStartButton'
     ).style.display = active ? 'block' : 'none';
     findChildByID(
-      this.guidedTour.html(),
+      this.guidedTour.domElement,
       'guidedTourExitButton'
     ).style.display = active ? 'none' : 'block';
   }

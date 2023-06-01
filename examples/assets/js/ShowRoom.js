@@ -31,7 +31,7 @@ const ShowRoom = class {
       feature: null,
       layer: null,
     };
-    this.frame3DPlanar.rootHtml.onclick = (event) => {
+    this.frame3DPlanar.domElement.onclick = (event) => {
       if (contextSelection.feature) {
         contextSelection.feature.userData.selectedColor = null;
         contextSelection.layer.updateStyle();
@@ -129,21 +129,6 @@ const ShowRoom = class {
   }
 
   /**
-   *
-   * @returns {HTMLElement} root html
-   */
-  html() {
-    return this.frame3DPlanar.rootHtml;
-  }
-
-  /**
-   * Dispose
-   */
-  dispose() {
-    this.frame3DPlanar.dispose();
-  }
-
-  /**
    * Add layers of geo data
    *
    * @param {object} configs - different config
@@ -212,7 +197,7 @@ const ShowRoom = class {
     // Menu Side bar
     this.menuSideBar = document.createElement('div');
     this.menuSideBar.classList.add('_sidebar_widget_menu_sidebar');
-    this.frame3DPlanar.appendToUI(this.menuSideBar, 3);
+    this.frame3DPlanar.domElementUI.appendChild(this.menuSideBar, 3);
     {
       // title
       const titleNavBar = document.createElement('div');
@@ -227,12 +212,12 @@ const ShowRoom = class {
 
     // Pan Menu Side bar
     this.panMenuSideBar = new PanMenuSideBar();
-    this.frame3DPlanar.appendToUI(this.panMenuSideBar.html());
+    this.frame3DPlanar.domElementUI.appendChild(this.panMenuSideBar.domElement);
 
     // Logo container
     this.logoContainer = document.createElement('div');
     this.logoContainer.setAttribute('id', 'logo-container');
-    this.frame3DPlanar.appendToUI(this.logoContainer);
+    this.frame3DPlanar.domElementUI.appendChild(this.logoContainer);
   }
 
   addURLButton(pathIcon) {
@@ -260,7 +245,7 @@ const ShowRoom = class {
       // Authentication Frame
       const authenticationFrame = document.createElement('div');
       authenticationFrame.setAttribute('id', '_sidebar_widget_profile');
-      this.frame3DPlanar.appendToUI(authenticationFrame);
+      this.frame3DPlanar.domElementUI.appendChild(authenticationFrame);
       {
         // Authentication Menu Logged in
         this.authenticationMenuLoggedIn = document.createElement('div');
@@ -322,7 +307,7 @@ const ShowRoom = class {
         this.authenticationMenuLoggedOut.hidden = true;
         this.authenticationUserNameID.innerHTML = `Logged in as <em>${user.firstname} ${user.lastname}</em>`;
 
-        if (this.authenticationView.html().parentElement) {
+        if (this.authenticationView.domElement.parentElement) {
           this.authenticationView.dispose();
         }
       } else {
@@ -344,7 +329,9 @@ const ShowRoom = class {
 
     // link button event
     this.buttonLogIn.onclick = () => {
-      this.frame3DPlanar.appendToUI(this.authenticationView.html());
+      this.frame3DPlanar.domElementUI.appendChild(
+        this.authenticationView.domElement
+      );
     };
 
     this.authenticationButtonLogOut.onclick = () => {
@@ -377,13 +364,15 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.geocodingView.html().parentElement) {
+      if (this.geocodingView.domElement.parentElement) {
         this.geocodingView.dispose();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
-        this.frame3DPlanar.appendToUI(this.geocodingView.html());
+        this.frame3DPlanar.domElementUI.appendChild(
+          this.geocodingView.domElement
+        );
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
@@ -404,7 +393,7 @@ const ShowRoom = class {
     // VISUALIZER
     const visualizerView =
       new udvizBrowser.Widget.Server.Document.VisualizerView(
-        this.frame3DPlanar.getItownsView(),
+        this.frame3DPlanar.itownsView,
         this.documentCore.provider
       );
 
@@ -412,9 +401,11 @@ const ShowRoom = class {
     visualizeButton.innerHTML = 'Visualize';
     visualizeButton.onclick = async () => {
       await visualizerView.startTravelToDisplayedDocument();
-      this.frame3DPlanar.appendToUI(visualizerView.html());
+      this.frame3DPlanar.domElementUI.appendChild(visualizerView.domElement);
     };
-    this.documentCore.view.inspectorWindow.html().appendChild(visualizeButton);
+    this.documentCore.view.inspectorWindow.domElement.appendChild(
+      visualizeButton
+    );
 
     // CONTRIBUTE
 
@@ -423,10 +414,10 @@ const ShowRoom = class {
         this.documentCore.provider,
         visualizerView,
         this.requestService,
-        this.frame3DPlanar.getItownsView(),
-        this.frame3DPlanar.getItownsView().controls,
+        this.frame3DPlanar.itownsView,
+        this.frame3DPlanar.itownsView.controls,
         configServer,
-        this.frame3DPlanar.ui
+        this.frame3DPlanar.domElementUI
       );
 
     const updateButton = document.createElement('button');
@@ -434,9 +425,9 @@ const ShowRoom = class {
     updateButton.onclick = async () => {
       await documentContribute.updateWindow.updateFromDisplayedDocument();
       udvizBrowser.clearChildren(parentHtmlFeature);
-      parentHtmlFeature.appendChild(documentContribute.updateWindow.html());
+      parentHtmlFeature.appendChild(documentContribute.updateWindow.domElement);
     };
-    this.documentCore.view.inspectorWindow.html().appendChild(updateButton);
+    this.documentCore.view.inspectorWindow.domElement.appendChild(updateButton);
 
     const deleteButton = document.createElement('button');
     deleteButton.innerHTML = 'Delete';
@@ -455,13 +446,15 @@ const ShowRoom = class {
         alert(e);
       }
     };
-    this.documentCore.view.inspectorWindow.html().appendChild(deleteButton);
+    this.documentCore.view.inspectorWindow.domElement.appendChild(deleteButton);
 
     const createDocumentButton = document.createElement('button');
     createDocumentButton.innerHTML = 'Create new document';
     createDocumentButton.onclick = () => {
       udvizBrowser.clearChildren(parentHtmlFeature);
-      parentHtmlFeature.appendChild(documentContribute.creationWindow.html());
+      parentHtmlFeature.appendChild(
+        documentContribute.creationWindow.domElement
+      );
     };
     this.documentCore.view.navigatorWindow.documentListContainer.appendChild(
       createDocumentButton
@@ -473,11 +466,11 @@ const ShowRoom = class {
         this.documentCore.provider,
         this.requestService,
         configServer,
-        this.documentCore.view.inspectorWindow.html()
+        this.documentCore.view.inspectorWindow.domElement
       );
 
     this.documentCore.view.navigatorWindow.displayableFiltersContainer.appendChild(
-      documentValidation.validationView.html()
+      documentValidation.validationView.domElement
     );
 
     // COMMENT
@@ -492,10 +485,12 @@ const ShowRoom = class {
     commentButton.onclick = async () => {
       udvizBrowser.clearChildren(parentHtmlFeature);
       await documentComment.commentsWindow.getComments();
-      parentHtmlFeature.appendChild(documentComment.commentsWindow.html());
+      parentHtmlFeature.appendChild(documentComment.commentsWindow.domElement);
     };
 
-    this.documentCore.view.inspectorWindow.html().appendChild(commentButton);
+    this.documentCore.view.inspectorWindow.domElement.appendChild(
+      commentButton
+    );
 
     // PLUG WITH SIDEBAR BUTTON
     const sideBarButton = document.createElement('img');
@@ -505,8 +500,8 @@ const ShowRoom = class {
     sideBarButton.onclick = () => {
       if (rootDocumentHtml.parentElement) {
         this.panMenuSideBar.remove(rootDocumentHtml);
-        this.documentCore.view.navigatorWindow.dispose();
-        this.documentCore.view.inspectorWindow.dispose();
+        this.documentCore.view.navigatorWindow.domElement.remove();
+        this.documentCore.view.inspectorWindow.domElement.remove();
 
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
@@ -516,10 +511,10 @@ const ShowRoom = class {
         udvizBrowser.clearChildren(rootDocumentHtml);
         udvizBrowser.clearChildren(parentHtmlFeature);
         rootDocumentHtml.appendChild(
-          this.documentCore.view.navigatorWindow.html()
+          this.documentCore.view.navigatorWindow.domElement
         );
         rootDocumentHtml.appendChild(
-          this.documentCore.view.inspectorWindow.html()
+          this.documentCore.view.inspectorWindow.domElement
         );
         rootDocumentHtml.appendChild(parentHtmlFeature);
         this.panMenuSideBar.add('Document', rootDocumentHtml);
@@ -548,16 +543,18 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.guidedTourController.guidedTour.html().parentElement) {
-        this.panMenuSideBar.remove(this.guidedTourController.guidedTour.html());
-        this.guidedTourController.guidedTour.dispose();
+      if (this.guidedTourController.guidedTour.domElement.parentElement) {
+        this.panMenuSideBar.remove(
+          this.guidedTourController.guidedTour.domElement
+        );
+        this.guidedTourController.guidedTour.domElement.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
         this.panMenuSideBar.add(
           'Guided Tour',
-          this.guidedTourController.guidedTour.html()
+          this.guidedTourController.guidedTour.domElement
         );
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
@@ -576,16 +573,16 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.cameraPositioner.html().parentElement) {
-        this.panMenuSideBar.remove(this.cameraPositioner.html());
-        this.cameraPositioner.dispose();
+      if (this.cameraPositioner.domElement.parentElement) {
+        this.panMenuSideBar.remove(this.cameraPositioner.domElement);
+        this.cameraPositioner.domElement.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
         this.panMenuSideBar.add(
           'Camera Positioner',
-          this.cameraPositioner.html()
+          this.cameraPositioner.domElement
         );
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
@@ -604,14 +601,14 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.layerChoice.html().parentElement) {
-        this.panMenuSideBar.remove(this.layerChoice.html());
-        this.layerChoice.dispose();
+      if (this.layerChoice.domElement.parentElement) {
+        this.panMenuSideBar.remove(this.layerChoice.domElement);
+        this.layerChoice.domElement.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
-        this.panMenuSideBar.add('Layer Choice', this.layerChoice.html());
+        this.panMenuSideBar.add('Layer Choice', this.layerChoice.domElement);
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
@@ -631,14 +628,14 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.slideShow.html().parentElement) {
-        this.panMenuSideBar.remove(this.slideShow.html());
+      if (this.slideShow.domElement.parentElement) {
+        this.panMenuSideBar.remove(this.slideShow.domElement);
         this.slideShow.dispose();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
-        this.panMenuSideBar.add('Slide Show', this.slideShow.html());
+        this.panMenuSideBar.add('Slide Show', this.slideShow.domElement);
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
@@ -663,14 +660,14 @@ const ShowRoom = class {
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
-      if (this.sparqlQueryWindow.html().parentElement) {
-        this.panMenuSideBar.remove(this.sparqlQueryWindow.html());
-        this.sparqlQueryWindow.dispose();
+      if (this.sparqlQueryWindow.domElement.parentElement) {
+        this.panMenuSideBar.remove(this.sparqlQueryWindow.domElement);
+        this.sparqlQueryWindow.domElement.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
       } else {
-        this.panMenuSideBar.add('Sparql', this.sparqlQueryWindow.html());
+        this.panMenuSideBar.add('Sparql', this.sparqlQueryWindow.domElement);
         sideBarButton.classList.add(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
@@ -702,7 +699,7 @@ const ShowRoom = class {
     console.warn(
       'Drag and drop avatar is still experimental, since it can conflict with camera movement of other widget, notice also that itowns.MAIN_LOOP is quite hacked see SinglePlanarProcess start method'
     );
-    const rootHtml = document.createElement('div');
+    const domElement = document.createElement('div');
 
     // create a single planar process using drag and drop game template
     const singleProcessPlanar =
@@ -754,11 +751,11 @@ const ShowRoom = class {
 
     // tell to the drag and drop external script where to add its html
     singleProcessPlanar.externalGameContext.userData.dragAndDropAvatarRootHtml =
-      rootHtml;
+      domElement;
 
     singleProcessPlanar.start();
 
-    this.addCustomHtml(pathIcon, rootHtml, 'Drag and drop avatar');
+    this.addCustomHtml(pathIcon, domElement, 'Drag and drop avatar');
   }
 
   addWidgetC3DTiles(pathIcon) {
@@ -766,7 +763,7 @@ const ShowRoom = class {
       this.frame3DPlanar.itownsView,
       {
         overrideStyle: this.c3DTilesStyle,
-        parentElement: this.frame3DPlanar.ui, // some hack see => https://github.com/iTowns/itowns/discussions/2098
+        parentElement: this.frame3DPlanar.domElementUI, // some hack see => https://github.com/iTowns/itowns/discussions/2098
       }
     );
 
@@ -778,10 +775,10 @@ const ShowRoom = class {
 
 class PanMenuSideBar {
   constructor() {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('_sidebar_widget_pan_menu_sidebar');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('_sidebar_widget_pan_menu_sidebar');
 
-    this.rootHtml.onclick = (event) => event.stopImmediatePropagation();
+    this.domElement.onclick = (event) => event.stopImmediatePropagation();
 
     this.containers = [];
   }
@@ -792,7 +789,7 @@ class PanMenuSideBar {
     newContainer.classList.add('_sidebar_widget_pan_menu_sidebar_container');
     newContainer.appendChild(el);
     this.containers.push(newContainer);
-    this.rootHtml.appendChild(newContainer);
+    this.domElement.appendChild(newContainer);
     this.fold(false);
   }
 
@@ -811,18 +808,14 @@ class PanMenuSideBar {
   }
 
   foldIfEmpty() {
-    if (!this.rootHtml.firstChild) this.fold(true);
+    if (!this.domElement.firstChild) this.fold(true);
   }
 
   fold(value) {
     if (value) {
-      this.rootHtml.style.transform = 'translate(-100%,0%)';
+      this.domElement.style.transform = 'translate(-100%,0%)';
     } else {
-      this.rootHtml.style.transform = 'translate(0%,0%)';
+      this.domElement.style.transform = 'translate(0%,0%)';
     }
-  }
-
-  html() {
-    return this.rootHtml;
   }
 }

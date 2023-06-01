@@ -15,22 +15,14 @@ export class DocumentCommentsWindow {
    * service.
    */
   constructor(documentCommentsService) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     this.documentCommentsService = documentCommentsService;
 
-    findChildByID(this.rootHtml, 'documentComments_inputButton').onclick =
+    findChildByID(this.domElement, 'documentComments_inputButton').onclick =
       this.publishComment.bind(this);
     this.getComments();
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -57,7 +49,8 @@ export class DocumentCommentsWindow {
     return new Promise((resolve, reject) => {
       this.documentCommentsService.getComments().then(
         (comments) => {
-          findChildByID(this.rootHtml, 'documentComments_left').innerHTML = '';
+          findChildByID(this.domElement, 'documentComments_left').innerHTML =
+            '';
           for (const comment of comments) {
             const text =
               typeof comment.description === 'string'
@@ -76,7 +69,7 @@ export class DocumentCommentsWindow {
                     ).toLocaleString()}</p>
                     </div>
                 `;
-            findChildByID(this.rootHtml, 'documentComments_left').appendChild(
+            findChildByID(this.domElement, 'documentComments_left').appendChild(
               div
             );
           }
@@ -84,7 +77,7 @@ export class DocumentCommentsWindow {
         },
         (reason) => {
           alert(reason);
-          this.dispose();
+          this.domElement.remove();
           reject();
         }
       );
@@ -92,11 +85,11 @@ export class DocumentCommentsWindow {
   }
 
   async publishComment() {
-    const form = findChildByID(this.rootHtml, 'documentComments_inputForm');
+    const form = findChildByID(this.domElement, 'documentComments_inputForm');
     const form_data = new FormData(form);
     try {
       await this.documentCommentsService.publishComment(form_data).then(() => {
-        findChildByID(this.rootHtml, 'documentComments_inputComment').value =
+        findChildByID(this.domElement, 'documentComments_inputComment').value =
           '';
         this.getComments();
       });

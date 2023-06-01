@@ -91,13 +91,13 @@ export class DragAndDropAvatar extends ExternalScriptBase {
     this.dragAndDropElement.draggable = true;
 
     /** @type {HTMLElement} */
-    this.rootHtml = this.context.userData.dragAndDropAvatarRootHtml;
+    this.domElement = this.context.userData.dragAndDropAvatarRootHtml;
 
     // append drag and drop element
     this.appendToHtml(this.dragAndDropElement);
 
     // drag and drop behavior
-    this.context.frame3D.html().ondragend = (event) => {
+    this.context.frame3D.domElement.ondragend = (event) => {
       if (event.target != this.dragAndDropElement) return;
 
       // compute where the avatar should be teleported
@@ -118,10 +118,10 @@ export class DragAndDropAvatar extends ExternalScriptBase {
   }
 
   appendToHtml(el) {
-    if (this.rootHtml) {
-      this.rootHtml.appendChild(el);
+    if (this.domElement) {
+      this.domElement.appendChild(el);
     } else {
-      this.context.frame3D.appendToUI(el);
+      this.context.frame3D.domElementUI.appendChild(el);
     }
   }
 

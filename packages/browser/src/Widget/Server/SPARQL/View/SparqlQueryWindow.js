@@ -35,9 +35,9 @@ export class SparqlQueryWindow extends EventSender {
     super();
 
     /** @type {HTMLElement} */
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.setAttribute('id', '_window_sparqlQueryWindow');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.setAttribute('id', '_window_sparqlQueryWindow');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     /**
      * The SPARQL Endpoint Response Provider
@@ -125,7 +125,7 @@ export class SparqlQueryWindow extends EventSender {
       (response) =>
         this.updateDataView(
           response,
-          findChildByID(this.rootHtml, this.resultSelectId).value
+          findChildByID(this.domElement, this.resultSelectId).value
         )
     );
 
@@ -204,14 +204,6 @@ export class SparqlQueryWindow extends EventSender {
         }
       );
     });
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   /**
@@ -334,7 +326,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get dataView() {
-    return findChildByID(this.rootHtml, this.dataViewId);
+    return findChildByID(this.domElement, this.dataViewId);
   }
 
   get formId() {
@@ -342,7 +334,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get form() {
-    return findChildByID(this.rootHtml, this.formId);
+    return findChildByID(this.domElement, this.formId);
   }
 
   get querySelectId() {
@@ -350,7 +342,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get querySelect() {
-    return findChildByID(this.rootHtml, this.querySelectId);
+    return findChildByID(this.domElement, this.querySelectId);
   }
 
   get resultSelectId() {
@@ -358,7 +350,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get resultSelect() {
-    return findChildByID(this.rootHtml, this.resultSelectId);
+    return findChildByID(this.domElement, this.resultSelectId);
   }
 
   get submitButtonId() {
@@ -366,7 +358,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get submitButton() {
-    return findChildByID(this.rootHtml, this.submitButtonId);
+    return findChildByID(this.domElement, this.submitButtonId);
   }
 
   get queryTextAreaId() {
@@ -374,7 +366,7 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get queryTextArea() {
-    return findChildByID(this.rootHtml, this.queryTextAreaId);
+    return findChildByID(this.domElement, this.queryTextAreaId);
   }
 
   get toggleQueryTextAreaButtonId() {
@@ -382,6 +374,6 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   get toggleQueryTextAreaButton() {
-    return findChildByID(this.rootHtml, this.toggleQueryTextAreaButtonId);
+    return findChildByID(this.domElement, this.toggleQueryTextAreaButtonId);
   }
 }

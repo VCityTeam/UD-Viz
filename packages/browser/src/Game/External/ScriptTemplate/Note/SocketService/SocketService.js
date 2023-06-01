@@ -22,12 +22,12 @@ export class SocketService extends ExternalScriptBase {
     );
 
     // ui
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('root_html_pointer_note');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('root_html_pointer_note');
     // fetch root ui
 
     const noteUI = this.context.findExternalScriptWithID(UI.ID_SCRIPT);
-    noteUI.appendToHtml(this.rootHtml);
+    noteUI.appendToHtml(this.domElement);
 
     // color
     const renderComp = pointerObject.getComponent(Game.Component.Render.TYPE);
@@ -37,12 +37,12 @@ export class SocketService extends ExternalScriptBase {
       // https://stackoverflow.com/a/3943023/112731
       return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? '#000000' : '#FFFFFF';
     };
-    this.rootHtml.style.color = contrastedColor(
+    this.domElement.style.color = contrastedColor(
       colorPointer[0] * 255,
       colorPointer[1] * 255,
       colorPointer[2] * 255
     );
-    this.rootHtml.style.backgroundColor =
+    this.domElement.style.backgroundColor =
       'rgb(' +
       colorPointer[0] * 255 +
       ',' +
@@ -55,7 +55,7 @@ export class SocketService extends ExternalScriptBase {
       const nameInput = document.createElement('input');
       nameInput.setAttribute('type', 'text');
       nameInput.value = this.variables.nameSocket;
-      this.rootHtml.appendChild(nameInput);
+      this.domElement.appendChild(nameInput);
 
       // to not conflict with other key event while typing
       nameInput.onfocus = () => {
@@ -82,7 +82,7 @@ export class SocketService extends ExternalScriptBase {
     } else {
       this.nameLabel = document.createElement('div');
       this.nameLabel.innerHTML = this.variables.nameSocket;
-      this.rootHtml.appendChild(this.nameLabel);
+      this.domElement.appendChild(this.nameLabel);
     }
 
     // edit pointer sphere attr ui
@@ -97,7 +97,7 @@ export class SocketService extends ExternalScriptBase {
       sphereScale.min = minScale;
       sphereScale.max = maxScale;
       sphereScale.value = pointerObject.scale.x; // scale is the same on all dim
-      this.rootHtml.appendChild(sphereScale);
+      this.domElement.appendChild(sphereScale);
 
       const sendCommandScale = (value) => {
         this.context.sendCommandToGameContext([
@@ -173,7 +173,7 @@ export class SocketService extends ExternalScriptBase {
         );
 
         this.menuEditNote.setAddNoteButtonCallback((message) => {
-          this.menuEditNote.html().remove();
+          this.menuEditNote.domElement.remove();
           this.menuEditNote = null;
 
           this.context.sendCommandToGameContext([
@@ -191,11 +191,13 @@ export class SocketService extends ExternalScriptBase {
         });
 
         this.menuEditNote.setCloseButtonCallback(() => {
-          this.menuEditNote.html().remove();
+          this.menuEditNote.domElement.remove();
           this.menuEditNote = null;
         });
 
-        this.context.frame3D.appendToUI(this.menuEditNote.html());
+        this.context.frame3D.domElementUI.appendChild(
+          this.menuEditNote.domElement
+        );
       });
     }
   }
@@ -203,7 +205,7 @@ export class SocketService extends ExternalScriptBase {
   tick() {
     if (this.menuEditNote) {
       moveHtmlToWorldPosition(
-        this.menuEditNote.html(),
+        this.menuEditNote.domElement,
         this.menuEditNote.getWorldPosition().clone(),
         this.context.frame3D.camera
       );
@@ -211,7 +213,7 @@ export class SocketService extends ExternalScriptBase {
   }
 
   addNoteButton(el) {
-    this.rootHtml.appendChild(el);
+    this.domElement.appendChild(el);
   }
 
   onOutdated() {
@@ -222,7 +224,7 @@ export class SocketService extends ExternalScriptBase {
   }
 
   onRemove() {
-    this.rootHtml.remove();
+    this.domElement.remove();
   }
 
   static get ID_SCRIPT() {
@@ -239,19 +241,19 @@ class MenuEditNote {
     /** @type {THREE.Vector3} */
     this.worldPosition = worldPosition;
 
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.classList.add('root_menu_message_note');
+    this.domElement = document.createElement('div');
+    this.domElement.classList.add('root_menu_message_note');
 
     this.textAreaMessage = document.createElement('textarea');
-    this.rootHtml.appendChild(this.textAreaMessage);
+    this.domElement.appendChild(this.textAreaMessage);
 
     this.closeButton = document.createElement('button');
     this.closeButton.innerHTML = 'Close';
-    this.rootHtml.appendChild(this.closeButton);
+    this.domElement.appendChild(this.closeButton);
 
     this.addNoteButton = document.createElement('button');
     this.addNoteButton.innerHTML = 'Add note';
-    this.rootHtml.appendChild(this.addNoteButton);
+    this.domElement.appendChild(this.addNoteButton);
 
     this.textAreaMessage.focus(); // cant focus textarea force it there (patch)
   }
@@ -262,14 +264,6 @@ class MenuEditNote {
    */
   getWorldPosition() {
     return this.worldPosition;
-  }
-
-  /**
-   *
-   * @returns {HTMLElement} - root html menu
-   */
-  html() {
-    return this.rootHtml;
   }
 
   /**

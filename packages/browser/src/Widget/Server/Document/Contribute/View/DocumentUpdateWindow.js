@@ -17,8 +17,8 @@ export class DocumentUpdateWindow {
    * @param {object} provider - document provider
    */
   constructor(contributeService, provider) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
 
     /**
      * The contribute service to perform requests.
@@ -33,22 +33,14 @@ export class DocumentUpdateWindow {
     };
 
     this.cancelButtonElement.onclick = () => {
-      this.dispose();
+      this.domElement.remove();
     };
 
     this.provider = provider;
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.dispose()
+      () => this.domElement.remove()
     );
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -94,7 +86,7 @@ export class DocumentUpdateWindow {
     const doc = this.provider.getDisplayedDocument();
 
     if (!doc) {
-      this.dispose();
+      this.domElement.remove();
       return;
     }
 
@@ -136,7 +128,7 @@ export class DocumentUpdateWindow {
   }
 
   get formElement() {
-    return findChildByID(this.rootHtml, this.formId);
+    return findChildByID(this.domElement, this.formId);
   }
 
   get docTitleId() {
@@ -144,7 +136,7 @@ export class DocumentUpdateWindow {
   }
 
   get docTitleElement() {
-    return findChildByID(this.rootHtml, this.docTitleId);
+    return findChildByID(this.domElement, this.docTitleId);
   }
 
   get cancelButtonId() {
@@ -152,7 +144,7 @@ export class DocumentUpdateWindow {
   }
 
   get cancelButtonElement() {
-    return findChildByID(this.rootHtml, this.cancelButtonId);
+    return findChildByID(this.domElement, this.cancelButtonId);
   }
 
   get docImageId() {
@@ -160,7 +152,7 @@ export class DocumentUpdateWindow {
   }
 
   get docImageElement() {
-    return findChildByID(this.rootHtml, this.docImageId);
+    return findChildByID(this.domElement, this.docImageId);
   }
 
   get sourceId() {
@@ -168,7 +160,7 @@ export class DocumentUpdateWindow {
   }
 
   get sourceElement() {
-    return findChildByID(this.rootHtml, this.sourceId);
+    return findChildByID(this.domElement, this.sourceId);
   }
 
   get docRightsHolderId() {
@@ -176,7 +168,7 @@ export class DocumentUpdateWindow {
   }
 
   get docRightsHolderElement() {
-    return findChildByID(this.rootHtml, this.docRightsHolderId);
+    return findChildByID(this.domElement, this.docRightsHolderId);
   }
 
   get descriptionId() {
@@ -184,7 +176,7 @@ export class DocumentUpdateWindow {
   }
 
   get descriptionElement() {
-    return findChildByID(this.rootHtml, this.descriptionId);
+    return findChildByID(this.domElement, this.descriptionId);
   }
 
   get pubDateId() {
@@ -192,7 +184,7 @@ export class DocumentUpdateWindow {
   }
 
   get pubDateElement() {
-    return findChildByID(this.rootHtml, this.pubDateId);
+    return findChildByID(this.domElement, this.pubDateId);
   }
 
   get refDateId() {
@@ -200,6 +192,6 @@ export class DocumentUpdateWindow {
   }
 
   get refDateElement() {
-    return findChildByID(this.rootHtml, this.refDateId);
+    return findChildByID(this.domElement, this.refDateId);
   }
 }

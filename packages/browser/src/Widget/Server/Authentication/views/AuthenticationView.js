@@ -18,15 +18,7 @@ export class AuthenticationView {
     this.authenticationService = authenticationService;
 
     /** @type {HTMLElement} */
-    this.rootHtml = this.createHtml();
-  }
-
-  /**
-   *
-   * @returns {HTMLElement} - root html
-   */
-  html() {
-    return this.rootHtml;
+    this.domElement = this.createHtml();
   }
 
   /**
@@ -72,7 +64,7 @@ export class AuthenticationView {
 
     // register callbacks
     findChildByID(result, 'loginRegistrationCloseButton').onclick = () => {
-      this.dispose();
+      this.domElement.remove();
     };
     findChildByID(result, 'LoginButton').onclick = () => {
       this.logInFunction();
@@ -88,13 +80,6 @@ export class AuthenticationView {
     };
 
     return result;
-  }
-
-  /**
-   * Remove its root html from the DOM
-   */
-  dispose() {
-    this.rootHtml.remove();
   }
 
   /**

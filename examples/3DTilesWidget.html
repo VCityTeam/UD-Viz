@@ -70,7 +70,7 @@
             frame3DPlanar.itownsView,
             {
               overrideStyle: style,
-              parentElement: frame3DPlanar.ui,
+              parentElement: frame3DPlanar.domElementUI,
               layerContainerClassName: 'widgets-3dtiles-layer-container',
               c3DTFeatureInfoContainerClassName:
                 'widgets-3dtiles-feature-container',
@@ -84,7 +84,7 @@
             feature: null,
             layer: null
           };
-          frame3DPlanar.rootHtml.onclick = (event) => {
+          frame3DPlanar.domElement.onclick = (event) => {
             if (contextSelection.feature) {
               // reset feature userData
               contextSelection.feature.userData.selectedColor = null;

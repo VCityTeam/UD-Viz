@@ -36,8 +36,8 @@
           );
 
           const app = new C3DTilesEditor(extent, configs['frame3D_planars'][2]);
-          app.frame3DPlanar.ui.style.zIndex = 2;
-          app.frame3DPlanar.ui.style.position = 'relative';
+          app.frame3DPlanar.domElementUI.style.zIndex = 2;
+          app.frame3DPlanar.domElementUI.style.position = 'relative';
 
           app.addLayers({
             $3DTiles: configs['3DTiles'],

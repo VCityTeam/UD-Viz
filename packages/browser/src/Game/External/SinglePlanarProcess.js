@@ -98,7 +98,7 @@ export class SinglePlanarProcess {
         const gameProcess = new RequestAnimationFrameProcess(60);
 
         // plug inputmanager directly in game process
-        this.inputManager.startListening(this.frame3DPlanar.html());
+        this.inputManager.startListening(this.frame3DPlanar.domElement);
 
         gameProcess.start((dt) => {
           // game loop

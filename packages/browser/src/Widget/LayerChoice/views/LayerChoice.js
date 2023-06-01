@@ -9,7 +9,7 @@ export class LayerChoice {
    */
   constructor(itownView) {
     /** @type {HTMLElement} */
-    this.rootHtml = null;
+    this.domElement = null;
 
     /** @type {HTMLElement} */
     this.colorLayersSpoilerBoxElement = null;
@@ -26,30 +26,22 @@ export class LayerChoice {
     this.initHtml();
   }
 
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
-  }
-
   initHtml() {
-    this.rootHtml = document.createElement('div');
+    this.domElement = document.createElement('div');
     {
       // color
       const displayableColor = createDisplayable('Color Layers');
-      this.rootHtml.appendChild(displayableColor.parent);
+      this.domElement.appendChild(displayableColor.parent);
       this.colorLayersSpoilerBoxElement = displayableColor.container;
 
       // elevation
       const displayableElevation = createDisplayable('Elevation Layer');
-      this.rootHtml.appendChild(displayableElevation.parent);
+      this.domElement.appendChild(displayableElevation.parent);
       this.elevationLayersSpoilerBoxElement = displayableElevation.container;
 
       // geometry
       const displayableGeometry = createDisplayable('Geometry Layers');
-      this.rootHtml.appendChild(displayableGeometry.parent);
+      this.domElement.appendChild(displayableGeometry.parent);
       this.geometryLayersSpoilerBoxElement = displayableGeometry.container;
     }
 

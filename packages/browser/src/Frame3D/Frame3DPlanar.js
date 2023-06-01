@@ -46,7 +46,7 @@ export class Frame3DPlanar extends Frame3DBase {
      * planar view
      *
       @type {itowns.PlanarView} */
-    this.itownsView = new itowns.PlanarView(this.rootWebGL, extent, {
+    this.itownsView = new itowns.PlanarView(this.domElementWebGL, extent, {
       disableSkirt: false,
       placement: {
         coord: coordinates,
@@ -118,14 +118,6 @@ export class Frame3DPlanar extends Frame3DBase {
     } else {
       this.itownsView.render = () => {};
     }
-  }
-
-  /**
-   *
-   * @returns {itowns.PlanarView} - itowns view
-   */
-  getItownsView() {
-    return this.itownsView;
   }
 
   /**

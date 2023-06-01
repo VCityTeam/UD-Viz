@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Billboard example</title>
+    <title>DomElement3D example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
@@ -68,14 +68,14 @@
           const iframe = document.createElement('iframe');
           iframe.src = './assets/html/billboard.html';
 
-          const billboard = new udvizBrowser.Billboard(
+          const domElement3D = new udvizBrowser.DomElement3D(
             iframe,
             new udvizBrowser.THREE.Vector3(center.x, center.y, 600),
             new udvizBrowser.THREE.Vector3(Math.PI * 0.5, -Math.PI * 1.7, 0),
             new udvizBrowser.THREE.Vector3(20, 20, 20),
             100
           );
-          frame3DPlanar.appendBillboard(billboard);
+          frame3DPlanar.appendDomElement3D(domElement3D);
         });
     </script>
     SCRIPT_TAG_RELOAD

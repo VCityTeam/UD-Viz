@@ -29,8 +29,8 @@ export class ValidationView {
     validationSource,
     parentElementValidateButton
   ) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = `
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = `
         <label for="${this.switchId}">Validation status : </label>
         <select id="${this.switchId}">
           <option value="validated">Validated documents</option>
@@ -74,14 +74,6 @@ export class ValidationView {
     this.switchElement.onchange = () => {
       this._toggleValidation();
     };
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   // /////////////////////////////////////
@@ -186,6 +178,6 @@ export class ValidationView {
   }
 
   get switchElement() {
-    return findChildByID(this.rootHtml, this.switchId);
+    return findChildByID(this.domElement, this.switchId);
   }
 }

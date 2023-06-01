@@ -16,17 +16,17 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 });
 
 /** @class */
-export class Billboard {
+export class DomElement3D {
   /**
    * Composed of a {@link CSS3DObject} containing html and a {@link THREE.Object3D} superposing each other
    *
-   * @param {HTMLElement} html - html of billboard
+   * @param {HTMLElement} domElement - dom element
    * @param {THREE.Vector3} position - position in world referential
    * @param {THREE.Vector3} rotation - rotation in world referential
    * @param {THREE.Vector3} scale - scale in world referential
    * @param {number} [scalar=1] - increase size of html element
    */
-  constructor(html, position, rotation, scale, scalar = 1) {
+  constructor(domElement, position, rotation, scale, scalar = 1) {
     /**
      * uuid
      *
@@ -37,14 +37,14 @@ export class Billboard {
      * html element of css3Dobject
      *
       @type {HTMLElement} */
-    this.html = html;
+    this.domElement = domElement;
 
     // scale html size
-    this.html.style.width = scalar * scale.x + 'px';
-    this.html.style.height = scalar * scale.y + 'px';
+    this.domElement.style.width = scalar * scale.x + 'px';
+    this.domElement.style.height = scalar * scale.y + 'px';
 
     // initialize css3Dobject
-    const newElement = new CSS3DObject(this.html);
+    const newElement = new CSS3DObject(this.domElement);
     newElement.position.copy(position);
     newElement.rotation.setFromVector3(rotation);
 
@@ -84,14 +84,6 @@ export class Billboard {
   }
 
   /**
-   *
-   * @returns {HTMLElement} - html element
-   */
-  getHtml() {
-    return this.html;
-  }
-
-  /**
    * Set if this is selected or not and update css style
    *
    * @param {boolean} value - new selected value
@@ -99,9 +91,9 @@ export class Billboard {
   select(value) {
     this.isSelected = value;
     if (value) {
-      this.html.style.filter = 'grayscale(0%)';
+      this.domElement.style.filter = 'grayscale(0%)';
     } else {
-      this.html.style.filter = 'grayscale(100%)';
+      this.domElement.style.filter = 'grayscale(100%)';
     }
   }
 
@@ -113,21 +105,5 @@ export class Billboard {
   lookAt(vector) {
     this.maskObject.lookAt(vector);
     this.css3DObject.lookAt(vector);
-  }
-
-  /**
-   *
-   * @returns {THREE.Object3D} - mask object3D
-   */
-  getMaskObject() {
-    return this.maskObject;
-  }
-
-  /**
-   *
-   * @returns {CSS3DObject} - css3D object
-   */
-  getCss3DObject() {
-    return this.css3DObject;
   }
 }

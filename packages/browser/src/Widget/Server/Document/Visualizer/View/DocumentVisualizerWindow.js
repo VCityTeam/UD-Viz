@@ -17,9 +17,9 @@ export class DocumentVisualizerWindow {
    * @param {*} provider document provider
    */
   constructor(itownsView, provider) {
-    this.rootHtml = document.createElement('div');
-    this.rootHtml.innerHTML = this.innerContentHtml;
-    this.rootHtml.classList.add('orienter-box');
+    this.domElement = document.createElement('div');
+    this.domElement.innerHTML = this.innerContentHtml;
+    this.domElement.classList.add('orienter-box');
 
     /**
      * The iTowns view.
@@ -47,7 +47,7 @@ export class DocumentVisualizerWindow {
 
     // callbacks
     this.closeButtonElement.onclick = () => {
-      this.dispose();
+      this.domElement.remove();
     };
 
     this.opacitySliderElement.oninput = () => {
@@ -57,16 +57,8 @@ export class DocumentVisualizerWindow {
     // Dispose the window when the displayed document change
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      () => this.dispose()
+      () => this.domElement.remove()
     );
-  }
-
-  html() {
-    return this.rootHtml;
-  }
-
-  dispose() {
-    this.rootHtml.remove();
   }
 
   get innerContentHtml() {
@@ -222,7 +214,7 @@ export class DocumentVisualizerWindow {
   }
 
   get closeButtonElement() {
-    return findChildByID(this.rootHtml, this.closeButtonId);
+    return findChildByID(this.domElement, this.closeButtonId);
   }
 
   get opacitySliderId() {
@@ -230,7 +222,7 @@ export class DocumentVisualizerWindow {
   }
 
   get opacitySliderElement() {
-    return findChildByID(this.rootHtml, this.opacitySliderId);
+    return findChildByID(this.domElement, this.opacitySliderId);
   }
 
   get opacityId() {
@@ -238,7 +230,7 @@ export class DocumentVisualizerWindow {
   }
 
   get opacityElement() {
-    return findChildByID(this.rootHtml, this.opacityId);
+    return findChildByID(this.domElement, this.opacityId);
   }
 
   get imageId() {
@@ -246,6 +238,6 @@ export class DocumentVisualizerWindow {
   }
 
   get imageElement() {
-    return findChildByID(this.rootHtml, this.imageId);
+    return findChildByID(this.domElement, this.imageId);
   }
 }
