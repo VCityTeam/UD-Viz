@@ -101,7 +101,6 @@ export class LegonizerWindow extends Window {
       inputScaleElement.style.width = 'inherit';
       inputScaleElement.setAttribute('value', '0');
 
-
       // Input Rotation
       const inputRotationElement = document.createElement('input');
       inputRotationElement.id = 'input_rotation_' + coordinatesString[i];
@@ -117,10 +116,10 @@ export class LegonizerWindow extends Window {
             parseFloat(this.inputRotationXElement.value),
             parseFloat(this.inputRotationYElement.value),
             parseFloat(this.inputRotationZElement.value)
-            );
-            this.boxSelector.updateMatrixWorld();
-            this.transformCtrls.updateMatrixWorld();
-            this.frame3D.getItownsView().notifyChange();
+          );
+          this.boxSelector.updateMatrixWorld();
+          this.transformCtrls.updateMatrixWorld();
+          this.frame3D.getItownsView().notifyChange();
         }
       });
 
@@ -355,7 +354,6 @@ export class LegonizerWindow extends Window {
     const bufferBoxGeometry = this.boxSelector.geometry.clone();
     bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
     bufferBoxGeometry.computeBoundingBox();
-    
 
     const xPlates = parseInt(this.inputLegoScaleXElement.value);
     const yPlates = parseInt(this.inputLegoScaleYElement.value);
