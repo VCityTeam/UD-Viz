@@ -2,5 +2,5 @@
 
 ```bash
 git shortlog -sne > raw_contributors.txt
-python simplify.py
+python3 simplify.py
 ```
