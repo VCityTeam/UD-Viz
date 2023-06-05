@@ -1,4 +1,4 @@
-When creating a `Frame3DPlanar` you may want your camera to be placed at a specific point of view. In this tutorial we are going to see differents options available to achieve that. You may want to check [show room code](../../../../examples/assets/js/ShowRoom.js) which implements differents methods expose here.
+When creating a `Frame3DPlanar` you may want your camera to be placed at a specific point of view. In this tutorial we are going to see differents options available to achieve that. You may want to check [show room code](../../../examples/assets/js/ShowRoom.js) which implements differents methods expose here.
 
 ## Configure `Frame3DPlanar`
 
