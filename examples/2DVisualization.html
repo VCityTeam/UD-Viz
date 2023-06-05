@@ -82,13 +82,16 @@
               tileContent.layer.tilesC3DTileFeatures.has(tileContent.tileId)
             ) {
               tileContent.traverse((el) => {
-                for (const [
-                  // eslint-disable-next-line no-unused-vars
-                  batchId,
-                  c3DTFeature,
-                ] of tileContent.layer.tilesC3DTileFeatures.get(tileContent.tileId)) {
-                  if (el.geometry && el.geometry.attributes._BATCHID) {
-                    const worldBox3 = tileContent.layer.computeWorldBox3(c3DTFeature);
+                if (el.geometry && el.geometry.attributes._BATCHID) {
+                  for (const [
+                    // eslint-disable-next-line no-unused-vars
+                    batchId,
+                    c3DTFeature,
+                  ] of tileContent.layer.tilesC3DTileFeatures.get(
+                    tileContent.tileId
+                  )) {
+                    const worldBox3 =
+                      tileContent.layer.computeWorldBox3(c3DTFeature);
                     let featureElevation = worldBox3.min.z;
 
                     const c3DTFeaturePos = new udvizBrowser.THREE.Vector3()
@@ -122,14 +125,15 @@
                         el.geometry.attributes.position.array[index + 2] -=
                           worldBox3.min.z - featureElevation; // translation
 
-                        min =
-                          min > el.geometry.attributes.position.array[index + 2]
-                            ? el.geometry.attributes.position.array[index + 2]
-                            : min;
-                        max =
-                          max < el.geometry.attributes.position.array[index + 2]
-                            ? el.geometry.attributes.position.array[index + 2]
-                            : max;
+                        min = Math.min(
+                          el.geometry.attributes.position.array[index + 2],
+                          min
+                        );
+
+                        max = Math.max(
+                          el.geometry.attributes.position.array[index + 2],
+                          max
+                        );
                       }
                       tileContent.boundingVolume.box.min.z = min;
                       tileContent.boundingVolume.box.max.z = max;
@@ -139,8 +143,6 @@
                 }
               });
             }
-            // });
-            // });
             frame3DPlanar.itownsView.notifyChange();
           };
 
