@@ -89,30 +89,29 @@
                   )) {
                     const worldBox3 =
                       tileContent.layer.computeWorldBox3(c3DTFeature);
-                    let featureElevation = worldBox3.min.z;
 
-                    const c3DTFeaturePos = new udvizBrowser.THREE.Vector3()
-                      .addVectors(worldBox3.max, worldBox3.min)
-                      .divideScalar(2);
-                    c3DTFeaturePos.z = worldBox3.min.z;
+                    // compute feature elevation
+                    let featureElevation = null;
                     if (elevationLayer.scale == 1) {
                       featureElevation =
                         udvizBrowser.itowns.DEMUtils.getElevationValueAt(
                           planarLayer,
                           new udvizBrowser.itowns.Coordinates(
                             configs['crs'][0].name,
-                            c3DTFeaturePos
+                            worldBox3.min.clone().lerp(worldBox3.max, 0.5)
                           )
                         );
                     } else
                       featureElevation =
                         elevationLayer.colorTextureElevationMinZ;
+
+                    // update feature geometry based on feature elevation + compute boundingVolume of tile content
+                    let minZ = Infinity;
+                    let maxZ = -Infinity;
                     c3DTFeature.groups.forEach((group) => {
                       const positionIndexStart = group.start * 3;
                       const positionIndexCount =
                         (group.start + group.count) * 3;
-                      let min = Infinity;
-                      let max = -Infinity;
                       for (
                         let index = positionIndexStart;
                         index < positionIndexCount;
@@ -122,20 +121,21 @@
                         el.geometry.attributes.position.array[index + 2] -=
                           worldBox3.min.z - featureElevation; // translation
 
-                        min = Math.min(
+                        minZ = Math.min(
                           el.geometry.attributes.position.array[index + 2],
-                          min
+                          minZ
                         );
 
-                        max = Math.max(
+                        maxZ = Math.max(
                           el.geometry.attributes.position.array[index + 2],
-                          max
+                          maxZ
                         );
                       }
-                      tileContent.boundingVolume.box.min.z = min;
-                      tileContent.boundingVolume.box.max.z = max;
                       el.geometry.attributes.position.needsUpdate = true;
                     });
+
+                    tileContent.boundingVolume.box.min.z = minZ;
+                    tileContent.boundingVolume.box.max.z = maxZ;
                   }
                 }
               });
