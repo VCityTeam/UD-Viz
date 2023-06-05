@@ -46,11 +46,12 @@
             this.context.addObject3D(newGOCube);
           }, 3000);
         }
-        tick() {
-          this.context.commands.forEach((command) => {
-            if (command.type === 'toggle_pause') this.pause = !this.pause;
-          });
 
+        onCommand(type) {
+          if (type === 'toggle_pause') this.pause = !this.pause;
+        }
+
+        tick() {
           if (this.pause) return;
 
           for (let index = this.goCubes.length - 1; index >= 0; index--) {
