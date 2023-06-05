@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Data } from '@ud-viz/shared';
 
 /**
  * Some unique key to not collide with another item recorded in localStorage
@@ -22,13 +23,16 @@ export function localStorageSetCameraMatrix(camera, key = KEY.CAMERA) {
   // listen the close tab event
   window.addEventListener('beforeunload', () => {
     camera.updateMatrixWorld();
-    localStorage.setItem(key, camera.matrixWorld.toArray().toString());
+    const cameraMatrixString = camera.matrixWorld.toArray().toString();
+    if (Data.checkIfSubStringIsMatrix4(cameraMatrixString.split(','))) {
+      localStorage.setItem(key, cameraMatrixString);
+    }
   });
 
   // check if there was a previous camera matrix
   const storedMatrixArrayString = localStorage.getItem(key);
 
-  if (storedMatrixArrayString) {
+  if (Data.checkIfSubStringIsMatrix4(storedMatrixArrayString.split(','))) {
     let error = false;
     try {
       const storedMatrixArray = storedMatrixArrayString
