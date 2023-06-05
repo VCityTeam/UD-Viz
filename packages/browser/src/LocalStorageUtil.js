@@ -32,7 +32,10 @@ export function localStorageSetCameraMatrix(camera, key = KEY.CAMERA) {
   // check if there was a previous camera matrix
   const storedMatrixArrayString = localStorage.getItem(key);
 
-  if (Data.checkIfSubStringIsMatrix4(storedMatrixArrayString.split(','))) {
+  if (
+    typeof storedMatrixArrayString === 'string' &&
+    Data.checkIfSubStringIsMatrix4(storedMatrixArrayString.split(','))
+  ) {
     let error = false;
     try {
       const storedMatrixArray = storedMatrixArrayString
