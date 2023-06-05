@@ -24,10 +24,12 @@ const GameContextScript = class extends Game.ScriptBase {
       this.context.addObject3D(newGOCube);
     }, 3000);
   }
+
+  onCommand(type) {
+    if (type === 'toggle_pause') this.pause = !this.pause;
+  }
+
   tick() {
-    this.context.commands.forEach((command) => {
-      if (command.type === 'toggle_pause') this.pause = !this.pause;
-    });
 
     if (this.pause) return;
 

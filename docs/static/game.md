@@ -174,16 +174,20 @@ setInterval(() => {
   ...
 ```
 
-And in the `tick` of `GameContextScript`
+In the `tick` of `GameContextScript`
 
 ```js
 tick() {
-  this.context.commands.forEach((command) => {
-    if (command.type === 'toggle_pause') this.pause = !this.pause;
-  });
-
   if (this.pause) return;
   ...
+```
+
+And finally add `onCommand` method:
+
+```js
+onCommand(type) {
+  if (type === 'toggle_pause') this.pause = !this.pause;
+}
 ```
 
 Now you have learned how to build a singleplayer simple game, let's see how to modify it to make a multiplayer one. 
