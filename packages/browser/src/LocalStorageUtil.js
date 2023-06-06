@@ -59,3 +59,49 @@ export function localStorageSetCameraMatrix(camera, key = KEY.CAMERA) {
 
   return false;
 }
+
+/**
+ * If there was a vector 3 recorded in localStorage within the key passed copy values in vector3 + when tab is closing record current vector3 values
+ * /!\ calling this function make window reference the vector3 avoiding it to be GC and could cause memory leak
+ *
+ * @param {THREE.Vector3} vector3 - vector 3 to track
+ * @param {string} key - key of the item in localstorage
+ * @returns {boolean} true if vector3 has been setted with localStorage
+ */
+export function localStorageSetVector3(vector3, key) {
+  if (!vector3) throw new Error('no vector3');
+  if (!key) throw new Error('no key');
+
+  // listen the close tab event
+  window.addEventListener('beforeunload', () => {
+    const vector3String = vector3.toArray().toString();
+    if (Data.checkIfSubStringIsVector3(vector3String.split(','))) {
+      localStorage.setItem(key, vector3String);
+    }
+  });
+
+  // check if there was a previous vector3 register within this key
+  const storedVector3String = localStorage.getItem(key);
+
+  if (
+    typeof storedVector3String === 'string' &&
+    Data.checkIfSubStringIsVector3(storedVector3String.split(','))
+  ) {
+    let error = false;
+    try {
+      const storedVector3Array = storedVector3String
+        .split(',')
+        .map((x) => parseFloat(x));
+
+      const storedVector3 = new THREE.Vector3().fromArray(storedVector3Array);
+
+      vector3.copy(storedVector3);
+    } catch (e) {
+      error = true;
+      console.error(e);
+    }
+    return !error;
+  }
+
+  return false;
+}
