@@ -32,7 +32,7 @@ const Context = class {
         for (const key in object) {
           const value = object[key];
 
-          if (value.prototype instanceof ScriptBase) {
+          if (value.IS_SCRIPTBASE) {
             if (result[value.ID_SCRIPT])
               throw new Error('no unique id ' + value.ID_SCRIPT);
             result[value.ID_SCRIPT] = value;
@@ -693,7 +693,12 @@ const ScriptBase = class {
   onCommand(type, data) {}
 
   static get ID_SCRIPT() {
+    console.error(this.name);
     throw new Error('this is abstract class you should override ID_SCRIPT');
+  }
+
+  static get IS_SCRIPTBASE() {
+    return true;
   }
 };
 
