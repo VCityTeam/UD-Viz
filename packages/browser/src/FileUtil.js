@@ -81,8 +81,8 @@ export function loadMultipleJSON(urlArray) {
 
     urlArray.forEach((url) => {
       promises.push(
-        this.loadJSON(url).then((jsonResult) => {
-          const key = this.computeFileNameFromPath(url);
+        loadJSON(url).then((jsonResult) => {
+          const key = computeFileNameFromPath(url);
           if (result[key]) throw new Error('conflict same key');
           result[key] = jsonResult;
         })
