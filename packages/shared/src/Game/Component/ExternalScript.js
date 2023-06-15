@@ -6,7 +6,17 @@ const Script = require('./Script');
  *
  * @see module:ExternalScript
  */
-const ExternalScriptComponent = class extends Component {};
+const ExternalScriptComponent = class extends Component {
+  /**
+   * This function checks if an external script ID is included in the model's list of script IDs.
+   *
+   * @param {string} externalIDScript - string contains externalscrip.ID_SCRIPT
+   * @returns {boolean } - Return a boolean indicating whether an external script exists in id_scripts of component
+   */
+  has(externalIDScript) {
+    return this.getModel().getIdScripts().includes(externalIDScript);
+  }
+};
 
 ExternalScriptComponent.TYPE = 'ExternalScript';
 
