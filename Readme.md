@@ -9,7 +9,8 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 [Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html) &mdash;
 [Developers](./docs/static/Developers.md) &mdash;
 [License](./LICENSE.md) &mdash;
-[Getting Started](#getting-started)
+[Getting Started](#getting-started) &mdash;
+[Architecture](./docs/static/Architecture.md) &mdash;
 
 **Online demos**:
 
@@ -19,17 +20,10 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 **UD-Viz Packages:**
 
 Split-code by interpretation environment:  
-- [@ud-viz/browser](./packages/browser) package is interpretable by the browser
-- [@ud-viz/node](./packages/node) package is interpretable by Node.js
-- [@ud-viz/shared](./packages/shared) interpretable by both environments
+- [@ud-viz/browser](./packages/browser)
+- [@ud-viz/node](./packages/node)
+- [@ud-viz/shared](./packages/shared)
 
-```mermaid
-graph TD
-ud-viz/shared-->|import|ud-viz/browser
-ud-viz/shared-->|import|ud-viz/node
-```
-
- 
 ### Directory Hierarchy
 
 ```
