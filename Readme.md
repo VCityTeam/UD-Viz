@@ -18,10 +18,18 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 **UD-Viz Packages:**
 
-- [@ud-viz/shared](./packages/shared)
-- [@ud-viz/browser](./packages/browser)
-- [@ud-viz/node](./packages/node)
+Split-code by interpretation environment:  
+- [@ud-viz/browser](./packages/browser) package is interpretable by the browser
+- [@ud-viz/node](./packages/node) package is interpretable by Node.js
+- [@ud-viz/shared](./packages/shared) interpretable by both environments
 
+```mermaid
+graph TD
+ud-viz/shared-->|import|ud-viz/browser
+ud-viz/shared-->|import|ud-viz/node
+```
+
+ 
 ### Directory Hierarchy
 
 ```
