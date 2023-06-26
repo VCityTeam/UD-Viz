@@ -20,6 +20,7 @@
   border: 6px solid;
   border-style: dotted;
   border-color: black;
+  z-index: 10;
 }
 
 @keyframes rotate {

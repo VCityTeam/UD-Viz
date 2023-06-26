@@ -138,35 +138,36 @@ const ShowRoom = class {
    */
   addLayers(configs) {
     if (configs.$3DTiles) {
-      /** @type {Map<string, THREE.Mesh>} */
+      /** @type {Map<string, udvizBrowser.THREE.Mesh>} */
       const currentLoadingBox = new Map();
 
       const loadingBoxId = (layer, tileId) => layer.id + tileId;
 
       configs.$3DTiles.forEach((layerConfig) => {
-        const c3DTilesLayer = new itowns.C3DTilesLayer(
+        const c3DTilesLayer = new udvizBrowser.itowns.C3DTilesLayer(
           layerConfig['id'],
           {
             style: this.c3DTilesStyle,
             name: layerConfig['id'],
-            source: new itowns.C3DTilesSource({
+            source: new udvizBrowser.itowns.C3DTilesSource({
               url: layerConfig['url'],
             }),
           },
           this.frame3DPlanar.itownsView
         );
-        itowns.View.prototype.addLayer.call(
+        udvizBrowser.itowns.View.prototype.addLayer.call(
           this.frame3DPlanar.itownsView,
           c3DTilesLayer
         );
 
-        const loadingBoxMaterial = new THREE.MeshBasicMaterial({
+        const loadingBoxMaterial = new udvizBrowser.THREE.MeshBasicMaterial({
           wireframe: true,
+          wireframeLinewidth: 2,
           color: 'white',
         });
 
         c3DTilesLayer.addEventListener(
-          itowns.C3DTILES_LAYER_EVENTS.ON_TILE_REQUESTED,
+          udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_REQUESTED,
           ({ metadata }) => {
             if (metadata.tileId == undefined) throw new Error('no tile id');
 
@@ -174,8 +175,8 @@ const ShowRoom = class {
 
             if (metadata.transform) worldBox3.applyMatrix4(metadata.transform);
 
-            const box3Object = new THREE.Mesh(
-              new THREE.BoxGeometry(),
+            const box3Object = new udvizBrowser.THREE.Mesh(
+              new udvizBrowser.THREE.BoxGeometry(),
               loadingBoxMaterial
             );
             box3Object.scale.copy(worldBox3.max.clone().sub(worldBox3.min));
@@ -194,7 +195,7 @@ const ShowRoom = class {
         );
 
         c3DTilesLayer.addEventListener(
-          itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+          udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
           ({ tileContent }) => {
             if (
               currentLoadingBox.has(
@@ -285,14 +286,14 @@ const ShowRoom = class {
     // Logo container
     this.logoContainer = document.createElement('div');
     this.logoContainer.setAttribute('id', 'logo-container');
-    this.frame3DPlanar.appendToUI(this.logoContainer);
+    this.frame3DPlanar.domElementUI.appendChild(this.logoContainer);
 
     // c3DTiles loading element
     this.c3DTilesLoadingDomElement = document.createElement('div');
     this.c3DTilesLoadingDomElement.classList.add(
       '_sidebar_widget_3DTiles_loading'
     );
-    this.frame3DPlanar.ui.appendChild(this.c3DTilesLoadingDomElement);
+    this.frame3DPlanar.domElementUI.appendChild(this.c3DTilesLoadingDomElement);
     this.c3DTilesLoadingDomElement.hidden = true;
   }
 
