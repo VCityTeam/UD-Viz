@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>3D Tiles loading example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <style>
+      .loading {
+        position: absolute;
+        margin: 20px;
+        top: 0%;
+        right: 0%;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        animation: rotate 3.5s linear infinite;
+        border: 6px solid;
+        border-style: dotted;
+        border-color: rgb(255, 255, 255);
+        z-index: 10;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script type="text/javascript">
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json'
+        ])
+        .then((configs) => {
+          udvizBrowser.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][2]
+          );
+
+          // ADD BASE MAP
+          udvizBrowser.addBaseMapLayer(
+            configs['base_maps'][0],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          // ADD ELEVATION LAYER
+          udvizBrowser.addElevationLayer(
+            configs['elevation'],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          // c3DTiles loading element
+          const c3DTilesLoadingDomElement = document.createElement('div');
+          c3DTilesLoadingDomElement.classList.add('loading');
+          frame3DPlanar.domElementUI.appendChild(c3DTilesLoadingDomElement);
+          c3DTilesLoadingDomElement.hidden = true;
+
+          /** @type {Map<string, udvizBrowser.THREE.Mesh>} */
+          const currentLoadingBox = new Map();
+
+          const loadingBoxId = (layer, tileId) => layer.id + tileId;
+
+          configs['3DTiles'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udvizBrowser.itowns.C3DTilesLayer(
+              layerConfig['id'],
+              {
+                name: layerConfig['id'],
+                source: new udvizBrowser.itowns.C3DTilesSource({
+                  url: layerConfig['url']
+                })
+              },
+              frame3DPlanar.itownsView
+            );
+            udvizBrowser.itowns.View.prototype.addLayer.call(
+              frame3DPlanar.itownsView,
+              c3DTilesLayer
+            );
+
+            c3DTilesLayer.addEventListener(
+              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_REQUESTED,
+              ({ metadata }) => {
+                if (metadata.tileId == undefined) throw new Error('no tile id');
+
+                const worldBox3 = metadata.boundingVolume.box.clone();
+
+                if (metadata.transform)
+                  worldBox3.applyMatrix4(metadata.transform);
+
+                const box3Object = new udvizBrowser.THREE.Mesh(
+                  new udvizBrowser.THREE.BoxGeometry(),
+                  new udvizBrowser.THREE.MeshBasicMaterial({
+                    wireframe: true,
+                    wireframeLinewidth: 2,
+                    color: new udvizBrowser.THREE.Color(
+                      Math.random(),
+                      Math.random(),
+                      Math.random()
+                    )
+                  })
+                );
+                box3Object.scale.copy(worldBox3.max.clone().sub(worldBox3.min));
+                worldBox3.getCenter(box3Object.position);
+                box3Object.updateMatrixWorld();
+                frame3DPlanar.scene.add(box3Object);
+                frame3DPlanar.itownsView.notifyChange();
+
+                // bufferize
+                currentLoadingBox.set(
+                  loadingBoxId(c3DTilesLayer, metadata.tileId),
+                  box3Object
+                );
+                c3DTilesLoadingDomElement.hidden = false;
+              }
+            );
+
+            c3DTilesLayer.addEventListener(
+              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+              ({ tileContent }) => {
+                if (
+                  currentLoadingBox.has(
+                    loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                  )
+                ) {
+                  frame3DPlanar.scene.remove(
+                    currentLoadingBox.get(
+                      loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                    )
+                  );
+                  currentLoadingBox.delete(
+                    loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                  );
+                  c3DTilesLoadingDomElement.hidden =
+                    currentLoadingBox.size == 0; // nothing more is loaded
+                  frame3DPlanar.itownsView.notifyChange();
+                }
+              }
+            );
+          });
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>
