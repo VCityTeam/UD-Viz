@@ -6,6 +6,9 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack"
   },
+  "bin": {
+    "autoMermaid": "bin/autoMermaid.js"
+  },
   "files": [
     "src"
   ],

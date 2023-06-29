@@ -2,13 +2,14 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/node)](https://npmjs.com/package/@ud-viz/node)
 
-[@ud-viz/node](https://npmjs.com/package/@ud-viz/node) is a npm package including dev tools plus a dedicated [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on the [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
+[@ud-viz/[node](https://npmjs.com/package/@ud-viz/node) is an npm package including dev tools plus a dedicated [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on the [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
 
 - [@ud-viz/node](#ud-viznode)
   - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
+    - [Binary](#binary)
 
 ### Directory Hierarchy
 
@@ -37,3 +38,10 @@ For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/do
 | Script          | Description                                                       |
 | --------------- | ----------------------------------------------------------------- |
 | `npm run build` | Create a [webpack](https://webpack.js.org/) bundle of the library |
+
+
+### Binary
+
+| Script        | Description                                                                                                                                                                                                                      |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `autoMermaid` | Permits to create a mermaid diagram in a markdown file from a folder in entry. `npx @ud-viz/node autoMermaid [--entryFolder] -e <entry folder> [--outputFile] -o <output file> [--ignore] -i <ignore file> -d <deep> --noImport` |
