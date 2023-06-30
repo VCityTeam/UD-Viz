@@ -212,6 +212,7 @@ flowchart
    IDbrowserSrcRequestServicejs["RequestService.js"]
    IDbrowserSrcSocketIOWrapperjs["SocketIOWrapper.js"]
    IDbrowserSrcTHREEUtiljs["THREEUtil.js"]
+   IDbrowserSrcURLUtiljs["URLUtil.js"]
    subgraph IDbrowserSrcAssetManager["AssetManager"]
    end
    subgraph IDbrowserSrcFrame3D["Frame3D"]
@@ -230,12 +231,14 @@ flowchart
    IDbrowserWebpackConfigWebpackconfigprodjs["webpack.config.prod.js"]
   end
  end
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcInputManagerjs
 IDbrowserSrcIndexjs-.->|import|IDbrowserSrcTHREEUtiljs
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcRequestServicejs
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcItownsUtiljs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigprodjs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigdevjs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigcommonjs
 ```
-
 **Browser src (deep 2)**
 
 ```mermaid
@@ -251,15 +254,15 @@ flowchart
   IDsrcRequestServicejs["RequestService.js"]
   IDsrcSocketIOWrapperjs["SocketIOWrapper.js"]
   IDsrcTHREEUtiljs["THREEUtil.js"]
+  IDsrcURLUtiljs["URLUtil.js"]
   subgraph IDsrcAssetManager["AssetManager"]
    IDsrcAssetManagerAssetManagercss["AssetManager.css"]
    IDsrcAssetManagerAssetManagerjs["AssetManager.js"]
   end
   subgraph IDsrcFrame3D["Frame3D"]
+   IDsrcFrame3DDomElement3Djs["DomElement3D.js"]
    IDsrcFrame3DFrame3Djs["Frame3D.js"]
    IDsrcFrame3DFrame3DPlanarjs["Frame3DPlanar.js"]
-   subgraph IDsrcFrame3DComponent["Component"]
-   end
    subgraph IDsrcFrame3DFrame3DBase["Frame3DBase"]
    end
   end
@@ -295,37 +298,45 @@ flowchart
    end
   end
  end
+IDsrcIndexjs-.->|import|IDsrcInputManagerjs
 IDsrcIndexjs-.->|import|IDsrcTHREEUtiljs
+IDsrcIndexjs-.->|import|IDsrcRequestServicejs
+IDsrcIndexjs-.->|import|IDsrcItownsUtiljs
+IDsrcIndexjs-.->|import|IDsrcFrame3DFrame3Djs
+IDsrcIndexjs-.->|import|IDsrcGUIGUIjs
 IDsrcIndexjs-.->|import|IDsrcGameGamejs
 IDsrcIndexjs-.->|import|IDsrcWidgetWidgetjs
 IDsrcAssetManagerAssetManagerjs-.->|import|IDsrcTHREEUtiljs
+IDsrcFrame3DFrame3Djs-.->|import|IDsrcFrame3DFrame3DPlanarjs
+IDsrcFrame3DFrame3Djs-.->|import|IDsrcFrame3DDomElement3Djs
+IDsrcFrame3DFrame3DPlanarjs-.->|import|IDsrcTHREEUtiljs
 IDsrcWidgetC3DTilesjs-.->|import|IDsrcHTMLUtiljs
 IDsrcWidgetPlanarControlsjs-.->|import|IDsrcHTMLUtiljs
+IDsrcWidgetWidgetjs-.->|import|IDsrcWidgetC3DTilesjs
+IDsrcWidgetWidgetjs-.->|import|IDsrcWidgetPlanarControlsjs
 ```
-
 
 **Browser src/Frame3D/**
 
 ```mermaid
 flowchart
  subgraph IDFrame3D["Frame3D"]
+  IDFrame3DDomElement3Djs["DomElement3D.js"]
   IDFrame3DFrame3Djs["Frame3D.js"]
   IDFrame3DFrame3DPlanarjs["Frame3DPlanar.js"]
-  subgraph IDFrame3DComponent["Component"]
-   IDFrame3DComponentBillboardjs["Billboard.js"]
-   IDFrame3DComponentComponentjs["Component.js"]
-  end
   subgraph IDFrame3DFrame3DBase["Frame3DBase"]
    IDFrame3DFrame3DBaseFrame3DBasecss["Frame3DBase.css"]
    IDFrame3DFrame3DBaseFrame3DBasejs["Frame3DBase.js"]
   end
  end
+IDFrame3DFrame3Djs-.->|import|IDFrame3DFrame3DPlanarjs
+IDFrame3DFrame3Djs-.->|import|IDFrame3DFrame3DBaseFrame3DBasejs
+IDFrame3DFrame3Djs-.->|import|IDFrame3DDomElement3Djs
 IDFrame3DFrame3DPlanarjs-.->|import|IDFrame3DFrame3DBaseFrame3DBasejs
-IDFrame3DFrame3DBaseFrame3DBasejs-.->|import|IDFrame3DComponentBillboardjs
+IDFrame3DFrame3DBaseFrame3DBasejs-.->|import|IDFrame3DDomElement3Djs
 ```
 
-
-**Browser src/Game**
+**Browser src/Game (deep 3)**
 
 ```mermaid
 flowchart
@@ -342,27 +353,10 @@ flowchart
     IDGameExternalScriptTemplateCameraManagerjs["CameraManager.js"]
     IDGameExternalScriptTemplateScriptTemplatejs["ScriptTemplate.js"]
     subgraph IDGameExternalScriptTemplateComponent["Component"]
-     IDGameExternalScriptTemplateComponentCommandControllerjs["CommandController.js"]
-     IDGameExternalScriptTemplateComponentUtiljs["Util.js"]
     end
     subgraph IDGameExternalScriptTemplateDragAndDropAvatar["DragAndDropAvatar"]
-     IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarcss["DragAndDropAvatar.css"]
-     IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs["DragAndDropAvatar.js"]
     end
     subgraph IDGameExternalScriptTemplateNote["Note"]
-     IDGameExternalScriptTemplateNoteNotejs["Note.js"]
-     subgraph IDGameExternalScriptTemplateNoteElement["Element"]
-      IDGameExternalScriptTemplateNoteElementElementcss["Element.css"]
-      IDGameExternalScriptTemplateNoteElementElementjs["Element.js"]
-     end
-     subgraph IDGameExternalScriptTemplateNoteSocketService["SocketService"]
-      IDGameExternalScriptTemplateNoteSocketServiceSocketServicecss["SocketService.css"]
-      IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs["SocketService.js"]
-     end
-     subgraph IDGameExternalScriptTemplateNoteUI["UI"]
-      IDGameExternalScriptTemplateNoteUIUIcss["UI.css"]
-      IDGameExternalScriptTemplateNoteUIUIjs["UI.js"]
-     end
     end
    end
   end
@@ -375,29 +369,22 @@ IDGameGamejs-.->|import|IDGameExternalExternalGamejs
 IDGameGamejs-.->|import|IDGameScriptTemplateScriptTemplatejs
 IDGameExternalContextjs-.->|import|IDGameExternalRenderControllerjs
 IDGameExternalContextjs-.->|import|IDGameExternalAudioControllerjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalContextjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalMultiPlanarProcessjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalSinglePlanarProcessjs
 IDGameExternalExternalGamejs-.->|import|IDGameExternalScriptTemplateScriptTemplatejs
 IDGameExternalMultiPlanarProcessjs-.->|import|IDGameExternalExternalGamejs
 IDGameExternalSinglePlanarProcessjs-.->|import|IDGameExternalExternalGamejs
 IDGameExternalScriptTemplateCameraManagerjs-.->|import|IDGameExternalContextjs
-IDGameExternalScriptTemplateScriptTemplatejs-.->|import|IDGameExternalScriptTemplateNoteNotejs
-IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalContextjs
-IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateComponentCommandControllerjs
-IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
-IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateCameraManagerjs
-IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalContextjs
-IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalScriptTemplateCameraManagerjs
-IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
-IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs
-IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameExternalContextjs
-IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
-IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameExternalScriptTemplateNoteUIUIjs
-IDGameExternalScriptTemplateNoteUIUIjs-.->|import|IDGameExternalContextjs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateMapjs
 ```
+
 
 **Browser src/Widget (deep 3)**
 
+
 ```mermaid
-flowchart TB
+flowchart
  subgraph IDWidget["Widget"]
   IDWidgetC3DTilesjs["C3DTiles.js"]
   IDWidgetPlanarControlsjs["PlanarControls.js"]
@@ -469,8 +456,14 @@ flowchart TB
    end
   end
  end
+IDWidgetWidgetjs-.->|import|IDWidgetLayerChoiceViewsLayerChoicejs
+IDWidgetWidgetjs-.->|import|IDWidgetCameraPositionerCameraPositionerjs
 IDWidgetWidgetjs-.->|import|IDWidgetTemporalTemporaljs
+IDWidgetWidgetjs-.->|import|IDWidgetSlideShowSlideShowjs
+IDWidgetWidgetjs-.->|import|IDWidgetBaseMapBaseMapWindowjs
 IDWidgetWidgetjs-.->|import|IDWidgetServerServerjs
+IDWidgetWidgetjs-.->|import|IDWidgetC3DTilesjs
+IDWidgetWidgetjs-.->|import|IDWidgetPlanarControlsjs
 IDWidgetServerServerjs-.->|import|IDWidgetServerDocumentDocumentjs
 IDWidgetTemporalTemporaljs-.->|import|IDWidgetTemporalModel3DTemporalBatchTablejs
 IDWidgetTemporalTemporaljs-.->|import|IDWidgetTemporalModel3DTemporalBoundingVolumejs

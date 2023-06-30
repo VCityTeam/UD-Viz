@@ -20,6 +20,7 @@ flowchart
    IDbrowserSrcRequestServicejs["RequestService.js"]
    IDbrowserSrcSocketIOWrapperjs["SocketIOWrapper.js"]
    IDbrowserSrcTHREEUtiljs["THREEUtil.js"]
+   IDbrowserSrcURLUtiljs["URLUtil.js"]
    subgraph IDbrowserSrcAssetManager["AssetManager"]
    end
    subgraph IDbrowserSrcFrame3D["Frame3D"]
@@ -38,7 +39,10 @@ flowchart
    IDbrowserWebpackConfigWebpackconfigprodjs["webpack.config.prod.js"]
   end
  end
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcInputManagerjs
 IDbrowserSrcIndexjs-.->|import|IDbrowserSrcTHREEUtiljs
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcRequestServicejs
+IDbrowserSrcIndexjs-.->|import|IDbrowserSrcItownsUtiljs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigprodjs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigdevjs
 IDbrowserWebpackConfigWebpackconfigjs-.->|import|IDbrowserWebpackConfigWebpackconfigcommonjs
