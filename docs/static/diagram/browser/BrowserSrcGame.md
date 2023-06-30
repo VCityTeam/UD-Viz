@@ -46,6 +46,9 @@ IDGameGamejs-.->|import|IDGameExternalExternalGamejs
 IDGameGamejs-.->|import|IDGameScriptTemplateScriptTemplatejs
 IDGameExternalContextjs-.->|import|IDGameExternalRenderControllerjs
 IDGameExternalContextjs-.->|import|IDGameExternalAudioControllerjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalContextjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalMultiPlanarProcessjs
+IDGameExternalExternalGamejs-.->|import|IDGameExternalSinglePlanarProcessjs
 IDGameExternalExternalGamejs-.->|import|IDGameExternalScriptTemplateScriptTemplatejs
 IDGameExternalMultiPlanarProcessjs-.->|import|IDGameExternalExternalGamejs
 IDGameExternalSinglePlanarProcessjs-.->|import|IDGameExternalExternalGamejs
@@ -55,6 +58,9 @@ IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGa
 IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateComponentCommandControllerjs
 IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
 IDGameExternalScriptTemplateDragAndDropAvatarDragAndDropAvatarjs-.->|import|IDGameExternalScriptTemplateCameraManagerjs
+IDGameExternalScriptTemplateNoteNotejs-.->|import|IDGameExternalScriptTemplateNoteUIUIjs
+IDGameExternalScriptTemplateNoteNotejs-.->|import|IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs
+IDGameExternalScriptTemplateNoteNotejs-.->|import|IDGameExternalScriptTemplateNoteElementElementjs
 IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalContextjs
 IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalScriptTemplateCameraManagerjs
 IDGameExternalScriptTemplateNoteElementElementjs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
@@ -63,4 +69,6 @@ IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameEx
 IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameExternalScriptTemplateComponentUtiljs
 IDGameExternalScriptTemplateNoteSocketServiceSocketServicejs-.->|import|IDGameExternalScriptTemplateNoteUIUIjs
 IDGameExternalScriptTemplateNoteUIUIjs-.->|import|IDGameExternalContextjs
+IDGameExternalScriptTemplateNoteUIUIjs-.->|import|IDGameExternalScriptTemplateNoteNotejs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateMapjs
 ```

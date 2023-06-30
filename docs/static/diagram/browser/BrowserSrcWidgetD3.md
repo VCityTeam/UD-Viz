@@ -1,5 +1,5 @@
 ```mermaid
-flowchart TB
+flowchart
  subgraph IDWidget["Widget"]
   IDWidgetC3DTilesjs["C3DTiles.js"]
   IDWidgetPlanarControlsjs["PlanarControls.js"]
@@ -71,8 +71,14 @@ flowchart TB
    end
   end
  end
+IDWidgetWidgetjs-.->|import|IDWidgetLayerChoiceViewsLayerChoicejs
+IDWidgetWidgetjs-.->|import|IDWidgetCameraPositionerCameraPositionerjs
 IDWidgetWidgetjs-.->|import|IDWidgetTemporalTemporaljs
+IDWidgetWidgetjs-.->|import|IDWidgetSlideShowSlideShowjs
+IDWidgetWidgetjs-.->|import|IDWidgetBaseMapBaseMapWindowjs
 IDWidgetWidgetjs-.->|import|IDWidgetServerServerjs
+IDWidgetWidgetjs-.->|import|IDWidgetC3DTilesjs
+IDWidgetWidgetjs-.->|import|IDWidgetPlanarControlsjs
 IDWidgetServerServerjs-.->|import|IDWidgetServerDocumentDocumentjs
 IDWidgetTemporalTemporaljs-.->|import|IDWidgetTemporalModel3DTemporalBatchTablejs
 IDWidgetTemporalTemporaljs-.->|import|IDWidgetTemporalModel3DTemporalBoundingVolumejs
