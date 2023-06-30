@@ -166,9 +166,7 @@ function createMermaidDiagramFromFolderPath(
 
         if (path.extname(element) == '.js') {
           const data = fs.readFileSync(path.join(folderPath, element));
-          const matchImport = data
-            .toString()
-            .match(/(import)\b.*from.*('|").*('|")/g);
+          const matchImport = data.toString().match(/from.*('|").*('|")/g);
           const matchRequire = data.toString().match(/require\(("|').*\)/g);
 
           let allPaths = null;
