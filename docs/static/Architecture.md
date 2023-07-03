@@ -29,7 +29,7 @@ Why?
 
 ## Shared package
 
-[**Shared diagram (deep 2)**](./diagram/shared/SharedD3.md)
+[**Shared diagram (deep 3)**](./diagram/shared/SharedD3.md)
 
 [**Shared Game**](./diagram/shared/SharedSrcGame.md)
 
