@@ -1,0 +1,66 @@
+```mermaid
+flowchart
+ subgraph IDGame["Game"]
+  IDGameContextjs["Context.js"]
+  IDGameObject3Djs["Object3D.js"]
+  subgraph IDGameComponent["Component"]
+   IDGameComponentAudiojs["Audio.js"]
+   IDGameComponentColliderjs["Collider.js"]
+   IDGameComponentComponentjs["Component.js"]
+   IDGameComponentExternalScriptjs["ExternalScript.js"]
+   IDGameComponentGameScriptjs["GameScript.js"]
+   IDGameComponentRenderjs["Render.js"]
+   IDGameComponentScriptjs["Script.js"]
+  end
+  subgraph IDGameScriptTemplate["ScriptTemplate"]
+   IDGameScriptTemplateAbstractMapjs["AbstractMap.js"]
+   IDGameScriptTemplateConstantsjs["Constants.js"]
+   IDGameScriptTemplateDragAndDropAvatarjs["DragAndDropAvatar.js"]
+   IDGameScriptTemplateNativeCommandManagerjs["NativeCommandManager.js"]
+   IDGameScriptTemplateScriptTemplatejs["ScriptTemplate.js"]
+  end
+  subgraph IDGameState["State"]
+   IDGameStateDiffjs["Diff.js"]
+   IDGameStateInterpolatorjs["Interpolator.js"]
+   IDGameStateStatejs["State.js"]
+  end
+ end
+IDGameContextjs-.->|import|IDGameComponentColliderjs
+IDGameContextjs-.->|import|IDGameComponentScriptjs
+IDGameContextjs-.->|import|IDGameComponentGameScriptjs
+IDGameContextjs-.->|import|IDGameObject3Djs
+IDGameContextjs-.->|import|IDGameStateStatejs
+IDGameObject3Djs-.->|import|IDGameComponentExternalScriptjs
+IDGameObject3Djs-.->|import|IDGameComponentGameScriptjs
+IDGameObject3Djs-.->|import|IDGameComponentColliderjs
+IDGameObject3Djs-.->|import|IDGameComponentAudiojs
+IDGameObject3Djs-.->|import|IDGameComponentRenderjs
+IDGameComponentAudiojs-.->|import|IDGameComponentComponentjs
+IDGameComponentColliderjs-.->|import|IDGameComponentComponentjs
+IDGameComponentComponentjs-.->|import|IDGameObject3Djs
+IDGameComponentExternalScriptjs-.->|import|IDGameComponentComponentjs
+IDGameComponentExternalScriptjs-.->|import|IDGameComponentScriptjs
+IDGameComponentGameScriptjs-.->|import|IDGameComponentComponentjs
+IDGameComponentGameScriptjs-.->|import|IDGameComponentScriptjs
+IDGameComponentRenderjs-.->|import|IDGameComponentComponentjs
+IDGameComponentScriptjs-.->|import|IDGameComponentComponentjs
+IDGameScriptTemplateAbstractMapjs-.->|import|IDGameContextjs
+IDGameScriptTemplateAbstractMapjs-.->|import|IDGameObject3Djs
+IDGameScriptTemplateDragAndDropAvatarjs-.->|import|IDGameContextjs
+IDGameScriptTemplateDragAndDropAvatarjs-.->|import|IDGameContextjs
+IDGameScriptTemplateDragAndDropAvatarjs-.->|import|IDGameScriptTemplateConstantsjs
+IDGameScriptTemplateDragAndDropAvatarjs-.->|import|IDGameObject3Djs
+IDGameScriptTemplateNativeCommandManagerjs-.->|import|IDGameContextjs
+IDGameScriptTemplateNativeCommandManagerjs-.->|import|IDGameScriptTemplateAbstractMapjs
+IDGameScriptTemplateNativeCommandManagerjs-.->|import|IDGameObject3Djs
+IDGameScriptTemplateNativeCommandManagerjs-.->|import|IDGameComponentExternalScriptjs
+IDGameScriptTemplateNativeCommandManagerjs-.->|import|IDGameScriptTemplateConstantsjs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateConstantsjs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateDragAndDropAvatarjs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateNativeCommandManagerjs
+IDGameScriptTemplateScriptTemplatejs-.->|import|IDGameScriptTemplateAbstractMapjs
+IDGameStateInterpolatorjs-.->|import|IDGameStateStatejs
+IDGameStateInterpolatorjs-.->|import|IDGameStateDiffjs
+IDGameStateStatejs-.->|import|IDGameStateDiffjs
+IDGameStateStatejs-.->|import|IDGameObject3Djs
+```
