@@ -81,12 +81,10 @@ export class AudioController extends Game.Component.Controller {
       // https://github.com/goldfire/howler.js#documentation
       if (this.model.getConf().spatialized) {
         const worldPosition = new THREE.Vector3();
-        const worldQuaternion = new THREE.Quaternion();
-        const worldScale = new THREE.Vector3();
         this.object3D.matrixWorld.decompose(
           worldPosition,
-          worldQuaternion,
-          worldScale
+          new THREE.Quaternion(),
+          new THREE.Vector3()
         );
 
         // in camera referential
