@@ -24,7 +24,7 @@ jobs:
         - npm run assert-code
       name: 'Build and test code'
     - script:
-        - npm audit --audit-level=low
+        - npm audit --audit-level=high
       name: 'Lightweight dependencies security audit'
     - script:
         - npm run validate-links
