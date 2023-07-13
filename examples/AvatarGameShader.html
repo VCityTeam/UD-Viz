@@ -434,8 +434,10 @@
 
               // update variables on resize
               const updateResize = function () {
-                const size = game.frame3DPlanar.size;
-                renderTargetFX.setSize(size.x, size.y);
+                renderTargetFX.setSize(
+                  frame3DPlanar.domElementWebGL.clientWidth,
+                  frame3DPlanar.domElementWebGL.clientHeight
+                );
 
                 sobelPass.uniforms.resolution.value = new THREE.Vector2(
                   edgeDetectionComposer.writeBuffer.width,

@@ -23,9 +23,11 @@ export class Frame3DBase {
      *
       @type {HTMLDivElement} */
     this.domElement = document.createElement('div');
-    this.domElement.classList.add('root_Frame3DBase');
 
-    // Add to DOM
+    /**
+     * `this.domElement` has be added to the DOM in order to compute its dimension
+     * this is necessary because the itowns.PlanarView need these dimension in order to be initialized correctly
+     */
     if (options.parentDomElement instanceof HTMLElement) {
       options.parentDomElement.appendChild(this.domElement);
     } else {
@@ -70,13 +72,6 @@ export class Frame3DBase {
      *
       @type {boolean} */
     this.isRendering = true;
-
-    /**
-     * Size of the frame3D
-     *
-      @type {THREE.Vector2} */
-    this.size = new THREE.Vector2();
-    this.updateSize();
 
     /**
      * canvas scene 3D
@@ -311,46 +306,30 @@ export class Frame3DBase {
   }
 
   /**
-   *
-   * @param {boolean} value - false => stop rendering, otherwise true
-   */
-  setIsRendering(value) {
-    this.isRendering = value;
-  }
-
-  /**
    * Resize frame3D
    *
    * @param {boolean} [updateTHREEVariables=true] - camera and renderer should be updated
    */
   onResize(updateTHREEVariables = true) {
-    this.updateSize();
-
     if (this.css3DRenderer)
-      this.css3DRenderer.setSize(this.size.x, this.size.y);
+      this.css3DRenderer.setSize(
+        this.domElementCss.clientWidth,
+        this.domElementCss.clientHeight
+      );
 
     if (updateTHREEVariables) {
-      this.camera.aspect = this.size.x / this.size.y;
+      this.camera.aspect =
+        this.domElementWebGL.clientWidth / this.domElementWebGL.clientHeight;
       this.camera.updateProjectionMatrix();
-      this.renderer.setSize(this.size.x, this.size.y);
+      this.renderer.setSize(
+        this.domElementWebGL.clientWidth,
+        this.domElementWebGL.clientHeight
+      );
     }
 
     this.listeners[Frame3DBase.EVENT.RESIZE].forEach((listener) => {
       listener();
     });
-  }
-
-  /**
-   * update `this.size`
-   */
-  updateSize() {
-    let offsetLeft = parseInt(this.domElementWebGL.style.left);
-    if (isNaN(offsetLeft)) offsetLeft = 0;
-    let offsetTop = parseInt(this.domElementWebGL.style.top);
-    if (isNaN(offsetTop)) offsetTop = 0;
-
-    this.size.x = window.innerWidth - offsetLeft;
-    this.size.y = window.innerHeight - offsetTop;
   }
 
   /**
