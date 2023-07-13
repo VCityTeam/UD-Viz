@@ -471,28 +471,85 @@
             });
 
             // /// ADD LAYERS
-            udvizBrowser.add3DTilesLayers(
-              configs['3DTiles'],
-              frame3DPlanar.itownsView
-            );
+            {
+              frame3DPlanar.itownsView.addLayer(
+                new udvizBrowser.itowns.ColorLayer(
+                  configs['base_maps'][0]['layer_name'],
+                  {
+                    updateStrategy: {
+                      type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
+                      options: {}
+                    },
+                    source: new udvizBrowser.itowns.WMSSource({
+                      extent: extent,
+                      name: configs['base_maps'][0]['name'],
+                      url: configs['base_maps'][0]['url'],
+                      version: configs['base_maps'][0]['version'],
+                      crs: extent.crs,
+                      format: configs['base_maps'][0]['format']
+                    }),
+                    transparent: true
+                  }
+                )
+              );
 
-            udvizBrowser.addBaseMapLayer(
-              configs['base_maps'][0],
-              frame3DPlanar.itownsView,
-              extent
-            );
+              configs['geoJSONs'].forEach((layerConfig) => {
+                frame3DPlanar.itownsView.addLayer(
+                  new udvizBrowser.itowns.ColorLayer(layerConfig.id, {
+                    name: layerConfig.id,
+                    transparent: true,
+                    source: new udvizBrowser.itowns.FileSource({
+                      url: layerConfig.url,
+                      crs: extent.crs,
+                      format: 'application/json'
+                    }),
+                    style: new udvizBrowser.itowns.Style(layerConfig.style)
+                  })
+                );
+              });
 
-            udvizBrowser.addElevationLayer(
-              configs['elevation'],
-              frame3DPlanar.itownsView,
-              extent
-            );
+              configs['3DTiles'].forEach((layerConfig) => {
+                udvizBrowser.itowns.View.prototype.addLayer.call(
+                  frame3DPlanar.itownsView,
+                  new udvizBrowser.itowns.C3DTilesLayer(
+                    layerConfig['id'],
+                    {
+                      name: layerConfig['id'],
+                      source: new udvizBrowser.itowns.C3DTilesSource({
+                        url: layerConfig['url']
+                      })
+                    },
+                    frame3DPlanar.itownsView
+                  )
+                );
+              });
 
-            udvizBrowser.addGeoJsonLayers(
-              configs['geoJSONs'],
-              frame3DPlanar.itownsView,
-              extent
-            );
+              const isTextureFormat =
+                configs['elevation']['format'] == 'image/jpeg' ||
+                configs['elevation']['format'] == 'image/png';
+              frame3DPlanar.itownsView.addLayer(
+                new udvizBrowser.itowns.ElevationLayer(
+                  configs['elevation']['layer_name'],
+                  {
+                    useColorTextureElevation: isTextureFormat,
+                    colorTextureElevationMinZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMinZ']
+                      : null,
+                    colorTextureElevationMaxZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMaxZ']
+                      : null,
+                    source: new udvizBrowser.itowns.WMSSource({
+                      extent: extent,
+                      url: configs['elevation']['url'],
+                      name: configs['elevation']['name'],
+                      crs: extent.crs,
+                      heightMapWidth: 256,
+                      format: configs['elevation']['format']
+                    })
+                  }
+                )
+              );
+            }
           });
         });
     </script>

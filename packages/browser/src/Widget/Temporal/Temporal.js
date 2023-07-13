@@ -3,7 +3,6 @@ import { $3DTemporalBoundingVolume } from './Model/3DTemporalBoundingVolume';
 import { $3DTemporalTileset } from './Model/3DTemporalTileset';
 import * as itownsWidget from 'itowns/widgets';
 import * as itowns from 'itowns';
-import { createC3DTilesLayer } from '../../ItownsUtil';
 
 /**
  *
@@ -57,7 +56,17 @@ export function add3DTilesTemporalFromConfig(config, itownsView) {
     const extensions = create3DTilesTemporalExtension(layer['extensions']);
     itowns.View.prototype.addLayer.call(
       itownsView,
-      createC3DTilesLayer(layer, itownsView, extensions)
+      new itowns.C3DTilesLayer(
+        layer['id'],
+        {
+          name: layer['id'],
+          source: new itowns.C3DTilesSource({
+            url: layer['url'],
+          }),
+          registeredExtensions: extensions,
+        },
+        itownsView
+      )
     );
   }
 }

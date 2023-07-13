@@ -36,10 +36,21 @@
             configs['frame3D_planars'][2]
           );
 
-          udvizBrowser.add3DTilesLayers(
-            configs['3DTiles'],
-            frame3DPlanar.itownsView
-          );
+          configs['3DTiles'].forEach((layerConfig) => {
+            udvizBrowser.itowns.View.prototype.addLayer.call(
+              frame3DPlanar.itownsView,
+              new udvizBrowser.itowns.C3DTilesLayer(
+                layerConfig['id'],
+                {
+                  name: layerConfig['id'],
+                  source: new udvizBrowser.itowns.C3DTilesSource({
+                    url: layerConfig['url']
+                  })
+                },
+                frame3DPlanar.itownsView
+              )
+            );
+          });
 
           const myStyle = new udvizBrowser.itowns.Style({
             fill: {

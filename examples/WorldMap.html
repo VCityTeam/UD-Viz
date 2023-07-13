@@ -31,10 +31,25 @@
           );
 
           // /// ADD LAYER
-          udvizBrowser.addBaseMapLayer(
-            configs['base_maps'][0],
-            frame3DPlanar.itownsView,
-            extent
+          frame3DPlanar.itownsView.addLayer(
+            new udvizBrowser.itowns.ColorLayer(
+              configs['base_maps'][0]['layer_name'],
+              {
+                updateStrategy: {
+                  type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
+                  options: {}
+                },
+                source: new udvizBrowser.itowns.WMSSource({
+                  extent: extent,
+                  name: configs['base_maps'][0]['name'],
+                  url: configs['base_maps'][0]['url'],
+                  version: configs['base_maps'][0]['version'],
+                  crs: extent.crs,
+                  format: configs['base_maps'][0]['format']
+                }),
+                transparent: true
+              }
+            )
           );
         });
     </script>
