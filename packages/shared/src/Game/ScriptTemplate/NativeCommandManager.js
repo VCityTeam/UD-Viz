@@ -9,8 +9,8 @@ const Data = require('../../Data');
 const defaultVariables = {
   angleMin: Math.PI / 5,
   angleMax: 2 * Math.PI - Math.PI / 10,
-  speedTranslate: 0.04,
-  speedRotate: 0.00001,
+  defaultSpeedTranslate: 0.04,
+  defaultSpeedRotate: 0.00001,
 };
 
 /**
@@ -53,13 +53,11 @@ const NativeCommandManager = class extends ScriptBase {
       externalScriptComponent = updatedObject3D.getComponent(Component.TYPE);
     }
 
-    let indexObjectMoving = -1;
-
     switch (type) {
       case Constants.COMMAND.MOVE_FORWARD:
         NativeCommandManager.moveForward(
           updatedObject3D,
-          this.variables.speedTranslate * this.context.dt,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
           this.map,
           data.withMap
         );
@@ -67,7 +65,7 @@ const NativeCommandManager = class extends ScriptBase {
       case Constants.COMMAND.MOVE_BACKWARD:
         NativeCommandManager.moveBackward(
           updatedObject3D,
-          this.variables.speedTranslate * this.context.dt,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
           this.map,
           data.withMap
         );
@@ -75,13 +73,21 @@ const NativeCommandManager = class extends ScriptBase {
       case Constants.COMMAND.ROTATE_LEFT:
         NativeCommandManager.rotate(
           updatedObject3D,
-          new THREE.Vector3(0, 0, this.variables.speedRotate * this.context.dt)
+          new THREE.Vector3(
+            0,
+            0,
+            this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
+          )
         );
         break;
       case Constants.COMMAND.ROTATE_RIGHT:
         NativeCommandManager.rotate(
           updatedObject3D,
-          new THREE.Vector3(0, 0, -this.variables.speedRotate * this.context.dt)
+          new THREE.Vector3(
+            0,
+            0,
+            -this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
+          )
         );
         break;
       case Constants.COMMAND.UPDATE_TRANSFORM:
@@ -121,117 +127,77 @@ const NativeCommandManager = class extends ScriptBase {
           externalScriptComponent.getModel().variables[data.variableName] =
             data.variableValue;
           updatedObject3D.setOutdated(true);
-          // console.log(
-          //   'update ',
-          //   data.nameVariable,
-          //   ' set with ',
-          //   data.variableValue
-          // );
         }
         break;
       case Constants.COMMAND.MOVE_FORWARD_START:
-        if (
-          !this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].includes(
-            updatedObject3D
-          )
-        ) {
-          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].push(
-            updatedObject3D
-          );
-        }
+        Data.arrayPushOnce(
+          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_FORWARD_END:
-        indexObjectMoving =
-          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].indexOf(
-            updatedObject3D
-          );
-        if (indexObjectMoving >= 0)
-          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].splice(
-            indexObjectMoving,
-            1
-          );
+        Data.removeFromArray(
+          this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_BACKWARD_START:
-        if (
-          !this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].includes(
-            updatedObject3D
-          )
-        ) {
-          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].push(
-            updatedObject3D
-          );
-        }
+        Data.arrayPushOnce(
+          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_BACKWARD_END:
-        indexObjectMoving =
-          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].indexOf(
-            updatedObject3D
-          );
-        if (indexObjectMoving >= 0)
-          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].splice(
-            indexObjectMoving,
-            1
-          );
+        Data.removeFromArray(
+          this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_LEFT_START:
-        if (
-          !this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].includes(
-            updatedObject3D
-          )
-        ) {
-          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].push(
-            updatedObject3D
-          );
-        }
+        Data.arrayPushOnce(
+          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_LEFT_END:
-        indexObjectMoving =
-          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].indexOf(
-            updatedObject3D
-          );
-        if (indexObjectMoving >= 0)
-          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].splice(
-            indexObjectMoving,
-            1
-          );
+        Data.removeFromArray(
+          this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_RIGHT_START:
-        if (
-          !this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].includes(
-            updatedObject3D
-          )
-        ) {
-          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].push(
-            updatedObject3D
-          );
-        }
+        Data.arrayPushOnce(
+          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.MOVE_RIGHT_END:
-        indexObjectMoving =
-          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].indexOf(
-            updatedObject3D
-          );
-        if (indexObjectMoving >= 0)
-          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].splice(
-            indexObjectMoving,
-            1
-          );
+        Data.removeFromArray(
+          this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START],
+          updatedObject3D
+        );
         break;
       case Constants.COMMAND.ROTATE:
         if (data.vector) {
           if (!isNaN(data.vector.x)) {
             updatedObject3D.rotateX(
-              data.vector.x * this.context.dt * this.variables.speedRotate
+              data.vector.x *
+                this.context.dt *
+                this.computeObjectSpeedRotate(updatedObject3D)
             );
           }
           if (!isNaN(data.vector.y)) {
             updatedObject3D.rotateY(
-              data.vector.y * this.context.dt * this.variables.speedRotate
+              data.vector.y *
+                this.context.dt *
+                this.computeObjectSpeedRotate(updatedObject3D)
             );
           }
           if (!isNaN(data.vector.z)) {
             updatedObject3D.rotateZ(
-              data.vector.z * this.context.dt * this.variables.speedRotate
+              data.vector.z *
+                this.context.dt *
+                this.computeObjectSpeedRotate(updatedObject3D)
             );
           }
           this.clampRotation(updatedObject3D);
@@ -249,33 +215,51 @@ const NativeCommandManager = class extends ScriptBase {
     }
   }
 
+  /**
+   * If you want to have different translation speed for gameobject you should override this method
+   *
+   * @returns {number} speed of the translation
+   */
+  computeObjectSpeedTranslate() {
+    return this.variables.defaultSpeedTranslate;
+  }
+
+  /**
+   * If you want to have different rotation speed for gameobject you should override this method
+   *
+   * @returns {number} speed of the rotation
+   */
+  computeObjectSpeedRotate() {
+    return this.variables.defaultSpeedRotate;
+  }
+
   tick() {
     // move objectsMoving
     this.objectsMoving[Constants.COMMAND.MOVE_FORWARD_START].forEach((o) => {
       NativeCommandManager.moveForward(
         o,
-        this.variables.speedTranslate * this.context.dt,
+        this.computeObjectSpeedTranslate(o) * this.context.dt,
         this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_BACKWARD_START].forEach((o) => {
       NativeCommandManager.moveBackward(
         o,
-        this.variables.speedTranslate * this.context.dt,
+        this.computeObjectSpeedTranslate(o) * this.context.dt,
         this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_LEFT_START].forEach((o) => {
       NativeCommandManager.moveLeft(
         o,
-        this.variables.speedTranslate * this.context.dt,
+        this.computeObjectSpeedTranslate(o) * this.context.dt,
         this.map
       );
     });
     this.objectsMoving[Constants.COMMAND.MOVE_RIGHT_START].forEach((o) => {
       NativeCommandManager.moveRight(
         o,
-        this.variables.speedTranslate * this.context.dt,
+        this.computeObjectSpeedTranslate(o) * this.context.dt,
         this.map
       );
     });

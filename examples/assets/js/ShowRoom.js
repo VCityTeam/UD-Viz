@@ -716,7 +716,7 @@ const ShowRoom = class {
               ],
               variables: {
                 idRenderDataAvatar: idRenderDataAvatar,
-                speedRotate: 0.0005,
+                defaultSpeedRotate: 0.0005,
               },
             },
             ExternalScript: {

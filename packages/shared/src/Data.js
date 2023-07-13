@@ -584,6 +584,37 @@ function computeFileFormat(filename) {
   return filename.slice(indexLastPoint + 1);
 }
 
+/**
+ * Check if the element is alreeady included in the array if not push it
+ *
+ * @param {Array} array - array where to push the element
+ * @param {*} element - element to push
+ * @returns {boolean} true if pushed false otherwise
+ */
+function arrayPushOnce(array, element) {
+  if (!array.includes(element)) {
+    array.push(element);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Remove an element if it's present in an array
+ *
+ * @param {Array} array - array to remove element from
+ * @param {*} element - element to remove
+ * @returns {boolean} true if removed false otherwise
+ */
+function removeFromArray(array, element) {
+  const index = array.indexOf(element);
+  if (index) {
+    array.splice(index, 1);
+    return true;
+  }
+  return false;
+}
+
 module.exports = {
   PartialString: PartialString,
   StringComposer: StringComposer,
@@ -605,4 +636,6 @@ module.exports = {
   objectParse: objectParse,
   objectParseNumeric: objectParseNumeric,
   computeFileFormat: computeFileFormat,
+  arrayPushOnce: arrayPushOnce,
+  removeFromArray: removeFromArray,
 };
