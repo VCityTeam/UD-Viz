@@ -15,11 +15,11 @@ const THREE = require('three');
  * @property {number} [heading=-50] - Camera heading placement
  * @property {number} [range=3000] -  Camera range placement
  * @property {number} [tilt=10] - Camera tilt placement
- * @property {number} [maxSubdivisionLevel=3] - Maximum subdivision level for PlanarLayer
+ * @property {number} [maxSubdivisionLevel=5] - Maximum subdivision level for PlanarLayer
  * @property {import('../THREEUtil').SceneConfig} sceneConfig - scene config
  */
 
-/** @classdesc It's a class that extends the {@link Base} class and adds a PlanarView to it */
+/** @classdesc It's a class that extends the {@link Frame3DBase} class and adds a PlanarView to it */
 export class Frame3DPlanar extends Frame3DBase {
   /**
    *
@@ -40,7 +40,7 @@ export class Frame3DPlanar extends Frame3DBase {
     const heading = options.heading || -50;
     const range = options.range || 3000;
     const tilt = options.tilt || 10;
-    const maxSubdivisionLevel = options.maxSubdivisionLevel || 3;
+    const maxSubdivisionLevel = options.maxSubdivisionLevel || 5;
 
     /**
      * planar view
