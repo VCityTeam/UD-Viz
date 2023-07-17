@@ -15,7 +15,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/base_maps.json'
+          './assets/config/layer/base_maps.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -42,13 +42,13 @@
             [
               {
                 layer: configs['base_maps'][0],
-                pathIcon: './assets/img/ign_ortho.png'
+                pathIcon: './assets/img/ign_ortho.png',
               },
               {
                 layer: configs['base_maps'][1],
                 pathIcon:
-                  'https://download.data.grandlyon.com/catalogue/srv/fre//resources.get?uuid=7e0bab06-ff3b-453e-9b72-e16b8f08d926&fname=ortho2018_s.png'
-              }
+                  'https://download.data.grandlyon.com/catalogue/srv/fre//resources.get?uuid=7e0bab06-ff3b-453e-9b72-e16b8f08d926&fname=ortho2018_s.png',
+              },
             ],
             extent
           );
