@@ -5,7 +5,7 @@
 [@ud-viz/[node](https://npmjs.com/package/@ud-viz/node) is an npm package including dev tools plus a dedicated [@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) back-end service based on the [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) package.
 
 - [@ud-viz/node](#ud-viznode)
-  - [Directory Hierarchy](#directory-hierarchy)
+    - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
