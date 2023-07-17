@@ -6,7 +6,7 @@ This UD-Viz-Shared demo is part of the [Urban Data Viewer](https://github.com/VC
 - [Lyon Métropole Open Data](https://data.grandlyon.com)
 
 Legal and operational disclaimer:
-This demonstration and its underlying software are provided “as is”. The authors and contributors disclaim all warranties with regard to the software including all implied warranties of merchantability and fitness for a particular purpose (refer to the spirit of any [BSD license](<https://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_(%22Simplified_BSD_License%22_or_%22FreeBSD_License%22)>) dislaimer).
+This demonstration and its underlying software are provided “as is”. The authors and contributors disclaim all warranties with regard to the software including all implied warranties of merchantability and fitness for a particular purpose (refer to the spirit of any [BSD license](https://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_(%22Simplified_BSD_License%22_or_%22FreeBSD_License%22)) dislaimer).
 
 Nevertheless, if you notice any issue, help us by [openning an issue on github](https://github.com/MEPP-team/UD-Viz/issues).
 
