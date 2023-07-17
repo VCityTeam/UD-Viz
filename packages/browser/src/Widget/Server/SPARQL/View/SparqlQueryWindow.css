@@ -51,25 +51,25 @@
   font-size: 12px;
   font-weight: normal;
   background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 10px; 
+  border-radius: 10px;
 }
 
-#_window_sparqlQueryWindow_filter{
+#_window_sparqlQueryWindow_filter {
   position: fixed;
   padding: 1px;
-  background-color: rgba(30,30,30,0.7);
+  background-color: rgba(30, 30, 30, 0.7);
 }
 
 #_window_sparqlQueryWindow_data_view table {
   border: 1px solid white;
   width: 100%;
   height: 100%;
-  margin-top:24px;
+  margin-top: 24px;
 }
 
 #_window_sparqlQueryWindow_data_view thead {
-  color: #90EE90;
-  margin:auto;
+  color: #90ee90;
+  margin: auto;
   border: 1px solid white;
 }
 
@@ -82,11 +82,11 @@
 }
 
 #_window_sparqlQueryWindow_data_view th.des:after {
-  content: "\21E9";
+  content: '\21E9';
 }
 
 #_window_sparqlQueryWindow_data_view th.aes:after {
-  content: "\21E7";
+  content: '\21E7';
 }
 
 .renderjson {
