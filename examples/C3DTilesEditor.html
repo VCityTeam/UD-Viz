@@ -19,7 +19,7 @@
           './assets/config/layer/base_maps.json',
           './assets/config/layer/geoJSONs.json',
           './assets/config/layer/elevation.json',
-          './assets/config/layer/3DTiles.json'
+          './assets/config/layer/3DTiles.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -44,7 +44,7 @@
             elevation: configs['elevation'],
             baseMap: configs['base_maps'][0],
             labels: configs['labels'],
-            geoJSON: configs['geoJSONs']
+            geoJSON: configs['geoJSONs'],
           });
         });
     </script>

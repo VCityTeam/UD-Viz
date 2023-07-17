@@ -14,7 +14,7 @@
         .loadMultipleJSON([
           './assets/config/extents.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/base_maps.json'
+          './assets/config/layer/base_maps.json',
         ])
         .then((configs) => {
           const extent = new udvizBrowser.itowns.Extent(
@@ -37,7 +37,7 @@
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {}
+                  options: {},
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -45,9 +45,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format']
+                  format: configs['base_maps'][0]['format'],
                 }),
-                transparent: true
+                transparent: true,
               }
             )
           );

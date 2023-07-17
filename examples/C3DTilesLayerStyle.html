@@ -15,7 +15,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/3DTiles.json'
+          './assets/config/layer/3DTiles.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -44,8 +44,8 @@
                 {
                   name: layerConfig['id'],
                   source: new udvizBrowser.itowns.C3DTilesSource({
-                    url: layerConfig['url']
-                  })
+                    url: layerConfig['url'],
+                  }),
                 },
                 frame3DPlanar.itownsView
               )
@@ -68,8 +68,8 @@
               opacity: function (feature) {
                 if (feature.batchId % 2 == 0) return 0.5;
                 return 1;
-              }
-            }
+              },
+            },
           });
 
           // apply style to layers
@@ -83,7 +83,7 @@
           // userData styling example using a pick selection
           const contextSelection = {
             feature: null,
-            layer: null
+            layer: null,
           };
           frame3DPlanar.domElement.onclick = (event) => {
             if (contextSelection.feature) {

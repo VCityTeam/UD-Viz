@@ -15,7 +15,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/widget/slide_show.json'
+          './assets/config/widget/slide_show.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -32,7 +32,7 @@
           );
 
           const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
-            hasItownsControls: true
+            hasItownsControls: true,
           });
 
           const fitExtent = () => {

@@ -15,7 +15,7 @@
 
 .loading_screen_character {
   color: gray;
-  height: var(--size-character); 
+  height: var(--size-character);
   font-size: var(--size-character);
   animation-name: characterAnimation;
   animation-direction: alternate-reverse;

@@ -17,7 +17,7 @@
           './assets/config/frame3D_planars.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
-          './assets/config/layer/3DTiles.json'
+          './assets/config/layer/3DTiles.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -45,7 +45,7 @@
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {}
+                  options: {},
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -53,9 +53,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format']
+                  format: configs['base_maps'][0]['format'],
                 }),
-                transparent: true
+                transparent: true,
               }
             )
           );
@@ -81,8 +81,8 @@
                   name: configs['elevation']['name'],
                   crs: extent.crs,
                   heightMapWidth: 256,
-                  format: configs['elevation']['format']
-                })
+                  format: configs['elevation']['format'],
+                }),
               }
             )
           );
@@ -96,8 +96,8 @@
                 {
                   name: layerConfig['id'],
                   source: new udvizBrowser.itowns.C3DTilesSource({
-                    url: layerConfig['url']
-                  })
+                    url: layerConfig['url'],
+                  }),
                 },
                 frame3DPlanar.itownsView
               )
@@ -129,7 +129,7 @@
                   for (const [
                     // eslint-disable-next-line no-unused-vars
                     batchId,
-                    c3DTFeature
+                    c3DTFeature,
                   ] of tileContent.layer.tilesC3DTileFeatures.get(
                     tileContent.tileId
                   )) {

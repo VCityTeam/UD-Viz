@@ -16,7 +16,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/3DTiles.json'
+          './assets/config/layer/3DTiles.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -43,8 +43,8 @@
                 return feature.userData.selectedColor
                   ? feature.userData.selectedColor
                   : 'white';
-              }
-            }
+              },
+            },
           });
 
           // create 3DTilesLayers
@@ -55,8 +55,8 @@
                 style: style,
                 name: layerConfig['id'],
                 source: new udvizBrowser.itowns.C3DTilesSource({
-                  url: layerConfig['url']
-                })
+                  url: layerConfig['url'],
+                }),
               },
               frame3DPlanar.itownsView
             );
@@ -74,7 +74,7 @@
               layerContainerClassName: 'widgets-3dtiles-layer-container',
               c3DTFeatureInfoContainerClassName:
                 'widgets-3dtiles-feature-container',
-              urlContainerClassName: 'widgets-3dtiles-url-container'
+              urlContainerClassName: 'widgets-3dtiles-url-container',
             }
           );
           widget.domElement.setAttribute('id', 'widgets-3dtiles');
@@ -82,7 +82,7 @@
           // add on click behavior
           const contextSelection = {
             feature: null,
-            layer: null
+            layer: null,
           };
           frame3DPlanar.domElement.onclick = (event) => {
             if (contextSelection.feature) {
