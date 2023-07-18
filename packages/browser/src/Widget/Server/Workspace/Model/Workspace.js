@@ -1,6 +1,5 @@
 import { getUriLocalname } from '../../SPARQL/Model/URI';
 import { SparqlQueryWindow } from '../../SPARQL/View/SparqlQueryWindow';
-import { LayerManager } from '../../../../Itowns/LayerManager/LayerManager';
 import { Graph } from '../../SPARQL/Model/Graph';
 
 export class Workspace extends Graph {
@@ -23,7 +22,7 @@ export class Workspace extends Graph {
    * Given the index of a node (of type Version), return the node of the first Scenario links to it using Scenario.versionMember.
    *
    * @param {number} d the index of the Version node
-   * @returns {object|undefined} return the object that represents the datum of a Scenario
+   * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionScenarioByIndex(d) {
     const uri = this.getNodeByIndex(d).id;
@@ -34,7 +33,7 @@ export class Workspace extends Graph {
    * Given the index of a node (of type VersionTransition), return the node of the first Scenario links to it using Scenario.versionTransitionMember.
    *
    * @param {number} d the index of the Version node
-   * @returns {object|undefined} return the object that represents the datum of a Scenario
+   * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionTransitionScenarioByIndex(d) {
     const uri = this.getNodeByIndex(d).id;
@@ -46,7 +45,7 @@ export class Workspace extends Graph {
    * The uri should belong to a node of type Version.
    *
    * @param {string} uri the URI of the Version node
-   * @returns {object|undefined} return the object that represents the datum of a Scenario
+   * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionScenarioByUri(uri) {
     const memberLink = this.links.find((element) => {
@@ -59,7 +58,7 @@ export class Workspace extends Graph {
       return this.getNodeByUri(memberLink.source);
     }
     console.warn(`No Scenario found for version with uri: ${uri}`);
-    return undefined;
+    return null;
   }
 
   /**
@@ -67,7 +66,7 @@ export class Workspace extends Graph {
    * The uri should belong to a node of type VersionTransition.
    *
    * @param {string} uri the URI of the Version node
-   * @returns {object|undefined} return the object that represents the datum of a Scenario
+   * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionTransitionScenarioByUri(uri) {
     const memberLink = this.links.find((element) => {
@@ -80,7 +79,7 @@ export class Workspace extends Graph {
       return this.getNodeByUri(memberLink.source);
     }
     console.warn(`No Scenario found for versionTransition with uri: ${uri}`);
-    return undefined;
+    return null;
   }
 
   /**
@@ -89,35 +88,46 @@ export class Workspace extends Graph {
    * the layer.name of the Scenario's localname.
    *
    * @param {number} d the index of the Version or VersionTransition node
-   * @param {LayerManager} layerManager the layerManager
-   * @returns {C3DTilesLayer|undefined} return the a matching geometryLayer
+   * @param itownsView
+   * @returns {C3DTilesLayer|null} return the a matching geometryLayer
    */
-  getScenarioLayerByIndex(d, layerManager) {
+  getScenarioLayerByIndex(d, itownsView) {
     const node = this.getNodeByIndex(d);
-    let scenarioLayer = undefined;
+    let scenarioLayer = null;
     switch (
       getUriLocalname(node.type) // behavior changes based on the node type
     ) {
       case 'Version': {
-        const versionScenarioName = getUriLocalname(
-          this.getVersionScenarioByIndex(d).id
-        );
-        scenarioLayer = layerManager
-          .getGeometryLayersWithoutPlanar()
-          .find((layer) => {
-            return layer.name == versionScenarioName;
-          });
+        const versionScenarioByIndex = this.getVersionScenarioByIndex(d);
+
+        if (versionScenarioByIndex) {
+          const scenarioName = getUriLocalname(versionScenarioByIndex.id);
+          scenarioLayer = itownsView
+            .getLayers()
+            .filter((el) => el.isC3DTilesLayer)
+            .find((layer) => {
+              return layer.name == scenarioName;
+            });
+        }
+
         break;
       }
       case 'VersionTransition': {
-        const transitionScenarioName = getUriLocalname(
-          this.getVersionTransitionScenarioByIndex(d).id
-        );
-        scenarioLayer = layerManager
-          .getGeometryLayersWithoutPlanar()
-          .find((layer) => {
-            return layer.name == transitionScenarioName;
-          });
+        const versionTransitionScenarioByIndex =
+          this.getVersionTransitionScenarioByIndex(d);
+
+        if (versionTransitionScenarioByIndex) {
+          const transitionScenarioName = getUriLocalname(
+            versionTransitionScenarioByIndex.id
+          );
+          scenarioLayer = itownsView
+            .getLayers()
+            .filter((el) => el.isC3DTilesLayer)
+            .find((layer) => {
+              return layer.name == transitionScenarioName;
+            });
+        }
+
         break;
       }
       default:
@@ -126,7 +136,7 @@ export class Workspace extends Graph {
             node.id
           )}; Unknown node type: ${getUriLocalname(node.type)}`
         );
-        return undefined;
+        return null;
     }
     return scenarioLayer;
   }
@@ -137,12 +147,12 @@ export class Workspace extends Graph {
    * the layer.name of the Scenario's localname.
    *
    * @param {string} uri the uri of the Version or VersionTransition node
-   * @param {LayerManager} layerManager the layerManager
-   * @returns {C3DTilesLayer|undefined} return the a matching geometryLayer
+   * @param {itowns.PlanarView} itownsView - itowns view
+   * @returns {C3DTilesLayer|null} return the a matching geometryLayer
    */
-  getScenarioLayerByUri(uri, layerManager) {
+  getScenarioLayerByUri(uri, itownsView) {
     const node = this.getNodeByUri(uri);
-    let scenarioLayer = undefined;
+    let scenarioLayer = null;
     switch (
       getUriLocalname(node.type) // behavior changes based on the node type
     ) {
@@ -150,8 +160,9 @@ export class Workspace extends Graph {
         const versionScenarioName = getUriLocalname(
           this.getVersionScenarioByUri(uri).id
         );
-        scenarioLayer = layerManager
-          .getGeometryLayersWithoutPlanar()
+        scenarioLayer = itownsView
+          .getLayers()
+          .filter((el) => el.isC3DTilesLayer)
           .find((layer) => {
             return layer.name == versionScenarioName;
           });
@@ -161,8 +172,9 @@ export class Workspace extends Graph {
         const transitionScenarioName = getUriLocalname(
           this.getVersionTransitionScenarioByUri(uri).id
         );
-        scenarioLayer = layerManager
-          .getGeometryLayersWithoutPlanar()
+        scenarioLayer = itownsView
+          .getLayers()
+          .filter((el) => el.isC3DTilesLayer)
           .find((layer) => {
             return layer.name == transitionScenarioName;
           });
@@ -174,7 +186,7 @@ export class Workspace extends Graph {
             node.id
           )}; Unknown node type: ${getUriLocalname(node.type)}`
         );
-        return undefined;
+        return null;
     }
     return scenarioLayer;
   }
@@ -185,7 +197,7 @@ export class Workspace extends Graph {
    * AbstractFeatureWithLifespan.validTo) and return them as an object of Dates
    *
    * @param {number} d the index of the node
-   * @returns {{validFrom:Date,validTo:Date}|undefined} return the object that represents the datum of a node
+   * @returns {{validFrom:Date,validTo:Date}|null} return the object that represents the datum of a node
    */
   getBitemporalTimestampsByIndex(d) {
     const links = this.getLinksByIndex(d);
@@ -204,7 +216,7 @@ export class Workspace extends Graph {
       console.warn(
         `could not find bitemporal timestamps for ${this.getNodeByIndex(d).id}`
       );
-      return;
+      return null;
     }
     const timestamp1 = new Date(String(validFrom.target)).getFullYear();
     const timestamp2 = new Date(String(validTo.target)).getFullYear();
