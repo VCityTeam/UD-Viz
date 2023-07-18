@@ -11,7 +11,6 @@ import * as itowns from 'itowns';
 import * as THREE from 'three';
 
 import './SparqlQueryWindow.css';
-import { Workspace } from '../Model/Workspace';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
@@ -79,7 +78,7 @@ export class SparqlQueryWindow extends EventSender {
     this.queries = configSparqlWidget['queries'];
 
     /**
-     * Gml_id linked to the cityObject
+     * Gml_id linked to the feature
      *
      * @type {string}
      */
@@ -143,7 +142,7 @@ export class SparqlQueryWindow extends EventSender {
         )
     );
 
-    const fetchC3DTileFeatureWithNodeText = (node_text) => {
+    const fetchC3DTileFeatureWithNodeText = (gmlId) => {
       let result = null;
       this.itownsView
         .getLayers()
@@ -156,10 +155,7 @@ export class SparqlQueryWindow extends EventSender {
           ] of c3DTilesLayer.tilesC3DTileFeatures) {
             // eslint-disable-next-line no-unused-vars
             for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
-              if (
-                c3DTileFeature.getInfo().batchTable['gml_id'] ==
-                URI.tokenizeURI(node_text).id
-              ) {
+              if (c3DTileFeature.getInfo().batchTable['gml_id'] == gmlId) {
                 result = {
                   feature: c3DTileFeature,
                   layer: c3DTilesLayer,
@@ -173,9 +169,47 @@ export class SparqlQueryWindow extends EventSender {
       return result;
     };
 
-    this.addEventListener(Graph.EVENT_NODE_CLICKED, (node_text) => {
-      const clickedResult = fetchC3DTileFeatureWithNodeText(node_text);
+    this.addEventListener(D3GraphCanvas.EVENT_NODE_CLICKED, (index) => {
+      const nodeData = this.d3Graph.data.getNodeByIndex(index);
 
+      console.debug('node clicked: ', nodeData);
+
+      if (URI.getUriLocalname(nodeData.type) == 'Building') {
+        const clickedResult = fetchC3DTileFeatureWithNodeText(
+          URI.getUriLocalname(nodeData.id)
+        );
+        if (!clickedResult) return;
+
+        focusCameraOn(
+          this.itownsView,
+          this.itownsView.controls,
+          clickedResult.layer
+            .computeWorldBox3(clickedResult.feature)
+            .getCenter(new THREE.Vector3()),
+          {
+            verticalDistance: 200,
+            horizontalDistance: 200,
+          }
+        );
+      }
+    });
+
+    // TODO
+
+    // this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
+    //   console.warn('DEPRECATED cant apply style to ', node_text);
+    // if this imply some style it should be handle in template or layer should be able to have != styles ?
+    // });
+
+    // this.addEventListener(
+    //   Graph.EVENT_NODE_MOUSEOUT,
+    //   () => console.warn('DEPRECATED') // same reason as above
+    // );
+
+    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
+      const clickedResult = fetchC3DTileFeatureWithNodeText(
+        URI.getUriLocalname(cell_text)
+      );
       if (!clickedResult) return;
 
       focusCameraOn(
@@ -190,23 +224,6 @@ export class SparqlQueryWindow extends EventSender {
         }
       );
     });
-
-    // this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
-    //   console.warn('DEPRECATED cant apply style to ', node_text);
-    // if this imply some style it should be handle in template or layer should be able to have != styles ?
-    // });
-
-    // this.addEventListener(
-    //   Graph.EVENT_NODE_MOUSEOUT,
-    //   () => console.warn('DEPRECATED') // same reason as above
-    // );
-
-    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) =>
-      this.cityObjectProvider.selectCityObjectByBatchTable(
-        'gml_id',
-        getUriLocalname(cell_text)
-      )
-    );
   }
 
   /**
@@ -305,30 +322,6 @@ export class SparqlQueryWindow extends EventSender {
       option.innerHTML = v;
       this.resultSelect.appendChild(option);
     });
-  }
-
-  /**
-   * Zoom the camera on a city object by its gml_id in a batch table
-   *
-   * @param {string} id an identifier of a city object that exists in a batch table
-   */
-  zoomOnCityObject(id) {
-    this.cityObjectProvider.selectCityObjectByBatchTable('gml_id', id);
-    const cityObject = this.layerManager.pickCityObjectByBatchTable(
-      'gml_id',
-      id
-    );
-    if (cityObject) {
-      focusCameraOn(
-        this.layerManager.view,
-        this.layerManager.view.controls,
-        cityObject.centroid,
-        {
-          verticalDistance: 200,
-          horizontalDistance: 200,
-        }
-      );
-    }
   }
 
   /**
@@ -452,7 +445,7 @@ WHERE {
   }
 
   get resetButton() {
-    return document.getElementById(this.resetButtonId);
+    return findChildByID(this.domElement, this.resetButtonId);
   }
 
   get queryTextAreaId() {
