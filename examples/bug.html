@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BUG Pointcloud example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <style>
+      .loading {
+        position: absolute;
+        margin: 20px;
+        top: 0%;
+        right: 0%;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        animation: rotate 3.5s linear infinite;
+        border: 6px solid;
+        border-style: dotted;
+        border-color: rgb(219, 6, 6);
+        z-index: 10;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script type="text/javascript">
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles_point_cloud.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json'
+        ])
+        .then((configs) => {
+          udvizBrowser.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // wrapper of the itowns.PlanarView
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][3]
+          );
+
+          // add a color layer
+          udvizBrowser.addBaseMapLayer(
+            configs['base_maps'][0],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          // add an elevation layer
+          udvizBrowser.addElevationLayer(
+            configs['elevation'],
+            frame3DPlanar.itownsView,
+            extent
+          );
+
+          // c3DTiles loading element
+          const c3DTilesLoadingDomElement = document.createElement('div');
+          c3DTilesLoadingDomElement.classList.add('loading');
+          frame3DPlanar.domElementUI.appendChild(c3DTilesLoadingDomElement);
+          c3DTilesLoadingDomElement.hidden = true;
+
+          /** @type {Map<string, udvizBrowser.THREE.Mesh>} */
+          const currentLoadingBox = new Map();
+
+          const loadingBoxId = (layer, tileId) => layer.id + tileId;
+
+          configs['3DTiles_point_cloud'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udvizBrowser.itowns.C3DTilesLayer(
+              layerConfig['id'],
+              {
+                name: layerConfig['id'],
+                source: new udvizBrowser.itowns.C3DTilesSource({
+                  url: layerConfig['url']
+                })
+              },
+              frame3DPlanar.itownsView
+            );
+            c3DTilesLayer.material = new udvizBrowser.THREE.PointsMaterial({
+              vertexColors: true,
+              size: 10
+            });
+            udvizBrowser.itowns.View.prototype.addLayer.call(
+              frame3DPlanar.itownsView,
+              c3DTilesLayer
+            );
+
+            c3DTilesLayer.addEventListener(
+              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_REQUESTED,
+              ({ metadata }) => {
+                if (metadata.tileId == undefined) throw new Error('no tile id');
+
+                const worldBox3 = metadata.boundingVolume.box.clone();
+
+                if (metadata.transform) {
+                  worldBox3.applyMatrix4(metadata.transform);
+                } else if (metadata._worldFromLocalTransform) {
+                  worldBox3.applyMatrix4(metadata._worldFromLocalTransform);
+                }
+                const box3Object = new udvizBrowser.THREE.Mesh(
+                  new udvizBrowser.THREE.BoxGeometry(),
+                  new udvizBrowser.THREE.MeshBasicMaterial({
+                    wireframe: true,
+                    wireframeLinewidth: 2,
+                    color: new udvizBrowser.THREE.Color(
+                      Math.random(),
+                      Math.random(),
+                      Math.random()
+                    )
+                  })
+                );
+                box3Object.scale.copy(worldBox3.max.clone().sub(worldBox3.min));
+                worldBox3.getCenter(box3Object.position);
+                box3Object.updateMatrixWorld();
+                frame3DPlanar.scene.add(box3Object);
+                frame3DPlanar.itownsView.notifyChange();
+
+                // bufferize
+                currentLoadingBox.set(
+                  loadingBoxId(c3DTilesLayer, metadata.tileId),
+                  box3Object
+                );
+                c3DTilesLoadingDomElement.hidden = false;
+              }
+            );
+
+            c3DTilesLayer.addEventListener(
+              udvizBrowser.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+              ({ tileContent }) => {
+                if (
+                  currentLoadingBox.has(
+                    loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                  )
+                ) {
+                  frame3DPlanar.scene.remove(
+                    currentLoadingBox.get(
+                      loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                    )
+                  );
+                  currentLoadingBox.delete(
+                    loadingBoxId(c3DTilesLayer, tileContent.tileId)
+                  );
+                  c3DTilesLoadingDomElement.hidden =
+                    currentLoadingBox.size == 0; // nothing more is loaded
+                  frame3DPlanar.itownsView.notifyChange();
+                }
+              }
+            );
+          });
+
+          const povs = [
+            [
+              -0.5408398532432884, -0.8411255870224007, -1.1102230246251564e-16,
+              0, 0.26437085735604254, -0.16998923573399352, 0.9493217102307326,
+              0, -0.7984987807909345, 0.5134310144418571, 0.3143060458925283, 0,
+              1842716.902844625, 5178416.434760627, 1117.1346397986877, 1
+            ],
+            [
+              -0.7256811105208393, 0.6880311953925063, 1.1102230246251564e-16,
+              0, -0.3008507374199521, -0.3173136606217058, 0.8993335724728189,
+              0, 0.6187695529250871, 0.652629385600749, 0.43726322212515895, 0,
+              1846319.5193464637, 5176720.115485685, 499.72188289888004, 1
+            ],
+            [
+              -0.5408398532432884, -0.8411255870224006, 0, 0,
+              0.26437085735604254, -0.16998923573399333, 0.9493217102307326, 0,
+              -0.7984987807909345, 0.513431014441857, 0.3143060458925283, 0,
+              1845490.9508785084, 5176284.35656217, 228.54906234643568, 1
+            ]
+          ];
+
+          let currentIndex = 0;
+
+          const currentIndexDomElement = document.createElement('div');
+          currentIndexDomElement.style.zIndex = 2;
+          currentIndexDomElement.style.position = 'absolute';
+          currentIndexDomElement.style.left = '0px';
+          currentIndexDomElement.style.top = '0px';
+          frame3DPlanar.domElementUI.appendChild(currentIndexDomElement);
+
+          const updatePOV = () => {
+            console.log(currentIndex);
+            currentIndexDomElement.innerText = currentIndex;
+
+            const matrix = new udvizBrowser.THREE.Matrix4().fromArray(
+              povs[currentIndex]
+            );
+
+            matrix.decompose(
+              frame3DPlanar.camera.position,
+              frame3DPlanar.camera.quaternion,
+              frame3DPlanar.camera.scale
+            );
+
+            frame3DPlanar.itownsView.notifyChange(frame3DPlanar.camera);
+          };
+
+          window.addEventListener('keyup', (event) => {
+            if (event.key == 'n') {
+              currentIndex = (currentIndex + 1) % povs.length;
+              updatePOV();
+            }
+          });
+          updatePOV();
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>
