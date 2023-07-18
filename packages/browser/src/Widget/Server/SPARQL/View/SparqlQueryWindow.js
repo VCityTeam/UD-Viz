@@ -10,8 +10,6 @@ import { findChildByID } from '../../../../HTMLUtil';
 import * as itowns from 'itowns';
 import * as THREE from 'three';
 
-import './SparqlQueryWindow.css';
-
 /**
  * The SPARQL query window class which provides the user interface for querying
  * a SPARQL endpoint and displaying the endpoint response.

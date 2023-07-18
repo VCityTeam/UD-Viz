@@ -14,5 +14,7 @@ export { SparqlQueryWindow } from './SPARQL/View/SparqlQueryWindow';
 
 export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
+export { SparqlWorkspaceQueryWindow } from './Workspace/View/SparqlWorkspaceQueryWindow';
+
 import * as Document from './Document/Document';
 export { Document };
