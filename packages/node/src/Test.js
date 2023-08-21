@@ -202,7 +202,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
               })
               .on('response', (response) => {
                 const log = `${response.status()} ${response.url()}`;
-                if (response.status() == 404) {
+                if (response.status() >= 400 && response.status() < 500) {
                   throw new Error(log);
                 } else {
                   console.log(log);
