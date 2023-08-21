@@ -24,7 +24,7 @@
     "name": "BDCARTO_BDD_WLD_WGS84G:zone_habitat_mairie",
     "format": "application/json",
     "zoom": {
-      "min": 2
+      "min": 0
     },
     "style": {
       "text": {
