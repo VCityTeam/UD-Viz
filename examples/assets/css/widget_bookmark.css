@@ -1,0 +1,16 @@
+.widget_bookmark {
+  z-index: 2;
+  position: absolute;
+  margin: 10px;
+  background-color: #313336bb;
+  color: white;
+  padding: 5px;
+}
+
+.widget_bookmark * {
+  padding: 2px;
+}
+
+.widget_bookmark button {
+  cursor: pointer;
+}

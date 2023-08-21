@@ -10,10 +10,7 @@ const ShowRoom = class {
       frame3DPlanarOptions
     );
 
-    if (!udvizBrowser.URLSetCameraMatrix(this.frame3DPlanar.camera)) {
-      // local storage tracking
-      udvizBrowser.localStorageSetCameraMatrix(this.frame3DPlanar.camera);
-    }
+    udvizBrowser.URLSetCameraMatrix(this.frame3DPlanar.camera);
 
     /** @type {udvizBrowser.itowns.Style} */
     this.c3DTilesStyle = new udvizBrowser.itowns.Style({
@@ -123,6 +120,9 @@ const ShowRoom = class {
 
     /** @type {udvizBrowser.Widget.C3DTiles|null} */
     this.widgetC3DTiles = null;
+
+    /** @type {udvizBrowser.Widget.Bookmark|null} */
+    this.widgetBookmark = null;
 
     // INTIALIZE
     this.initUI(version);
@@ -862,6 +862,19 @@ const ShowRoom = class {
     this.widgetC3DTiles.domElement.remove();
 
     this.addCustomHtml(pathIcon, this.widgetC3DTiles.domElement, '3DTiles');
+  }
+
+  addWidgetBookmark(pathIcon) {
+    this.widgetBookmark = new udvizBrowser.Widget.Bookmark(
+      this.frame3DPlanar.itownsView,
+      {
+        parentElement: this.frame3DPlanar.domElementUI, // some hack see => https://github.com/iTowns/itowns/discussions/2098
+      }
+    );
+
+    this.widgetBookmark.domElement.remove();
+
+    this.addCustomHtml(pathIcon, this.widgetBookmark.domElement, 'Bookmark');
   }
 };
 
