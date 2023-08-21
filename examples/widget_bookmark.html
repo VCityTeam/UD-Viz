@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget bookmark example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/widget_bookmark.css" />
+  </head>
+  <body>
+    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+
+    <script type="text/javascript">
+      udvizBrowser
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/base_maps.json'
+        ])
+        .then((configs) => {
+          udvizBrowser.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udvizBrowser.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
+            extent,
+            configs['frame3D_planars'][2]
+          );
+
+          // /// ADD LAYERS
+
+          frame3DPlanar.itownsView.addLayer(
+            new udvizBrowser.itowns.ColorLayer(
+              configs['base_maps'][0]['layer_name'],
+              {
+                updateStrategy: {
+                  type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
+                  options: {}
+                },
+                source: new udvizBrowser.itowns.WMSSource({
+                  extent: extent,
+                  name: configs['base_maps'][0]['name'],
+                  url: configs['base_maps'][0]['url'],
+                  version: configs['base_maps'][0]['version'],
+                  crs: extent.crs,
+                  format: configs['base_maps'][0]['format']
+                }),
+                transparent: true
+              }
+            )
+          );
+
+          const widget = new udvizBrowser.Widget.Bookmark(
+            frame3DPlanar.itownsView,
+            { parentElement: frame3DPlanar.domElementUI }
+          );
+          widget.domElement.classList.add('widget_bookmark');
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>
