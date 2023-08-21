@@ -86,9 +86,12 @@ export class GuidedTour extends EventSender {
    * Get all available guided tour from the database
    */
   startGuidedTourMode() {
-    this.guidedTourController.getGuidedTours().then(() => {
-      this.previewTour();
-    });
+    this.guidedTourController
+      .getGuidedTours()
+      .then(() => {
+        this.previewTour();
+      })
+      .catch((error) => console.log(error));
   }
 
   /**

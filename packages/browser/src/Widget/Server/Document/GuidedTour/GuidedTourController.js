@@ -60,12 +60,19 @@ export class GuidedTourController {
   /**
    * Get all guided tour from a database
    */
-  async getGuidedTours() {
-    const req = await this.requestService.request('GET', this.url, {
-      authenticate: false,
+  getGuidedTours() {
+    return new Promise((resolve, reject) => {
+      const req = this.requestService
+        .request('GET', this.url, {
+          authenticate: false,
+        })
+        .then(() => {
+          this.guidedTours = JSON.parse(req.responseText);
+          if (!this.guidedTours.length) reject('NO GUIDED TOUR ON SERVER');
+          resolve();
+        })
+        .catch(reject);
     });
-    this.guidedTours = JSON.parse(req.responseText);
-    if (!this.guidedTours.length) console.warn('NO GUIDED TOUR ON SERVER');
   }
 
   /**

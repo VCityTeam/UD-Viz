@@ -79,7 +79,7 @@ class EventSender {
    * @param {string} event The event to fire. Must be first registered.
    * @param {*} data The optional data to pass as parameter.
    */
-  async sendEvent(event, data = null) {
+  sendEvent(event, data = null) {
     const listeners = this.eventListeners[event];
     if (listeners) {
       for (const action of listeners) {
