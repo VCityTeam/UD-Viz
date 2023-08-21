@@ -65,7 +65,12 @@ export class DocumentProvider extends EventSender {
    */
   async refreshDocumentList() {
     const previousDocument = this.getDisplayedDocument();
-    this.allDocuments = await this.service.fetchDocuments();
+    this.allDocuments = await this.service
+      .fetchDocuments()
+      .catch((error) => console.log(error));
+
+    if (!this.allDocuments) return;
+
     this.filteredDocuments = this.allDocuments.slice();
 
     for (const filter of this.filters) {
@@ -85,11 +90,11 @@ export class DocumentProvider extends EventSender {
     } else {
       this.displayedDocumentIndex = undefined;
     }
-    await this.sendEvent(
+    this.sendEvent(
       DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
       this.getFilteredDocuments()
     );
-    await this.sendEvent(
+    this.sendEvent(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       this.getDisplayedDocument()
     );
