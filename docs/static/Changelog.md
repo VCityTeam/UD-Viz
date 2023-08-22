@@ -1,68 +1,119 @@
+# v3.1.1
+
+## @ud-viz
+
+    - Examples:
+        - 2D Visualisation Mode
+        - SidebarWidget renamed as Showroom and moved in Examples
+        - 3DTiles loading feedback
+        - Bookmark widget
+        - Change GrandLyon basemaps and elevation
+        - Remove unused 'color' attribute from 3DTiles config
+        - Projections are now defined in a config file
+        - New C3DTilesEditor example
+    - Doc
+        - Camera
+        - Fix links
+        - Add Contributing.md
+        - Update Contributors.md
+        - Add Architecture.md
+        - Packages description
+        - Use Showdown package to add mermaid in online doc
+    - CI
+        - Throw only the client errors
+
+## @ud-viz/shared
+
+    - NativeCommandManager: possibility to customize speed
+    - Context: add IS_SCRIPTBASE static in ScriptBase class
+
+## @ud-viz/node
+
+    - JS Script to generate mermaid diagrams in markdown from JS projects
+
+## @ud-viz/browser
+
+    - update to iTowns 2.39.1-next.25
+    - Remove addLayer methods (now in examples)
+    - Frame3D: change default maxSubdivisionLevel from 3 to 5
+    - Frame3D: remove 'size" attribute
+    - Fix AudioController: spatialized sounds decompose feature
+    - LocalStorage: vector3 tracking
+    - Context: add IS_SCRIPTBASE static in ScriptBase class
+    - Remove JQuery
+    - Use domElement instead of rootHtml
+    - `URLUtil`
+    - Game: commands are applied at step
+    - FileUtil is no longer exposed in the API
+
 # v3.1.0
 
 ## @ud-viz:
- - Docs:
-    - Mermaid is interpreted on jsdoc generation 
-    - Simple game tutorial
-    - Camera intialization tutorial 
-    - How to import bundle 
- - CI:
-    - validate docs generation
-    - validate .md links (remark-cli + remark-validate-links)
- - Examples:
-    - `ShowRoom`:  url can encoded camera pov + loading screen
-    - 3DTiles wireframe 
-    - 3DTiles pointCloud 
-    - FitExtent 
-    - PlanarControls widget
-    - 3DTiles widget
-    - MultiPlayer note game
-    - 3DTiles style
-    - Authentication
-    - Guided tour
-    - Window
- - Architecture:
-    - dev worflow improve with auto-reload (reload)  
-    - dynamic html (string-replace-middleware)  
-    - test folder created
-    - examples are no more in @ud-viz/browser
-    - docs folder is currently cleaned (still in progression)
-    - some clean
+
+- Docs:
+  - Mermaid is interpreted on jsdoc generation
+  - Simple game tutorial
+  - Camera intialization tutorial
+  - How to import bundle
+- CI:
+  - validate docs generation
+  - validate .md links (remark-cli + remark-validate-links)
+- Examples:
+  - `ShowRoom`: url can encoded camera pov + loading screen
+  - 3DTiles wireframe
+  - 3DTiles pointCloud
+  - FitExtent
+  - PlanarControls widget
+  - 3DTiles widget
+  - MultiPlayer note game
+  - 3DTiles style
+  - Authentication
+  - Guided tour
+  - Window
+- Architecture:
+  - dev worflow improve with auto-reload (reload)
+  - dynamic html (string-replace-middleware)
+  - test folder created
+  - examples are no more in @ud-viz/browser
+  - docs folder is currently cleaned (still in progression)
+  - some clean
 
 ## @ud-viz/shared
- - Add Game script template
+
+- Add Game script template
 
 ## @ud-viz/node:
- - Add Game script template
- - Game `SocketService` (socket.io)
+
+- Add Game script template
+- Game `SocketService` (socket.io)
 
 ## @ud-viz/browser:
- - Widget `3DTiles`
- - Widget `PlanarControls`
- - `LocalStorageUtil`
- - `InputManager` can be no insensitive
- - Add Game external script template
- - Game `MultiPlanarProcess` created (socket.io-client)
- - Bug fixes
- - `SlideShow`:
-   - sound on video
-   - bug fixes
- - `Window`:
-   - reduce button
-   - removed from `AllWidget` and is no more used (no removed yet)
- - `AllWidget` => `ShowRoom` and is now an example
- - SPARQL Module new features
- - Update to itowns 2.39.1-next.18:
- - Remove Itowns folder :
-   - `TilesManager`
-   - `LayerManager`
-   - `CityObject`
-   - `CityObjectStyle`
-   - `StyleManager`
-   - `Tiles`
- - Remove `LinkDocument` 
- - Remove `3DTilesDebugWindow`
-  
+
+- Widget `3DTiles`
+- Widget `PlanarControls`
+- `LocalStorageUtil`
+- `InputManager` can be no insensitive
+- Add Game external script template
+- Game `MultiPlanarProcess` created (socket.io-client)
+- Bug fixes
+- `SlideShow`:
+  - sound on video
+  - bug fixes
+- `Window`:
+  - reduce button
+  - removed from `AllWidget` and is no more used (no removed yet)
+- `AllWidget` => `ShowRoom` and is now an example
+- SPARQL Module new features
+- Update to itowns 2.39.1-next.18:
+- Remove Itowns folder :
+  - `TilesManager`
+  - `LayerManager`
+  - `CityObject`
+  - `CityObjectStyle`
+  - `StyleManager`
+  - `Tiles`
+- Remove `LinkDocument`
+- Remove `3DTilesDebugWindow`
 
 # v3.0.0
 
