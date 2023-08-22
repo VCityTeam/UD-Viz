@@ -1,0 +1,100 @@
+# Common prefixes
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:    <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX list:   <https://w3id.org/list#>
+PREFIX skos:   <http://www.w3.org/2004/02/skos/core#>
+PREFIX gml:    <http://www.opengis.net/gml#>
+PREFIX gmlowl: <http://www.opengis.net/ont/gml#>
+PREFIX units:  <http://www.opengis.net/def/uom/OGC/1.0/>
+PREFIX geo:    <http://www.opengis.net/ont/geosparql#>
+PREFIX geof:   <http://www.opengis.net/def/function/geosparql/>
+PREFIX strdf:  <http://strdf.di.uoa.gr/ontology#>
+PREFIX xlink:  <http://www.w3.org/1999/xlink#>
+
+# CityGML 2.0 prefixes
+PREFIX core2: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/core#>
+PREFIX bldg2: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/building#>
+
+# CityGML 3.0 prefixes
+PREFIX core3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/core#>
+PREFIX con3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/construction#>
+PREFIX bldg3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#>
+
+# Workspace prefixes
+PREFIX vers: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
+PREFIX wksp: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/workspace#>
+PREFIX type: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/transactiontypes#>
+
+# Dataset prefixes
+PREFIX ws:   <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_2018_Workspace#>
+PREFIX v2009: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_split#>
+PREFIX v2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_alt_split#>
+PREFIX v2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_split#>
+PREFIX v2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_alt_split#>
+PREFIX v2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2015_split#>
+PREFIX v2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2018_split#>
+PREFIX vt2009_2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2012#>
+PREFIX vt2009_2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2009b#>
+PREFIX vt2009b_2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009b_2012b#>
+PREFIX vt2012b_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012b_2015#>
+PREFIX vt2012_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012_2015#>
+PREFIX vt2015_2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2015_2018#>
+
+
+# return a workspace graph (spaces, scenarios, versionTransitions, and versions) and their immediate properties
+
+SELECT DISTINCT ?subject ?subjectType ?predicate ?object ?objectType
+WHERE {
+  {
+    ?subject a wksp:Workspace ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  } UNION {
+    ?subject a wksp:ConcensusSpace ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  } UNION {
+    ?subject a wksp:PropositionSpace ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  } UNION {
+    ?subject a wksp:Scenario ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  } UNION {
+    ?subject a vers:Version ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  } UNION {
+    ?subject a vers:VersionTransition ;
+      ?predicate ?object .
+    ?subject a ?subjectType .
+    OPTIONAL {
+      ?object a ?objectType .
+    }
+  }
+  FILTER(?predicate != rdf:type)
+  FILTER(?predicate != vers:Version.versionMember)
+  FILTER(?predicate != vers:VersionTransition.transaction)
+  FILTER(?subject != owl:NamedIndividual)
+  FILTER(?object != owl:NamedIndividual)
+  FILTER(?subjectType != owl:NamedIndividual)
+  FILTER(?objectType != owl:NamedIndividual)
+}

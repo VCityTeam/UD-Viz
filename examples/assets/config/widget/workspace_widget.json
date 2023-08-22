@@ -11,6 +11,13 @@
       "filepath": "./assets/queries/versions.rq"
     },
     {
+      "title": "Select the workspace without transactions or buildings",
+      "formats": {
+        "graph": "Graph"
+      },
+      "filepath": "./assets/queries/workspace.rq"
+    },
+    {
       "title": "Select the transition between 2012 and 2015",
       "formats": {
         "graph": "Graph"
