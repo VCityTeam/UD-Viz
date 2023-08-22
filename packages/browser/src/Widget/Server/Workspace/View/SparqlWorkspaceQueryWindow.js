@@ -50,19 +50,26 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
 
         // if a layer is found, make sure it is visible and hide all other layers
         if (scenarioLayer) {
-          this.layerManager.changeVisibility(false);
-          scenarioLayer.visible = true;
-          this.layerManager.notifyChange();
+          itownsView
+            .getLayers()
+            .filter((el) => el.isC3DTilesLayer)
+            .forEach((layer) => (layer.visible = layer == scenarioLayer));
 
-          // Calculate the average timestamp of the clicked node
-          const timestamps =
-            this.d3Graph.data.getBitemporalTimestampsByIndex(index);
-          const timestampAverage =
-            (timestamps.validTo - timestamps.validFrom) / 2 +
-            timestamps.validFrom;
-          console.debug(`timestamp average: ${timestampAverage}`);
-          scenarioLayer.currentTime = parseInt(timestampAverage);
-          scenarioLayer.changeVisibleTilesStates();
+          itownsView.notifyChange();
+
+          // this.layerManager.changeVisibility(false);
+          // scenarioLayer.visible = true;
+          // this.layerManager.notifyChange();
+
+          // // Calculate the average timestamp of the clicked node
+          // const timestamps =
+          //   this.d3Graph.data.getBitemporalTimestampsByIndex(index);
+          // const timestampAverage =
+          //   (timestamps.validTo - timestamps.validFrom) / 2 +
+          //   timestamps.validFrom;
+          // console.debug(`timestamp average: ${timestampAverage}`);
+          // scenarioLayer.currentTime = parseInt(timestampAverage);
+          // scenarioLayer.changeVisibleTilesStates();
         }
       }
     });

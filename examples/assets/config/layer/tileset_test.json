@@ -1,0 +1,14 @@
+[
+  {
+    "id": "scenario_2",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/la-doua_2009-2018-temporal_tileset/tileset.json",
+    "color": "0xFFFFFF",
+    "extensions": ["3DTILES_temporal"]
+  },
+  {
+    "id": "scenario_1",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/la-doua_2009-2018-temporal_tileset/tileset.json",
+    "color": "0xFFFFFF",
+    "extensions": ["3DTILES_temporal"]
+  }
+]
