@@ -23,15 +23,17 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/browser",
   "dependencies": {
     "@ud-viz/shared": "3.1.1",
-    "d3": "^7.0.1",
-    "fetch-sparql-endpoint": "^2.3.1",
-    "howler": "^2.2.3",
-    "itowns": "^2.39.1-next.25",
-    "socket.io-client": "^4.0.0",
-    "vis-network": "^9.0.3"
+    "d3": "7.0.1",
+    "fetch-sparql-endpoint": "2.3.1",
+    "howler": "2.2.3",
+    "itowns": "2.39.1-next.25",
+    "socket.io": "4.7.2",
+    "socket.io-client": "^4.7.2",
+    "vis-network": "9.0.3",
+    "webpack": "5.88.2"
   },
   "peerDependencies": {
-    "proj4": "^2.8.0"
+    "proj4": "2.8.0"
   },
   "dependencyComments": {
     "d3": "required by the SPARQL Module"

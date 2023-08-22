@@ -1,7 +1,8 @@
 # v3.1.1
 
 ## @ud-viz
-
+    - NPM :
+        - Remove `^` in all package.json
     - Examples:
         - 2D Visualisation Mode
         - SidebarWidget renamed as Showroom and moved in Examples
