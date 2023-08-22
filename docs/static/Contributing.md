@@ -27,7 +27,7 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 - Make sure your code is mature for a review.
 - `git rebase origin/master`, in order to resolve merge conflicts to master. Doc : [git-rebase](https://git-scm.com/docs/git-rebase). If you are not able to resolve all of the conflicts of your rebase, please open a new [discussion](https://github.com/VCityTeam/UD-Viz/discussions).
 - `npm run assert-code` must finish with no errors.
-- `npm audit` must finish without vulnerabilities higher than _low_.
+- `npm audit` must finish without vulnerabilities lower than _high_.
 - `npm run validate-links` must finish with no errors.
 
 ⚠️ When your PR is open each push on your branch will trigger Travis CI jobs.

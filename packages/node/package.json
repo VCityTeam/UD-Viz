@@ -23,14 +23,15 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/node",
   "dependencies": {
     "@ud-viz/shared": "3.1.1",
-    "child-process-promise": "^2.2.1",
-    "express": "^4.18.2",
-    "gm": "^1.23.1",
-    "pngjs": "^6.0.0",
-    "puppeteer": "^19.4.1",
-    "socket.io": "^4.5.4"
+    "child-process-promise": "2.2.1",
+    "express": "4.18.2",
+    "gm": "1.23.1",
+    "pngjs": "6.0.0",
+    "puppeteer": "19.4.1",
+    "socket.io": "^4.7.2",
+    "webpack": "5.88.2"
   },
   "devDependencies": {
-    "webpack-node-externals": "^2.5.2"
+    "webpack-node-externals": "2.5.2"
   }
 }
