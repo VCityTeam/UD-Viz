@@ -22,6 +22,7 @@
         - Use Showdown package to add mermaid in online doc
     - CI
         - Throw only the client errors
+        - Change Node version to 18 and npm version to 9
 
 ## @ud-viz/shared
 

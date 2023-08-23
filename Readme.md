@@ -55,8 +55,8 @@ For the node/npm installation instructions refer [here](https://github.com/VCity
 
 UD-Viz has been reported to work with versions:
 
-- node version 16.X
-- npm version: 8.X
+- node version 18.X
+- npm version: 9.X
 
 ### Installing the UD-Viz framework per se
 
