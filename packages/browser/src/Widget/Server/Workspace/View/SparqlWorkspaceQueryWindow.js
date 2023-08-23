@@ -4,6 +4,7 @@ import { getUriLocalname } from '../../SPARQL/Model/URI';
 import { SparqlQueryWindow } from '../../SPARQL/View/SparqlQueryWindow';
 import { D3WorkspaceCanvas } from './D3WorkspaceCanvas';
 import * as itowns from 'itowns';
+import { Temporal3DTilesLayerWrapper } from '../../../Temporal/Temporal';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
@@ -33,6 +34,22 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
      */
     this.d3Graph = new D3WorkspaceCanvas(this, configSparqlWidget);
 
+    /** @type {Map<string,Temporal3DTilesLayerWrapper>} */
+    const temporalWrappers = new Map();
+    itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer)
+      .forEach((layer) => {
+        if (
+          layer.registeredExtensions.isExtensionRegistered('3DTILES_temporal')
+        ) {
+          temporalWrappers.set(
+            layer.id,
+            new Temporal3DTilesLayerWrapper(layer)
+          );
+        }
+      });
+
     this.addEventListener(D3GraphCanvas.EVENT_NODE_CLICKED, (index) => {
       const nodeData = this.d3Graph.data.getNodeByIndex(index);
       const nodeType = getUriLocalname(nodeData.type);
@@ -55,21 +72,17 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
             .filter((el) => el.isC3DTilesLayer)
             .forEach((layer) => (layer.visible = layer == scenarioLayer));
 
+          // Calculate the average timestamp of the clicked node
+          const timestamps =
+            this.d3Graph.data.getBitemporalTimestampsByIndex(index);
+          const timestampAverage =
+            (timestamps.validTo - timestamps.validFrom) / 2 +
+            timestamps.validFrom;
+
+          // set style temporal layer with the date
+          temporalWrappers.get(scenarioLayer.id).update(timestampAverage);
+
           itownsView.notifyChange();
-
-          // this.layerManager.changeVisibility(false);
-          // scenarioLayer.visible = true;
-          // this.layerManager.notifyChange();
-
-          // // Calculate the average timestamp of the clicked node
-          // const timestamps =
-          //   this.d3Graph.data.getBitemporalTimestampsByIndex(index);
-          // const timestampAverage =
-          //   (timestamps.validTo - timestamps.validFrom) / 2 +
-          //   timestamps.validFrom;
-          // console.debug(`timestamp average: ${timestampAverage}`);
-          // scenarioLayer.currentTime = parseInt(timestampAverage);
-          // scenarioLayer.changeVisibleTilesStates();
         }
       }
     });
