@@ -28,7 +28,7 @@
     "gm": "1.23.1",
     "pngjs": "6.0.0",
     "puppeteer": "19.4.1",
-    "socket.io": "^4.7.2",
+    "socket.io": "4.7.2",
     "webpack": "5.88.2"
   },
   "devDependencies": {
