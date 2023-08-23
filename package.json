@@ -52,14 +52,14 @@
     "eslint-plugin-prettier": "4.2.1",
     "jsdoc": "4.0.0",
     "jsdoc-tsimport-plugin": "1.0.5",
-    "nodemon": "^2.0.22",
+    "nodemon": "2.0.22",
     "prettier": "2.6.2",
     "reload": "3.2.1",
     "remark-cli": "11.0.0",
     "remark-validate-links": "12.1.0",
     "string-replace-middleware": "1.0.2",
     "style-loader": "3.3.1",
-    "webpack": "^5.88.2",
+    "webpack": "5.88.2",
     "webpack-cli": "4.9.2"
   },
   "dependencies": {
