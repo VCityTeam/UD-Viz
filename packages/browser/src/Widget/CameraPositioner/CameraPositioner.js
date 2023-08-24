@@ -1,6 +1,5 @@
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
-import { findChildByID } from '../../HTMLUtil';
 
 export class CameraPositioner extends THREE.EventDispatcher {
   /**
@@ -11,6 +10,99 @@ export class CameraPositioner extends THREE.EventDispatcher {
   constructor(itownsView) {
     super();
 
+    // start dom creation
+
+    this.domElement = document.createElement('div');
+
+    this.sectionTitle = document.createElement('h3');
+    this.sectionTitle.innerText = 'Coordinates';
+    this.domElement.appendChild(this.sectionTitle);
+
+    this.form = document.createElement('form');
+    this.domElement.appendChild(this.form);
+
+    const createInputAndAddToParent = (labelText, name, parent) => {
+      const label = document.createElement('label');
+      label.innerText = labelText;
+
+      const uuid = THREE.MathUtils.generateUUID();
+
+      label.setAttribute('for', uuid);
+
+      const input = document.createElement('input');
+      input.setAttribute('type', 'text');
+      input.setAttribute('id', uuid);
+      input.setAttribute('name', name);
+
+      parent.appendChild(label);
+      parent.appendChild(input);
+
+      return input;
+    };
+
+    const fieldsetPosition = document.createElement('fieldset');
+    this.form.appendChild(fieldsetPosition);
+
+    const legendPosition = document.createElement('legend');
+    legendPosition.innerText = 'Position';
+    fieldsetPosition.appendChild(legendPosition);
+
+    this.positionXElement = createInputAndAddToParent(
+      'X',
+      'positionX',
+      fieldsetPosition
+    );
+    this.positionYElement = createInputAndAddToParent(
+      'Y',
+      'positionY',
+      fieldsetPosition
+    );
+    this.positionZElement = createInputAndAddToParent(
+      'Z',
+      'positionZ',
+      fieldsetPosition
+    );
+
+    const fieldsetQuaternion = document.createElement('fieldset');
+    this.form.appendChild(fieldsetQuaternion);
+
+    const legendQuaternion = document.createElement('legend');
+    legendQuaternion.innerText = 'Quaternion';
+    fieldsetQuaternion.appendChild(legendQuaternion);
+
+    this.quaternionXElement = createInputAndAddToParent(
+      'X',
+      'quaternionX',
+      fieldsetQuaternion
+    );
+    this.quaternionYElement = createInputAndAddToParent(
+      'Y',
+      'quaternionY',
+      fieldsetQuaternion
+    );
+    this.quaternionZElement = createInputAndAddToParent(
+      'Z',
+      'quaternionZ',
+      fieldsetQuaternion
+    );
+    this.quaternionWElement = createInputAndAddToParent(
+      'W',
+      'quaternionW',
+      fieldsetQuaternion
+    );
+
+    this.buttonValidate = document.createElement('button');
+    this.buttonValidate.setAttribute('type', 'button');
+    this.buttonValidate.innerText = 'Validate';
+    this.form.appendChild(this.buttonValidate);
+
+    this.buttonTravel = document.createElement('input');
+    this.buttonTravel.setAttribute('type', 'submit');
+    this.buttonTravel.setAttribute('value', 'Travel');
+    this.form.appendChild(this.buttonTravel);
+
+    // end dom creation
+
     this.itownsView = itownsView;
 
     // Request update every active frame
@@ -19,51 +111,15 @@ export class CameraPositioner extends THREE.EventDispatcher {
       () => this._updateFieldsFromCamera()
     );
 
-    this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
-
     // callbacks
-    this.formElement.onsubmit = () => {
+    this.form.onsubmit = () => {
       this._travel();
       return false;
     };
 
-    this.buttonValidateElement.onclick = () => {
+    this.buttonValidate.onclick = () => {
       this._validate();
     };
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-      <div class="box-section">
-        <h3 class="section-title">Coordinates</h3>
-        <form id="${this.formId}">
-          <fieldset>
-            <legend>Position</legend>
-            <label for="${this.positionXId}">X</label>
-            <input id="${this.positionXId}" name="positionX" type="text"><br>
-            <label for="${this.positionYId}">Y</label>
-            <input id="${this.positionYId}" name="positionY" type="text"><br>
-            <label for="${this.positionZId}">Z</label>
-            <input id="${this.positionZId}" name="positionZ" type="text"><br>
-          </fieldset>
-          <fieldset>
-            <legend>Quaternion</legend>
-            <label for="${this.quaternionXId}">X</label>
-            <input id="${this.quaternionXId}" name="quaternionX" type="text"><br>
-            <label for="${this.quaternionYId}">Y</label>
-            <input id="${this.quaternionYId}" name="quaternionY" type="text"><br>
-            <label for="${this.quaternionZId}">Z</label>
-            <input id="${this.quaternionZId}" name="quaternionZ" type="text"><br>
-            <label for="${this.quaternionWId}">W</label>
-            <input id="${this.quaternionWId}" name="quaternionW" type="text"><br>
-          </fieldset>
-          <hr>
-          <button id="${this.buttonValidateId}" type="button">Validate</button>
-          <input id="${this.buttonTravelId}" type="submit" value="Travel">
-        </form>
-      </div>
-    `;
   }
 
   // ///////////////////////
@@ -94,7 +150,7 @@ export class CameraPositioner extends THREE.EventDispatcher {
    * @returns {{position: THREE.Vector3, quaternion: THREE.Quaternion}} Returns a position and a rotation
    */
   _getCameraPosition() {
-    const data = new FormData(this.formElement);
+    const data = new FormData(this.form);
     const position = new THREE.Vector3();
     const quaternion = new THREE.Quaternion();
 
@@ -136,89 +192,6 @@ export class CameraPositioner extends THREE.EventDispatcher {
       type: CameraPositioner.EVENT_POSITION_SUBMITTED,
       message: camera,
     });
-  }
-
-  // ///////////
-  // /// GETTERS
-
-  get buttonValidateId() {
-    return `camera_positioner_button_validate`;
-  }
-
-  get buttonValidateElement() {
-    return findChildByID(this.domElement, this.buttonValidateId);
-  }
-
-  get buttonTravelId() {
-    return `camera_positioner_button_travel`;
-  }
-
-  get buttonTravelElement() {
-    return findChildByID(this.domElement, this.buttonTravelId);
-  }
-
-  get formId() {
-    return `camera_positioner_form`;
-  }
-
-  get formElement() {
-    return findChildByID(this.domElement, this.formId);
-  }
-
-  get positionXId() {
-    return `camera_positioner_position_x`;
-  }
-
-  get positionXElement() {
-    return findChildByID(this.domElement, this.positionXId);
-  }
-
-  get positionYId() {
-    return `camera_positioner_position_y`;
-  }
-
-  get positionYElement() {
-    return findChildByID(this.domElement, this.positionYId);
-  }
-
-  get positionZId() {
-    return `camera_positioner_position_z`;
-  }
-
-  get positionZElement() {
-    return findChildByID(this.domElement, this.positionZId);
-  }
-
-  get quaternionXId() {
-    return `camera_positioner_quaternion_x`;
-  }
-
-  get quaternionXElement() {
-    return findChildByID(this.domElement, this.quaternionXId);
-  }
-
-  get quaternionYId() {
-    return `camera_positioner_quaternion_y`;
-  }
-
-  get quaternionYElement() {
-    return findChildByID(this.domElement, this.quaternionYId);
-  }
-
-  get quaternionZId() {
-    return `camera_positioner_quaternion_z`;
-  }
-
-  get quaternionZElement() {
-    return findChildByID(this.domElement, this.quaternionZId);
-  }
-
-  get quaternionWId() {
-    return `camera_positioner_quaternion_w`;
-  }
-
-  get quaternionWElement() {
-    return findChildByID(this.domElement, this.quaternionWId);
   }
 
   // //////////
