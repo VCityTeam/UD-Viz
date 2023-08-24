@@ -2,10 +2,6 @@ import { RequestService } from '../../../../RequestService';
 import { GuidedTour } from './GuidedTour.js';
 import { DocumentModule } from '../Core/DocumentModule';
 
-import { findChildByID } from '../../../../HTMLUtil';
-
-import './GuidedTour.css';
-
 /**
  * Class: GuidedTourController
  * Description :
@@ -67,6 +63,7 @@ export class GuidedTourController {
           authenticate: false,
         })
         .then(() => {
+          if (!req.responseText) reject('no response');
           this.guidedTours = JSON.parse(req.responseText);
           if (!this.guidedTours.length) reject('NO GUIDED TOUR ON SERVER');
           resolve();
@@ -163,29 +160,23 @@ export class GuidedTourController {
   // Hide or show previous / next buttons in browser window
   // =============================================================================
   toggleGuidedTourButtons(active) {
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourPreviousTourButton'
-    ).style.display = active ? 'block' : 'none';
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourNextTourButton'
-    ).style.display = active ? 'block' : 'none';
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourPreviousStepButton'
-    ).style.display = active ? 'none' : 'block';
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourNextStepButton'
-    ).style.display = active ? 'none' : 'block';
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourStartButton'
-    ).style.display = active ? 'block' : 'none';
-    findChildByID(
-      this.guidedTour.domElement,
-      'guidedTourExitButton'
-    ).style.display = active ? 'none' : 'block';
+    this.guidedTour.guidedTourPreviousTourButton.style.display = active
+      ? 'block'
+      : 'none';
+    this.guidedTour.guidedTourNextTourButton.style.display = active
+      ? 'block'
+      : 'none';
+    this.guidedTour.guidedTourPreviousStepButton.style.display = active
+      ? 'none'
+      : 'block';
+    this.guidedTour.guidedTourNextStepButton.style.display = active
+      ? 'none'
+      : 'block';
+    this.guidedTour.guidedTourStartButton.style.display = active
+      ? 'block'
+      : 'none';
+    this.guidedTour.guidedTourExitButton.style.display = active
+      ? 'none'
+      : 'block';
   }
 }
