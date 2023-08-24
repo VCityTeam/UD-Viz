@@ -1,4 +1,4 @@
-export { LayerChoice } from './LayerChoice/views/LayerChoice';
+export { LayerChoice } from './LayerChoice/LayerChoice';
 
 export { CameraPositioner } from './CameraPositioner/CameraPositioner';
 

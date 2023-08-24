@@ -1,6 +1,6 @@
-import { createDisplayable, createLabelInput } from '../../../HTMLUtil';
+import { createDisplayable, createLabelInput } from '../../HTMLUtil';
 import * as itowns from 'itowns';
-import { focusC3DTilesLayer } from '../../../ItownsUtil';
+import { focusC3DTilesLayer } from '../../ItownsUtil';
 
 export class LayerChoice {
   /**
