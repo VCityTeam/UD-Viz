@@ -18,6 +18,9 @@ export class AuthenticationView {
     /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
 
+    this.infoDomElement = document.createElement('h3');
+    this.domElement.appendChild(this.infoDomElement);
+
     this.formRegistration = document.createElement('form');
     this.domElement.appendChild(this.formRegistration);
 
@@ -45,9 +48,11 @@ export class AuthenticationView {
     this.formRegistration.appendChild(this.passwordRegistration.parent);
     this.passwordRegistration.input.setAttribute('name', 'password');
 
-    this.buttonRegister = document.createElement('button');
-    this.formRegistration.appendChild(this.buttonRegister);
-    this.buttonRegister.innerText = 'Register';
+    this.registrationButton = document.createElement('button');
+    this.formRegistration.appendChild(this.registrationButton);
+    this.registrationButton.setAttribute('name', 'register');
+    this.registrationButton.setAttribute('type', 'button');
+    this.registrationButton.innerText = 'Register';
 
     this.formLogin = document.createElement('form');
     this.domElement.appendChild(this.formLogin);
@@ -55,9 +60,6 @@ export class AuthenticationView {
     const loginTitle = document.createElement('h2');
     loginTitle.innerText = 'Login';
     this.formLogin.appendChild(loginTitle);
-
-    this.loginInfo = document.createElement('h3');
-    this.formLogin.appendChild(this.loginInfo);
 
     this.usernameLogin = createLabelInput('Username', 'text');
     this.formLogin.appendChild(this.usernameLogin.parent);
@@ -74,6 +76,7 @@ export class AuthenticationView {
     this.loginButton = document.createElement('button');
     this.formLogin.appendChild(this.loginButton);
     this.loginButton.innerText = 'Login';
+    this.loginButton.setAttribute('type', 'button');
 
     this.closeButton = document.createElement('button');
     this.closeButton.innerText = 'Close';
@@ -86,7 +89,7 @@ export class AuthenticationView {
     this.loginButton.onclick = () => {
       this.logInFunction();
     };
-    this.buttonRegister.onclick = () => {
+    this.registrationButton.onclick = () => {
       this.registerFunction();
     };
     this.passwordRegistration.onkeypress = (event) => {
@@ -98,75 +101,36 @@ export class AuthenticationView {
   }
 
   /**
-   * Display the register error
-   *
-   * @param {string} msg The message to display
-   */
-  displayRegisterError(msg) {
-    const errorField = document.getElementById('RegisterInfo');
-    errorField.className = 'ErrorBox';
-    errorField.innerHTML = msg;
-  }
-
-  /**
-   * Display the login error
-   *
-   * @param {string} msg The message to display
-   */
-  displayLoginError(msg) {
-    const errorField = document.getElementById('LoginInfo');
-    errorField.innerHTML = msg;
-  }
-
-  /**
-   * Display the register success message
-   *
-   * @param {string} msg The message to display
-   */
-  displayRegisterSuccess(msg) {
-    const successField = document.getElementById('RegisterInfo');
-    successField.className = 'SuccessBox';
-    successField.innerHTML = msg;
-  }
-
-  /**
    * Check if the window is visible
    *
    * @returns {boolean} True if the window is visible
    */
   isVisible() {
-    const div = document.getElementById('loginRegistrationWindow');
-    return div !== undefined && div !== null;
+    return !!this.domElement.parentElement;
   }
 
   /**
    *
-   * @param {Array<number|string>} formIds Array of IDs
+   * @param {Array<HTMLFormElement>} forms Array of forms
    * @returns {boolean} True if all form values aren't empty
    */
-  verifyNotEmptyValuesForm(formIds) {
+  verifyNotEmptyValuesForm(forms) {
     let validate = true;
-    for (const id in formIds) {
-      const element = document.getElementById(formIds[id]);
-      element.setAttribute('style', '');
+    forms.forEach((element) => {
       if (element.value == '') {
-        element.setAttribute('style', ' border: 3px solid red');
         validate = false;
       }
-    }
+    });
     return validate;
   }
 
   /**
    * Delete the values of the form
    *
-   * @param {Array<number|string>} formIds Array of IDs
+   * @param {Array<HTMLFormElement>} forms Array of form
    */
-  deleteValuesForm(formIds) {
-    for (const id in formIds) {
-      const element = document.getElementById(formIds[id]);
-      element.value = '';
-    }
+  deleteValuesForm(forms) {
+    forms.forEach((f) => (f.value = ''));
   }
 
   /**
@@ -180,14 +144,12 @@ export class AuthenticationView {
       /^[A-Za-z0-9_!#$%&'*+/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/,
       'gm'
     );
-    const element = document.getElementById('Email');
-    if (emailRegex.test(element.value)) {
-      element.setAttribute('style', '');
-      this.displayRegisterError('');
+    if (emailRegex.test(this.emailRegistration.input.value)) {
+      this.emailRegistration.input.setAttribute('style', '');
+      this.infoDomElement.innerText = '';
       return true;
     }
-    element.setAttribute('style', ' border: 3px solid red');
-    this.displayRegisterError('Please insert a valid mail');
+    this.infoDomElement.innerText = 'Please insert a valid mail';
     return false;
   }
 
@@ -196,20 +158,25 @@ export class AuthenticationView {
    * the authentication service
    */
   async logInFunction() {
-    this.displayLoginError('');
-    const loginForm = document.getElementById('LoginForm');
-    const formData = new FormData(loginForm);
-    const formIds = ['login', 'PasswordLogin'];
-    if (this.verifyNotEmptyValuesForm(formIds)) {
+    this.infoDomElement.innerText = '';
+    const formData = new FormData(this.formLogin);
+    if (
+      this.verifyNotEmptyValuesForm([
+        this.usernameLogin.input,
+        this.passwordLogin.input,
+      ])
+    ) {
       try {
         await this.authenticationService.login(formData);
       } catch (e) {
         if (e.status === 401) {
-          this.displayLoginError('Login or password invalid');
+          this.infoDomElement.innerText = 'Login or password invalid';
         } else {
-          this.displayLoginError(e);
+          this.infoDomElement.innerText = e;
         }
       }
+    } else {
+      this.infoDomElement.innerText = 'Fill username and password';
     }
   }
 
@@ -217,26 +184,32 @@ export class AuthenticationView {
    * Register a new user
    */
   async registerFunction() {
-    this.displayRegisterError('');
-    const registerForm = document.getElementById('RegistrationForm');
-    const formData = new FormData(registerForm);
-    const formIds = [
-      'Firstname',
-      'Lastname',
-      'Username',
-      'Email',
-      'PasswordRegistration',
-    ];
-    if (this.verifyNotEmptyValuesForm(formIds) & this.verifymail()) {
+    this.infoDomElement.innerText = '';
+    const formData = new FormData(this.formRegistration);
+    if (
+      this.verifyNotEmptyValuesForm([
+        this.firstNameRegistration.input,
+        this.lastNameRegistration.input,
+        this.usernameRegistration.input,
+        this.emailRegistration.input,
+        this.passwordRegistration.input,
+      ]) & this.verifymail()
+    ) {
       try {
         await this.authenticationService.register(formData);
-        this.deleteValuesForm(formIds);
-        this.displayRegisterSuccess('Your registration succeed');
+        this.deleteValuesForm([
+          this.firstNameRegistration.input,
+          this.lastNameRegistration.input,
+          this.usernameRegistration.input,
+          this.emailRegistration.input,
+          this.passwordRegistration.input,
+        ]);
+        this.infoDomElement.innerText = 'Your registration succeed';
       } catch (e) {
         if (e.status == '422') {
-          this.displayRegisterError('The user already exist');
+          this.infoDomElement.innerText = 'The user already exist';
         } else {
-          this.displayRegisterError(e.response || e);
+          this.infoDomElement.innerText = e.response || e;
         }
       }
     }
