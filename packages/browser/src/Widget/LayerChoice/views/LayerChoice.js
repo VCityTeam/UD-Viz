@@ -1,4 +1,4 @@
-import { createDisplayable, findChildByID } from '../../../HTMLUtil';
+import { createDisplayable, createLabelInput } from '../../../HTMLUtil';
 import * as itowns from 'itowns';
 import { focusC3DTilesLayer } from '../../../ItownsUtil';
 
@@ -61,31 +61,29 @@ export class LayerChoice {
       .filter((el) => el.isColorLayer == true);
     for (let i = 0; i < layers.length; i++) {
       const item = document.createElement('div');
-      item.innerHTML = `<label for="${
-        layers[i].id
-      }-spoiler" class="section-title">${layers[i].id}</Label>
-                        Visible <input type="checkbox" id="checkbox_${i}" ${
-        layers[i].visible ? 'checked' : ''
-      }></input></br>
-                        <div id="opacity_${i}"> 
-                          Opacity : <span id="color_value_opacity_${i}">${
-        layers[i].opacity
-      }</span>  <input type ="range" id="range_${i}" min="0" max="1" step = "0.1" value="${
-        layers[i].opacity
-      }"></input>
-                        </div>`;
+      item.innerText = layers[i].id;
 
-      item.oninput = (event) => {
-        if (event.srcElement.id === 'checkbox_' + i) {
-          layers[i].visible = event.srcElement.checked;
-        }
-        if (event.srcElement.id === 'range_' + i) {
-          layers[i].opacity = event.srcElement.valueAsNumber;
-        }
-        const span_opacity = findChildByID(item, 'color_value_opacity_' + i);
-        span_opacity.innerHTML = `${layers[i].opacity}`;
+      const visibilityLayer = createLabelInput('Visible', 'checkbox');
+      visibilityLayer.input.checked = layers[i].visible;
+      item.appendChild(visibilityLayer.parent);
+
+      visibilityLayer.input.oninput = () => {
+        layers[i].visible = visibilityLayer.input.checked;
         this.itownView.notifyChange();
       };
+
+      const opacityLayer = createLabelInput('Opacity', 'range');
+      opacityLayer.input.min = 0;
+      opacityLayer.input.max = 1;
+      opacityLayer.input.step = 0.1;
+      opacityLayer.input.value = layers[i].opacity;
+      item.appendChild(opacityLayer.parent);
+
+      opacityLayer.input.oninput = () => {
+        layers[i].opacity = opacityLayer.input.value;
+        this.itownView.notifyChange();
+      };
+
       list.appendChild(item);
     }
   }
@@ -100,20 +98,19 @@ export class LayerChoice {
       .getLayers()
       .filter((el) => el.isElevationLayer == true);
     for (let i = 0; i < layers.length; i++) {
-      const item = document.createElement('div');
-      item.innerHTML = `<h3>${layers[i].id}</h3>
-                        Scale : <span id="elevation_value_scale_${i}">${layers[i].scale}</span> <input type ="range" id="${i}" min="1" max="10" step = "0.01" value="${layers[i].scale}"></input>`;
+      const scale = createLabelInput('Scale', 'range');
+      scale.input.min = 0;
+      scale.input.max = 2.5;
+      scale.input.step = 0.1;
 
-      item.oninput = (event) => {
-        layers[i].scale = event.srcElement.valueAsNumber;
+      scale.input.value = layers[i].scale;
+
+      scale.input.oninput = () => {
+        layers[i].scale = scale.input.value;
         this.itownView.notifyChange();
-        const span_elevation = findChildByID(
-          item,
-          'elevation_value_scale_' + i
-        );
-        span_elevation.innerHTML = `${layers[i].scale}`;
       };
-      list.appendChild(item);
+
+      list.appendChild(scale.parent);
     }
   }
 
