@@ -23,36 +23,6 @@ export function checkParentChild(child, parent) {
 }
 
 /**
- *
- * @param {HTMLElement} element - element to look into recursively
- * @param {string} childID - id of the child to look for
- * @returns {HTMLElement|null} - child with the id given or null if not
- */
-export function findChildByID(element, childID) {
-  for (let i = 0; i < element.children.length; i++) {
-    const child = element.children[i];
-    if (child.id == childID) {
-      return child;
-    }
-    // check recursively
-    const findInChild = findChildByID(child, childID);
-    if (findInChild) return findInChild;
-  }
-
-  return null;
-}
-
-/**
- *
- * @param {HTMLElement} element - element to remove children from
- */
-export function clearChildren(element) {
-  while (element.firstChild) {
-    element.firstChild.remove();
-  }
-}
-
-/**
  * Create a button to toggle visibility of the content in a container
  *
  * @param {string} label - label of the container
