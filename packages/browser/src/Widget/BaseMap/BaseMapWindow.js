@@ -1,5 +1,4 @@
 import * as itowns from 'itowns';
-import { findChildByID } from '../../HTMLUtil';
 
 /**
  * It manages multiple WMS sources used as Itowns ColoLayer for background.
@@ -17,7 +16,6 @@ export class BaseMap {
   constructor(itownsView, baseMapLayersConfigs, appExtent) {
     /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
 
     /** @type {object} */
     this.baseMapLayersConfigs = baseMapLayersConfigs;
@@ -78,7 +76,7 @@ export class BaseMap {
       new_img.width = 250; // icon dimension are hardcoded
       new_img.height = 200;
       new_img.onclick = () => this.changeVisibleLayer(config.layer.id);
-      this.baseDivElement.appendChild(new_img);
+      this.domElement.appendChild(new_img);
     }
   }
 
@@ -93,19 +91,5 @@ export class BaseMap {
         config.layer.id == layerID;
     }
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-    <div id="${this.baseDivId}"></div>
-    `;
-  }
-
-  get baseDivId() {
-    return `View_baseMap_div`;
-  }
-
-  get baseDivElement() {
-    return findChildByID(this.domElement, this.baseDivId);
   }
 }
