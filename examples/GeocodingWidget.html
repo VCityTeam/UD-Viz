@@ -74,6 +74,9 @@
           );
 
           frame3DPlanar.domElementUI.appendChild(geocodingView.domElement);
+
+          geocodingView.domElement.style.position = 'absolute';
+          geocodingView.domElement.style.zIndex = 2;
         });
     </script>
     SCRIPT_TAG_RELOAD
