@@ -1,11 +1,8 @@
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import proj4 from 'proj4';
-import { findChildByID } from '../../../../HTMLUtil';
 import { focusCameraOn } from '../../../../ItownsUtil';
 import { GeocodingService } from '../services/GeocodingService';
-
-import './GeocodingStyle.css';
 
 export class GeocodingView {
   /**
@@ -15,17 +12,27 @@ export class GeocodingView {
    * @param {import('itowns').PlanarView} planarView The iTowns view.
    */
   constructor(geocodingService, planarView) {
-    this.domElement = document.createElement('div');
-    this.domElement.setAttribute('id', this.viewId);
-    this.domElement.innerHTML = this.innerHtmlContent;
-
     this.geocodingService = geocodingService;
+
+    // create ui
+    this.domElement = document.createElement('div');
+
+    this.form = document.createElement('form');
+    this.domElement.appendChild(this.form);
+
+    this.searchInput = document.createElement('input');
+    this.searchInput.setAttribute('type', 'text');
+    this.searchInput.setAttribute('placeholder', 'Search address, location...');
+    this.form.appendChild(this.searchInput);
+
+    const credits = document.createElement('p');
+    credits.innerHTML = this.geocodingService.credit;
+    this.form.appendChild(credits);
+
     this.planarView = planarView;
     this.meshes = [];
 
-    this.creditElement.innerHTML = this.geocodingService.credit;
-
-    this.formElement.onsubmit = () => {
+    this.form.onsubmit = () => {
       this.doGeocoding();
       return false;
     };
@@ -44,18 +51,6 @@ export class GeocodingView {
     );
   }
 
-  get innerHtmlContent() {
-    return /* html*/ `
-      <form id="${this.formId}">
-        <div id="${this.centeredDivId}">
-          <input id="${this.searchInputId}" type="text"
-          name="geocoding_searchstring" placeholder="Search address, location...">
-          <p id="${this.creditId}"></p>
-        </div>
-      </form>
-    `;
-  }
-
   /**
    * Remove domElement and the meshes added in scene
    */
@@ -71,10 +66,11 @@ export class GeocodingView {
    */
   async doGeocoding() {
     this.removePins();
-    const searchString = this.searchInputElement.value;
+    const searchString = this.searchInput.value;
 
     try {
       const coords = await this.geocodingService.getCoordinates(searchString);
+      console.debug(coords);
       coords.forEach((c, i) => {
         const { lat, lng } = c;
 
@@ -167,66 +163,15 @@ export class GeocodingView {
     const box = document.createElement('p');
     box.id = this.errorMessageBoxId;
     box.innerHTML = errorMsg;
-    this.centeredDivElement.appendChild(box);
+    this.domElement.appendChild(box);
     box.addEventListener('transitionend', (evt) => {
       if (evt.propertyName === 'opacity') {
-        this.centeredDivElement.removeChild(box);
+        this.domElement.removeChild(box);
       }
     });
     setTimeout(() => {
       box.style.transition = 'opacity 0.4s ease-out';
       box.style.opacity = '0';
     }, timeout);
-  }
-
-  // ////////// Helpful getters
-  // //////////////////////////
-
-  get viewId() {
-    return '_geocoding_view';
-  }
-
-  get viewElement() {
-    return findChildByID(this.domElement, this.viewId);
-  }
-
-  get formId() {
-    return `${this.viewId}_form`;
-  }
-
-  get formElement() {
-    return findChildByID(this.domElement, this.formId);
-  }
-
-  get searchInputId() {
-    return `${this.formId}_searchstring`;
-  }
-
-  get searchInputElement() {
-    return findChildByID(this.domElement, this.searchInputId);
-  }
-
-  get centeredDivId() {
-    return `${this.viewId}_centered`;
-  }
-
-  get centeredDivElement() {
-    return findChildByID(this.domElement, this.centeredDivId);
-  }
-
-  get errorMessageBoxId() {
-    return `${this.centeredDivId}_error`;
-  }
-
-  get errorMessageBoxElement() {
-    return `${this.centeredDivId}_error`;
-  }
-
-  get creditId() {
-    return `${this.centeredDivId}_credit`;
-  }
-
-  get creditElement() {
-    return findChildByID(this.domElement, this.creditId);
   }
 }
