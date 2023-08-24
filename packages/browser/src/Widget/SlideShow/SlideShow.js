@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { findChildByID } from '../../HTMLUtil';
+import { RequestAnimationFrameProcess } from '../../RequestAnimationFrameProcess';
 
 /**
  * @typedef {object} TextureFile
@@ -59,14 +59,14 @@ export class SlideShow {
     this.domElement = null;
 
     // Ids
-    this.coordinatesInputVectorID = null;
-    this.rotationInputVectorID = null;
-    this.sizeInputVectorID = null;
-    this.aspectRatioCheckboxID = null;
-    this.loopSlideShowCheckboxID = null;
-    this.slideSelectID = null;
+    this.coordinatesInputVector = null;
+    this.rotationInputVector = null;
+    this.sizeInputVector = null;
+    this.aspectRatioCheckbox = null;
+    this.loopSlideShowCheckbox = null;
+    this.slideSelect = null;
     this.durationLoopInputID = null;
-    this.counterLoopTimeDivID = null;
+    this.counterLoopTimeDiv = null;
 
     // Vectors
     this.coordinatesVector = new THREE.Vector3();
@@ -76,7 +76,7 @@ export class SlideShow {
     /**
      * List of callbacks to set when the window is created
      *
-      @type {Array<{event:string,id:number,cb:Function}>}  */
+      @type {Array<{event:string,element:HTMLElement,cb:Function}>}  */
     this.callbacksHTMLEl = [];
 
     /** @type {THREE.Mesh} */
@@ -125,18 +125,21 @@ export class SlideShow {
     this.hidePlaneListener = null;
 
     // Through this.callbacksHTMLEl and addEventListeners to HTMLElements in DOM (elements which created by Window class)
-    this.callbacksHTMLEl.forEach((element) => {
-      const htmlElement = findChildByID(this.domElement, element.id);
-      htmlElement.addEventListener(element.event, element.cb.bind(this));
+    this.callbacksHTMLEl.forEach((callbackHtmlEl) => {
+      callbackHtmlEl.element.addEventListener(
+        callbackHtmlEl.event,
+        callbackHtmlEl.cb.bind(this)
+      );
     });
     this.matchExtent();
 
-    /** A function call each frame by the browser */
-    const tick = () => {
-      requestAnimationFrame(tick);
-      this.notifyChangeEachFrame();
-    };
-    tick();
+    /** A function call at 30 fps by the browser */
+    const process = new RequestAnimationFrameProcess(30);
+    process.start(() => {
+      if (this.notifyValue) {
+        this.itownsView.notifyChange();
+      }
+    });
   }
 
   addListeners() {
@@ -163,15 +166,6 @@ export class SlideShow {
     this.itownsView.notifyChange();
 
     this.removeListeners();
-  }
-
-  /**
-   * If the notifyValue is true, then update the 3D view
-   */
-  notifyChangeEachFrame() {
-    if (this.notifyValue) {
-      this.itownsView.notifyChange();
-    }
   }
 
   /**
@@ -257,7 +251,7 @@ export class SlideShow {
     this.dropListener = (event) => {
       event.preventDefault();
       // Setting the value of the select element to null.
-      this.slideSelectDOM.value = null;
+      this.slideSelect.value = null;
       if (!this.plane) return;
       const files = Array.from(event.dataTransfer.files);
 
@@ -409,7 +403,7 @@ export class SlideShow {
       100
     );
     domElement.appendChild(coordinatesElement.title);
-    this.coordinatesInputVectorID = coordinatesElement.inputVector.id;
+    this.coordinatesInputVector = coordinatesElement.inputVector;
     domElement.appendChild(coordinatesElement.inputVector);
 
     const rotationElement = this.createInputVector(
@@ -418,7 +412,7 @@ export class SlideShow {
       0.1
     );
     domElement.appendChild(rotationElement.title);
-    this.rotationInputVectorID = rotationElement.inputVector.id;
+    this.rotationInputVector = rotationElement.inputVector;
     domElement.appendChild(rotationElement.inputVector);
 
     const sizeElement = this.createInputVector(
@@ -427,7 +421,7 @@ export class SlideShow {
       100
     );
     domElement.appendChild(sizeElement.title);
-    this.sizeInputVectorID = sizeElement.inputVector.id;
+    this.sizeInputVector = sizeElement.inputVector;
     domElement.appendChild(sizeElement.inputVector);
 
     const matchExtentButton = document.createElement('button');
@@ -435,7 +429,7 @@ export class SlideShow {
     matchExtentButton.innerHTML = 'Match Extent';
     this.callbacksHTMLEl.push({
       event: 'click',
-      id: matchExtentButton.id,
+      element: matchExtentButton,
       cb: this.matchExtent,
     });
     domElement.appendChild(matchExtentButton);
@@ -448,7 +442,7 @@ export class SlideShow {
     aspectRatioCheckbox.type = 'checkbox';
     this.callbacksHTMLEl.push({
       event: 'change',
-      id: aspectRatioCheckbox.id,
+      element: aspectRatioCheckbox,
       cb: function (event) {
         if (event.target.checked) {
           const currentW = this.getSizeValues().width;
@@ -459,7 +453,7 @@ export class SlideShow {
       },
     });
 
-    this.aspectRatioCheckboxID = aspectRatioCheckbox.id;
+    this.aspectRatioCheckbox = aspectRatioCheckbox;
     aspectRatioDiv.appendChild(aspectRatioCheckbox);
 
     const labelAspectRatio = document.createElement('label');
@@ -475,7 +469,7 @@ export class SlideShow {
     loopCheckbox.type = 'checkbox';
     this.callbacksHTMLEl.push({
       event: 'change',
-      id: loopCheckbox.id,
+      element: loopCheckbox,
       cb: function (event) {
         if (this.intervalLoop) this.stopLoopSlideShow();
         if (event.target.checked) {
@@ -484,7 +478,7 @@ export class SlideShow {
       },
     });
 
-    this.loopSlideShowCheckboxID = loopCheckbox.id;
+    this.loopSlideShowCheckbox = loopCheckbox;
     loopDiv.appendChild(loopCheckbox);
 
     const labelLoopSlideShow = document.createElement('label');
@@ -504,7 +498,7 @@ export class SlideShow {
     durationLoopInSecDiv.step = 0.5;
     this.callbacksHTMLEl.push({
       event: 'change',
-      id: durationLoopInSecInput.id,
+      element: durationLoopInSecInput,
       cb: function (event) {
         this.durationLoopInSec = parseFloat(event.target.value);
         if (this.intervalLoop) {
@@ -525,7 +519,7 @@ export class SlideShow {
     counterLoopTimeDiv.id = 'counterLoopTimeDivSlideShow';
     counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
 
-    this.counterLoopTimeDivID = counterLoopTimeDiv.id;
+    this.counterLoopTimeDiv = counterLoopTimeDiv;
     durationLoopInSecDiv.appendChild(counterLoopTimeDiv);
 
     const slideSelect = document.createElement('select');
@@ -536,7 +530,7 @@ export class SlideShow {
     unsetOptionSlide.value = 'null';
     unsetOptionSlide.innerHTML = 'Select config slide';
     slideSelect.appendChild(unsetOptionSlide);
-    this.slideSelectID = slideSelect.id;
+    this.slideSelect = slideSelect;
 
     if (this.slides) {
       for (let i = 0; i < this.slides.length; i++) {
@@ -548,7 +542,7 @@ export class SlideShow {
       }
       this.callbacksHTMLEl.push({
         event: 'input',
-        id: slideSelect.id,
+        element: slideSelect,
         cb: function (event) {
           this.setSlideshowInConfig(event.target.value);
         },
@@ -670,12 +664,12 @@ export class SlideShow {
       labelElement.htmlFor = componentElement.id;
       this.callbacksHTMLEl.push({
         event: 'change',
-        id: componentElement.id,
+        element: componentElement,
         cb: function (event) {
           const value = event.target.value;
           const element = event.target;
           element.setAttribute('value', value);
-          if (this.aspectRatioCheckboxDOM.checked)
+          if (this.aspectRatioCheckbox.checked)
             if (vectorName.toLowerCase().includes('size'))
               this.matchRatio(iInput, value);
           this.updateVectors();
@@ -699,9 +693,7 @@ export class SlideShow {
    */
   matchRatio(iInput, value) {
     const linkedSizeElement =
-      this.sizeInputVectorDOM.getElementsByTagName('input')[
-        iInput == 0 ? 1 : 0
-      ];
+      this.sizeInputVector.getElementsByTagName('input')[iInput == 0 ? 1 : 0];
     const height = this.currentTextureFile.size.height;
     const width = this.currentTextureFile.size.width;
     const ratio = width / height;
@@ -713,15 +705,14 @@ export class SlideShow {
   /** Update vectors variables with the values contained in inputs elements in DOM */
   updateVectors() {
     this.coordinatesVector =
-      this.inputVectorToVector(this.coordinatesInputVectorDOM) ||
+      this.inputVectorToVector(this.coordinatesInputVector) ||
       new THREE.Vector3();
 
     this.rotationVector =
-      this.inputVectorToVector(this.rotationInputVectorDOM) ||
-      new THREE.Vector3();
+      this.inputVectorToVector(this.rotationInputVector) || new THREE.Vector3();
 
     this.sizeVector =
-      this.inputVectorToVector(this.sizeInputVectorDOM) || new THREE.Vector2();
+      this.inputVectorToVector(this.sizeInputVector) || new THREE.Vector2();
 
     this.modifyPlane();
   }
@@ -783,7 +774,7 @@ export class SlideShow {
     this.currentTexture = this.currentTextureFile.texture;
     this.modifyPlane();
     this.itownsView.notifyChange();
-    this.aspectRatioCheckboxDOM.dispatchEvent(new Event('change'));
+    this.aspectRatioCheckbox.dispatchEvent(new Event('change'));
   }
 
   /** Modify `this.plane` {THREE.Mesh} */
@@ -829,9 +820,9 @@ export class SlideShow {
    *
    */
   loopSlideShow() {
-    if (!this.loopCheckboxDOM.checked) return;
+    if (!this.loopSlideShowCheckbox.checked) return;
     const durationInMS = this.durationLoopInSec * 1000; // Loop event
-    this.counterLoopTimeDivDOM.innerHTML = this.durationLoopInSec;
+    this.counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
     this.intervalLoop = setInterval(() => {
       this.nextSlide();
     }, durationInMS);
@@ -842,9 +833,9 @@ export class SlideShow {
   }
 
   updateCounterLoop() {
-    const value = parseFloat(this.counterLoopTimeDivDOM.innerHTML);
+    const value = parseFloat(this.counterLoopTimeDiv.innerHTML);
     const newValue = value - 0.1 <= 0 ? this.durationLoopInSec : value - 0.1;
-    this.counterLoopTimeDivDOM.innerHTML = newValue.toFixed(1);
+    this.counterLoopTimeDiv.innerHTML = newValue.toFixed(1);
   }
 
   stopLoopSlideShow() {
@@ -858,37 +849,6 @@ export class SlideShow {
   }
 
   // DOM GETTERS
-  /* Return coordinates HTMLElements (inputs+labels) */
-  get coordinatesInputVectorDOM() {
-    return findChildByID(this.domElement, this.coordinatesInputVectorID);
-  }
-
-  /* Return rotation HTMLElement (inputs+labels)*/
-  get rotationInputVectorDOM() {
-    return findChildByID(this.domElement, this.rotationInputVectorID);
-  }
-
-  /* Return size HTMLElement (inputs+labels)*/
-  get sizeInputVectorDOM() {
-    return findChildByID(this.domElement, this.sizeInputVectorID);
-  }
-
-  /* Return apspect ratio HTMLElement (checkbox)*/
-  get aspectRatioCheckboxDOM() {
-    return findChildByID(this.domElement, this.aspectRatioCheckboxID);
-  }
-
-  get counterLoopTimeDivDOM() {
-    return findChildByID(this.domElement, this.counterLoopTimeDivID);
-  }
-
-  get loopCheckboxDOM() {
-    return findChildByID(this.domElement, this.loopSlideShowCheckboxID);
-  }
-
-  get slideSelectDOM() {
-    return findChildByID(this.domElement, this.slideSelectID);
-  }
 
   get innerContentHtml() {
     return this.domElement.outerHTML;
@@ -901,7 +861,7 @@ export class SlideShow {
   // INPUTS ELEMENTS SETTERS
   /* Setting the values of the input fields in the DOM. */
   setSizeInputs(vec2) {
-    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
+    const sizeInputEls = this.sizeInputVector.getElementsByTagName('input');
 
     if (vec2.x !== null) {
       const element0 = sizeInputEls[0];
@@ -918,7 +878,7 @@ export class SlideShow {
 
   setCoordinatesInputs(vec3) {
     const coordinatesInputEls =
-      this.coordinatesInputVectorDOM.getElementsByTagName('input');
+      this.coordinatesInputVector.getElementsByTagName('input');
 
     if (vec3.x !== null) {
       const element0 = coordinatesInputEls[0];
@@ -940,7 +900,7 @@ export class SlideShow {
 
   setRotationInputs(vec3) {
     const rotationInputEls =
-      this.rotationInputVectorDOM.getElementsByTagName('input');
+      this.rotationInputVector.getElementsByTagName('input');
 
     if (vec3.x !== null) {
       const element0 = rotationInputEls[0];
@@ -965,7 +925,7 @@ export class SlideShow {
    * @returns {{height:number,width:number}} sizevalues
    */
   getSizeValues() {
-    const sizeInputEls = this.sizeInputVectorDOM.getElementsByTagName('input');
+    const sizeInputEls = this.sizeInputVector.getElementsByTagName('input');
     return {
       height: parseInt(sizeInputEls[0].value),
       width: parseInt(sizeInputEls[1].value),
