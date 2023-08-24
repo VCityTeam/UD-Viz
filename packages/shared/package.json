@@ -25,6 +25,6 @@
     "detect-collisions": "2.5.2"
   },
   "peerDependencies": {
-    "three": "0.146.0"
+    "three": "0.154.0"
   }
 }

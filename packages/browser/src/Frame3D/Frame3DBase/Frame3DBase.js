@@ -125,7 +125,7 @@ export class Frame3DBase {
     if (init3D) {
       // Initialize 3D
 
-      THREE.Object3D.DefaultUp.set(0, 0, 1);
+      THREE.Object3D.DEFAULT_UP.set(0, 0, 1);
 
       this.scene = new THREE.Scene();
       const canvas = document.createElement('canvas');
