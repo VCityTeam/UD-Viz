@@ -1,7 +1,5 @@
-import { findChildByID } from '../../../../HTMLUtil';
+import { createLabelInput } from '../../../../HTMLUtil';
 import { AuthenticationService } from '../services/AuthenticationService';
-
-import './AuthenticationView.css';
 
 /**
  *  It's a view that displays a login and registration form
@@ -18,68 +16,85 @@ export class AuthenticationView {
     this.authenticationService = authenticationService;
 
     /** @type {HTMLElement} */
-    this.domElement = this.createHtml();
-  }
+    this.domElement = document.createElement('div');
 
-  /**
-   * Returns the HTML as string
-   *
-   * @returns {string} HTML as string
-   */
-  createHtml() {
-    const result = document.createElement('div');
-    result.id = AuthenticationView.HTML_ID;
-    result.innerHTML = `
-            <form id="RegistrationForm">\
-                <h2>Registration</h2> \
-                <h3 id="RegisterInfo" class=""></h3>
-                <label for="Firstname">Firstname</label>\
-                <input type="text" name="firstName" id="Firstname"/>\
-                <label for="Lastname">Lastname</label>\
-                <input type="text" name="lastName" id="Lastname"/>\
-                <label for="Username">Username</label>\
-                <input type="text" name="username" id="Username"/>\
-                <label for="Email">Email</label>\
-                <input type="text" name="email" id="Email"/>\
-                <label for=PasswordRegistration>Password</label>\
-                <input type="password" name="password" id="PasswordRegistration"/>\
-                <!--<label for="ConfirmPasswordRegistration"> Confirm Password*</label>\
-                <input type="password" name="confirmPassword" id="ConfirmPasswordRegistration"/>-->\
-                <button type="button" name="register" id="RegisterButton">Register</button>\
-                
-            </form>\
-            \
-            <form id="LoginForm">\
-                <h2>Login</h2>\
-                <h3 id="LoginInfo" class="ErrorBox"></h3>
-                <label for="Login">Username</label>\
-                <input type="text" id="login" name="username"/>\
-                <label for=PasswordLogin>Password</label>\
-                <input type="password" id="PasswordLogin" name="password"/>\
-                <div>Forgot your password?</div>\
-                <button type="button" id="LoginButton">Login</button>\
-            </form>\
-            <button id="loginRegistrationCloseButton">Close</button>\
-        `;
+    this.formRegistration = document.createElement('form');
+    this.domElement.appendChild(this.formRegistration);
+
+    const registrationTitle = document.createElement('h2');
+    registrationTitle.innerText = 'Registration';
+    this.formRegistration.appendChild(registrationTitle);
+
+    this.firstNameRegistration = createLabelInput('firstName', 'text');
+    this.formRegistration.appendChild(this.firstNameRegistration.parent);
+    this.firstNameRegistration.input.setAttribute('name', 'firstName');
+
+    this.lastNameRegistration = createLabelInput('lastName', 'text');
+    this.formRegistration.appendChild(this.lastNameRegistration.parent);
+    this.lastNameRegistration.input.setAttribute('name', 'lastName');
+
+    this.usernameRegistration = createLabelInput('username', 'text');
+    this.formRegistration.appendChild(this.usernameRegistration.parent);
+    this.usernameRegistration.input.setAttribute('name', 'username');
+
+    this.emailRegistration = createLabelInput('email', 'text');
+    this.formRegistration.appendChild(this.emailRegistration.parent);
+    this.emailRegistration.input.setAttribute('name', 'email');
+
+    this.passwordRegistration = createLabelInput('password', 'password');
+    this.formRegistration.appendChild(this.passwordRegistration.parent);
+    this.passwordRegistration.input.setAttribute('name', 'password');
+
+    this.buttonRegister = document.createElement('button');
+    this.formRegistration.appendChild(this.buttonRegister);
+    this.buttonRegister.innerText = 'Register';
+
+    this.formLogin = document.createElement('form');
+    this.domElement.appendChild(this.formLogin);
+
+    const loginTitle = document.createElement('h2');
+    loginTitle.innerText = 'Login';
+    this.formLogin.appendChild(loginTitle);
+
+    this.loginInfo = document.createElement('h3');
+    this.formLogin.appendChild(this.loginInfo);
+
+    this.usernameLogin = createLabelInput('Username', 'text');
+    this.formLogin.appendChild(this.usernameLogin.parent);
+    this.usernameLogin.input.setAttribute('name', 'username');
+
+    this.passwordLogin = createLabelInput('Password', 'password');
+    this.formLogin.appendChild(this.passwordLogin.parent);
+    this.passwordLogin.input.setAttribute('name', 'password');
+
+    const forgotYourPassword = document.createElement('div');
+    forgotYourPassword.innerText = 'Forgot your password ?';
+    this.formLogin.appendChild(forgotYourPassword);
+
+    this.loginButton = document.createElement('button');
+    this.formLogin.appendChild(this.loginButton);
+    this.loginButton.innerText = 'Login';
+
+    this.closeButton = document.createElement('button');
+    this.closeButton.innerText = 'Close';
+    this.domElement.appendChild(this.closeButton);
 
     // register callbacks
-    findChildByID(result, 'loginRegistrationCloseButton').onclick = () => {
+    this.closeButton.onclick = () => {
       this.domElement.remove();
     };
-    findChildByID(result, 'LoginButton').onclick = () => {
+    this.loginButton.onclick = () => {
       this.logInFunction();
     };
-    findChildByID(result, 'RegisterButton').onclick = () => {
+    this.buttonRegister.onclick = () => {
       this.registerFunction();
     };
-    findChildByID(result, 'PasswordRegistration').onkeypress = () => {
+    this.passwordRegistration.onkeypress = (event) => {
       if (event.key == 'Enter') this.registerFunction();
     };
-    findChildByID(result, 'PasswordLogin').onkeypress = () => {
+    this.passwordLogin.onkeypress = (event) => {
       if (event.key == 'Enter') this.logInFunction();
     };
-
-    return result;
   }
 
   /**
@@ -227,5 +242,3 @@ export class AuthenticationView {
     }
   }
 }
-
-AuthenticationView.HTML_ID = 'loginRegistrationWindow'; // => means we should create only one authentificationView
