@@ -26,11 +26,9 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 *3D tiles related*
 <p>
-  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/3DTiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
+  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
   <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
 </p>
-
-
 
 **UD-Viz Packages:**
 
