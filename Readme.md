@@ -35,9 +35,19 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 **UD-Viz Packages:**
 
 Split-code by interpretation environment:  
-- [@ud-viz/browser](./packages/browser)
-- [@ud-viz/node](./packages/node)
-- [@ud-viz/shared](./packages/shared)
+- [@ud-viz/browser](./packages/browser/Readme.md) package is interpretable by the **browser**
+- [@ud-viz/node](./packages/node/Readme.md) package is interpretable by **Node.js**
+- [@ud-viz/shared](./packages/shared/Readme.md) interpretable by **both** environments
+
+```mermaid
+flowchart TD
+  subgraph UD-Viz repo
+    subgraph packages
+    shared-->|import|browser
+    shared-->|import|node
+    end
+  end
+```
 
 ### Directory Hierarchy
 
@@ -65,10 +75,10 @@ UD-Viz (repo)
 **Github repositories:** 
 
   
-| Repository      | Link                                         | Description                                                        |
-| --------------- | -------------------------------------------- | ------------------------------------------------------------------ |
-| UD-Viz-docker   | https://github.com/VCityTeam/UD-Viz-docker   | Docker, which performs all the steps described in Getting Started. |
-| UD-Viz-template | https://github.com/VCityTeam/UD-Viz-template | A basis for creating your application using UD-Viz.                |
+| Repository      | Link                                         | Description                                                                            |
+| --------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
+| UD-Viz-docker   | https://github.com/VCityTeam/UD-Viz-docker   | Docker, which performs all the steps described in [Getting Started](#getting-started). |
+| UD-Viz-template | https://github.com/VCityTeam/UD-Viz-template | A basis for creating your application using UD-Viz.                                    |
 
 
 ## Getting Started
