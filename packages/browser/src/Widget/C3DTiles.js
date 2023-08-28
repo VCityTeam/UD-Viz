@@ -21,6 +21,12 @@ export class C3DTiles extends itownsWidget.Widget {
   constructor(view, options) {
     super(view, options, DEFAULT_OPTIONS);
 
+    /** @type {itowns.PlanarView} */
+    this.view = view;
+
+    /** @type {THREE.Box3Helper} */
+    this.displayedBBFeature = new THREE.Box3Helper(new THREE.Box3());
+
     // cant click through the widget
     this.domElement.onclick = (event) => event.stopImmediatePropagation();
 
@@ -132,6 +138,9 @@ export class C3DTiles extends itownsWidget.Widget {
     while (this.c3DTFeatureInfoContainer.firstChild)
       this.c3DTFeatureInfoContainer.firstChild.remove();
 
+    if (this.displayedBBFeature.parent)
+      this.displayedBBFeature.parent.remove(this.displayedBBFeature);
+
     this.c3DTFeatureInfoContainer.hidden = !c3DTFeature;
 
     if (!c3DTFeature) return;
@@ -166,9 +175,20 @@ export class C3DTiles extends itownsWidget.Widget {
     labelLayerDomElement.innerText = layer.name;
     this.c3DTFeatureInfoContainer.appendChild(labelLayerDomElement);
 
+    layer.computeWorldBox3(c3DTFeature, this.displayedBBFeature.box);
+    this.displayedBBFeature.updateMatrixWorld();
+
+    this.view.scene.add(this.displayedBBFeature);
+
     // feature info
     this.c3DTFeatureInfoContainer.appendChild(
-      createObjectDomElement(c3DTFeature.getInfo(), 'Feature info')
+      createObjectDomElement(
+        {
+          info: c3DTFeature.getInfo(),
+          boundingBox: this.displayedBBFeature.box,
+        },
+        'Feature'
+      )
     );
   }
 }
