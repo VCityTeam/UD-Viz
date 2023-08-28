@@ -1,3 +1,10 @@
+/**
+ * Merges JSDoc configuration files based on the provided PACKAGE environment variable.
+ * Generates documentation configuration for different packages (browser, node, shared, home).
+ *
+ * @returns {object} Merged JSDoc configuration.
+ */
+
 const { merge } = require('webpack-merge');
 
 const jsdocJson = {
