@@ -21,11 +21,10 @@ export class C3DTiles extends itownsWidget.Widget {
   constructor(view, options) {
     super(view, options, DEFAULT_OPTIONS);
 
-    /** @type {itowns.PlanarView} */
-    this.view = view;
-
     /** @type {THREE.Box3Helper} */
     this.displayedBBFeature = new THREE.Box3Helper(new THREE.Box3());
+    this.displayedBBFeature.visible = false;
+    view.scene.add(this.displayedBBFeature);
 
     // cant click through the widget
     this.domElement.onclick = (event) => event.stopImmediatePropagation();
@@ -138,9 +137,7 @@ export class C3DTiles extends itownsWidget.Widget {
     while (this.c3DTFeatureInfoContainer.firstChild)
       this.c3DTFeatureInfoContainer.firstChild.remove();
 
-    if (this.displayedBBFeature.parent)
-      this.displayedBBFeature.parent.remove(this.displayedBBFeature);
-
+    this.displayedBBFeature.visible = !!c3DTFeature;
     this.c3DTFeatureInfoContainer.hidden = !c3DTFeature;
 
     if (!c3DTFeature) return;
@@ -177,8 +174,6 @@ export class C3DTiles extends itownsWidget.Widget {
 
     layer.computeWorldBox3(c3DTFeature, this.displayedBBFeature.box);
     this.displayedBBFeature.updateMatrixWorld();
-
-    this.view.scene.add(this.displayedBBFeature);
 
     // feature info
     this.c3DTFeatureInfoContainer.appendChild(
