@@ -1,8 +1,5 @@
 import * as THREE from 'three';
-import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
-import { findChildByID } from '../../../../../HTMLUtil';
-
-import './DocumentVisualizer.css';
+import { DocumentProvider } from '../Core/ViewModel/DocumentProvider';
 
 /**
  * Represents the document visualizer, under the form of an oriented image. It
@@ -17,9 +14,42 @@ export class DocumentVisualizerWindow {
    * @param {*} provider document provider
    */
   constructor(itownsView, provider) {
+    // create dom
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
-    this.domElement.classList.add('orienter-box');
+
+    this.imageDomEl = document.createElement('img');
+    this.domElement.appendChild(this.imageDomEl);
+
+    this.ctrlPanelDomEl = document.createElement('div');
+    this.domElement.appendChild(this.ctrlPanelDomEl);
+
+    this.closeButton = document.createElement('button');
+    this.ctrlPanelDomEl.appendChild(this.closeButton);
+
+    this.sliderDomEl = document.createElement('div');
+    this.ctrlPanelDomEl.appendChild(this.sliderDomEl);
+
+    this.sliderLabel = document.createElement('div');
+    this.sliderDomEl.appendChild(this.sliderLabel);
+
+    this.labelDiv = document.createElement('label');
+    this.sliderLabel.appendChild(this.labelDiv);
+
+    this.outputOpacity = document.createElement('output');
+    this.sliderLabel.appendChild(this.outputOpacity);
+
+    this.inputOpacity = document.createElement('input');
+    this.inputOpacity.setAttribute('type', 'range');
+    this.inputOpacity.min = 0;
+    this.inputOpacity.max = 1;
+    this.inputOpacity.value = 1;
+    this.inputOpacity.value = 0.01;
+
+    const id = 'id_document_visualizer_input_opacity';
+    this.inputOpacity.id = id;
+    this.outputOpacity.setAttribute('for', id);
+
+    // end dom creation
 
     /**
      * The iTowns view.
@@ -33,24 +63,24 @@ export class DocumentVisualizerWindow {
      *
      * @type {THREE.Vector3}
      */
-    this.position = undefined;
+    this.position = null;
 
     /**
      * The visualization camera orientation.
      *
      * @type {THREE.Quaternion}
      */
-    this.quaternion = undefined;
+    this.quaternion = null;
 
     // document provider
     this.provider = provider;
 
     // callbacks
-    this.closeButtonElement.onclick = () => {
+    this.closeButton.onclick = () => {
       this.domElement.remove();
     };
 
-    this.opacitySliderElement.oninput = () => {
+    this.inputOpacity.oninput = () => {
       this._onOpacityChange();
     };
 
@@ -59,22 +89,6 @@ export class DocumentVisualizerWindow {
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this.domElement.remove()
     );
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-      <img id="${this.imageId}"/>
-      <div class="controls-panel">
-        <button id="${this.closeButtonId}">Close</button>
-        <div class="slider-container">
-          <div class="slider-label">
-            <label for="${this.opacitySliderId}">Opacity : </label>
-            <output for="${this.opacitySliderId}" id="${this.opacityId}">1</output>
-          </div>
-          <input type="range" min="0" max="1" value="1" step="0.01" id="${this.opacitySliderId}">
-        </div>
-      </div>
-    `;
   }
 
   // ////////////////////
@@ -89,7 +103,7 @@ export class DocumentVisualizerWindow {
   _onOpacityChange() {
     const opacity = this.opacitySliderElement.value;
     this.opacityElement.value = opacity;
-    this.imageElement.style.opacity = opacity;
+    this.imageDomEl.style.opacity = opacity;
   }
 
   /**
@@ -118,7 +132,7 @@ export class DocumentVisualizerWindow {
    * @param {string} newSrc The image source.
    */
   setImageSrc(newSrc) {
-    this.imageElement.src = newSrc;
+    this.imageDomEl.src = newSrc;
   }
 
   /**
@@ -173,7 +187,7 @@ export class DocumentVisualizerWindow {
   startTravel() {
     if (!this.itownsView.controls) return; // when PR https://github.com/iTowns/itowns/pull/2046 enabled this would be useless
 
-    this.imageElement.style.opacity = 0;
+    this.imageDomEl.style.opacity = 0;
     this.opacitySliderElement.value = 0;
     this.opacityElement.value = 0;
 
@@ -204,40 +218,5 @@ export class DocumentVisualizerWindow {
         reject(e);
       }
     });
-  }
-
-  // ///////////
-  // /// GETTERS
-
-  get closeButtonId() {
-    return `document_visualizer_close_button`;
-  }
-
-  get closeButtonElement() {
-    return findChildByID(this.domElement, this.closeButtonId);
-  }
-
-  get opacitySliderId() {
-    return `document_visualizer_opacity_slider`;
-  }
-
-  get opacitySliderElement() {
-    return findChildByID(this.domElement, this.opacitySliderId);
-  }
-
-  get opacityId() {
-    return `document_visualizer_opacity`;
-  }
-
-  get opacityElement() {
-    return findChildByID(this.domElement, this.opacityId);
-  }
-
-  get imageId() {
-    return `document_visualizer_image`;
-  }
-
-  get imageElement() {
-    return findChildByID(this.domElement, this.imageId);
   }
 }

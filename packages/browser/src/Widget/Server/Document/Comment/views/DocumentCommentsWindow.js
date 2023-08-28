@@ -1,7 +1,4 @@
 import { DocumentCommentsService } from '../services/DocumentCommentsService';
-import { findChildByID } from '../../../../../HTMLUtil';
-
-import './DocumentCommentsStyle.css';
 
 /**
  * A window to display the comments associated to a document. Also serves as
@@ -16,62 +13,53 @@ export class DocumentCommentsWindow {
    */
   constructor(documentCommentsService) {
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
+
+    this.commentsLeft = document.createElement('div');
+    this.domElement.appendChild(this.commentsLeft);
+
+    this.commentsRight = document.createElement('div');
+    this.domElement.appendChild(this.commentsRight);
+
+    this.form = document.createElement('form');
+    this.commentsRight.appendChild(this.form);
+
+    this.textArea = document.createElement('textarea');
+    this.textArea.setAttribute('placeholder', 'Enter your comment here.');
+    this.textArea.setAttribute('name', 'description');
+    this.form.appendChild(this.textArea);
+
+    this.buttonComment = document.createElement('button');
+    this.buttonComment.setAttribute('type', 'button');
+    this.buttonComment.innerText = 'Comment';
+    this.form.appendChild(this.buttonComment);
 
     this.documentCommentsService = documentCommentsService;
 
-    findChildByID(this.domElement, 'documentComments_inputButton').onclick =
-      this.publishComment.bind(this);
+    this.buttonComment.onclick = this.publishComment.bind(this);
     this.getComments();
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-        <div class="innerClass" id="documentComments_innerWindow">
-            <div id ="documentComments_left">
-
-            </div>
-            <div id ="documentComments_right">
-                <form id="documentComments_inputForm">
-                    <div class="commentRow">
-                        <textarea placeholder="Enter your comment here." id="documentComments_inputComment" name="description" ></textarea>
-                    </div>
-                    <div class="commentRow">
-                        <button type="button" id ="documentComments_inputButton">Comment</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        `;
   }
 
   getComments() {
     return new Promise((resolve, reject) => {
       this.documentCommentsService.getComments().then(
         (comments) => {
-          findChildByID(this.domElement, 'documentComments_left').innerHTML =
-            '';
+          this.commentsLeft.innerHTML = '';
           for (const comment of comments) {
             const text =
               typeof comment.description === 'string'
                 ? comment.description.replace(/(?:\r\n|\r|\n)/g, '<br>')
                 : '';
             const div = document.createElement('div');
-            div.className = 'talk-bubble';
             div.innerHTML = `
-                    <div class="talktext">
-                    <p class="talktext-author">${comment.author.firstName} ${
+                    <div >
+                    <p >${comment.author.firstName} ${
               comment.author.lastName
             }</p>
-                    <p class="talktext-comment">${text}</p>
-                    <p class="talktext-date">${new Date(
-                      comment.date
-                    ).toLocaleString()}</p>
+                    <p >${text}</p>
+                    <p >${new Date(comment.date).toLocaleString()}</p>
                     </div>
                 `;
-            findChildByID(this.domElement, 'documentComments_left').appendChild(
-              div
-            );
+            this.commentsLeft.appendChild(div);
           }
           resolve();
         },
@@ -85,12 +73,10 @@ export class DocumentCommentsWindow {
   }
 
   async publishComment() {
-    const form = findChildByID(this.domElement, 'documentComments_inputForm');
-    const form_data = new FormData(form);
+    const form_data = new FormData(this.form);
     try {
       await this.documentCommentsService.publishComment(form_data).then(() => {
-        findChildByID(this.domElement, 'documentComments_inputComment').value =
-          '';
+        this.textArea.value = '';
         this.getComments();
       });
     } catch (e) {

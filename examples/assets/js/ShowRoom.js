@@ -516,7 +516,9 @@ const ShowRoom = class {
     updateButton.innerHTML = 'Update';
     updateButton.onclick = async () => {
       await documentContribute.updateWindow.updateFromDisplayedDocument();
-      udvizBrowser.clearChildren(parentHtmlFeature);
+      while (parentHtmlFeature.firstChild) {
+        parentHtmlFeature.firstChild.remove();
+      }
       parentHtmlFeature.appendChild(documentContribute.updateWindow.domElement);
     };
     this.documentCore.view.inspectorWindow.domElement.appendChild(updateButton);
@@ -543,7 +545,9 @@ const ShowRoom = class {
     const createDocumentButton = document.createElement('button');
     createDocumentButton.innerHTML = 'Create new document';
     createDocumentButton.onclick = () => {
-      udvizBrowser.clearChildren(parentHtmlFeature);
+      while (parentHtmlFeature.firstChild) {
+        parentHtmlFeature.firstChild.remove();
+      }
       parentHtmlFeature.appendChild(
         documentContribute.creationWindow.domElement
       );
@@ -575,7 +579,9 @@ const ShowRoom = class {
     const commentButton = document.createElement('button');
     commentButton.innerHTML = 'Comment';
     commentButton.onclick = async () => {
-      udvizBrowser.clearChildren(parentHtmlFeature);
+      while (parentHtmlFeature.firstChild) {
+        parentHtmlFeature.firstChild.remove();
+      }
       await documentComment.commentsWindow.getComments();
       parentHtmlFeature.appendChild(documentComment.commentsWindow.domElement);
     };
@@ -600,8 +606,12 @@ const ShowRoom = class {
         );
       } else {
         // rebuild rootDocument
-        udvizBrowser.clearChildren(rootDocumentHtml);
-        udvizBrowser.clearChildren(parentHtmlFeature);
+        while (rootDocumentHtml.firstChild) {
+          rootDocumentHtml.firstChild.remove();
+        }
+        while (parentHtmlFeature.firstChild) {
+          parentHtmlFeature.firstChild.remove();
+        }
         rootDocumentHtml.appendChild(
           this.documentCore.view.navigatorWindow.domElement
         );
