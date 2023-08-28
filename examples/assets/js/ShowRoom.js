@@ -10,6 +10,9 @@ const ShowRoom = class {
       frame3DPlanarOptions
     );
 
+    // right click open a menu to copy position
+    this.addContextMenu();
+
     udvizBrowser.URLSetCameraMatrix(this.frame3DPlanar.camera);
 
     /** @type {udvizBrowser.itowns.Style} */
@@ -126,6 +129,80 @@ const ShowRoom = class {
 
     // INTIALIZE
     this.initUI(version);
+  }
+
+  /**
+   * Add a context menu to copy coord
+   */
+  addContextMenu() {
+    const contextMenuDomElement = document.createElement('div');
+    contextMenuDomElement.classList.add('context-menu');
+    contextMenuDomElement.hidden = true;
+    this.frame3DPlanar.domElementUI.appendChild(contextMenuDomElement);
+
+    const downloadCoordButton = document.createElement('button');
+    downloadCoordButton.innerText = 'Copy coord';
+    contextMenuDomElement.appendChild(downloadCoordButton);
+
+    // world coord in view.referenceCrs
+    const worldPosition = new udvizBrowser.THREE.Vector3();
+
+    downloadCoordButton.onclick = () => {
+      udvizBrowser.downloadObjectAsJson(
+        worldPosition,
+        'showroom_coord_' + this.frame3DPlanar.itownsView.referenceCrs
+      );
+    };
+
+    const forceNoneStatePlanarControls = () => {
+      this.frame3DPlanar.itownsView.controls.state = -1; // TODO: ask itowns to expose state NONE of the PlanarControls
+      this.frame3DPlanar.itownsView.controls.updateMouseCursorType();
+    };
+
+    const closeContextMenu = () => {
+      if (!contextMenuDomElement.hidden) {
+        contextMenuDomElement.hidden = true;
+        this.frame3DPlanar.itownsView.controls.enabled = true;
+        forceNoneStatePlanarControls();
+        return true;
+      }
+      return false;
+    };
+
+    this.frame3DPlanar.domElement.addEventListener('click', closeContextMenu);
+
+    this.frame3DPlanar.domElement.oncontextmenu = (event) => {
+      if (closeContextMenu()) return;
+
+      this.frame3DPlanar.itownsView.controls.enabled = false; // disable controls while context menu
+      forceNoneStatePlanarControls();
+
+      const mouse = new udvizBrowser.THREE.Vector2(
+        event.clientX,
+        event.clientY
+      );
+
+      this.frame3DPlanar.itownsView.getPickingPositionFromDepth(
+        mouse,
+        worldPosition
+      );
+
+      const onScreenCoord = worldPosition.clone();
+
+      onScreenCoord.project(this.frame3DPlanar.camera);
+
+      // compute position on screen
+      const widthHalf = this.frame3DPlanar.domElementWebGL.clientWidth * 0.5,
+        heightHalf = this.frame3DPlanar.domElementWebGL.clientHeight * 0.5;
+      onScreenCoord.x = onScreenCoord.x * widthHalf + widthHalf;
+      onScreenCoord.y = -(onScreenCoord.y * heightHalf) + heightHalf;
+
+      contextMenuDomElement.style.left = onScreenCoord.x + 'px';
+      contextMenuDomElement.style.top = onScreenCoord.y + 'px';
+
+      contextMenuDomElement.hidden = false;
+      console.debug(worldPosition);
+    };
   }
 
   /**

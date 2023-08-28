@@ -162,3 +162,12 @@
 #loginRegistration {
   left: 23%;
 }
+
+.context-menu {
+  position: absolute;
+  z-index: 5;
+}
+
+.context-menu button {
+  cursor: pointer;
+}
