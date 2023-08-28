@@ -1,3 +1,12 @@
+/**
+ * Performs version management tasks within a monorepo:
+ * - Updates package.json files and dependencies to the provided version
+ * - Formats code with prettier
+ * - Executes reset and generates changelog diffs
+ *
+ * @param {string} version - The version to update to.
+ */
+
 const fs = require('fs');
 const exec = require('child-process-promise').exec;
 
@@ -5,6 +14,8 @@ const version = process.argv[2];
 if (!version) throw new Error('no version argument found');
 
 const subStringVersion = version.split('.');
+
+/* Check the provided version argument. */
 if (subStringVersion.length != 3)
   throw new Error('Version format length error');
 subStringVersion.forEach((digit) => {
@@ -25,6 +36,12 @@ const printExec = function (result) {
   console.log('stderr: \n', result.stderr);
 };
 
+/**
+ * Updates the version number in a package.json file and updates the dependencies that start with "@ud-viz/" to the same version number.
+ *
+ * @param {string} path - file path to the `package.json` file to update.
+ * @returns {Promise} Promise
+ */
 const changeVersionPackageJSON = function (path) {
   return new Promise((resolve) => {
     console.log(path, '[x]');
@@ -49,13 +66,14 @@ changeVersionPackageJSON('./packages/shared/package.json').then(() => {
   changeVersionPackageJSON('./packages/browser/package.json').then(() => {
     changeVersionPackageJSON('./packages/node/package.json').then(() => {
       changeVersionPackageJSON('./package.json').then(() => {
-        console.log('Start reset');
-        exec('npm run reset')
+        const commandReset = `npm run reset`;
+        console.log('RUN', commandReset);
+        exec(commandReset)
           .then(printExec)
           .then(() => {
-            exec(
-              `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`
-            ).then(() => {
+            const commandGenerateChangelog = `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`;
+            console.log('RUN', commandGenerateChangelog);
+            exec(commandGenerateChangelog).then(() => {
               console.log(
                 'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'
               );

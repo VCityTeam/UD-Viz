@@ -1,7 +1,7 @@
 ## Release creation process
 
 1. Create a new branch for the release, e.g. `release-x.x.x` from the `master` branch.
-2. Change the monorepo version `npm run pre-publish x.x.x`
+2. Change the monorepo version `npm run pre-publish x.x.x`. It will change the version in all package.json and generate a Changelog file with all commits' names since the last release. (See the script [here](../../bin/prePublish.js)) 
 3. Pick relevant commit message in ./docs/static/ChangelogDiff.txt to put them in ./docs/static/Changelog.md (Reformulate if necessary)
 4. Run `npm run docs`
 5. Follow the [prior PR submission](./Contributing.md#prior-to-pr-submission)
