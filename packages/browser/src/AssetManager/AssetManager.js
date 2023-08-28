@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as THREE from 'three';
 import { Howl } from 'howler';
-import { textureEncoding } from '../THREEUtil';
+import { colorSpace } from '../THREEUtil';
 
 import './AssetManager.css';
 
@@ -354,7 +354,7 @@ export class RenderData {
         child.receiveShadow = true;
       }
       if (child.material) {
-        if (child.material.map) child.material.map.encoding = textureEncoding;
+        if (child.material.map) child.material.map.colorSpace = colorSpace;
         child.material.side = THREE.FrontSide;
         child.material.needsUpdate = true;
       }
