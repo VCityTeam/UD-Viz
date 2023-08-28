@@ -14,23 +14,8 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 **Online demos**:
 
-<p>
-  <a href="https://ud-viz.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/UDVIZ-Examples.png" alt="UD-VizExamples Mosaic" width="32.5%"></a>
-  <a href="https://www.imuvirtuel.fr/"><img src="examples/assets/img/readme/IMUV_Homepage.png" alt="IMUV Flying Campus Mosaic" width="32.5%"></a>
-  <a href="https://deambulation-bron.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/Deambulation Bron.png" alt="Deambulation Bron Mosaic" width="32.5%"></a>
-</p>
-<p>
-  <a href="https://ui-driven-data-lyon.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/UI_Data_Driven.png" alt="UI Data Driven Mosaic" width="32.5%"></a>
-  <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
-</p>
-
-*3D tiles related*
-<p>
-  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/3DTiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
-  <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
-</p>
-
-
+- [Ud-Viz examples](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)
+- [Flying campus](https://www.imuvirtuel.fr/): a multi-player demo using UD-Viz
 
 **UD-Viz Packages:**
 
