@@ -1,8 +1,6 @@
+import { createLabelInput } from '../../../../../HTMLUtil';
 import { DocumentProvider } from '../../Core/ViewModel/DocumentProvider';
 import { ContributeService } from '../Service/ContributeService';
-import { findChildByID } from '../../../../../HTMLUtil';
-
-import './Contribute.css';
 
 /**
  * This window is used to update a document. It contains a form that allows to
@@ -17,8 +15,52 @@ export class DocumentUpdateWindow {
    * @param {object} provider - document provider
    */
   constructor(contributeService, provider) {
+    // create dom ui
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
+
+    this.docTitle = document.createElement('h3');
+    this.domElement.appendChild(this.docTitle);
+
+    const container = document.createElement('div');
+
+    this.docImage = document.createElement('img');
+    this.docImage.setAttribute('alt', 'Document image');
+    container.appendChild(this.docImage);
+
+    this.form = document.createElement('form');
+    container.appendChild(this.form);
+
+    this.docDescription = createLabelInput('Description', 'text');
+    this.docDescription.input.setAttribute('name', 'description');
+    this.form.appendChild(this.docDescription.parent);
+
+    this.docPubDate = createLabelInput('PubDate', 'date');
+    this.docPubDate.input.setAttribute('name', 'publicationDate');
+    this.form.appendChild(this.docPubDate.parent);
+
+    this.docRefDate = createLabelInput('RefDate', 'date');
+    this.docRefDate.input.setAttribute('name', 'refDate');
+    this.form.appendChild(this.docRefDate.parent);
+
+    this.docSource = createLabelInput('Source', 'text');
+    this.docSource.input.setAttribute('name', 'source');
+    this.form.appendChild(this.docSource.parent);
+
+    this.docRightsHolder = createLabelInput('RightsHolder', 'text');
+    this.docRightsHolder.input.setAttribute('name', 'rightsHolder');
+    this.form.appendChild(this.docRightsHolder.parent);
+
+    this.inputUpdate = document.createElement('input');
+    this.inputUpdate.setAttribute('type', 'submit');
+    this.inputUpdate.value = 'Update';
+    this.form.appendChild(this.inputUpdate);
+
+    this.buttonCancel = document.createElement('button');
+    this.buttonCancel.innerText = 'Cancel';
+    this.buttonCancel.setAttribute('type', 'button');
+    this.form.appendChild(this.buttonCancel);
+
+    // end dom ui
 
     /**
      * The contribute service to perform requests.
@@ -27,12 +69,12 @@ export class DocumentUpdateWindow {
      */
     this.contributeService = contributeService;
 
-    this.formElement.onsubmit = () => {
+    this.form.onsubmit = () => {
       this._submitUpdate();
       return false;
     };
 
-    this.cancelButtonElement.onclick = () => {
+    this.buttonCancel.onclick = () => {
       this.domElement.remove();
     };
 
@@ -41,33 +83,6 @@ export class DocumentUpdateWindow {
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
       () => this.domElement.remove()
     );
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-      <div class="box-section">
-        <h3 id="${this.docTitleId}" class="section-title"></h3>
-        <div>
-          <img class="inspector-doc-img" src="" alt="Document image"
-            id="${this.docImageId}">
-          <form id="${this.formId}" class="doc-update-creation-form">
-            <label for="${this.descriptionId}">Description</label>
-            <textarea name="description" id="${this.descriptionId}"></textarea>
-            <label for="${this.pubDateId}">Publication date</label>
-            <input name="publicationDate" type="date" id="${this.pubDateId}">
-            <label for="${this.refDateId}">Refering date</label>
-            <input name="refDate" type="date" id="${this.refDateId}">
-            <label for="${this.sourceId}">Source</label>
-            <input name="source" type="text" id="${this.sourceId}">
-            <label for="${this.docRightsHolderId}">Rights holder</label>
-            <input name="rightsHolder" type="text" id="${this.docRightsHolderId}">
-            <hr>
-            <input type="submit" value="Update">
-            <button id="${this.cancelButtonId}" type="button">Cancel</button>
-          </form>
-        </div>
-      </div>
-    `;
   }
 
   // /////////////////////
@@ -90,15 +105,15 @@ export class DocumentUpdateWindow {
       return;
     }
 
-    this.docTitleElement.innerText = doc.title;
-    this.docImageElement.src = await this.provider.getDisplayedDocumentImage();
-    this.sourceElement.value = doc.source;
-    this.docRightsHolderElement.value = doc.rightsHolder;
-    this.descriptionElement.value = doc.description;
-    this.pubDateElement.value = new Date(doc.publicationDate)
+    this.docTitle.innerText = doc.title;
+    this.docImage.src = await this.provider.getDisplayedDocumentImage();
+    this.docSource.input.value = doc.source;
+    this.docRightsHolder.input.value = doc.rightsHolder;
+    this.docDescription.input.value = doc.description;
+    this.docPubDate.input.value = new Date(doc.publicationDate)
       .toISOString()
       .substring(0, 10);
-    this.refDateElement.value = new Date(doc.refDate)
+    this.docRefDate.input.value = new Date(doc.refDate)
       .toISOString()
       .substring(0, 10);
   }
@@ -112,86 +127,11 @@ export class DocumentUpdateWindow {
    * @private
    */
   async _submitUpdate() {
-    const data = new FormData(this.formElement);
+    const data = new FormData(this.form);
     try {
       await this.contributeService.updateDocument(data);
     } catch (e) {
       alert(e);
     }
-  }
-
-  // ///////////
-  // /// GETTERS
-
-  get formId() {
-    return `contribute_update_form`;
-  }
-
-  get formElement() {
-    return findChildByID(this.domElement, this.formId);
-  }
-
-  get docTitleId() {
-    return `contribute_update_title`;
-  }
-
-  get docTitleElement() {
-    return findChildByID(this.domElement, this.docTitleId);
-  }
-
-  get cancelButtonId() {
-    return `contribute_update_cancel`;
-  }
-
-  get cancelButtonElement() {
-    return findChildByID(this.domElement, this.cancelButtonId);
-  }
-
-  get docImageId() {
-    return `contribute_update_image`;
-  }
-
-  get docImageElement() {
-    return findChildByID(this.domElement, this.docImageId);
-  }
-
-  get sourceId() {
-    return `contribute_update_source`;
-  }
-
-  get sourceElement() {
-    return findChildByID(this.domElement, this.sourceId);
-  }
-
-  get docRightsHolderId() {
-    return `contribute_update_rights_holder`;
-  }
-
-  get docRightsHolderElement() {
-    return findChildByID(this.domElement, this.docRightsHolderId);
-  }
-
-  get descriptionId() {
-    return `contribute_update_description`;
-  }
-
-  get descriptionElement() {
-    return findChildByID(this.domElement, this.descriptionId);
-  }
-
-  get pubDateId() {
-    return `contribute_update_pub_date`;
-  }
-
-  get pubDateElement() {
-    return findChildByID(this.domElement, this.pubDateId);
-  }
-
-  get refDateId() {
-    return `contribute_update_ref_date`;
-  }
-
-  get refDateElement() {
-    return findChildByID(this.domElement, this.refDateId);
   }
 }

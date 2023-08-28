@@ -2,7 +2,7 @@ import { RequestService } from '../../../../RequestService';
 import { DocumentCreationWindow } from './View/DocumentCreationWindow';
 import { DocumentUpdateWindow } from './View/DocumentUpdateWindow';
 import { ContributeService } from './Service/ContributeService';
-import { DocumentVisualizerWindow } from '../Visualizer/View/DocumentVisualizerWindow';
+import { DocumentVisualizerWindow } from '../Visualizer/DocumentVisualizerWindow';
 
 /**
  * This module is used to manage the update, deletion and creation of documents.

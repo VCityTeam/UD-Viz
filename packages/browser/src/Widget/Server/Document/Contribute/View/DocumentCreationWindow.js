@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { DocumentVisualizerWindow } from '../../Visualizer/View/DocumentVisualizerWindow';
+import { DocumentVisualizerWindow } from '../../Visualizer/DocumentVisualizerWindow';
 import { CameraPositioner } from '../../../../CameraPositioner/CameraPositioner';
 import { ContributeService } from '../Service/ContributeService';
-import { findChildByID } from '../../../../../HTMLUtil';
+import { createLabelInput } from '../../../../../HTMLUtil';
 
 /** @class */
 export class DocumentCreationWindow {
@@ -23,8 +23,51 @@ export class DocumentCreationWindow {
     documentVisualizer,
     parentElementVisualizer
   ) {
+    // create dom ui
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = this.innerContentHtml;
+
+    this.form = document.createElement('form');
+
+    this.docImage = createLabelInput('File', 'file');
+    this.docImage.input.setAttribute('name', 'file');
+    this.form.appendChild(this.docImage.parent);
+
+    this.docTitle = createLabelInput('Title', 'text');
+    this.docTitle.input.setAttribute('name', 'title');
+    this.form.appendChild(this.docTitle.parent);
+
+    this.docDescription = createLabelInput('Description', 'text');
+    this.docDescription.input.setAttribute('name', 'description');
+    this.form.appendChild(this.docDescription.parent);
+
+    this.pubDate = createLabelInput('Publication date', 'date');
+    this.pubDate.input.setAttribute('name', 'publicationDate');
+    this.form.appendChild(this.pubDate.parent);
+
+    this.refDate = createLabelInput('Refering date', 'date');
+    this.refDate.input.setAttribute('name', 'refDate');
+    this.form.appendChild(this.refDate.parent);
+
+    this.source = createLabelInput('Source', 'text');
+    this.source.input.setAttribute('name', 'source');
+    this.form.appendChild(this.source.parent);
+
+    this.rightsHolder = createLabelInput('Rights holder', 'text');
+    this.rightsHolder.input.setAttribute('name', 'rightsHolder');
+    this.form.appendChild(this.rightsHolder.parent);
+
+    this.buttonPosition = document.createElement('button');
+    this.buttonPosition.setAttribute('type', 'button');
+    this.buttonPosition.innerText = 'Set Position';
+    this.form.appendChild(this.buttonPosition);
+
+    this.inputCreate = document.createElement('input');
+    this.inputCreate.setAttribute('type', 'submit');
+    this.inputCreate.value = 'Create';
+    this.inputCreate.disabled = true;
+    this.form.appendChild(this.inputCreate);
+
+    // end dom
 
     this.parentElementVisualizer = parentElementVisualizer;
 
@@ -100,14 +143,14 @@ export class DocumentCreationWindow {
     }
 
     // callbacks
-    this.formElement.onsubmit = () => {
+    this.form.onsubmit = () => {
       this._submitCreation();
       return false;
     };
 
-    this.formElement.oninput = () => this._updateFormButtons();
+    this.form.oninput = () => this._updateFormButtons();
 
-    this.buttonPositionElement.onclick = () => this._startPositioningDocument();
+    this.buttonPosition.onclick = () => this._startPositioningDocument();
 
     this._initForm();
   }
@@ -117,33 +160,6 @@ export class DocumentCreationWindow {
     this.domElement.remove();
     this._exitEditMode();
     this.documentVisualizer.dispose();
-  }
-
-  get innerContentHtml() {
-    return /* html*/ `
-      <div class="box-section">
-        <h3 class="section-title">Document data</h3>
-        <form id="${this.formId}" class="doc-update-creation-form">
-          <label for="${this.docImageId}">File</label>
-          <input name="file" type="file" id="${this.docImageId}">
-          <label for="${this.docTitleId}">Title</label>
-          <input name="title" type="text" id="${this.docTitleId}">
-          <label for="${this.descriptionId}">Description</label>
-          <textarea name="description" id="${this.descriptionId}"></textarea>
-          <label for="${this.pubDateId}">Publication date</label>
-          <input name="publicationDate" type="date" id="${this.pubDateId}">
-          <label for="${this.refDateId}">Refering date</label>
-          <input name="refDate" type="date" id="${this.refDateId}">
-          <label for="${this.sourceId}">Source</label>
-          <input name="source" type="text" id="${this.sourceId}">
-          <label for="${this.docRightsHolderId}">Rights holder</label>
-          <input name="rightsHolder" type="text" id="${this.docRightsHolderId}">
-          <hr>
-          <button type="button" id="${this.buttonPositionId}">Set position</button>
-          <input type="submit" disabled value="Create" id="${this.buttonCreateId}">
-        </form>
-      </div>
-    `;
   }
 
   // ///////////////////////
@@ -167,7 +183,7 @@ export class DocumentCreationWindow {
         this.documentVisualizer.domElement
       );
     };
-    fileReader.readAsDataURL(this.docImageElement.files[0]);
+    fileReader.readAsDataURL(this.docImage.input.files[0]);
   }
 
   /**
@@ -199,13 +215,13 @@ export class DocumentCreationWindow {
    * @private
    */
   _initForm() {
-    this.docImageElement.value = '';
-    this.docTitleElement.value = '';
-    this.sourceElement.value = '';
-    this.docRightsHolderElement.value = '';
-    this.descriptionElement.value = '';
-    this.pubDateElement.value = '';
-    this.refDateElement.value = '';
+    this.docImage.input.value = '';
+    this.docTitle.input.value = '';
+    this.source.input.value = '';
+    this.rightsHolder.input.value = '';
+    this.docDescription.input.value = '';
+    this.pubDate.input.value = '';
+    this.refDate.input.value = '';
     this._updateFormButtons();
   }
 
@@ -217,7 +233,7 @@ export class DocumentCreationWindow {
    * @private
    */
   _formValidation() {
-    const data = new FormData(this.formElement);
+    const data = new FormData(this.form);
     for (const entry of data.entries()) {
       if (!entry[1] || entry[1] === '') {
         return false;
@@ -237,16 +253,16 @@ export class DocumentCreationWindow {
    * @private
    */
   _updateFormButtons() {
-    if (this.docImageElement.value) {
-      this.buttonPositionElement.disabled = false;
+    if (this.docImage.input.value) {
+      this.buttonPosition.disabled = false;
     } else {
-      this.buttonPositionElement.disabled = true;
+      this.buttonPosition.disabled = true;
     }
 
     if (this._formValidation()) {
-      this.buttonCreateElement.disabled = false;
+      this.inputCreate.disabled = false;
     } else {
-      this.buttonCreateElement.disabled = true;
+      this.inputCreate.disabled = true;
     }
   }
 
@@ -274,7 +290,7 @@ export class DocumentCreationWindow {
       return;
     }
 
-    const data = new FormData(this.formElement);
+    const data = new FormData(this.form);
     data.append('positionX', this.cameraPosition.x);
     data.append('positionY', this.cameraPosition.y);
     data.append('positionZ', this.cameraPosition.z);
@@ -289,88 +305,5 @@ export class DocumentCreationWindow {
     } catch (e) {
       alert(e);
     }
-  }
-
-  // ///////////
-  // /// GETTERS
-
-  get buttonPositionId() {
-    return `document_contribute_creation_button_position`;
-  }
-
-  get buttonPositionElement() {
-    return findChildByID(this.domElement, this.buttonPositionId);
-  }
-
-  get buttonCreateId() {
-    return `document_contribute_creation_button_creation`;
-  }
-
-  get buttonCreateElement() {
-    return findChildByID(this.domElement, this.buttonCreateId);
-  }
-
-  get formId() {
-    return `document_contribute_creation_form`;
-  }
-
-  get formElement() {
-    return findChildByID(this.domElement, this.formId);
-  }
-
-  get docTitleId() {
-    return `document_contribute_creation_title`;
-  }
-
-  get docTitleElement() {
-    return findChildByID(this.domElement, this.docTitleId);
-  }
-
-  get docImageId() {
-    return `document_contribute_creation_image`;
-  }
-
-  get docImageElement() {
-    return findChildByID(this.domElement, this.docImageId);
-  }
-
-  get sourceId() {
-    return `document_contribute_creation_source`;
-  }
-
-  get sourceElement() {
-    return findChildByID(this.domElement, this.sourceId);
-  }
-
-  get docRightsHolderId() {
-    return `document_contribute_creation_rights_holder`;
-  }
-
-  get docRightsHolderElement() {
-    return findChildByID(this.domElement, this.docRightsHolderId);
-  }
-
-  get descriptionId() {
-    return `document_contribute_creation_description`;
-  }
-
-  get descriptionElement() {
-    return findChildByID(this.domElement, this.descriptionId);
-  }
-
-  get pubDateId() {
-    return `document_contribute_creation_pub_date`;
-  }
-
-  get pubDateElement() {
-    return findChildByID(this.domElement, this.pubDateId);
-  }
-
-  get refDateId() {
-    return `document_contribute_creation_ref_date`;
-  }
-
-  get refDateElement() {
-    return findChildByID(this.domElement, this.refDateId);
   }
 }

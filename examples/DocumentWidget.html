@@ -201,7 +201,9 @@
           updateButton.innerText = 'Update';
           updateButton.onclick = async () => {
             await documentContribute.updateWindow.updateFromDisplayedDocument();
-            udvizBrowser.clearChildren(parentBottomRight);
+            while (parentBottomRight.firstChild) {
+              parentBottomRight.firstChild.remove();
+            }
             parentBottomRight.appendChild(
               documentContribute.updateWindow.domElement
             );
@@ -234,7 +236,9 @@
           const createDocumentButton = document.createElement('button');
           createDocumentButton.innerText = 'Create new document';
           createDocumentButton.onclick = () => {
-            udvizBrowser.clearChildren(parentBottomRight);
+            while (parentBottomRight.firstChild) {
+              parentBottomRight.firstChild.remove();
+            }
             parentBottomRight.appendChild(
               documentContribute.creationWindow.domElement
             );
@@ -267,7 +271,9 @@
           const commentButton = document.createElement('button');
           commentButton.innerText = 'Comment';
           commentButton.onclick = async () => {
-            udvizBrowser.clearChildren(parentBottomRight);
+            while (parentBottomRight.firstChild) {
+              parentBottomRight.firstChild.remove();
+            }
             await documentComment.commentsWindow.getComments();
             parentBottomRight.appendChild(
               documentComment.commentsWindow.domElement

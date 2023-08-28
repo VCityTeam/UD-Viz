@@ -2,8 +2,6 @@ import { DocumentSource } from '../../Core/Model/DocumentService';
 import { ValidationService } from '../Service/ValidationService';
 import { DocumentsInValidationDocumentSource } from '../Service/DocumentsInValidationSource';
 
-import { findChildByID } from '../../../../../HTMLUtil';
-
 /**
  * This class represents the visual elements and their logic for the
  * validation module :
@@ -30,13 +28,23 @@ export class ValidationView {
     parentElementValidateButton
   ) {
     this.domElement = document.createElement('div');
-    this.domElement.innerHTML = `
-        <label for="${this.switchId}">Validation status : </label>
-        <select id="${this.switchId}">
-          <option value="validated">Validated documents</option>
-          <option value="in-validation">Documents in validation</option>
-        </select>
-      `;
+
+    const label = document.createElement('label');
+    label.innerText = 'Validation status : ';
+    this.domElement.appendChild(label);
+
+    this.select = document.createElement('select');
+    this.domElement.appendChild(this.select);
+
+    const validatedDocumentOption = document.createElement('option');
+    validatedDocumentOption.value = 'validated';
+    validatedDocumentOption.innerText = 'Validated documents';
+    this.select.appendChild(validatedDocumentOption);
+
+    const inValidationDocument = document.createElement('option');
+    inValidationDocument.value = 'in-validated';
+    inValidationDocument.innerText = 'Documents in validation';
+    this.select.appendChild(inValidationDocument);
 
     this.parentElementValidateButton = parentElementValidateButton;
 
@@ -60,7 +68,7 @@ export class ValidationView {
      *
      * @type {DocumentSource}
      */
-    this.previousDocumentSource = undefined;
+    this.previousDocumentSource = null;
 
     /**
      * The validation source.
@@ -69,9 +77,9 @@ export class ValidationView {
      */
     this.validationSource = validationSource;
 
-    this.switchElement.value = 'validated';
+    this.select.value = 'validated';
     this._toggleValidation();
-    this.switchElement.onchange = () => {
+    this.select.onchange = () => {
       this._toggleValidation();
     };
   }
@@ -87,8 +95,7 @@ export class ValidationView {
    * @private
    */
   _toggleValidation() {
-    this.displayingDocumentsToValidate =
-      this.switchElement.value === 'in-validation';
+    this.displayingDocumentsToValidate = this.select.value === 'in-validation';
     if (this.displayingDocumentsToValidate) {
       this._showDocumentsInValidation();
     } else {
@@ -100,7 +107,7 @@ export class ValidationView {
       (reason) => {
         this._showValidatedDocuments();
         this.displayingDocumentsToValidate = false;
-        this.switchElement.value = 'validated';
+        this.select.value = 'validated';
         alert(reason);
       }
     );
@@ -168,16 +175,5 @@ export class ValidationView {
       .then(() => {
         this.provider.refreshDocumentList();
       });
-  }
-
-  // ///////////
-  // /// GETTERS
-
-  get switchId() {
-    return 'document-validation-view-switch';
-  }
-
-  get switchElement() {
-    return findChildByID(this.domElement, this.switchId);
   }
 }
