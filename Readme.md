@@ -62,17 +62,7 @@ UD-Viz (repo)
 ├── style.css                 # Landing page style
 ```
 
-**Github repositories:** 
-
-  
-| Repository      | Link                                         | Description                                                        |
-| --------------- | -------------------------------------------- | ------------------------------------------------------------------ |
-| UD-Viz-docker   | https://github.com/VCityTeam/UD-Viz-docker   | Docker, which performs all the steps described in Getting Started. |
-| UD-Viz-template | https://github.com/VCityTeam/UD-Viz-template | A basis for creating your application using UD-Viz.                |
-
-
 ## Getting Started
-
 
 ### Installing node/npm
 
