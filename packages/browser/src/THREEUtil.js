@@ -93,8 +93,8 @@ export function initScene(camera, renderer, scene, config, object3D) {
 /**
  * Texture encoding used to have the right color of the .glb model + have an alpha channel
  */
-const textureEncoding = THREE.sRGBEncoding;
-export { textureEncoding };
+const colorSpace = THREE.SRGBColorSpace;
+export { colorSpace };
 
 /**
  *
@@ -140,7 +140,7 @@ export function initRenderer(renderer, skyColor, clear = false) {
   renderer.setClearColor(skyColor, 1);
   renderer.autoClear = clear;
   renderer.autoClearColor = clear;
-  renderer.outputEncoding = textureEncoding;
+  renderer.outputColorSpace = colorSpace;
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.shadowMap.enabled = true;
   // To antialias the shadow
