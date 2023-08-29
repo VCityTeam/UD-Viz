@@ -59,7 +59,43 @@ export class SparqlQueryWindow extends EventSender {
      *
      * @type {D3GraphCanvas}
      */
-    this.d3Graph = new D3GraphCanvas(this, configSparqlWidget);
+    this.d3Graph = new D3GraphCanvas(configSparqlWidget);
+
+    // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
+    this.d3Graph.addEventListener('click', (event, datum) => {
+      // Get clicked node's data, if data.type is 'Building', zoom camera on a feature with the same 'gmlid' as data.id
+      const nodeData = this.d3Graph.data.getNodeByIndex(datum.index);
+
+      console.debug('node clicked: ', nodeData);
+
+      if (URI.getUriLocalname(nodeData.type) == 'Building') {
+        const clickedResult = fetchC3DTileFeatureWithNodeText(
+          URI.getUriLocalname(nodeData.id)
+        );
+        if (!clickedResult) return;
+
+        focusCameraOn(
+          this.itownsView,
+          this.itownsView.controls,
+          clickedResult.layer
+            .computeWorldBox3(clickedResult.feature)
+            .getCenter(new THREE.Vector3()),
+          {
+            verticalDistance: 200,
+            horizontalDistance: 200,
+          }
+        );
+      }
+    });
+    this.d3Graph.addEventListener('mouseover', () => {
+      // TODO
+      // if this imply some style it should be handle in template or layer should be able to have != styles ?
+      console.warn('DEPRECATED');
+    });
+    this.d3Graph.addEventListener('mouseout', () => {
+      // TODO
+      console.warn('DEPRECATED'); // same reason as above
+    });
 
     /**
      * Contains the D3 table to display RDF data.
@@ -82,9 +118,6 @@ export class SparqlQueryWindow extends EventSender {
      */
     this.gml_id;
 
-    this.registerEvent(D3GraphCanvas.EVENT_NODE_CLICKED);
-    this.registerEvent(D3GraphCanvas.EVENT_NODE_MOUSEOVER);
-    this.registerEvent(D3GraphCanvas.EVENT_NODE_MOUSEOUT);
     this.registerEvent(Table.EVENT_CELL_CLICKED);
 
     /**
@@ -166,43 +199,6 @@ export class SparqlQueryWindow extends EventSender {
 
       return result;
     };
-
-    this.addEventListener(D3GraphCanvas.EVENT_NODE_CLICKED, (index) => {
-      const nodeData = this.d3Graph.data.getNodeByIndex(index);
-
-      console.debug('node clicked: ', nodeData);
-
-      if (URI.getUriLocalname(nodeData.type) == 'Building') {
-        const clickedResult = fetchC3DTileFeatureWithNodeText(
-          URI.getUriLocalname(nodeData.id)
-        );
-        if (!clickedResult) return;
-
-        focusCameraOn(
-          this.itownsView,
-          this.itownsView.controls,
-          clickedResult.layer
-            .computeWorldBox3(clickedResult.feature)
-            .getCenter(new THREE.Vector3()),
-          {
-            verticalDistance: 200,
-            horizontalDistance: 200,
-          }
-        );
-      }
-    });
-
-    // TODO
-
-    // this.addEventListener(Graph.EVENT_NODE_MOUSEOVER, (node_text) => {
-    //   console.warn('DEPRECATED cant apply style to ', node_text);
-    // if this imply some style it should be handle in template or layer should be able to have != styles ?
-    // });
-
-    // this.addEventListener(
-    //   Graph.EVENT_NODE_MOUSEOUT,
-    //   () => console.warn('DEPRECATED') // same reason as above
-    // );
 
     this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
       const clickedResult = fetchC3DTileFeatureWithNodeText(

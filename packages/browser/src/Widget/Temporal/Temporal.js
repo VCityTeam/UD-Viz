@@ -99,7 +99,18 @@ const TEMPORAL_COLOR_OPACITY = {
   },
 };
 
+/* The `Temporal3DTilesLayerWrapper` class is a wrapper for a temporal 3D Tiles layer
+ * using the `3DTILES_temporal` extension, providing methods to compute and update the
+ * style of the layer based on temporal data. */
 export class Temporal3DTilesLayerWrapper {
+  /**
+   * A constructor that initializes a temporal style for a C3DTilesLayer by
+   * computing tile maps based on the `3DTILES_temporal` batch table hierarchy content found in
+   * the tile content.
+   *
+   * @param {itowns.C3DTilesLayer} temporalC3DTilesLayer - An instance of the `itowns.C3DTilesLayer` class. It
+   * represents a layer that displays 3D tiles with temporal data.
+   */
   constructor(temporalC3DTilesLayer) {
     const computedTileIds = [];
 
@@ -236,7 +247,6 @@ export class Temporal3DTilesLayerWrapper {
 
     this.styleDate = null; // default value
     const computeColorOpacity = (c3DTileFeature) => {
-      console.log('compute style ', this.styleDate);
       const temporalExtension =
         c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
 
@@ -311,7 +321,17 @@ const DEFAULT_OPTIONS = {
   width: '400px',
 };
 
+/** 
+ * The `DateSelector` class allows users to select a C3DTilesLayer and
+choose a date from a dropdown menu. 
+ * 
+ */
 export class DateSelector extends itownsWidget.Widget {
+  /**
+   * @param {itowns.View} itownsView - an object that represents the view of the iTowns canvas.
+   * @param {object} options - an object that contains additional configuration options
+   * for the constructor. It is used to customize the behavior of the `constructor` function.
+   */
   constructor(itownsView, options) {
     super(itownsView, options, DEFAULT_OPTIONS);
 
