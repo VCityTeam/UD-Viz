@@ -1,21 +1,22 @@
 /**
- * Performs version management tasks within a monorepo:
+ * @file Performs version management tasks within a monorepo:
  * - Updates package.json files and dependencies to the provided version
  * - Formats code with prettier
  * - Executes reset and generates changelog diffs
- *
  * @param {string} version - The version to update to.
  */
 
 const fs = require('fs');
 const exec = require('child-process-promise').exec;
 
+/** @type {string} The version argument provided from the command line. */
 const version = process.argv[2];
 if (!version) throw new Error('no version argument found');
 
+/** @type {string[]} The version split into segments. */
 const subStringVersion = version.split('.');
 
-/* Check the provided version argument. */
+/** Check the provided version argument. */
 if (subStringVersion.length != 3)
   throw new Error('Version format length error');
 subStringVersion.forEach((digit) => {
@@ -27,20 +28,21 @@ subStringVersion.forEach((digit) => {
 console.log('Change ud-viz-monorepo version to ', version);
 
 /**
- * It prints the stdout and stderr of a result object
+ * Prints the stdout and stderr of a command execution result.
  *
- * @param {{stdout:string,stderr:string}} result - The result of the command execution.
+ * @param {{stdout: string, stderr: string}} result - The result of the command execution.
  */
 const printExec = function (result) {
-  console.log('stdout: \n', result.stdout);
-  console.log('stderr: \n', result.stderr);
+  console.log('stdout:\n', result.stdout);
+  console.log('stderr:\n', result.stderr);
 };
 
 /**
- * Updates the version number in a package.json file and updates the dependencies that start with "@ud-viz/" to the same version number.
+ * Updates the version number in a package.json file and updates the dependencies
+ * that start with "@ud-viz/" to the same version number.
  *
- * @param {string} path - file path to the `package.json` file to update.
- * @returns {Promise} Promise
+ * @param {string} path - The file path to the `package.json` file to update.
+ * @returns {Promise<void>} A Promise that resolves when the update is complete.
  */
 const changeVersionPackageJSON = function (path) {
   return new Promise((resolve) => {
@@ -48,7 +50,7 @@ const changeVersionPackageJSON = function (path) {
     const content = JSON.parse(fs.readFileSync(path));
     content.version = version;
 
-    // update dependencie
+    // Update dependencies
     for (const key in content.dependencies) {
       if (key.startsWith('@ud-viz/')) {
         content.dependencies[key] = version;
@@ -62,17 +64,22 @@ const changeVersionPackageJSON = function (path) {
   });
 };
 
+// Update version and dependencies for multiple package.json files
 changeVersionPackageJSON('./packages/shared/package.json').then(() => {
   changeVersionPackageJSON('./packages/browser/package.json').then(() => {
     changeVersionPackageJSON('./packages/node/package.json').then(() => {
       changeVersionPackageJSON('./package.json').then(() => {
         const commandReset = `npm run reset`;
         console.log('RUN', commandReset);
+
+        // Execute reset command
         exec(commandReset)
           .then(printExec)
           .then(() => {
             const commandGenerateChangelog = `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`;
             console.log('RUN', commandGenerateChangelog);
+
+            // Generate changelog diffs
             exec(commandGenerateChangelog).then(() => {
               console.log(
                 'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'

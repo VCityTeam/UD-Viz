@@ -1,4 +1,12 @@
-/** @file main examples backend */
+/**
+ * @file Sets up an Express backend server for examples, serving static files,
+ * replacing HTML strings, and enabling a game socket service.
+ * The behavior adapts based on the environment mode and uses package.json configuration.
+ * @requires {@link https://www.npmjs.com/package/@ud-viz/node|@ud-viz/node}
+ * @requires {@link https://www.npmjs.com/package/@ud-viz/shared|@ud-viz/shared}
+ * @requires {@link https://www.npmjs.com/package/reload|reload}
+ * @requires {@link https://www.npmjs.com/package/string-replace-middleware|string-replace-middleware}
+ */
 
 const udvizNode = require('@ud-viz/node');
 const udvizVersion = require('../package.json').version;
@@ -7,13 +15,30 @@ const Constant = require('./Constant');
 const reload = require('reload');
 const { stringReplace } = require('string-replace-middleware');
 
-// run an express app wrapper with a gamesocket service
+/**
+ * The environment mode.
+ *
+ * @type {string}
+ */
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+/**
+ * The runtime mode determined by the environment.
+ *
+ * @type {string}
+ */
 const runMode = NODE_ENV === 'production' ? 'release' : 'debug';
 
-console.log('Back-end start on mode', runMode);
+console.log('Back-end starting in', runMode, 'mode');
 
+/**
+ * Express application instance.
+ *
+ * @type {object}
+ */
 const app = new udvizNode.express();
+
+// Apply string replacements for different values in HTML responses
 app.use(
   stringReplace(
     {
@@ -48,21 +73,28 @@ app.use(
   )
 );
 
+// Serve static files
 app.use(udvizNode.express.static('./'));
 
+/**
+ * The HTTP server instance.
+ *
+ * @type {object}
+ */
 const httpServer = app.listen(Constant.DEFAULT_PORT, (err) => {
   if (err) {
-    console.error('Server does not start');
+    console.error('Server could not start');
     return;
   }
   console.log('Http server listening on port', Constant.DEFAULT_PORT);
 });
 
-// initialize examples game socket service
+// Initialize examples game socket service
 const gameSocketService = new udvizNode.Game.SocketService(httpServer);
 gameSocketService
   .loadGameThreads(
     [
+      // Define the game thread
       new Game.Object3D({
         name: 'Note Game',
         static: true,
@@ -86,7 +118,7 @@ gameSocketService
   )
   .then(() => {
     console.log('Game SocketService initialized');
-    // if can send message to parent notify it
+    // Notify parent process if possible
     if (process.send) {
       process.send(Constant.MESSAGE.READY);
     }
