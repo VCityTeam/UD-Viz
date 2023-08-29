@@ -121,6 +121,21 @@ export class Frame3DPlanar extends Frame3DBase {
   }
 
   /**
+   * Render scene3D + labels
+   */
+  render() {
+    super.render();
+
+    // render also label layers
+    if (this.isRendering && this.itownsView.tileLayer) {
+      this.itownsView.mainLoop.gfxEngine.label2dRenderer.render(
+        this.itownsView.tileLayer.object3d,
+        this.itownsView.camera.camera3D
+      );
+    }
+  }
+
+  /**
    * Resize Frame3D
    */
   onResize() {

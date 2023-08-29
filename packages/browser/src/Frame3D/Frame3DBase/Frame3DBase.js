@@ -257,7 +257,7 @@ export class Frame3DBase {
   render() {
     // Default Render
     if (!this.isRendering) return;
-    this.renderer.clearColor();
+    this.renderer.clear();
     this.renderer.render(this.scene, this.camera);
   }
 
