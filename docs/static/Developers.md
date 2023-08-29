@@ -14,7 +14,7 @@ Developing UD-Viz applications requires knowledge about :
 
 For developpers using node version manager (nvm) tool is advised. nvm allows you to quickly install and use different versions of node via the command line.
 
-To download and install followw this link: https://github.com/nvm-sh/nvm#installing-and-updating
+To download and install follow this link: https://github.com/nvm-sh/nvm#installing-and-updating
 
 ## Environment Tips
 
