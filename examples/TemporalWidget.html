@@ -15,10 +15,9 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/widget/temporal.json',
           './assets/config/layer/3DTiles_temporal.json',
           './assets/config/layer/base_maps.json',
-          './assets/config/layer/elevation.json',
+          './assets/config/layer/elevation.json'
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -45,7 +44,7 @@
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {},
+                  options: {}
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -53,9 +52,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format'],
+                  format: configs['base_maps'][0]['format']
                 }),
-                transparent: true,
+                transparent: true
               }
             )
           );
@@ -80,8 +79,8 @@
                   name: configs['elevation']['name'],
                   crs: extent.crs,
                   heightMapWidth: 256,
-                  format: configs['elevation']['format'],
-                }),
+                  format: configs['elevation']['format']
+                })
               }
             )
           );

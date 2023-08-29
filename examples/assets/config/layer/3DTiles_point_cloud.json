@@ -1,7 +1,6 @@
 [
   {
     "id": "Villeurbanne_point_cloud",
-    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Villeurbanne_2018_point_cloud/tileset.json",
-    "pc_size": 2
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Villeurbanne_2018_point_cloud/tileset.json"
   }
 ]

@@ -15,7 +15,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/base_maps.json',
+          './assets/config/layer/base_maps.json'
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -42,13 +42,13 @@
             [
               {
                 layer: configs['base_maps'][0],
-                pathIcon: './assets/img/ign_ortho.png',
+                pathIcon: './assets/img/ign_ortho.png'
               },
               {
                 layer: configs['base_maps'][1],
                 pathIcon:
-                  'https://imagerie.data.grandlyon.com/geoserver/grandlyon/ows?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&transparent=false&WIDTH=256&HEIGHT=256&layers=ortho_latest&FORMAT=image/jpeg&CRS=EPSG:3946&BBOX=1844753.50,5173557.50,1846476.88,5174961.00',
-              },
+                  'https://imagerie.data.grandlyon.com/geoserver/grandlyon/ows?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&transparent=false&WIDTH=256&HEIGHT=256&layers=ortho_latest&FORMAT=image/jpeg&CRS=EPSG:3946&BBOX=1844753.50,5173557.50,1846476.88,5174961.00'
+              }
             ],
             extent
           );
