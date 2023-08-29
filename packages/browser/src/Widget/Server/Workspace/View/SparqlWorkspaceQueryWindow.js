@@ -1,5 +1,4 @@
 import { SparqlEndpointResponseProvider } from '../../SPARQL/Service/SparqlEndpointResponseProvider';
-import { D3GraphCanvas } from '../../SPARQL/View/D3GraphCanvas';
 import { getUriLocalname } from '../../SPARQL/Model/URI';
 import { SparqlQueryWindow } from '../../SPARQL/View/SparqlQueryWindow';
 import { D3WorkspaceCanvas } from './D3WorkspaceCanvas';
@@ -50,8 +49,8 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
         }
       });
 
-    this.addEventListener(D3GraphCanvas.EVENT_NODE_CLICKED, (index) => {
-      const nodeData = this.d3Graph.data.getNodeByIndex(index);
+    this.d3Graph.addEventListener('click', (event, datum) => {
+      const nodeData = this.d3Graph.data.getNodeByIndex(datum.index);
       const nodeType = getUriLocalname(nodeData.type);
       if (nodeType == 'Version' || nodeType == 'VersionTransition') {
         /* find the first scenario that contains the clicked node,
@@ -59,7 +58,7 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
          * set the current time to the averaged timestamps linked to the node
          */
         const scenarioLayer = this.d3Graph.data.getScenarioLayerByIndex(
-          index,
+          datum.index,
           this.itownsView
         );
 
@@ -73,8 +72,9 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
             .forEach((layer) => (layer.visible = layer == scenarioLayer));
 
           // Calculate the average timestamp of the clicked node
-          const timestamps =
-            this.d3Graph.data.getBitemporalTimestampsByIndex(index);
+          const timestamps = this.d3Graph.data.getBitemporalTimestampsByIndex(
+            datum.index
+          );
           const timestampAverage =
             (timestamps.validTo - timestamps.validFrom) / 2 +
             timestamps.validFrom;
