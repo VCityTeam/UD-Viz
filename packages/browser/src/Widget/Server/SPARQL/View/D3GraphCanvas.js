@@ -1,15 +1,14 @@
 import * as d3 from 'd3';
 import { getUriLocalname, tokenizeURI } from '../Model/URI';
-import { SparqlQueryWindow } from './SparqlQueryWindow';
 import { Graph } from '../Model/Graph';
+import * as THREE from 'three';
 
-export class D3GraphCanvas {
+export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Create a new D3 graph from an RDF JSON object.
    * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and
    * https://www.d3indepth.com/zoom-and-pan/
    *
-   * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {object} configSparqlWidget The sparqlModule configuration.
    * @param {number} configSparqlWidget.height The SVG canvas height.
    * @param {number} configSparqlWidget.width The SVG canvas width.
@@ -17,7 +16,8 @@ export class D3GraphCanvas {
    * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
    *                                                    This doesn't (yet) affect the legend font size.
    */
-  constructor(window, configSparqlWidget) {
+  constructor(configSparqlWidget) {
+    super();
     if (
       !configSparqlWidget ||
       !configSparqlWidget.height ||
@@ -27,8 +27,6 @@ export class D3GraphCanvas {
       console.log(configSparqlWidget);
       throw 'The given "configSparqlWidget" configuration is incorrect.';
     }
-
-    this.window = window;
     this.height = configSparqlWidget.height;
     this.width = configSparqlWidget.width;
     this.fontSize = configSparqlWidget.fontSize;
@@ -45,7 +43,7 @@ export class D3GraphCanvas {
   // / Data Functions ///
 
   /**
-   * Clear and update the d3 SVG canvas based on the data from a graph dataset.
+   * Clear and update the d3 SVG canvas based on the data from a graph dataset. Also apply event dispatchers
    *
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
@@ -95,50 +93,75 @@ export class D3GraphCanvas {
       .attr('stroke-width', 0.75)
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
-      .on('click', (event, d) => {
-        this.window.sendEvent(D3GraphCanvas.EVENT_NODE_CLICKED, d.index);
+      .on('click', (event, datum) => {
+        this.dispatchEvent({
+          type: 'click',
+          message: 'node click event',
+          event: event,
+          datum: datum,
+        });
       })
-      .on('mouseover', (event, d) => {
+      .on('mouseover', (event, datum) => {
         event.target.style['stroke'] = setColor(
-          nodes[d.index].color_id,
+          nodes[datum.index].color_id,
           'white',
           'white'
         );
-        event.target.style['fill'] = setColor(nodes[d.index].color_id, '#333');
+        event.target.style['fill'] = setColor(
+          nodes[datum.index].color_id,
+          '#333'
+        );
         node_label
           .filter((e, j) => {
-            return d.index == j;
+            return datum.index == j;
           })
           .style('fill', 'white')
           .style('opacity', '1');
         link_label
           .filter((e) => {
-            return d.index == e.source.index || d.index == e.target.index;
+            return (
+              datum.index == e.source.index || datum.index == e.target.index
+            );
           })
           .style('fill', 'white')
           .style('opacity', '1');
-        this.window.sendEvent(D3GraphCanvas.EVENT_NODE_MOUSEOVER, d.index);
+        this.dispatchEvent({
+          type: 'mouseover',
+          message: 'node mouseover event',
+          event: event,
+          datum: datum,
+        });
       })
-      .on('mouseout', (event, d) => {
+      .on('mouseout', (event, datum) => {
         event.target.style['stroke'] = setColor(
-          nodes[d.index].color_id,
+          nodes[datum.index].color_id,
           '#ddd',
           '#111'
         );
-        event.target.style['fill'] = setColor(nodes[d.index].color_id, 'black');
+        event.target.style['fill'] = setColor(
+          nodes[datum.index].color_id,
+          'black'
+        );
         node_label
           .filter((e, j) => {
-            return d.index == j;
+            return datum.index == j;
           })
           .style('fill', 'grey')
           .style('opacity', '0.5');
         link_label
           .filter((e) => {
-            return d.index == e.source.index || d.index == e.target.index;
+            return (
+              datum.index == e.source.index || datum.index == e.target.index
+            );
           })
           .style('fill', 'grey')
           .style('opacity', '0.5');
-        this.window.sendEvent(D3GraphCanvas.EVENT_NODE_MOUSEOUT, d.index);
+        this.dispatchEvent({
+          type: 'mouseout',
+          message: 'node mouseout event',
+          event: event,
+          datum: datum,
+        });
       })
       .call(this.drag(simulation));
 
@@ -390,19 +413,5 @@ export class D3GraphCanvas {
       }
     }
     return prefixedLegendContent;
-  }
-
-  // / EVENTS
-
-  static get EVENT_NODE_CLICKED() {
-    return 'EVENT_NODE_CLICKED';
-  }
-
-  static get EVENT_NODE_MOUSEOVER() {
-    return 'EVENT_NODE_MOUSEOVER';
-  }
-
-  static get EVENT_NODE_MOUSEOUT() {
-    return 'EVENT_NODE_MOUSEOUT';
   }
 }

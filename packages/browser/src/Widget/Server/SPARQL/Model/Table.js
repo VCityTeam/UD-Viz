@@ -189,12 +189,16 @@ export class Table {
       <input id="${this.filterInputId}" type="text" value=""/>`;
   }
 
+  get tableId() {
+    return `D3_table`;
+  }
+
   get filterId() {
-    return `${this.window.windowId}_filter`;
+    return `${this.tableId}_filter`;
   }
 
   get filterSelectId() {
-    return `${this.window.windowId}_filter_select`;
+    return `${this.tableId}_filter_select`;
   }
 
   get filterSelect() {
@@ -202,7 +206,7 @@ export class Table {
   }
 
   get filterInputId() {
-    return `${this.window.windowId}_filter_input`;
+    return `${this.tableId}_filter_input`;
   }
 
   get filterInput() {
