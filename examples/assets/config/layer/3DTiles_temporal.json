@@ -3,5 +3,10 @@
     "id": "Lyon-1-temporal",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Lyon1er_Temporal-2009-2012-2015_TileSet/tileset.json",
     "extensions": ["3DTILES_temporal"]
+  },
+  {
+    "id": "La Doua temporel",
+    "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/la-doua_2009-2018-temporal_tileset/tileset.json",
+    "extensions": ["3DTILES_temporal"]
   }
 ]

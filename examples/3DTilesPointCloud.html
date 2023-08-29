@@ -16,7 +16,7 @@
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
           './assets/config/layer/3DTiles_point_cloud.json',
-          './assets/config/layer/base_maps.json',
+          './assets/config/layer/base_maps.json'
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -44,7 +44,7 @@
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {},
+                  options: {}
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -52,9 +52,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format'],
+                  format: configs['base_maps'][0]['format']
                 }),
-                transparent: true,
+                transparent: true
               }
             )
           );
@@ -64,16 +64,16 @@
             {
               name: configs['3DTiles_point_cloud'][0]['id'],
               source: new udvizBrowser.itowns.C3DTilesSource({
-                url: configs['3DTiles_point_cloud'][0]['url'],
-              }),
+                url: configs['3DTiles_point_cloud'][0]['url']
+              })
             },
             frame3DPlanar.itownsView
           );
 
           // hack (not declare in C3DTilesLayer) to override point cloud material
           pointCloudLayer.material = new udvizBrowser.THREE.PointsMaterial({
-            size: configs['3DTiles_point_cloud'][0]['pc_size'],
-            vertexColors: true,
+            size: 2,
+            vertexColors: true
           });
           udvizBrowser.itowns.View.prototype.addLayer.call(
             frame3DPlanar.itownsView,

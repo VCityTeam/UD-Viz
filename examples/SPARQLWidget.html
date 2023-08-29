@@ -15,10 +15,9 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/doua_temporal.json',
-          './assets/config/widget/temporal.json',
+          './assets/config/layer/3DTiles_temporal.json',
           './assets/config/widget/sparql_widget.json',
-          './assets/config/server/sparql_server.json',
+          './assets/config/server/sparql_server.json'
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -41,7 +40,7 @@
 
           // /// ADD LAYERS
           udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
-            configs['doua_temporal'],
+            [configs['3DTiles_temporal'][1]],
             frame3DPlanar.itownsView
           );
 
