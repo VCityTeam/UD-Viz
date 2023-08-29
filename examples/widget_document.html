@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Document Widget example</title>
+    <title>widget document example</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/widget_document.css" />
   </head>
   <body>
     <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
@@ -103,12 +104,9 @@
             )
           );
 
-          // quick fix but css needs to be remove from documents view TODO ISSUE
-          const addToUI = (el) => {
-            frame3DPlanar.domElementUI.appendChild(el);
-            el.style.position = 'relative';
-            el.style.zIndex = 2;
-          };
+          const widgetDocumentDomElement = document.createElement('div');
+          widgetDocumentDomElement.classList.add('widget_document');
+          frame3DPlanar.domElementUI.appendChild(widgetDocumentDomElement);
 
           // REQUEST SERVICE
           const requestService = new udvizBrowser.RequestService();
@@ -122,15 +120,10 @@
               )
             );
 
-          const toggleAuthView = document.createElement('button');
-          toggleAuthView.innerText = 'Show Authentification';
-          addToUI(toggleAuthView);
-          toggleAuthView.onclick = () => {
-            if (!authenticationView.domElement.parentElement) {
-              addToUI(authenticationView.domElement);
-              authenticationView.domElement.style.position = 'absolute';
-            }
-          };
+          const authDisplayable =
+            udvizBrowser.createDisplayable('Authentification');
+          widgetDocumentDomElement.appendChild(authDisplayable.parent);
+          authDisplayable.container.appendChild(authenticationView.domElement);
 
           // DOCUMENTS MODULE
           const documentCore = new udvizBrowser.Widget.Server.Document.Core(
@@ -138,26 +131,13 @@
             configs['spatial_multimedia_db_server']
           );
 
-          const parentNavigator = document.createElement('div');
-          parentNavigator.style.width = '200px';
-          parentNavigator.style.backgroundColor = 'white';
-          parentNavigator.appendChild(
+          widgetDocumentDomElement.appendChild(
             documentCore.view.navigatorWindow.domElement
           );
 
-          addToUI(parentNavigator);
-
-          const parentInspector = document.createElement('div');
-          parentInspector.style.width = 'fit-content';
-          parentInspector.style.position = 'absolute';
-          parentInspector.style.right = '0px';
-          parentInspector.style.top = '0px';
-          parentInspector.style.backgroundColor = 'white';
-          parentInspector.appendChild(
+          widgetDocumentDomElement.appendChild(
             documentCore.view.inspectorWindow.domElement
           );
-
-          addToUI(parentInspector);
 
           // DOCUMENTS VISUALIZER EXTENSION (to orient the document)
           const visualizerView =
@@ -165,24 +145,18 @@
               frame3DPlanar.itownsView,
               documentCore.provider
             );
+          visualizerView.domElement.classList.add('visualizer');
 
           const visualizeButton = document.createElement('button');
           visualizeButton.innerText = 'Visualize';
-          visualizerView.domElement.style.zIndex = 5;
+
           visualizeButton.onclick = async () => {
             await visualizerView.startTravelToDisplayedDocument();
-            addToUI(visualizerView.domElement);
+            frame3DPlanar.domElementUI.appendChild(visualizerView.domElement);
           };
           documentCore.view.inspectorWindow.domElement.appendChild(
             visualizeButton
           );
-
-          const parentBottomRight = document.createElement('div');
-          parentBottomRight.style.position = 'absolute';
-          parentBottomRight.style.backgroundColor = 'white';
-          parentBottomRight.style.bottom = '0px';
-          parentBottomRight.style.right = '0px';
-          addToUI(parentBottomRight);
 
           // DOCUMENT CONTRIBUTE
 
@@ -201,10 +175,7 @@
           updateButton.innerText = 'Update';
           updateButton.onclick = async () => {
             await documentContribute.updateWindow.updateFromDisplayedDocument();
-            while (parentBottomRight.firstChild) {
-              parentBottomRight.firstChild.remove();
-            }
-            parentBottomRight.appendChild(
+            widgetDocumentDomElement.appendChild(
               documentContribute.updateWindow.domElement
             );
           };
@@ -235,13 +206,12 @@
 
           const createDocumentButton = document.createElement('button');
           createDocumentButton.innerText = 'Create new document';
+          widgetDocumentDomElement.appendChild(
+            documentContribute.creationWindow.domElement
+          );
+          documentContribute.creationWindow.domElement.hidden = true;
           createDocumentButton.onclick = () => {
-            while (parentBottomRight.firstChild) {
-              parentBottomRight.firstChild.remove();
-            }
-            parentBottomRight.appendChild(
-              documentContribute.creationWindow.domElement
-            );
+            documentContribute.creationWindow.domElement.hidden = false;
           };
           documentCore.view.navigatorWindow.documentListContainer.appendChild(
             createDocumentButton
@@ -271,11 +241,8 @@
           const commentButton = document.createElement('button');
           commentButton.innerText = 'Comment';
           commentButton.onclick = async () => {
-            while (parentBottomRight.firstChild) {
-              parentBottomRight.firstChild.remove();
-            }
             await documentComment.commentsWindow.getComments();
-            parentBottomRight.appendChild(
+            widgetDocumentDomElement.appendChild(
               documentComment.commentsWindow.domElement
             );
           };

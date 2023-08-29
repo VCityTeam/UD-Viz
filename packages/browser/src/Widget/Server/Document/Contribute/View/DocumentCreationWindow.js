@@ -27,6 +27,7 @@ export class DocumentCreationWindow {
     this.domElement = document.createElement('div');
 
     this.form = document.createElement('form');
+    this.domElement.appendChild(this.form);
 
     this.docImage = createLabelInput('File', 'file');
     this.docImage.input.setAttribute('name', 'file');
@@ -99,7 +100,7 @@ export class DocumentCreationWindow {
      *
      * @type {THREE.Vector3}
      */
-    this.cameraPosition = undefined;
+    this.cameraPosition = null;
 
     /**
      * The registered camera orientation for the document visualization.
@@ -156,10 +157,10 @@ export class DocumentCreationWindow {
   }
 
   dispose() {
-    this.positioner.dispose();
+    this.positioner.domElement.remove();
     this.domElement.remove();
     this._exitEditMode();
-    this.documentVisualizer.dispose();
+    this.documentVisualizer.domElement.remove();
   }
 
   // ///////////////////////

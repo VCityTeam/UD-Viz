@@ -42,7 +42,7 @@ export class ValidationView {
     this.select.appendChild(validatedDocumentOption);
 
     const inValidationDocument = document.createElement('option');
-    inValidationDocument.value = 'in-validated';
+    inValidationDocument.value = 'in-validation';
     inValidationDocument.innerText = 'Documents in validation';
     this.select.appendChild(inValidationDocument);
 

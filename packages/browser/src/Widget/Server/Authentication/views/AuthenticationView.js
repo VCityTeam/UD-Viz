@@ -168,6 +168,7 @@ export class AuthenticationView {
     ) {
       try {
         await this.authenticationService.login(formData);
+        this.infoDomElement.innerText = 'Authentificated';
       } catch (e) {
         if (e.status === 401) {
           this.infoDomElement.innerText = 'Login or password invalid';
