@@ -22,6 +22,7 @@ export class DocumentUpdateWindow {
     this.domElement.appendChild(this.docTitle);
 
     const container = document.createElement('div');
+    this.domElement.appendChild(container);
 
     this.docImage = document.createElement('img');
     this.docImage.setAttribute('alt', 'Document image');

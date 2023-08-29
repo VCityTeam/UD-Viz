@@ -24,6 +24,7 @@ export class DocumentVisualizerWindow {
     this.domElement.appendChild(this.ctrlPanelDomEl);
 
     this.closeButton = document.createElement('button');
+    this.closeButton.innerText = 'Close';
     this.ctrlPanelDomEl.appendChild(this.closeButton);
 
     this.sliderDomEl = document.createElement('div');
@@ -42,8 +43,8 @@ export class DocumentVisualizerWindow {
     this.inputOpacity.setAttribute('type', 'range');
     this.inputOpacity.min = 0;
     this.inputOpacity.max = 1;
-    this.inputOpacity.value = 1;
-    this.inputOpacity.value = 0.01;
+    this.inputOpacity.step = 'any';
+    this.sliderDomEl.appendChild(this.inputOpacity);
 
     const id = 'id_document_visualizer_input_opacity';
     this.inputOpacity.id = id;
@@ -101,8 +102,8 @@ export class DocumentVisualizerWindow {
    * @private
    */
   _onOpacityChange() {
-    const opacity = this.opacitySliderElement.value;
-    this.opacityElement.value = opacity;
+    const opacity = this.inputOpacity.value;
+    this.outputOpacity.value = opacity;
     this.imageDomEl.style.opacity = opacity;
   }
 
@@ -188,8 +189,7 @@ export class DocumentVisualizerWindow {
     if (!this.itownsView.controls) return; // when PR https://github.com/iTowns/itowns/pull/2046 enabled this would be useless
 
     this.imageDomEl.style.opacity = 0;
-    this.opacitySliderElement.value = 0;
-    this.opacityElement.value = 0;
+    this.inputOpacity.value = 0;
 
     this.itownsView.controls.initiateTravel(
       this.position,
@@ -203,11 +203,10 @@ export class DocumentVisualizerWindow {
       try {
         setTimeout(() => {
           const increaseOpacity = () => {
-            let nextValue = Number(this.opacitySliderElement.value) + 0.01;
-            this.opacitySliderElement.value = nextValue;
+            const nextValue = Number(this.inputOpacity.value) + 0.01;
+            this.inputOpacity.value = nextValue;
             this._onOpacityChange();
             if (nextValue >= 1) {
-              nextValue = 1;
               clearInterval(intervalHandle);
             }
           };

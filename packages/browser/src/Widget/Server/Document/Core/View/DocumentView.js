@@ -2,8 +2,6 @@ import { DocumentProvider } from '../ViewModel/DocumentProvider';
 import { DocumentNavigatorWindow } from './DocumentNavigatorWindow';
 import { DocumentInspectorWindow } from './DocumentInspectorWindow';
 
-import './DocumentWindow.css';
-
 /**
  * The entry point of the document view. It holds the two main windows, inspector
  * and search. It also accepts instances of `AbstractDocumentWindow` as
