@@ -9,11 +9,19 @@
 const fs = require('fs');
 const exec = require('child-process-promise').exec;
 
-/** @type {string} The version argument provided from the command line. */
+/**
+ * The version argument provided from the command line.
+ *
+ * @type {string}
+ */
 const version = process.argv[2];
 if (!version) throw new Error('no version argument found');
 
-/** @type {string[]} The version split into segments. */
+/**
+ * The version split into segments.
+ *
+ * @type {string[]}
+ */
 const subStringVersion = version.split('.');
 
 /** Check the provided version argument. */
