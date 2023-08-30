@@ -1,4 +1,4 @@
 {
-  "url": "http://localhost:9011/strabon/",
+  "url": "http://localhost:9013/blazegraph/",
   "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
 }

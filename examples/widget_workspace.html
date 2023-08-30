@@ -17,11 +17,11 @@
           './assets/config/crs.json',
           './assets/config/extents.json',
           './assets/config/frame3D_planars.json',
-          './assets/config/layer/tileset_test.json',
+          './assets/config/layer/workspace_tileset.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
           './assets/config/widget/workspace_widget.json',
-          './assets/config/server/test.json'
+          './assets/config/server/sparql_workspace_server.json'
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -44,7 +44,7 @@
 
           // /// ADD LAYERS
           udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
-            configs['tileset_test'],
+            configs['workspace_tileset'],
             frame3DPlanar.itownsView
           );
 
@@ -108,7 +108,7 @@
           const sparqlWorkspaceWidgetView =
             new udvizBrowser.Widget.Server.SparqlWorkspaceQueryWindow(
               new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
-                configs['test']
+                configs['sparql_workspace_server']
               ),
               frame3DPlanar.itownsView,
               configs['workspace_widget']
