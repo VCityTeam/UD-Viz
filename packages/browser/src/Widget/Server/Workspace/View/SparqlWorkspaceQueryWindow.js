@@ -31,10 +31,10 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
      *
      * @type {D3WorkspaceCanvas}
      */
-    this.d3Graph = new D3WorkspaceCanvas(this, configSparqlWidget);
+    this.d3Graph = new D3WorkspaceCanvas(configSparqlWidget);
 
     /** @type {Map<string,Temporal3DTilesLayerWrapper>} */
-    const temporalWrappers = new Map();
+    this.temporalWrappers = new Map();
     itownsView
       .getLayers()
       .filter((el) => el.isC3DTilesLayer)
@@ -42,49 +42,11 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
         if (
           layer.registeredExtensions.isExtensionRegistered('3DTILES_temporal')
         ) {
-          temporalWrappers.set(
+          this.temporalWrappers.set(
             layer.id,
             new Temporal3DTilesLayerWrapper(layer)
           );
         }
       });
-
-    this.d3Graph.addEventListener('click', (event, datum) => {
-      const nodeData = this.d3Graph.data.getNodeByIndex(datum.index);
-      const nodeType = getUriLocalname(nodeData.type);
-      if (nodeType == 'Version' || nodeType == 'VersionTransition') {
-        /* find the first scenario that contains the clicked node,
-         * find the temporal the geometry layer with the same name, and
-         * set the current time to the averaged timestamps linked to the node
-         */
-        const scenarioLayer = this.d3Graph.data.getScenarioLayerByIndex(
-          datum.index,
-          this.itownsView
-        );
-
-        console.debug(scenarioLayer);
-
-        // if a layer is found, make sure it is visible and hide all other layers
-        if (scenarioLayer) {
-          itownsView
-            .getLayers()
-            .filter((el) => el.isC3DTilesLayer)
-            .forEach((layer) => (layer.visible = layer == scenarioLayer));
-
-          // Calculate the average timestamp of the clicked node
-          const timestamps = this.d3Graph.data.getBitemporalTimestampsByIndex(
-            datum.index
-          );
-          const timestampAverage =
-            (timestamps.validTo - timestamps.validFrom) / 2 +
-            timestamps.validFrom;
-
-          // set style temporal layer with the date
-          temporalWrappers.get(scenarioLayer.id).update(timestampAverage);
-
-          itownsView.notifyChange();
-        }
-      }
-    });
   }
 }

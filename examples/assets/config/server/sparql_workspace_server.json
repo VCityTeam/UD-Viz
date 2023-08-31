@@ -1,4 +1,5 @@
 {
   "url": "http://localhost:9013/blazegraph/",
-  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+  "url_parameters": "sparql?format=json&query=",
+  "options": {}
 }

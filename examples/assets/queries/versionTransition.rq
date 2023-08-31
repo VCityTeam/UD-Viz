@@ -14,13 +14,25 @@ PREFIX strdf:  <http://strdf.di.uoa.gr/ontology#>
 PREFIX xlink:  <http://www.w3.org/1999/xlink#>
 
 # CityGML 3.0 prefixes
-PREFIX core3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/core#>
-PREFIX con3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/construction#>
-PREFIX bldg3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/building#>
-PREFIX vers3: <https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#>
+PREFIX core3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/core#>
+PREFIX con3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/construction#>
+PREFIX bldg3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#>
+PREFIX vers3: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
 
 # Dataset prefixes
-PREFIX data: <https://github.com/VCityTeam/UD-Graph/DOUA_BATI_2009-2018_Workspace#>
+PREFIX ws:   <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_2018_Workspace#>
+PREFIX v2009: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_split#>
+PREFIX v2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_alt_split#>
+PREFIX v2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_split#>
+PREFIX v2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_alt_split#>
+PREFIX v2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2015_split#>
+PREFIX v2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2018_split#>
+PREFIX vt2009_2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2012#>
+PREFIX vt2009_2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2009b#>
+PREFIX vt2009b_2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009b_2012b#>
+PREFIX vt2012b_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012b_2015#>
+PREFIX vt2012_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012_2015#>
+PREFIX vt2015_2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2015_2018#>
 
 
 # return a the transactions and versionMembers of versionTransition_2012_2015, version_2012, version_2015 and their immediate properties
@@ -33,28 +45,30 @@ WHERE {
       ?predicate ?object .
     OPTIONAL {
       ?object a ?objectType .
+      FILTER(?objectType != owl:NamedIndividual)
     }
-    FILTER(?subject = data:versiontransition_2012_2015)
+    FILTER(?subject = vt2012_2015:versionTransition_2012_2015)
   } UNION {
     ?subject a vers3:Version ;
       a ?subjectType ;
       ?predicate ?object .
     OPTIONAL {
       ?object a ?objectType .
+      FILTER(?objectType != owl:NamedIndividual)
     }
-    FILTER(?subject = data:version_2012 || ?subject = data:version_2015)
+    FILTER(?subject = v2012:version_2012 || ?subject = v2015:version_2015)
   } UNION {
-    data:versiontransition_2012_2015 vers3:VersionTransition.transaction ?subject .
+    vt2012_2015:versionTransition_2012_2015 vers3:VersionTransition.transaction ?subject .
     ?subject a vers3:Transaction ;
       a ?subjectType ;
       ?predicate ?object .
     OPTIONAL {
       ?object a ?objectType .
+      FILTER(?objectType != owl:NamedIndividual)
     }
   }
   FILTER(?predicate != rdf:type)
   FILTER(?subject != owl:NamedIndividual)
   FILTER(?object != owl:NamedIndividual)
   FILTER(?subjectType != owl:NamedIndividual)
-  FILTER(?objectType != owl:NamedIndividual)
 }

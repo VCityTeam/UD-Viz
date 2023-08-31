@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
 
+// TODO remove dependency on parent window
+
 /** @class */
 export class Table {
   /**
