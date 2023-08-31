@@ -61,42 +61,6 @@ export class SparqlQueryWindow extends EventSender {
      */
     this.d3Graph = new D3GraphCanvas(configSparqlWidget);
 
-    // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
-    this.d3Graph.addEventListener('click', (event, datum) => {
-      // Get clicked node's data, if data.type is 'Building', zoom camera on a feature with the same 'gmlid' as data.id
-      const nodeData = this.d3Graph.data.getNodeByIndex(datum.index);
-
-      console.debug('node clicked: ', nodeData);
-
-      if (URI.getUriLocalname(nodeData.type) == 'Building') {
-        const clickedResult = fetchC3DTileFeatureWithNodeText(
-          URI.getUriLocalname(nodeData.id)
-        );
-        if (!clickedResult) return;
-
-        focusCameraOn(
-          this.itownsView,
-          this.itownsView.controls,
-          clickedResult.layer
-            .computeWorldBox3(clickedResult.feature)
-            .getCenter(new THREE.Vector3()),
-          {
-            verticalDistance: 200,
-            horizontalDistance: 200,
-          }
-        );
-      }
-    });
-    this.d3Graph.addEventListener('mouseover', () => {
-      // TODO
-      // if this imply some style it should be handle in template or layer should be able to have != styles ?
-      console.warn('DEPRECATED');
-    });
-    this.d3Graph.addEventListener('mouseout', () => {
-      // TODO
-      console.warn('DEPRECATED'); // same reason as above
-    });
-
     /**
      * Contains the D3 table to display RDF data.
      *
@@ -173,33 +137,7 @@ export class SparqlQueryWindow extends EventSender {
         )
     );
 
-    const fetchC3DTileFeatureWithNodeText = (gmlId) => {
-      let result = null;
-      this.itownsView
-        .getLayers()
-        .filter((el) => el.isC3DTilesLayer)
-        .forEach((c3DTilesLayer) => {
-          for (const [
-            // eslint-disable-next-line no-unused-vars
-            tileId,
-            tileC3DTileFeatures,
-          ] of c3DTilesLayer.tilesC3DTileFeatures) {
-            // eslint-disable-next-line no-unused-vars
-            for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
-              if (c3DTileFeature.getInfo().batchTable['gml_id'] == gmlId) {
-                result = {
-                  feature: c3DTileFeature,
-                  layer: c3DTilesLayer,
-                };
-                break;
-              }
-            }
-          }
-        });
-
-      return result;
-    };
-
+    // TODO extract table event listener assignments to example
     this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
       const clickedResult = fetchC3DTileFeatureWithNodeText(
         URI.getUriLocalname(cell_text)
@@ -219,6 +157,39 @@ export class SparqlQueryWindow extends EventSender {
       );
     });
   }
+
+
+  /**
+   * fetchC3DTileFeatureWithNodeText takes a parameter `gmlId` and returns a feature from a `3DTileslayer` if
+   * the batch table content of the feature contains a given `gmlid`string in the 'gml_id' key.
+   * @param {string} gmlid a given gml ID.
+   *  */ 
+  fetchC3DTileFeatureWithNodeText(gmlId) {
+    let result = null;
+    this.itownsView
+      .getLayers()
+      .filter((el) => el.isC3DTilesLayer)
+      .forEach((c3DTilesLayer) => {
+        for (const [
+          // eslint-disable-next-line no-unused-vars
+          tileId,
+          tileC3DTileFeatures,
+        ] of c3DTilesLayer.tilesC3DTileFeatures) {
+          // eslint-disable-next-line no-unused-vars
+          for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
+            if (c3DTileFeature.getInfo().batchTable['gml_id'] == gmlId) {
+              result = {
+                feature: c3DTileFeature,
+                layer: c3DTilesLayer,
+              };
+              break;
+            }
+          }
+        }
+      });
+
+    return result;
+  };
 
   /**
    * Update the DataView.

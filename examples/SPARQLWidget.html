@@ -60,6 +60,42 @@
           parent.appendChild(sparqlWidget.domElement);
 
           frame3DPlanar.domElementUI.appendChild(parent);
+
+          // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
+          sparqlWidget.d3Graph.addEventListener('click', (event) => {
+            // Get clicked node's data, if nodeData.type is 'Building', zoom camera on a feature with the same 'gmlid' as nodeData.id
+            const nodeData = sparqlWidget.d3Graph.data.getNodeByIndex(event.datum.index);
+
+            console.debug('node clicked: ', nodeData);
+
+            if (udvizBrowser.Widget.Server.URI.getUriLocalname(nodeData.type) == 'Building') {
+              const clickedResult = sparqlWidget.fetchC3DTileFeatureWithNodeText(
+                udvizBrowser.Widget.Server.URI.getUriLocalname(nodeData.id)
+              );
+              if (!clickedResult) return;
+
+              udvizBrowser.focusCameraOn(
+                sparqlWidget.itownsView,
+                sparqlWidget.itownsView.controls,
+                clickedResult.layer
+                  .computeWorldBox3(clickedResult.feature)
+                  .getCenter(new udvizBrowser.THREE.Vector3()),
+                {
+                  verticalDistance: 200,
+                  horizontalDistance: 200,
+                }
+              );
+            }
+          });
+          // TODO
+          // if this imply some style it should be handle in template or layer should be able to have != styles ?
+          // sparqlWidget.d3Graph.addEventListener('mouseover', () => {
+          //   console.warn('mouseover style not implemented');
+          // });
+          // TODO
+          // sparqlWidget.d3Graph.addEventListener('mouseout', () => {
+          //   console.warn('mouseout style not implemented'); // same reason as above
+          // });
         });
     </script>
     SCRIPT_TAG_RELOAD
