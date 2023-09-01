@@ -1,5 +1,4 @@
 import { SparqlEndpointResponseProvider } from '../../SPARQL/Service/SparqlEndpointResponseProvider';
-import { getUriLocalname } from '../../SPARQL/Model/URI';
 import { SparqlQueryWindow } from '../../SPARQL/View/SparqlQueryWindow';
 import { D3WorkspaceCanvas } from './D3WorkspaceCanvas';
 import * as itowns from 'itowns';
