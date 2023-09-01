@@ -160,11 +160,10 @@ export class SparqlQueryWindow extends EventSender {
 
   /**
    * fetchC3DTileFeatureWithNodeText takes a parameter `gmlId` and returns a feature from a `3DTileslayer` if
-   * the batch table content of the feature contains a given `gmlid`string in the 'gml_id' key.
-   * @param {string} gmlId a given gml ID.
+   * the batch table content of the feature contains a given `gmlid`string in the 'gml_id' key
+   * @param {string} gmlId a given gml ID
    * @returns {object} containting the feature and the layer containing the feature
-   * 
-   */ 
+   */
   fetchC3DTileFeatureWithNodeText(gmlId) {
     let result = null;
     this.itownsView

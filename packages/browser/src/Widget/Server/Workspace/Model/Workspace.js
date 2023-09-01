@@ -12,8 +12,8 @@ export class Workspace extends Graph {
    * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
    *                                                    This doesn't (yet) affect the legend font size.
    */
-  constructor() {
-    super();
+  constructor(configSparqlWidget) {
+    super(configSparqlWidget);
   }
 
   /**
