@@ -282,10 +282,12 @@ export class Temporal3DTilesLayerWrapper {
       },
     });
 
-    /** @type {Array<number>} - all date possible to update style with (ascending order) */
+    //  all date possible to update style with (ascending order)
+    /** @type {Array<number>} */
     this.knownDatesForAllTiles = knownDatesForAllTiles.sort((a, b) => a - b);
 
-    /** @type {itowns.C3DTilesLayer} - the layer wrapped */
+    // the layer wrapped
+    /** @type {itowns.C3DTilesLayer} */
     this.temporalC3DTilesLayer = temporalC3DTilesLayer;
   }
 

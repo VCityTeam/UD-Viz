@@ -2,8 +2,6 @@
 export class Graph {
   /**
    * Create a new Table using D3.
-   *
-   * @param {object} response A JSON object typically returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
    */
   constructor() {
     this.nodes = [

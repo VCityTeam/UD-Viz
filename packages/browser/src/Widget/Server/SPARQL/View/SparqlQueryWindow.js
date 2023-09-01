@@ -139,7 +139,7 @@ export class SparqlQueryWindow extends EventSender {
 
     // TODO extract table event listener assignments to example
     this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
-      const clickedResult = fetchC3DTileFeatureWithNodeText(
+      const clickedResult = this.fetchC3DTileFeatureWithNodeText(
         URI.getUriLocalname(cell_text)
       );
       if (!clickedResult) return;
@@ -158,12 +158,13 @@ export class SparqlQueryWindow extends EventSender {
     });
   }
 
-
   /**
    * fetchC3DTileFeatureWithNodeText takes a parameter `gmlId` and returns a feature from a `3DTileslayer` if
    * the batch table content of the feature contains a given `gmlid`string in the 'gml_id' key.
-   * @param {string} gmlid a given gml ID.
-   *  */ 
+   * @param {string} gmlId a given gml ID.
+   * @returns {object} containting the feature and the layer containing the feature
+   * 
+   */ 
   fetchC3DTileFeatureWithNodeText(gmlId) {
     let result = null;
     this.itownsView
@@ -189,7 +190,7 @@ export class SparqlQueryWindow extends EventSender {
       });
 
     return result;
-  };
+  }
 
   /**
    * Update the DataView.

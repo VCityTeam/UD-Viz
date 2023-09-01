@@ -1,12 +1,10 @@
 import { getUriLocalname } from '../../SPARQL/Model/URI';
-import { SparqlQueryWindow } from '../../SPARQL/View/SparqlQueryWindow';
 import { Graph } from '../../SPARQL/Model/Graph';
 
 export class Workspace extends Graph {
   /**
    * Create a new D3 workspace graph from an RDF JSON object.
    *
-   * @param {SparqlQueryWindow} window the window this graph is attached to.
    * @param {object} configSparqlWidget The sparqlModule configuration.
    * @param {number} configSparqlWidget.height The SVG canvas height.
    * @param {number} configSparqlWidget.width The SVG canvas width.
@@ -88,7 +86,7 @@ export class Workspace extends Graph {
    * the layer.name of the Scenario's localname.
    *
    * @param {number} d the index of the Version or VersionTransition node
-   * @param itownsView
+   * @param {itowns.PlanarView} itownsView view
    * @returns {C3DTilesLayer|null} return the a matching geometryLayer
    */
   getScenarioLayerByIndex(d, itownsView) {
