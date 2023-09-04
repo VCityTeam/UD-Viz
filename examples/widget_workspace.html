@@ -123,46 +123,60 @@
           );
 
           // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
-          sparqlWorkspaceWidgetView.d3Graph.addEventListener('click', (event) => {
-            // Get clicked node's data, if nodeData.type is 'Version' or 'VersionTransition', select the appropriate
-            // temporalwrapper that contains the 3DTiles representation of the version or transition,
-            // then set the time of the temporal wrapper to visualize the 3DTiles representation of the version or transition.
-            const nodeData = sparqlWorkspaceWidgetView.d3Graph.data.getNodeByIndex(event.datum.index);
-            const nodeType = udvizBrowser.Widget.Server.URI.getUriLocalname(nodeData.type);
-            if (nodeType == 'Version' || nodeType == 'VersionTransition') {
-              /* find the first scenario that contains the clicked node,
-              * find the temporal the geometry layer with the same name, and
-              * set the current time to the averaged timestamps linked to the node
-              */
-              const scenarioLayer = sparqlWorkspaceWidgetView.d3Graph.data.getScenarioLayerByIndex(
-                event.datum.index,
-                sparqlWorkspaceWidgetView.itownsView
-              );
-
-              console.debug(scenarioLayer);
-
-              // if a layer is found, make sure it is visible and hide all other layers
-              if (scenarioLayer) {
-                sparqlWorkspaceWidgetView.itownsView
-                  .getLayers()
-                  .filter((el) => el.isC3DTilesLayer)
-                  .forEach((layer) => (layer.visible = layer == scenarioLayer));
-
-                // Calculate the average timestamp of the clicked node
-                const timestamps = sparqlWorkspaceWidgetView.d3Graph.data.getBitemporalTimestampsByIndex(
+          sparqlWorkspaceWidgetView.d3Graph.addEventListener(
+            'click',
+            (event) => {
+              // Get clicked node's data, if nodeData.type is 'Version' or 'VersionTransition', select the appropriate
+              // temporalwrapper that contains the 3DTiles representation of the version or transition,
+              // then set the time of the temporal wrapper to visualize the 3DTiles representation of the version or transition.
+              const nodeData =
+                sparqlWorkspaceWidgetView.d3Graph.data.getNodeByIndex(
                   event.datum.index
                 );
-                const timestampAverage =
-                  (timestamps.validTo - timestamps.validFrom) / 2 +
-                  timestamps.validFrom;
+              const nodeType = udvizBrowser.Widget.Server.URI.getUriLocalname(
+                nodeData.type
+              );
+              if (nodeType == 'Version' || nodeType == 'VersionTransition') {
+                /* find the first scenario that contains the clicked node,
+                 * find the temporal the geometry layer with the same name, and
+                 * set the current time to the averaged timestamps linked to the node
+                 */
+                const scenarioLayer =
+                  sparqlWorkspaceWidgetView.d3Graph.data.getScenarioLayerByIndex(
+                    event.datum.index,
+                    sparqlWorkspaceWidgetView.itownsView
+                  );
 
-                // set style temporal layer with the date
-                sparqlWorkspaceWidgetView.temporalWrappers.get(scenarioLayer.id).update(timestampAverage);
+                console.debug(scenarioLayer);
 
-                sparqlWorkspaceWidgetView.itownsView.notifyChange();
+                // if a layer is found, make sure it is visible and hide all other layers
+                if (scenarioLayer) {
+                  sparqlWorkspaceWidgetView.itownsView
+                    .getLayers()
+                    .filter((el) => el.isC3DTilesLayer)
+                    .forEach(
+                      (layer) => (layer.visible = layer == scenarioLayer)
+                    );
+
+                  // Calculate the average timestamp of the clicked node
+                  const timestamps =
+                    sparqlWorkspaceWidgetView.d3Graph.data.getBitemporalTimestampsByIndex(
+                      event.datum.index
+                    );
+                  const timestampAverage =
+                    (timestamps.validTo - timestamps.validFrom) / 2 +
+                    timestamps.validFrom;
+
+                  // set style temporal layer with the date
+                  sparqlWorkspaceWidgetView.temporalWrappers.get(
+                    scenarioLayer.id
+                  ).styleDate = timestampAverage;
+
+                  sparqlWorkspaceWidgetView.itownsView.notifyChange();
+                }
               }
             }
-          });
+          );
         });
     </script>
     SCRIPT_TAG_RELOAD

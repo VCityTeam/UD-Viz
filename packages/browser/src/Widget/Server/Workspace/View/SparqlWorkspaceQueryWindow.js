@@ -36,16 +36,16 @@ export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
     this.temporalWrappers = new Map();
     itownsView
       .getLayers()
-      .filter((el) => el.isC3DTilesLayer)
+      .filter(
+        (el) =>
+          el.isC3DTilesLayer &&
+          el.registeredExtensions.isExtensionRegistered('3DTILES_temporal')
+      )
       .forEach((layer) => {
-        if (
-          layer.registeredExtensions.isExtensionRegistered('3DTILES_temporal')
-        ) {
-          this.temporalWrappers.set(
-            layer.id,
-            new Temporal3DTilesLayerWrapper(layer)
-          );
-        }
+        this.temporalWrappers.set(
+          layer.id,
+          new Temporal3DTilesLayerWrapper(layer)
+        );
       });
   }
 }
