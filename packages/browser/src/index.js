@@ -21,6 +21,8 @@ export * from './ItownsUtil';
 
 export * from './LocalStorageUtil.js';
 
+export * from './RequestAnimationFrameProcess.js';
+
 export * from './Frame3D/Frame3D';
 
 export * from './GUI/GUI';
