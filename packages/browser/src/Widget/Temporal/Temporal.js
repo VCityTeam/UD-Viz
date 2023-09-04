@@ -112,13 +112,22 @@ export class Temporal3DTilesLayerWrapper {
    * represents a layer that displays 3D tiles with temporal data.
    */
   constructor(temporalC3DTilesLayer) {
-    /** @type {itowns.C3DTilesLayer} - the layer wrapped */
+    /**
+     * the layer wrapped
+     *
+      @type {itowns.C3DTilesLayer} */
     this.temporalC3DTilesLayer = temporalC3DTilesLayer;
 
-    /** @type {Array<number>} - all date possible to update style with (ascending order) */
+    /**
+     * all date possible to update style with (ascending order)
+     *
+      @type {Array<number>} */
     this.knownDatesForAllTiles = [];
 
-    /** @type {number} - date selected TODO: use a Date Object */
+    /**
+     * date selected TODO: use a Date Object
+     *
+      @type {number} */
     this._styleDate = null;
 
     const computedTileIds = [];
