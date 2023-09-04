@@ -1,4 +1,4 @@
-import { EventSender } from '@ud-viz/shared';
+import { EventDispatcher } from 'three';
 import { DocumentService } from '../Model/DocumentService';
 import { Document } from '../Model/Document';
 import { DocumentFilter } from './DocumentFilter';
@@ -10,7 +10,7 @@ import { DocumentFilter } from './DocumentFilter';
  * events when the filtered documents, or the currently displayed document
  * change.
  */
-export class DocumentProvider extends EventSender {
+export class DocumentProvider extends EventDispatcher {
   /**
    * Constructs a new documents provider.
    *
@@ -53,9 +53,6 @@ export class DocumentProvider extends EventSender {
      * @type {number}
      */
     this.displayedDocumentIndex = undefined;
-
-    this.registerEvent(DocumentProvider.EVENT_FILTERED_DOCS_UPDATED);
-    this.registerEvent(DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED);
   }
 
   /**
@@ -90,14 +87,14 @@ export class DocumentProvider extends EventSender {
     } else {
       this.displayedDocumentIndex = undefined;
     }
-    this.sendEvent(
-      DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      this.getFilteredDocuments()
-    );
-    this.sendEvent(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument()
-    );
+    this.dispatchEvent({
+      type: DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
+      documents: this.getFilteredDocuments(),
+    });
+    this.dispatchEvent({
+      type: DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      document: this.getDisplayedDocument(),
+    });
   }
 
   /**
@@ -148,10 +145,10 @@ export class DocumentProvider extends EventSender {
     }
 
     this.displayedDocumentIndex = index;
-    this.sendEvent(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument()
-    );
+    this.dispatchEvent({
+      type: DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      document: this.getDisplayedDocument(),
+    });
   }
 
   /**
@@ -174,10 +171,10 @@ export class DocumentProvider extends EventSender {
       (this.filteredDocuments.length + this.displayedDocumentIndex + offset) %
       this.filteredDocuments.length;
 
-    this.sendEvent(
-      DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      this.getDisplayedDocument()
-    );
+    this.dispatchEvent({
+      type: DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
+      document: this.getDisplayedDocument(),
+    });
   }
 
   /**

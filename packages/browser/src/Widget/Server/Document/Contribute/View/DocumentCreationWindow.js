@@ -39,7 +39,9 @@ export class DocumentCreationWindow {
     this.positioner = new CameraPositioner(itownsView, cameraControls);
     this.positioner.addEventListener(
       CameraPositioner.EVENT_POSITION_SUBMITTED,
-      (data) => this._registerPositionAndQuaternion(data)
+      (data) => {
+        this._registerPositionAndQuaternion(data.message);
+      }
     );
 
     /**

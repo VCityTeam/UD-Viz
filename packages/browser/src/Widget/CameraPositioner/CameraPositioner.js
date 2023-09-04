@@ -1,9 +1,8 @@
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 import { findChildByID } from '../../HTMLUtil';
-import { EventSender } from '@ud-viz/shared';
 
-export class CameraPositioner extends EventSender {
+export class CameraPositioner extends THREE.EventDispatcher {
   /**
    * Creates a CameraPositioner
    *
@@ -32,9 +31,6 @@ export class CameraPositioner extends EventSender {
     this.buttonValidateElement.onclick = () => {
       this._validate();
     };
-
-    // Event for position registering
-    this.registerEvent(CameraPositioner.EVENT_POSITION_SUBMITTED);
   }
 
   get innerContentHtml() {
@@ -136,7 +132,10 @@ export class CameraPositioner extends EventSender {
    */
   _validate() {
     const camera = this._getCameraPosition();
-    this.sendEvent(CameraPositioner.EVENT_POSITION_SUBMITTED, camera);
+    this.dispatchEvent({
+      type: CameraPositioner.EVENT_POSITION_SUBMITTED,
+      message: camera,
+    });
   }
 
   // ///////////

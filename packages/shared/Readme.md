@@ -5,7 +5,7 @@
 [@ud-viz/shared](https://npmjs.com/package/@ud-viz/shared) is a npm package based on [Three.js](https://threejs.org/) including data processing and model plus a game engine.
 
 - [@ud-viz/shared](#ud-vizshared)
-  - [Directory Hierarchy](#directory-hierarchy)
+    - [Directory Hierarchy](#directory-hierarchy)
   - [Getting started](#getting-started)
   - [Developers](#developers)
     - [Npm scripts](#npm-scripts)
@@ -25,7 +25,6 @@ UD-Viz/packages/shared
 |    |    ├── Object3D.js               # Game node of a 3D scene
 |    ├── Command.js                     # Basic object communication
 |    ├── Data.js                        # Module for data processing (split string, converts to uri...)
-|    ├── EventSender.js                 # Manage custom events
 |    ├── index.js                       # API description (webpack entry point)
 |    ├── ProcessInterval.js             # Manage loop process requesters
 |    ├── Type.js                        # Check if a string is a valid number
