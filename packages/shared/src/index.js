@@ -11,7 +11,6 @@ module.exports = {
   Data: require('./Data'),
   /** @type {import("./Type")} */
   Type: require('./Type'),
-  /** @type {import("./ProcessInterval").ProcessInterval} */
   ProcessInterval: require('./ProcessInterval'),
   /** @type {import("./EventSender").EventSender} */
   EventSender: require('./EventSender'),
