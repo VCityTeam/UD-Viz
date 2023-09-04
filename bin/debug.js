@@ -1,8 +1,8 @@
 /**
  * @file This script executes build and runs the backend script.
  *
- * {@link https://www.npmjs.com/package/child-process-promise}
- * {@link https://nodejs.org/api/child_process.html}
+ * requires {@link https://www.npmjs.com/package/child-process-promise}
+ * requires {@link https://nodejs.org/api/child_process.html}
  */
 
 const exec = require('child-process-promise').exec;
