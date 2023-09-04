@@ -12,8 +12,6 @@ module.exports = {
   /** @type {import("./Type")} */
   Type: require('./Type'),
   ProcessInterval: require('./ProcessInterval'),
-  /** @type {import("./EventSender").EventSender} */
-  EventSender: require('./EventSender'),
   Command: require('./Command'),
   Game: {
     Context: require('./Game/Context').Context,

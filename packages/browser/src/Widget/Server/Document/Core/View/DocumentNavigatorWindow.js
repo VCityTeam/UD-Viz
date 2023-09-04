@@ -79,11 +79,11 @@ export class DocumentNavigatorWindow {
 
     this.provider.addEventListener(
       DocumentProvider.EVENT_FILTERED_DOCS_UPDATED,
-      (documents) => this._onFilteredDocumentsUpdate(documents)
+      (data) => this._onFilteredDocumentsUpdate(data.documents)
     );
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this._onDisplayedDocumentChange(doc)
+      (data) => this._onDisplayedDocumentChange(data.document)
     );
   }
 

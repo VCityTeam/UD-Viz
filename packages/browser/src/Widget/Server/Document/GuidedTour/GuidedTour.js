@@ -1,5 +1,4 @@
 import { findChildByID } from '../../../../HTMLUtil';
-import { EventSender } from '@ud-viz/shared';
 
 import './GuidedTour.css';
 
@@ -14,10 +13,8 @@ import './GuidedTour.css';
  *
 //=============================================================================
  */
-export class GuidedTour extends EventSender {
+export class GuidedTour {
   constructor(guidedTourController) {
-    super();
-
     this.domElement = document.createElement('div');
     this.domElement.innerHTML = this.innerContentHtml;
 

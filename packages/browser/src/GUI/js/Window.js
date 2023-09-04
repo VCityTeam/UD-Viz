@@ -1,7 +1,8 @@
 import { dragElement } from './Draggable.js';
-import { EventSender } from '@ud-viz/shared';
 import { windowManager } from './WindowManager.js';
 import { WindowExtension } from './WindowExtension.js';
+
+import { EventDispatcher } from 'three';
 
 import '../css/window.css';
 
@@ -9,7 +10,7 @@ import '../css/window.css';
 // URL : https://github.com/MEPP-team/UD-Viz/wiki/Window-Framework
 // You can see an example in UD-Viz-Shared/examples/DemoWindow
 
-export class Window extends EventSender {
+export class Window extends EventDispatcher {
   /**
    * Creates a window.
    *
@@ -65,12 +66,6 @@ export class Window extends EventSender {
      * @type {Array<WindowExtension>}
      */
     this.windowExtensions = [];
-
-    this.registerEvent(Window.EVENT_CREATED);
-    this.registerEvent(Window.EVENT_DESTROYED);
-    this.registerEvent(Window.EVENT_SHOWN);
-    this.registerEvent(Window.EVENT_HIDDEN);
-    this.registerEvent(Window.EVENT_REDUCED);
 
     windowManager.registerWindow(this);
   }
@@ -132,8 +127,8 @@ export class Window extends EventSender {
       }
 
       this.windowCreated();
-      this.sendEvent(Window.EVENT_CREATED);
-      this.sendEvent(Window.EVENT_SHOWN);
+      this.dispatchEvent({ type: Window.EVENT_CREATED });
+      this.dispatchEvent({ type: Window.EVENT_SHOWN });
     }
   }
 
@@ -146,7 +141,7 @@ export class Window extends EventSender {
       this.parentElement.removeChild(this.window);
 
       this.windowDestroyed();
-      this.sendEvent(Window.EVENT_DESTROYED);
+      this.dispatchEvent({ type: Window.EVENT_DESTROYED });
     }
   }
 
@@ -156,7 +151,7 @@ export class Window extends EventSender {
   show() {
     if (this.isCreated && !this.isVisible) {
       this.window.style.setProperty('display', this.windowDisplayWhenVisible);
-      this.sendEvent(Window.EVENT_SHOWN);
+      this.dispatchEvent({ type: Window.EVENT_SHOWN });
     }
   }
 
@@ -166,7 +161,7 @@ export class Window extends EventSender {
   hide() {
     if (this.isVisible) {
       this.window.style.setProperty('display', 'none');
-      this.sendEvent(Window.EVENT_HIDDEN);
+      this.dispatchEvent({ type: Window.EVENT_HIDDEN });
     }
   }
 
@@ -182,7 +177,7 @@ export class Window extends EventSender {
       this.content.style.display = 'none';
       this.window.style.height = getComputedStyle(this.header).height;
       this.window.style.resize = 'none';
-      this.sendEvent(Window.EVENT_REDUCED);
+      this.dispatchEvent({ type: Window.EVENT_REDUCED });
     }
   }
 

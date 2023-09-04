@@ -51,7 +51,7 @@ export class DocumentInspectorWindow {
 
     this.provider.addEventListener(
       DocumentProvider.EVENT_DISPLAYED_DOC_CHANGED,
-      (doc) => this.onDisplayedDocumentChange(doc)
+      (data) => this.onDisplayedDocumentChange(data.document)
     );
   }
 
