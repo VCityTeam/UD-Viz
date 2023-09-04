@@ -386,7 +386,7 @@ export class DateSelector extends itownsWidget.Widget {
 
             temporalWrapper.styleDate = selectDates.selectedOptions[0].value;
             selectDates.onchange = () => {
-              temporalWrapper.update(selectDates.selectedOptions[0].value);
+              temporalWrapper.styleDate = selectDates.selectedOptions[0].value;
               itownsView.notifyChange();
             };
           }
