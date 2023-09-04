@@ -112,11 +112,18 @@ export class Temporal3DTilesLayerWrapper {
    * represents a layer that displays 3D tiles with temporal data.
    */
   constructor(temporalC3DTilesLayer) {
+    /** @type {itowns.C3DTilesLayer} - the layer wrapped */
+    this.temporalC3DTilesLayer = temporalC3DTilesLayer;
+
+    /** @type {Array<number>} - all date possible to update style with (ascending order) */
+    this.knownDatesForAllTiles = [];
+
+    /** @type {number} - date selected TODO: use a Date Object */
+    this._styleDate = null;
+
     const computedTileIds = [];
 
     const tileMaps = new Map();
-
-    const knownDatesForAllTiles = [];
 
     // compute tileMaps base on the batchTable found in tileContent
     temporalC3DTilesLayer.addEventListener(
@@ -236,29 +243,30 @@ export class Temporal3DTilesLayerWrapper {
         }
 
         possibleDates.forEach((date) =>
-          Data.arrayPushOnce(knownDatesForAllTiles, date)
+          Data.arrayPushOnce(this.knownDatesForAllTiles, date)
         );
+        this.knownDatesForAllTiles.sort((a, b) => a - b); // sort
 
-        if (this.styleDate == null) this.styleDate = knownDatesForAllTiles[0]; // init with a default value
+        if (this._styleDate == null)
+          this._styleDate = this.knownDatesForAllTiles[0]; // init with a default value
         // TODO: because onTileContentLoaded of C3DTilesLayer is doing initFeature/updateStyle/dispatchEvent so this is called after updateStyle
         this.temporalC3DTilesLayer.updateStyle([tileContent.tileId]);
       }
     );
 
-    this.styleDate = null; // default value
     const computeColorOpacity = (c3DTileFeature) => {
       const temporalExtension =
         c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
 
       if (
-        temporalExtension.startDate <= this.styleDate &&
-        temporalExtension.endDate >= this.styleDate
+        temporalExtension.startDate <= this._styleDate &&
+        temporalExtension.endDate >= this._styleDate
       ) {
         // no transaction
         return TEMPORAL_COLOR_OPACITY.noTransaction;
       }
       // check if color opacity associated to featureDateID
-      const featureDateID = temporalExtension.featureId + this.styleDate;
+      const featureDateID = temporalExtension.featureId + this._styleDate;
       if (
         tileMaps.has(c3DTileFeature.tileId) &&
         tileMaps.get(c3DTileFeature.tileId).has(featureDateID)
@@ -281,14 +289,6 @@ export class Temporal3DTilesLayerWrapper {
         },
       },
     });
-
-    //  all date possible to update style with (ascending order)
-    /** @type {Array<number>} */
-    this.knownDatesForAllTiles = knownDatesForAllTiles.sort((a, b) => a - b);
-
-    // the layer wrapped
-    /** @type {itowns.C3DTilesLayer} */
-    this.temporalC3DTilesLayer = temporalC3DTilesLayer;
   }
 
   /**
@@ -296,7 +296,7 @@ export class Temporal3DTilesLayerWrapper {
    *
    * @param {number} date - year to update style with
    */
-  update(date) {
+  set styleDate(date) {
     if (!this.knownDatesForAllTiles.includes(date)) {
       // take the date the more closer
       let lastDiff = Infinity;
@@ -313,7 +313,7 @@ export class Temporal3DTilesLayerWrapper {
       }
     }
 
-    this.styleDate = date;
+    this._styleDate = date;
     this.temporalC3DTilesLayer.updateStyle();
   }
 }
@@ -384,7 +384,7 @@ export class DateSelector extends itownsWidget.Widget {
               selectDates.add(optionDate);
             });
 
-            temporalWrapper.update(selectDates.selectedOptions[0].value);
+            temporalWrapper.styleDate = selectDates.selectedOptions[0].value;
             selectDates.onchange = () => {
               temporalWrapper.update(selectDates.selectedOptions[0].value);
               itownsView.notifyChange();
