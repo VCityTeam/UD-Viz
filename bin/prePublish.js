@@ -78,14 +78,14 @@ changeVersionPackageJSON('./packages/shared/package.json').then(() => {
     changeVersionPackageJSON('./packages/node/package.json').then(() => {
       changeVersionPackageJSON('./package.json').then(() => {
         const commandReset = `npm run reset`;
-        console.log('RUN', commandReset);
+        console.log('EXEC', commandReset);
 
         // Execute reset command
         exec(commandReset)
           .then(printExec)
           .then(() => {
             const commandGenerateChangelog = `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`;
-            console.log('RUN', commandGenerateChangelog);
+            console.log('EXEC', commandGenerateChangelog);
 
             // Generate changelog diffs
             exec(commandGenerateChangelog).then(() => {
