@@ -1,7 +1,7 @@
 /**
  * @file Sets up an Express backend server for examples, serving static files,
  * replacing HTML strings, and enabling a game socket service.
- * The behavior adapts based on the environment mode (NODE_ENV) inject in procosss.env with cross-env package.
+ * The behavior adapts based on the environment mode (NODE_ENV) inject in processs.env with cross-env package.
  * See {@link https://nodejs.org/api/process.html#processenv-env}, {@link https://www.npmjs.com/package/cross-env}
  *
  * requires {@link https://www.npmjs.com/package/@ud-viz/node}
