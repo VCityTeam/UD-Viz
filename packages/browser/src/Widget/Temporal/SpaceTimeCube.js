@@ -2,16 +2,15 @@ import * as itowns from 'itowns';
 import * as THREE from 'three';
 
 class Level {
-  constructor(date, boudingBox, features) {
+  constructor(date, boundingBox, features) {
     /** @type {THREE.Box3} */
-    this.boundingBox = boudingBox;
+    this.boundingBox = boundingBox;
 
+    /** @type {THREE.Box3Helper} */
     this.boudingBoxHelper = new THREE.Box3Helper(
       this.boundingBox,
-      new THREE.Color(Math.random(), Math.random(), Math.random())
+      new THREE.Color(1, 0, 0)
     );
-
-    this.boudingBoxHelper.material.lineWidth = 5;
 
     /** @type {Array<itowns.C3DTFeature>} */
     this.features = features;
@@ -19,11 +18,18 @@ class Level {
     /** @type {number} */
     this.date = date;
 
+    /** @type {number} */
     this._offset = 0;
   }
 
   set offset(value) {
+    this.boundingBox.min.z -= this._offset;
+    this.boundingBox.max.z -= this._offset;
+
     this._offset = value;
+
+    this.boundingBox.min.z += this._offset;
+    this.boundingBox.max.z += this._offset;
   }
 
   get offset() {
@@ -40,29 +46,31 @@ class Level {
     // update bb
     this.boundingBox.min.x = Math.min(
       this.boundingBox.min.x,
-      feature.userData.initialBB.min.x
+      feature.userData.worldInitialBox3.min.x
     );
     this.boundingBox.min.y = Math.min(
       this.boundingBox.min.y,
-      feature.userData.initialBB.min.y
+      feature.userData.worldInitialBox3.min.y
     );
-    this.boundingBox.min.z = Math.min(
-      this.boundingBox.min.z,
-      feature.userData.initialBB.min.z
-    );
+    this.boundingBox.min.z =
+      Math.min(
+        this.boundingBox.min.z - this._offset,
+        feature.userData.worldInitialBox3.min.z
+      ) + this._offset;
 
     this.boundingBox.max.x = Math.max(
       this.boundingBox.max.x,
-      feature.userData.initialBB.max.x
+      feature.userData.worldInitialBox3.max.x
     );
     this.boundingBox.max.y = Math.max(
       this.boundingBox.max.y,
-      feature.userData.initialBB.max.y
+      feature.userData.worldInitialBox3.max.y
     );
-    this.boundingBox.max.z = Math.max(
-      this.boundingBox.max.z,
-      feature.userData.initialBB.max.z
-    );
+    this.boundingBox.max.z =
+      Math.max(
+        this.boundingBox.max.z - this._offset,
+        feature.userData.worldInitialBox3.max.z
+      ) + this._offset;
 
     this.boudingBoxHelper.updateMatrixWorld();
   }
@@ -87,7 +95,6 @@ export class SpaceTimeCube {
     };
 
     temporalLayers().forEach((temporalLayer) => {
-      console.log(temporalLayer);
       temporalLayer.addEventListener(
         itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
         () => {
@@ -96,10 +103,9 @@ export class SpaceTimeCube {
             tileFeatures,
           ] of temporalLayer.tilesC3DTileFeatures) {
             for (const [batchId, feature] of tileFeatures) {
-              if (!feature.userData.initialBB) {
-                const bb = new THREE.Box3();
-                temporalLayer.computeWorldBox3(feature, bb);
-                feature.userData.initialBB = bb;
+              if (!feature.userData.worldInitialBox3) {
+                feature.userData.worldInitialBox3 =
+                  temporalLayer.computeWorldBox3(feature);
               }
 
               const date =
@@ -108,7 +114,7 @@ export class SpaceTimeCube {
               if (!levels.has(date)) {
                 const newLevel = new Level(
                   date,
-                  feature.userData.initialBB.clone(),
+                  feature.userData.worldInitialBox3.clone(),
                   [feature]
                 );
                 levels.set(date, newLevel);
@@ -121,11 +127,11 @@ export class SpaceTimeCube {
             }
           }
 
-          let minHeightGap = Infinity;
+          let minLevelHeight = Infinity;
           let minDate = Infinity;
           for (const [date, level] of levels) {
             minDate = Math.min(minDate, date);
-            minHeightGap = Math.min(minHeightGap, level.height);
+            minLevelHeight = Math.min(minLevelHeight, level.height);
           }
 
           for (const [date, level] of levels) {
@@ -171,8 +177,6 @@ export class SpaceTimeCube {
                     });
                   }
                 });
-
-                tileContent.updateMatrixWorld();
               }
             }
           });

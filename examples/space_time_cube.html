@@ -86,7 +86,8 @@
           );
 
           udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
-            configs['3DTiles_temporal'],
+            [configs['3DTiles_temporal'][0]], // <== dans les 3DTiles de la doua il y a des features avec des -18000 etc
+            // configs['3DTiles_temporal'],
             frame3DPlanar.itownsView
           );
 
