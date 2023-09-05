@@ -127,14 +127,13 @@ export class SpaceTimeCube {
             }
           }
 
-          let minLevelHeight = Infinity;
           let minDate = Infinity;
           for (const [date, level] of levels) {
             minDate = Math.min(minDate, date);
-            minLevelHeight = Math.min(minLevelHeight, level.height);
           }
 
           for (const [date, level] of levels) {
+            // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
             level.offset = (date - minDate) * 100;
           }
           console.log(levels);
