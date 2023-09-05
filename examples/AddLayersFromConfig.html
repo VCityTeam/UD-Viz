@@ -19,7 +19,7 @@
           './assets/config/layer/geoJSONs.json',
           './assets/config/layer/elevation.json',
           './assets/config/layer/3DTiles.json',
-          './assets/config/layer/labels.json'
+          './assets/config/layer/labels.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -48,7 +48,7 @@
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {}
+                  options: {},
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -56,9 +56,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format']
+                  format: configs['base_maps'][0]['format'],
                 }),
-                transparent: true
+                transparent: true,
               }
             )
           );
@@ -71,9 +71,9 @@
                 source: new udvizBrowser.itowns.FileSource({
                   url: layerConfig.url,
                   crs: extent.crs,
-                  format: 'application/json'
+                  format: 'application/json',
                 }),
-                style: new udvizBrowser.itowns.Style(layerConfig.style)
+                style: new udvizBrowser.itowns.Style(layerConfig.style),
               })
             );
           });
@@ -86,8 +86,8 @@
                 {
                   name: layerConfig['id'],
                   source: new udvizBrowser.itowns.C3DTilesSource({
-                    url: layerConfig['url']
-                  })
+                    url: layerConfig['url'],
+                  }),
                 },
                 frame3DPlanar.itownsView
               )
@@ -114,8 +114,8 @@
                   name: configs['elevation']['name'],
                   crs: extent.crs,
                   heightMapWidth: 256,
-                  format: configs['elevation']['format']
-                })
+                  format: configs['elevation']['format'],
+                }),
               }
             )
           );
@@ -139,7 +139,7 @@
               source = new udvizBrowser.itowns.FileSource({
                 url: layerConfig.url,
                 crs: extent.crs,
-                format: 'application/json'
+                format: 'application/json',
               });
             } else if (layerConfig['sourceType'] == 'wfs') {
               source = new udvizBrowser.itowns.WFSSource({
@@ -147,7 +147,7 @@
                 version: '2.0.0',
                 typeName: layerConfig.name,
                 crs: extent.crs,
-                format: 'application/json'
+                format: 'application/json',
               });
             } else {
               console.warn(
@@ -170,7 +170,7 @@
                 transparent: true,
                 source: source,
                 style: layerStyle,
-                zoom: zoom
+                zoom: zoom,
               }
             );
             frame3DPlanar.itownsView.addLayer(labelLayer);
