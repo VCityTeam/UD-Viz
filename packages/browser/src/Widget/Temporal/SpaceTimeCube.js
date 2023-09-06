@@ -174,7 +174,7 @@ class LinkedList {
   }
 
   // find date
-  existingDate(date) {
+  getLevelWithDate(date) {
     let current = this.head;
     while (current != null) {
       if (current.date === date) return current;
@@ -226,7 +226,7 @@ export class SpaceTimeCube {
               const date =
                 feature.getInfo().extensions['3DTILES_temporal'].startDate;
 
-              const levelExisting = levelsList.existingDate(date);
+              const levelExisting = levelsList.getLevelWithDate(date);
               if (!levelExisting) {
                 const newLevel = new Level(
                   date,
@@ -258,8 +258,6 @@ export class SpaceTimeCube {
             }
           }
 
-          console.log(levelsList);
-
           let minDate;
           if (levelsList.head) minDate = levelsList.head.date;
 
@@ -268,6 +266,19 @@ export class SpaceTimeCube {
             level.offset = (date - minDate) * 100;
           }
 
+          if (levelsList.head) {
+            let current = levelsList.head;
+            while (current != null) {
+              const elevation = current.previous
+                ? current.previous.height
+                : 100;
+              current.offset = (current.date - minDate) * elevation;
+
+              current = current.next;
+            }
+          }
+
+          console.log(levelsList);
           temporalLayers().forEach((layer) => {
             for (const [tileId, tileFeatures] of layer.tilesC3DTileFeatures) {
               for (const [batchId, feature] of tileFeatures) {
@@ -278,9 +289,12 @@ export class SpaceTimeCube {
 
                 if (!tileContent) return;
 
-                const level = levels.get(
+                const level = levelsList.getLevelWithDate(
                   feature.getInfo().extensions['3DTILES_temporal'].startDate
                 );
+                // const level = levels.get(
+                //   feature.getInfo().extensions['3DTILES_temporal'].startDate
+                // );
 
                 const oldOffset = feature.userData.oldOffset
                   ? feature.userData.oldOffset
