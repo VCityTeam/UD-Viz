@@ -54,6 +54,12 @@ class Level {
 
     /** @type {number} */
     this._offset = 0;
+
+    /** @type {Level} */
+    this._previous = null;
+
+    /** @type {Level} */
+    this._next = null;
   }
 
   set offset(value) {
@@ -72,6 +78,22 @@ class Level {
 
   get height() {
     return this.boundingBox.max.z - this.boundingBox.min.z;
+  }
+
+  get previous() {
+    return this._previous;
+  }
+
+  get next() {
+    return this._next;
+  }
+
+  set previous(level) {
+    this._previous = level;
+  }
+
+  set next(level) {
+    this._next = level;
   }
 
   addFeature(feature) {
@@ -110,20 +132,9 @@ class Level {
   }
 }
 
-class Node {
-  /**
-   *
-   * @param {Level} level
-   */
-  constructor(level) {
-    this.level = level;
-    this.next = null;
-  }
-}
-
-class LevelList {
-  constructor() {
-    this.head = null;
+class LinkedList {
+  constructor(head = null) {
+    this.head = head;
     this.size = 0;
   }
 
@@ -132,36 +143,47 @@ class LevelList {
    * @param {Level} level
    */
   add(level) {
-    const node = new Node(level);
-
+    const l = level;
     let current;
-
-    if (this.head == null) this.head = node;
-    else {
+    if (this.head == null) {
+      this.head = l;
+    } else {
       current = this.head;
-      while (current.next) {
-        console.log(current.next);
+      while (current.next != null) {
         current = current.next;
       }
-
-      current.next = current;
+      current.next = l;
+      l.previous = current;
     }
     this.size++;
   }
 
   // finds the index of element
-  containNode(level) {
+  indexOf(level) {
+    let count = 0;
     let current = this.head;
 
     while (current != null) {
-      if (current.level.date === level.date) return true;
+      if (current === level) return count;
+      count++;
       current = current.next;
     }
 
     // not found
-    return false;
+    return -1;
+  }
+
+  // find date
+  existingDate(date) {
+    let current = this.head;
+    while (current != null) {
+      if (current.date === date) return current;
+      current = current.next;
+    }
+    return null;
   }
 }
+
 export class SpaceTimeCube {
   /**
    *
@@ -171,7 +193,7 @@ export class SpaceTimeCube {
     /** @type {Map<number,Level>} */
     const levels = new Map();
 
-    const levelsList = new LevelList();
+    const levelsList = new LinkedList();
 
     const temporalLayers = () => {
       return view.getLayers().filter((el) => {
@@ -186,9 +208,9 @@ export class SpaceTimeCube {
       temporalLayer.addEventListener(
         itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
         () => {
-          temporalLayer.tileset.extensions[
-            '3DTILES_temporal'
-          ].transactions.forEach((transaction) => {});
+          // temporalLayer.tileset.extensions[
+          //   '3DTILES_temporal'
+          // ].transactions.forEach((transaction) => {});
 
           // Features
           for (const [
@@ -204,29 +226,42 @@ export class SpaceTimeCube {
               const date =
                 feature.getInfo().extensions['3DTILES_temporal'].startDate;
 
-              if (!levels.has(date)) {
+              const levelExisting = levelsList.existingDate(date);
+              if (!levelExisting) {
                 const newLevel = new Level(
                   date,
                   feature.userData.worldInitialBox3.clone(),
                   [feature]
                 );
-                levels.set(date, newLevel);
-                // if (!levelsList.containNode(newLevel)) levelsList.add(newLevel);
-
-                // levelsList.add(newLevel);
-
-                view.scene.add(newLevel.boudingBoxHelper);
+                levelsList.add(newLevel);
               } else {
-                // add feature
-                levels.get(date).addFeature(feature);
+                levelExisting.addFeature(feature);
               }
+
+              // TO-DO Remove
+              if (levels)
+                if (!levels.has(date)) {
+                  const newLevel = new Level(
+                    date,
+                    feature.userData.worldInitialBox3.clone(),
+                    [feature]
+                  );
+                  levels.set(date, newLevel);
+
+                  // levelsList.add(newLevel);
+
+                  view.scene.add(newLevel.boudingBoxHelper);
+                } else {
+                  // add feature
+                  levels.get(date).addFeature(feature);
+                }
             }
           }
 
-          let minDate = Infinity;
-          for (const [date, level] of levels) {
-            minDate = Math.min(minDate, date);
-          }
+          console.log(levelsList);
+
+          let minDate;
+          if (levelsList.head) minDate = levelsList.head.date;
 
           for (const [date, level] of levels) {
             // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
@@ -293,10 +328,5 @@ export class SpaceTimeCube {
         }
       );
     });
-
-    levels.forEach((level) => {
-      levelsList.add(level);
-    });
-    console.log(levelsList.containNode(levels.get(2009)));
   }
 }
