@@ -10,13 +10,11 @@ export { GeocodingService } from './Geocoding/services/GeocodingService';
 
 export { GeocodingView } from './Geocoding/views/GeocodingView';
 
-export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
-
 export { SparqlQueryWindow } from './SPARQL/View/SparqlQueryWindow';
 
-export { SparqlWorkspaceQueryWindow } from './Workspace/View/SparqlWorkspaceQueryWindow';
-
-export * as URI from './SPARQL/Model/URI';
+export { SparqlEndpointResponseProvider } from './SPARQL/Service/SparqlEndpointResponseProvider';
 
 import * as Document from './Document/Document';
 export { Document };
+
+export { SparqlWorkspaceQueryWindow } from './Workspace/SparqlWorkspaceQueryWindow';

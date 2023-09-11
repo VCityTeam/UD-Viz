@@ -4,13 +4,6 @@
   "fontSize": 4,
   "queries": [
     {
-      "title": "Select the versionTransitions and versions",
-      "formats": {
-        "graph": "Graph"
-      },
-      "filepath": "./assets/queries/versions.rq"
-    },
-    {
       "title": "Select the workspace without transactions or buildings",
       "formats": {
         "graph": "Graph"

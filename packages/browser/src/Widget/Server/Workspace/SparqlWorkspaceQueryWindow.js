@@ -1,19 +1,72 @@
-import { getUriLocalname } from '../../SPARQL/Model/URI';
-import { Graph } from '../../SPARQL/Model/Graph';
+import { SparqlEndpointResponseProvider } from '../SPARQL/Service/SparqlEndpointResponseProvider';
+import { SparqlQueryWindow } from '../SPARQL/View/SparqlQueryWindow';
+import { getUriLocalname } from '../../../URLUtil';
 
-export class Workspace extends Graph {
+/**
+ * The SPARQL query window class which provides the user interface for querying
+ * a SPARQL endpoint and displaying the endpoint response.
+ */
+export class SparqlWorkspaceQueryWindow extends SparqlQueryWindow {
   /**
-   * Create a new D3 workspace graph from an RDF JSON object.
+   * Creates a SPARQL query window.
    *
-   * @param {object} configSparqlWidget The sparqlModule configuration.
-   * @param {number} configSparqlWidget.height The SVG canvas height.
-   * @param {number} configSparqlWidget.width The SVG canvas width.
-   * @param {number} configSparqlWidget.fontSize The font size to use for node and link labels.
-   * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
-   *                                                    This doesn't (yet) affect the legend font size.
+   * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider.
+   * @param {object} configSparqlWidget The sparqlModule view configuration.
+   * @param {object} configSparqlWidget.queries Query configurations
+   * @param {object} configSparqlWidget.queries.title The query title
+   * @param {object} configSparqlWidget.queries.filepath The path to the file which contains the query text
+   * @param {object} configSparqlWidget.queries.formats Configuration for which visualizations are allowed
+   *                                                    with this query. Should be an object of key, value
+   *                                                    pairs. The keys of these pairs should correspond
+   *                                                    with the cases in the updateDataView() function.
    */
-  constructor(configSparqlWidget) {
-    super(configSparqlWidget);
+  constructor(sparqlProvider, configSparqlWidget) {
+    super(sparqlProvider, configSparqlWidget);
+  }
+
+  /**
+   *
+   * @param {string} id an identifier
+   * @returns {Array<Array<string>>} - transaction chain
+   */
+  getTransactionChain(id) {
+    const result = this.sparqlProvider.querySparqlEndpointService(
+      this.transactionChainQuery(id)
+    );
+    return result;
+  }
+
+  /**
+   * Get the CityGML 3.0 transaction chain query for as a string
+   *
+   * @param {string} gml_id a gml_id identifier linked to a feature
+   * @returns {string} - query plain text
+   */
+  transactionChainQuery(gml_id) {
+    return /* SPARQL */ `
+# Workspace prefixes
+PREFIX vers: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
+
+# return a the transactions connected to a city objects URI through a distance of 4
+
+#SELECT DISTINCT ?transition ?transaction ?sourceGmlId ?sourceVersion ?targetGmlId ?targetVersion
+SELECT ?gmlID ?gmlID_future_1 ?gmlID_future_2 ?gmlID_future_3 ?gmlID_future_4
+WHERE {
+  ?gmlID ^vers:Transaction.oldFeature|^vers:Transaction.newFeature ?transaction .
+  # search forward in time
+  OPTIONAL {
+    ?transaction vers:Transaction.newFeature ?gmlID_future_1 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_2 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_3 .
+  } OPTIONAL {
+    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_4 .
+  }
+
+  FILTER REGEX( str(?gmlID), ".*${gml_id}" ) 
+}
+      `;
   }
 
   /**
@@ -23,7 +76,7 @@ export class Workspace extends Graph {
    * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionScenarioByIndex(d) {
-    const uri = this.getNodeByIndex(d).id;
+    const uri = this.d3Graph.data.getNodeByIndex(d).id;
     return this.getVersionScenarioByUri(uri);
   }
 
@@ -34,7 +87,7 @@ export class Workspace extends Graph {
    * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionTransitionScenarioByIndex(d) {
-    const uri = this.getNodeByIndex(d).id;
+    const uri = this.d3Graph.data.getNodeByIndex(d).id;
     return this.getVersionTransitionScenarioByUri(uri);
   }
 
@@ -46,14 +99,14 @@ export class Workspace extends Graph {
    * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionScenarioByUri(uri) {
-    const memberLink = this.links.find((element) => {
+    const memberLink = this.d3Graph.data.links.find((element) => {
       return (
         getUriLocalname(element.label) == 'Scenario.versionMember' &&
         element.target == uri
       );
     });
     if (memberLink) {
-      return this.getNodeByUri(memberLink.source);
+      return this.d3Graph.data.getNodeByUri(memberLink.source);
     }
     console.warn(`No Scenario found for version with uri: ${uri}`);
     return null;
@@ -67,14 +120,14 @@ export class Workspace extends Graph {
    * @returns {object|null} return the object that represents the datum of a Scenario
    */
   getVersionTransitionScenarioByUri(uri) {
-    const memberLink = this.links.find((element) => {
+    const memberLink = this.d3Graph.data.links.find((element) => {
       return (
         getUriLocalname(element.label) == 'Scenario.versionTransitionMember' &&
         element.target == uri
       );
     });
     if (memberLink) {
-      return this.getNodeByUri(memberLink.source);
+      return this.d3Graph.data.getNodeByUri(memberLink.source);
     }
     console.warn(`No Scenario found for versionTransition with uri: ${uri}`);
     return null;
@@ -86,12 +139,10 @@ export class Workspace extends Graph {
    * the layer.name of the Scenario's localname.
    *
    * @param {number} d the index of the Version or VersionTransition node
-   * @param {itowns.PlanarView} itownsView view
-   * @returns {C3DTilesLayer|null} return the a matching geometryLayer
+   * @returns {string|null} return the name of a matching geometryLayer
    */
-  getScenarioLayerByIndex(d, itownsView) {
-    const node = this.getNodeByIndex(d);
-    let scenarioLayer = null;
+  getScenarioLayerNameByIndex(d) {
+    const node = this.d3Graph.data.getNodeByIndex(d);
     switch (
       getUriLocalname(node.type) // behavior changes based on the node type
     ) {
@@ -99,13 +150,7 @@ export class Workspace extends Graph {
         const versionScenarioByIndex = this.getVersionScenarioByIndex(d);
 
         if (versionScenarioByIndex) {
-          const scenarioName = getUriLocalname(versionScenarioByIndex.id);
-          scenarioLayer = itownsView
-            .getLayers()
-            .filter((el) => el.isC3DTilesLayer)
-            .find((layer) => {
-              return layer.name == scenarioName;
-            });
+          return getUriLocalname(versionScenarioByIndex.id);
         }
 
         break;
@@ -115,17 +160,8 @@ export class Workspace extends Graph {
           this.getVersionTransitionScenarioByIndex(d);
 
         if (versionTransitionScenarioByIndex) {
-          const transitionScenarioName = getUriLocalname(
-            versionTransitionScenarioByIndex.id
-          );
-          scenarioLayer = itownsView
-            .getLayers()
-            .filter((el) => el.isC3DTilesLayer)
-            .find((layer) => {
-              return layer.name == transitionScenarioName;
-            });
+          return getUriLocalname(versionTransitionScenarioByIndex.id);
         }
-
         break;
       }
       default:
@@ -136,7 +172,7 @@ export class Workspace extends Graph {
         );
         return null;
     }
-    return scenarioLayer;
+    return null;
   }
 
   /**
@@ -145,38 +181,18 @@ export class Workspace extends Graph {
    * the layer.name of the Scenario's localname.
    *
    * @param {string} uri the uri of the Version or VersionTransition node
-   * @param {itowns.PlanarView} itownsView - itowns view
-   * @returns {C3DTilesLayer|null} return the a matching geometryLayer
+   * @returns {string|null} return the a matching geometryLayer name
    */
-  getScenarioLayerByUri(uri, itownsView) {
-    const node = this.getNodeByUri(uri);
-    let scenarioLayer = null;
+  getScenarioLayerNameByUri(uri) {
+    const node = this.d3Graph.data.getNodeByUri(uri);
     switch (
       getUriLocalname(node.type) // behavior changes based on the node type
     ) {
       case 'Version': {
-        const versionScenarioName = getUriLocalname(
-          this.getVersionScenarioByUri(uri).id
-        );
-        scenarioLayer = itownsView
-          .getLayers()
-          .filter((el) => el.isC3DTilesLayer)
-          .find((layer) => {
-            return layer.name == versionScenarioName;
-          });
-        break;
+        return getUriLocalname(this.getVersionScenarioByUri(uri).id);
       }
       case 'VersionTransition': {
-        const transitionScenarioName = getUriLocalname(
-          this.getVersionTransitionScenarioByUri(uri).id
-        );
-        scenarioLayer = itownsView
-          .getLayers()
-          .filter((el) => el.isC3DTilesLayer)
-          .find((layer) => {
-            return layer.name == transitionScenarioName;
-          });
-        break;
+        return getUriLocalname(this.getVersionTransitionScenarioByUri(uri).id);
       }
       default:
         console.warn(
@@ -186,7 +202,6 @@ export class Workspace extends Graph {
         );
         return null;
     }
-    return scenarioLayer;
   }
 
   /**
@@ -198,7 +213,7 @@ export class Workspace extends Graph {
    * @returns {{validFrom:Date,validTo:Date}|null} return the object that represents the datum of a node
    */
   getBitemporalTimestampsByIndex(d) {
-    const links = this.getLinksByIndex(d);
+    const links = this.d3Graph.data.getLinksByIndex(d);
     const validFrom = links.find((link) => {
       return (
         getUriLocalname(link.label) == 'AbstractFeatureWithLifespan.validFrom'
@@ -212,7 +227,9 @@ export class Workspace extends Graph {
 
     if (!validFrom || !validTo) {
       console.warn(
-        `could not find bitemporal timestamps for ${this.getNodeByIndex(d).id}`
+        `could not find bitemporal timestamps for ${
+          this.d3Graph.data.getNodeByIndex(d).id
+        }`
       );
       return null;
     }
@@ -226,19 +243,5 @@ export class Workspace extends Graph {
       validFrom: timestamp1,
       validTo: timestamp2,
     };
-  }
-
-  // / EVENTS
-
-  static get EVENT_WORKSPACE_NODE_CLICKED() {
-    return 'EVENT_WORKSPACE_NODE_CLICKED';
-  }
-
-  static get EVENT_WORKSPACE_NODE_MOUSEOVER() {
-    return 'EVENT_WORKSPACE_NODE_MOUSEOVER';
-  }
-
-  static get EVENT_WORKSPACE_NODE_MOUSEOUT() {
-    return 'EVENT_WORKSPACE_NODE_MOUSEOUT';
   }
 }

@@ -21,7 +21,7 @@
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
           './assets/config/widget/workspace_widget.json',
-          './assets/config/server/sparql_workspace_server.json'
+          './assets/config/server/sparql_workspace_server.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -48,22 +48,13 @@
             frame3DPlanar.itownsView
           );
 
-          // DEBUG
-          const layers = frame3DPlanar.itownsView
-            .getLayers()
-            .filter((el) => el.isC3DTilesLayer);
-          layers[0].overrideMaterials =
-            new udvizBrowser.THREE.MeshBasicMaterial({ color: 'red' });
-          layers[1].overrideMaterials =
-            new udvizBrowser.THREE.MeshBasicMaterial({ color: 'yellow' });
-
           frame3DPlanar.itownsView.addLayer(
             new udvizBrowser.itowns.ColorLayer(
               configs['base_maps'][0]['layer_name'],
               {
                 updateStrategy: {
                   type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {}
+                  options: {},
                 },
                 source: new udvizBrowser.itowns.WMSSource({
                   extent: extent,
@@ -71,9 +62,9 @@
                   url: configs['base_maps'][0]['url'],
                   version: configs['base_maps'][0]['version'],
                   crs: extent.crs,
-                  format: configs['base_maps'][0]['format']
+                  format: configs['base_maps'][0]['format'],
                 }),
-                transparent: true
+                transparent: true,
               }
             )
           );
@@ -98,19 +89,37 @@
                   name: configs['elevation']['name'],
                   crs: extent.crs,
                   heightMapWidth: 256,
-                  format: configs['elevation']['format']
-                })
+                  format: configs['elevation']['format'],
+                }),
               }
             )
           );
 
           // //// SPARQL Workspace widget
+          const temporalWrappers = new Map();
+          frame3DPlanar.itownsView
+            .getLayers()
+            .filter(
+              (el) =>
+                el.isC3DTilesLayer &&
+                el.registeredExtensions.isExtensionRegistered(
+                  '3DTILES_temporal'
+                )
+            )
+            .forEach((layer) => {
+              temporalWrappers.set(
+                layer.id,
+                new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(
+                  layer
+                )
+              );
+            });
+
           const sparqlWorkspaceWidgetView =
             new udvizBrowser.Widget.Server.SparqlWorkspaceQueryWindow(
               new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
                 configs['sparql_workspace_server']
               ),
-              frame3DPlanar.itownsView,
               configs['workspace_widget']
             );
 
@@ -133,25 +142,29 @@
                 sparqlWorkspaceWidgetView.d3Graph.data.getNodeByIndex(
                   event.datum.index
                 );
-              const nodeType = udvizBrowser.Widget.Server.URI.getUriLocalname(
-                nodeData.type
-              );
+              const nodeType = udvizBrowser.getUriLocalname(nodeData.type);
               if (nodeType == 'Version' || nodeType == 'VersionTransition') {
                 /* find the first scenario that contains the clicked node,
                  * find the temporal the geometry layer with the same name, and
                  * set the current time to the averaged timestamps linked to the node
                  */
-                const scenarioLayer =
-                  sparqlWorkspaceWidgetView.d3Graph.data.getScenarioLayerByIndex(
+                const scenarioLayerName =
+                  sparqlWorkspaceWidgetView.getScenarioLayerNameByIndex(
                     event.datum.index,
-                    sparqlWorkspaceWidgetView.itownsView
+                    frame3DPlanar.itownsView
                   );
+                const scenarioLayer = frame3DPlanar.itownsView
+                  .getLayers()
+                  .filter((el) => el.isC3DTilesLayer)
+                  .find((layer) => {
+                    return layer.name == scenarioLayerName;
+                  });
 
                 console.debug(scenarioLayer);
 
                 // if a layer is found, make sure it is visible and hide all other layers
                 if (scenarioLayer) {
-                  sparqlWorkspaceWidgetView.itownsView
+                  frame3DPlanar.itownsView
                     .getLayers()
                     .filter((el) => el.isC3DTilesLayer)
                     .forEach(
@@ -160,7 +173,7 @@
 
                   // Calculate the average timestamp of the clicked node
                   const timestamps =
-                    sparqlWorkspaceWidgetView.d3Graph.data.getBitemporalTimestampsByIndex(
+                    sparqlWorkspaceWidgetView.getBitemporalTimestampsByIndex(
                       event.datum.index
                     );
                   const timestampAverage =
@@ -168,11 +181,10 @@
                     timestamps.validFrom;
 
                   // set style temporal layer with the date
-                  sparqlWorkspaceWidgetView.temporalWrappers.get(
-                    scenarioLayer.id
-                  ).styleDate = timestampAverage;
+                  temporalWrappers.get(scenarioLayer.id).styleDate =
+                    timestampAverage;
 
-                  sparqlWorkspaceWidgetView.itownsView.notifyChange();
+                  frame3DPlanar.itownsView.notifyChange();
                 }
               }
             }

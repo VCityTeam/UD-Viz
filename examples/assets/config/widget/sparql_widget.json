@@ -6,7 +6,8 @@
     {
       "title": "Select a CityGML Building with ID: 'VILLEURBANNE_00012_23'",
       "formats": {
-        "graph": "Graph"
+        "graph": "Graph",
+        "json": "JSON"
       },
       "filepath": "./assets/queries/buildingByIDQuery.rq"
     },
@@ -34,7 +35,9 @@
     {
       "title": "Select several random features within the 2012 version of the city model",
       "formats": {
-        "graph": "Graph"
+        "graph": "Graph",
+        "table": "Table",
+        "json": "JSON"
       },
       "filepath": "./assets/queries/version.rq"
     }
