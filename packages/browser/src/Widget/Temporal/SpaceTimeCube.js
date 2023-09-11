@@ -1,11 +1,12 @@
 import * as itowns from 'itowns';
 import * as THREE from 'three';
+const { Data } = require('@ud-viz/shared');
 
 const TEMPORAL_COLOR_OPACITY = {
   noTransaction: {
     color: 'white',
     opacity: 1,
-    priority: 1,
+    priority: 0.5,
   },
   invisible: {
     color: 'blue',
@@ -20,7 +21,7 @@ const TEMPORAL_COLOR_OPACITY = {
   creation: {
     color: 'green',
     opacity: 0.6,
-    priority: 1,
+    priority: 1.5,
   },
   demolition: {
     color: 'red',
@@ -34,7 +35,6 @@ const TEMPORAL_COLOR_OPACITY = {
   },
 };
 
-// TO-DO: list chainé pour connaitre le level en dessous.
 class Level {
   constructor(date, boundingBox, features) {
     /** @type {THREE.Box3} */
@@ -48,6 +48,8 @@ class Level {
 
     /** @type {Array<itowns.C3DTFeature>} */
     this.features = features;
+
+    this.transactions = [];
 
     /** @type {number} */
     this.date = date;
@@ -139,6 +141,7 @@ class LinkedList {
   }
 
   /**
+   * TO-DO method static
    *
    * @param {Level} level
    */
@@ -158,6 +161,7 @@ class LinkedList {
     this.size++;
   }
 
+  // TO-DO method static
   // finds the index of element
   indexOf(level) {
     let count = 0;
@@ -211,6 +215,8 @@ export class SpaceTimeCube {
           // temporalLayer.tileset.extensions[
           //   '3DTILES_temporal'
           // ].transactions.forEach((transaction) => {});
+          const transactions =
+            temporalLayer.tileset.extensions['3DTILES_temporal'].transactions;
 
           // Features
           for (const [
@@ -261,10 +267,10 @@ export class SpaceTimeCube {
           let minDate;
           if (levelsList.head) minDate = levelsList.head.date;
 
-          for (const [date, level] of levels) {
-            // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
-            level.offset = (date - minDate) * 100;
-          }
+          // for (const [date, level] of levels) {
+          //   // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
+          //   level.offset = (date - minDate) * 100;
+          // }
 
           if (levelsList.head) {
             let current = levelsList.head;
@@ -292,15 +298,23 @@ export class SpaceTimeCube {
                 const level = levelsList.getLevelWithDate(
                   feature.getInfo().extensions['3DTILES_temporal'].startDate
                 );
-                // const level = levels.get(
-                //   feature.getInfo().extensions['3DTILES_temporal'].startDate
-                // );
 
+                console.log(transactions);
+
+                // Add transaction linked with the en
+                transactions.forEach((transaction) => {
+                  if (level.date == transaction.startDate)
+                    Data.arrayPushOnce(level.transactions, transaction);
+                  if (transaction.type == 'creation') console.log(transaction);
+                });
+
+                // Checker la bb, si le delta est trop petit par rapport à l'offset faire un ecart avec la bb
                 const oldOffset = feature.userData.oldOffset
                   ? feature.userData.oldOffset
                   : 0;
 
-                feature.userData.oldOffset = level.offset;
+                feature.userData.oldOffset = oldOffset;
+                // level.offset = oldOffset;
 
                 tileContent.traverse((child) => {
                   if (child.geometry && child.geometry.attributes._BATCHID) {
@@ -325,14 +339,56 @@ export class SpaceTimeCube {
               }
             }
 
-            layer.style = new itowns.Style({
+            const transactionTypeColor = (transactionType) => {
+              switch (transactionType) {
+                case 'modification':
+                  return TEMPORAL_COLOR_OPACITY.modification;
+                case 'creation':
+                  console.log('creation');
+                  return TEMPORAL_COLOR_OPACITY.creation;
+                case 'noTransaction':
+                  return TEMPORAL_COLOR_OPACITY.noTransaction;
+                case 'demolition':
+                  return TEMPORAL_COLOR_OPACITY.demolition;
+                case 'invisible':
+                  return TEMPORAL_COLOR_OPACITY.invisible;
+                default:
+                  break;
+              }
+            };
+
+            const computeColorOpacity = (c3DTileFeature) => {
+              const temporalExtension =
+                c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
+
+              const result = [];
+              let level = levelsList.head;
+              while (level != null) {
+                level.transactions.forEach((transaction) => {
+                  transaction.source.forEach((source) => {
+                    if (source == temporalExtension.featureId)
+                      Data.arrayPushOnce(
+                        result,
+                        transactionTypeColor(transaction.type)
+                      );
+                  });
+                });
+                level = level.next;
+              }
+              Data.arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.noTransaction);
+              result.sort((a, b) => b.priority - a.priority);
+              // console.log(result);
+              return result[0];
+            };
+
+            temporalLayer.style = new itowns.Style({
               fill: {
                 color: (bE) => {
-                  const colorOpacity = TEMPORAL_COLOR_OPACITY.creation;
+                  const colorOpacity = computeColorOpacity(bE);
                   return colorOpacity.color;
                 },
                 opacity: (bE) => {
-                  const colorOpacity = TEMPORAL_COLOR_OPACITY.creation;
+                  const colorOpacity = computeColorOpacity(bE);
                   return colorOpacity.opacity;
                 },
               },
