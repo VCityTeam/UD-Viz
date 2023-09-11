@@ -1,49 +1,56 @@
-import { EventSender } from '@ud-viz/shared';
-import { SparqlEndpointService } from './SparqlEndpointService';
-
 /**
  * Creates a SPARQL Endpoint Provider which manages treating SPARQL endpoint
  * responses and events for a specific SPARQL Endpoint. Also contains helper
  * functions for manipulating RDF data.
  */
-export class SparqlEndpointResponseProvider extends EventSender {
+export class SparqlEndpointResponseProvider {
   /**
    * Creates a SPARQL Endpoint Provider
    *
-   * @param {object} configSparqlServer - The SPARQL server configuration
+   * @param {object} configSparqlServer The sparqlModule configuration.
+   * @param {string} configSparqlServer.url The SPARQL server url.
+   * @param {string} configSparqlServer.url_parameters The SPARQL endpoint url parameters.
+   * @param {object} configSparqlServer.options The default options to be sent in a fetch request header.
    */
   constructor(configSparqlServer) {
-    super();
+    if (
+      !configSparqlServer ||
+      !configSparqlServer.url ||
+      !configSparqlServer.url_parameters ||
+      !configSparqlServer.options
+    ) {
+      console.error(
+        `The given "configSparqlServer" configuration is incorrect: ${configSparqlServer}`
+      );
+    }
 
-    /**
-     * The SPARQL Endpoint Service..
-     *
-     * @type {SparqlEndpointService}
-     */
-    this.service = new SparqlEndpointService(configSparqlServer);
-
-    this.registerEvent(
-      SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED
-    );
+    this.url = configSparqlServer.url;
+    this.url_parameters = configSparqlServer.url_parameters;
+    this.default_options = configSparqlServer.options;
   }
 
   /**
-   * Query the SPARQL endpoint service
+   * Perform a SPARQL Query. Cache and return the response
    *
-   * @param {string} query - The query to send to the SPARQL endpoint.
+   * @async
+   * @param {string} query The query to be sent to the SPARQL endpoint.
+   * @param {object} options optional fetch options
+   * @returns {Promise<object>|null} If the request is not successful, it throws an error. If successful, it returns the request.
    */
-  async querySparqlEndpointService(query) {
-    const response = await this.service.querySparqlEndpoint(query);
-    await this.sendEvent(
-      SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      JSON.parse(response.responseText)
-    );
-  }
+  async querySparqlEndpointService(query, options = this.default_options) {
+    const full_url = this.url + this.url_parameters + encodeURIComponent(query);
 
-  // //////////
-  // /// EVENTS
+    try {
+      const request = await fetch(full_url, options);
+      if (!request.ok) {
+        throw new Error('SPARQL Endpoint response was not OK');
+      }
+      const response = request.json();
+      return response;
+    } catch (error) {
+      console.error(`Could not query SPARQL endpoint: ${error}`);
+    }
 
-  static get EVENT_ENDPOINT_RESPONSE_UPDATED() {
-    return 'EVENT_ENDPOINT_RESPONSE_UPDATED';
+    return null;
   }
 }

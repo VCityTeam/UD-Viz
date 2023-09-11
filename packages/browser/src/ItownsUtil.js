@@ -71,3 +71,47 @@ export function focusC3DTilesLayer(itownsView, layer) {
     horizontalDistance: 200,
   });
 }
+
+/**
+ * fetchC3DTileFeatureWithNodeText takes a parameter `batchTableKey` and returns a feature from a `3DTileslayer` if
+ * the batch table content of the feature contains a given `batchTableValue` string in the given key. Returns an object
+ * containing the first matching feature and its layer.
+ *
+ * @param {itowns.PlanarView} itownsView - view
+ * @param {string} batchTableKey a given batch table key
+ * @param {string} batchTableValue a given batch table value
+ * @returns {object} containting the feature and the layer containing the feature
+ */
+export function fetchC3DTileFeatureWithNodeText(
+  itownsView,
+  batchTableKey,
+  batchTableValue
+) {
+  let result = null;
+  itownsView
+    .getLayers()
+    .filter((el) => el.isC3DTilesLayer)
+    .forEach((c3DTilesLayer) => {
+      for (const [
+        // eslint-disable-next-line no-unused-vars
+        tileId,
+        tileC3DTileFeatures,
+      ] of c3DTilesLayer.tilesC3DTileFeatures) {
+        // eslint-disable-next-line no-unused-vars
+        for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
+          if (
+            c3DTileFeature.getInfo().batchTable[batchTableKey] ==
+            batchTableValue
+          ) {
+            result = {
+              feature: c3DTileFeature,
+              layer: c3DTilesLayer,
+            };
+            break;
+          }
+        }
+      }
+    });
+
+  return result;
+}

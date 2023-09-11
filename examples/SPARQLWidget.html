@@ -17,7 +17,7 @@
           './assets/config/frame3D_planars.json',
           './assets/config/layer/3DTiles_temporal.json',
           './assets/config/widget/sparql_widget.json',
-          './assets/config/server/sparql_server.json'
+          './assets/config/server/sparql_server.json',
         ])
         .then((configs) => {
           udvizBrowser.proj4.default.defs(
@@ -49,7 +49,6 @@
             new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
               configs['sparql_server']
             ),
-            frame3DPlanar.itownsView,
             configs['sparql_widget']
           );
           const parent = document.createElement('div');
@@ -61,22 +60,29 @@
 
           frame3DPlanar.domElementUI.appendChild(parent);
 
-          // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
+          // Add listeners for D3Canvas node events. Three events are currently recognized 'click', 'mouseover', and 'mouseout'
+
+          // graph event
           sparqlWidget.d3Graph.addEventListener('click', (event) => {
             // Get clicked node's data, if nodeData.type is 'Building', zoom camera on a feature with the same 'gmlid' as nodeData.id
-            const nodeData = sparqlWidget.d3Graph.data.getNodeByIndex(event.datum.index);
+            const nodeData = sparqlWidget.d3Graph.data.getNodeByIndex(
+              event.datum.index
+            );
 
             console.debug('node clicked: ', nodeData);
 
-            if (udvizBrowser.Widget.Server.URI.getUriLocalname(nodeData.type) == 'Building') {
-              const clickedResult = sparqlWidget.fetchC3DTileFeatureWithNodeText(
-                udvizBrowser.Widget.Server.URI.getUriLocalname(nodeData.id)
-              );
+            if (udvizBrowser.getUriLocalname(nodeData.type) == 'Building') {
+              const clickedResult =
+                udvizBrowser.fetchC3DTileFeatureWithNodeText(
+                  frame3DPlanar.itownsView,
+                  'gml_id',
+                  udvizBrowser.getUriLocalname(nodeData.id)
+                );
               if (!clickedResult) return;
 
               udvizBrowser.focusCameraOn(
-                sparqlWidget.itownsView,
-                sparqlWidget.itownsView.controls,
+                frame3DPlanar.itownsView,
+                frame3DPlanar.itownsView.controls,
                 clickedResult.layer
                   .computeWorldBox3(clickedResult.feature)
                   .getCenter(new udvizBrowser.THREE.Vector3()),
@@ -87,15 +93,33 @@
               );
             }
           });
-          // TODO
-          // if this imply some style it should be handle in template or layer should be able to have != styles ?
-          // sparqlWidget.d3Graph.addEventListener('mouseover', () => {
-          //   console.warn('mouseover style not implemented');
-          // });
-          // TODO
-          // sparqlWidget.d3Graph.addEventListener('mouseout', () => {
-          //   console.warn('mouseout style not implemented'); // same reason as above
-          // });
+
+          // graph event
+          sparqlWidget.table.addEventListener('click', (event) => {
+            const col = event.datum.col;
+            const row = event.datum.row;
+            const clickedResult =
+              udvizBrowser.fetchC3DTileFeatureWithNodeText(
+                frame3DPlanar.itownsView,
+                'gml_id',
+                udvizBrowser.getUriLocalname(row[col].value)
+              );
+            if (!clickedResult) return;
+
+            console.debug('clicked cell value: ', row[col].value);
+
+            udvizBrowser.focusCameraOn(
+              frame3DPlanar.itownsView,
+              frame3DPlanar.itownsView.controls,
+              clickedResult.layer
+                .computeWorldBox3(clickedResult.feature)
+                .getCenter(new udvizBrowser.THREE.Vector3()),
+              {
+                verticalDistance: 200,
+                horizontalDistance: 200,
+              }
+            );
+          });
         });
     </script>
     SCRIPT_TAG_RELOAD

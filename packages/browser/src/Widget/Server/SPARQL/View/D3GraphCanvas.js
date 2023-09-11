@@ -1,5 +1,5 @@
 import * as d3 from 'd3';
-import { getUriLocalname, tokenizeURI } from '../Model/URI';
+import { getUriLocalname, tokenizeURI } from '../../../../URLUtil';
 import { Graph } from '../Model/Graph';
 import * as THREE from 'three';
 

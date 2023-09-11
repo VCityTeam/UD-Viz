@@ -1,25 +1,18 @@
 import { SparqlEndpointResponseProvider } from '../Service/SparqlEndpointResponseProvider';
 import { D3GraphCanvas } from './D3GraphCanvas';
-import { Table } from '../Model/Table';
-import * as URI from '../Model/URI';
+import { Table } from './Table';
 import { JsonRenderer } from './JsonRenderer';
-import { focusCameraOn } from '../../../../ItownsUtil';
 import { loadTextFile } from '../../../../FileUtil';
-import { EventSender } from '@ud-viz/shared';
-import { findChildByID } from '../../../../HTMLUtil';
-import * as itowns from 'itowns';
-import * as THREE from 'three';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
  * a SPARQL endpoint and displaying the endpoint response.
  */
-export class SparqlQueryWindow extends EventSender {
+export class SparqlQueryWindow {
   /**
    * Creates a SPARQL query window.
    *
    * @param {SparqlEndpointResponseProvider} sparqlProvider The SPARQL Endpoint Response Provider
-   * @param {itowns.PlanarView} itownsView view
    * @param {object} configSparqlWidget The sparqlModule view configuration.
    * @param {object} configSparqlWidget.queries Query configurations
    * @param {object} configSparqlWidget.queries.title The query title
@@ -29,13 +22,32 @@ export class SparqlQueryWindow extends EventSender {
    *                                              pairs. The keys of these pairs should correspond
    *                                              with the cases in the updateDataView() function.
    */
-  constructor(sparqlProvider, itownsView, configSparqlWidget) {
-    super();
+  constructor(sparqlProvider, configSparqlWidget) {
+    /** @type {HTMLElement} */
+    this.domElement = null;
 
     /** @type {HTMLElement} */
-    this.domElement = document.createElement('div');
-    this.domElement.setAttribute('id', '_window_sparqlQueryWindow');
-    this.domElement.innerHTML = this.innerContentHtml;
+    this.dataView = null;
+
+    /** @type {HTMLElement} */
+    this.form = null;
+
+    /** @type {HTMLElement} */
+    this.querySelect = null;
+
+    /** @type {HTMLElement} */
+    this.resultSelect = null;
+
+    /** @type {HTMLElement} */
+    this.resetButton = null;
+
+    /** @type {HTMLElement} */
+    this.queryTextArea = null;
+
+    /** @type {HTMLElement} */
+    this.toggleQueryTextAreaButton = null;
+
+    this.initHtml();
 
     /**
      * The SPARQL Endpoint Response Provider
@@ -43,9 +55,6 @@ export class SparqlQueryWindow extends EventSender {
      * @type {SparqlEndpointResponseProvider}
      */
     this.sparqlProvider = sparqlProvider;
-
-    /** @type {itowns.PlanarView} */
-    this.itownsView = itownsView;
 
     /**
      *A reference to the JsonRenderer class
@@ -74,15 +83,6 @@ export class SparqlQueryWindow extends EventSender {
      * @type {object}
      */
     this.queries = configSparqlWidget['queries'];
-
-    /**
-     * Gml_id linked to the feature
-     *
-     * @type {string}
-     */
-    this.gml_id;
-
-    this.registerEvent(Table.EVENT_CELL_CLICKED);
 
     /**
      * Sets the SparqlEndpointResponseProvider
@@ -119,7 +119,11 @@ export class SparqlQueryWindow extends EventSender {
     this.form.onsubmit = () => {
       console.log('submit');
       console.debug(this.queryTextArea.value);
-      this.sparqlProvider.querySparqlEndpointService(this.queryTextArea.value);
+      this.sparqlProvider
+        .querySparqlEndpointService(this.queryTextArea.value)
+        .then((response) =>
+          this.updateDataView(response, this.resultSelect.value)
+        );
       return false;
     };
 
@@ -127,68 +131,6 @@ export class SparqlQueryWindow extends EventSender {
       this.d3Graph.clearCanvas();
       this.d3Graph.data.clear();
     };
-
-    this.sparqlProvider.addEventListener(
-      SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED,
-      (response) =>
-        this.updateDataView(
-          response,
-          findChildByID(this.domElement, this.resultSelectId).value
-        )
-    );
-
-    // TODO extract table event listener assignments to example
-    this.addEventListener(Table.EVENT_CELL_CLICKED, (cell_text) => {
-      const clickedResult = this.fetchC3DTileFeatureWithNodeText(
-        URI.getUriLocalname(cell_text)
-      );
-      if (!clickedResult) return;
-
-      focusCameraOn(
-        this.itownsView,
-        this.itownsView.controls,
-        clickedResult.layer
-          .computeWorldBox3(clickedResult.feature)
-          .getCenter(new THREE.Vector3()),
-        {
-          verticalDistance: 200,
-          horizontalDistance: 200,
-        }
-      );
-    });
-  }
-
-  /**
-   * fetchC3DTileFeatureWithNodeText takes a parameter `gmlId` and returns a feature from a `3DTileslayer` if
-   * the batch table content of the feature contains a given `gmlid`string in the 'gml_id' key
-   * @param {string} gmlId a given gml ID
-   * @returns {object} containting the feature and the layer containing the feature
-   */
-  fetchC3DTileFeatureWithNodeText(gmlId) {
-    let result = null;
-    this.itownsView
-      .getLayers()
-      .filter((el) => el.isC3DTilesLayer)
-      .forEach((c3DTilesLayer) => {
-        for (const [
-          // eslint-disable-next-line no-unused-vars
-          tileId,
-          tileC3DTileFeatures,
-        ] of c3DTilesLayer.tilesC3DTileFeatures) {
-          // eslint-disable-next-line no-unused-vars
-          for (const [batchId, c3DTileFeature] of tileC3DTileFeatures) {
-            if (c3DTileFeature.getInfo().batchTable['gml_id'] == gmlId) {
-              result = {
-                feature: c3DTileFeature,
-                layer: c3DTilesLayer,
-              };
-              break;
-            }
-          }
-        }
-      });
-
-    return result;
   }
 
   /**
@@ -211,12 +153,13 @@ export class SparqlQueryWindow extends EventSender {
         this.dataView.append(this.jsonRenderer.renderjson(response));
         break;
       case 'table':
+        this.dataView.append(this.table.domElement);
         this.table.dataAsTable(response.results.bindings, response.head.vars);
         this.table.filterInput.addEventListener('change', (e) =>
           Table.update(this.table, e)
         );
         this.dataView.style['height'] = '500px';
-        this.dataView.style['overflow'] = 'scroll';
+        this.dataView.style['width'] = '800px';
         break;
       default:
         console.error('This result format is not supported: ' + view_type);
@@ -290,142 +233,41 @@ export class SparqlQueryWindow extends EventSender {
   }
 
   /**
-   *
-   * @param {string} id an identifier
-   * @returns {Array<Array<string>>}
+   * Initialize the html of the view
    */
-  getTransactionChain(id) {
-    this.gml_id = id;
-    const result = this.sparqlProvider.querySparqlEndpointService(
-      this.transactionChainQuery
-    );
-    return result;
-  }
-
-  get transactionChainQuery() {
-    return /* SPARQL */ `
-    # Workspace prefixes
-PREFIX vers: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#>
-PREFIX wksp: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/workspace#>
-PREFIX type: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/transactiontypes#>
-
-# Dataset prefixes
-PREFIX ws:   <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_2018_Workspace#>
-PREFIX v2009: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_split#>
-PREFIX v2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2009_alt_split#>
-PREFIX v2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_split#>
-PREFIX v2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2012_alt_split#>
-PREFIX v2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2015_split#>
-PREFIX v2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2018_split#>
-PREFIX vt2009_2012: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2012#>
-PREFIX vt2009_2009b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009_2009b#>
-PREFIX vt2009b_2012b: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2009b_2012b#>
-PREFIX vt2012b_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012b_2015#>
-PREFIX vt2012_2015: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2012_2015#>
-PREFIX vt2015_2018: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/Transition_2015_2018#>
-
-
-# return a the transactions connected to a city objects URI through a distance of 4
-
-#SELECT DISTINCT ?transition ?transaction ?sourceGmlId ?sourceVersion ?targetGmlId ?targetVersion
-SELECT ?gmlID ?gmlID_future_1 ?gmlID_future_2 ?gmlID_future_3 ?gmlID_future_4
-WHERE {
-  ?gmlID ^vers:Transaction.oldFeature|^vers:Transaction.newFeature ?transaction .
-  # search forward in time
-  OPTIONAL {
-    ?transaction vers:Transaction.newFeature ?gmlID_future_1 .
-  } OPTIONAL {
-    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_2 .
-  } OPTIONAL {
-    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_3 .
-  } OPTIONAL {
-    ?transaction vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature/^vers:Transaction.oldFeature/vers:Transaction.newFeature ?gmlID_future_4 .
-  }
-
-  FILTER REGEX( str(?gmlID), ".*${this.gml_id}" ) 
-}
-    `;
-  }
-
-  // SPARQL Window getters //
-  get innerContentHtml() {
-    return /* html*/ `
-      <div class="box-section">
-        <label>Select Query: </label>
-        <select id="${this.querySelectId}"></select>
-        <button id="${this.toggleQueryTextAreaButtonId}">▶</button>
-        <form id=${this.formId}>
-          <textarea id="${this.queryTextAreaId}" rows="20" style="display:none"></textarea>
-          <input id="${this.submitButtonId}" type="submit" value="Send"/>
-        </form>
-        <label>Results Format: </label>
-        <select id="${this.resultSelectId}"></select>
-        <button id="${this.resetButtonId}">Reset Graph</button>
-      </div>
-      <div id="${this.dataViewId}" class="box-selection"/>`;
-  }
-
-  get dataViewId() {
-    return `sparql_window_data_view`;
-  }
-
-  get dataView() {
-    return findChildByID(this.domElement, this.dataViewId);
-  }
-
-  get formId() {
-    return `sparql_window_form`;
-  }
-
-  get form() {
-    return findChildByID(this.domElement, this.formId);
-  }
-
-  get querySelectId() {
-    return `sparql_window_query_select`;
-  }
-
-  get querySelect() {
-    return findChildByID(this.domElement, this.querySelectId);
-  }
-
-  get resultSelectId() {
-    return `sparql_window_result_select`;
-  }
-
-  get resultSelect() {
-    return findChildByID(this.domElement, this.resultSelectId);
-  }
-
-  get submitButtonId() {
-    return `sparql_window_submit_button`;
-  }
-
-  get submitButton() {
-    return findChildByID(this.domElement, this.submitButtonId);
-  }
-
-  get resetButtonId() {
-    return `${this.windowId}_reset_button`;
-  }
-
-  get resetButton() {
-    return findChildByID(this.domElement, this.resetButtonId);
-  }
-
-  get queryTextAreaId() {
-    return `sparql_window_query_text_area`;
-  }
-
-  get queryTextArea() {
-    return findChildByID(this.domElement, this.queryTextAreaId);
-  }
-
-  get toggleQueryTextAreaButtonId() {
-    return `sparql_window_toggle_query_text_area_button`;
-  }
-
-  get toggleQueryTextAreaButton() {
-    return findChildByID(this.domElement, this.toggleQueryTextAreaButtonId);
+  initHtml() {
+    this.domElement = document.createElement('div');
+    const interfaceElement = document.createElement('div');
+    interfaceElement.className = 'box-section';
+    this.domElement.appendChild(interfaceElement);
+    const selectLabel = document.createElement('label');
+    selectLabel.innerText = 'Select Query: ';
+    interfaceElement.appendChild(selectLabel);
+    this.querySelect = document.createElement('select');
+    interfaceElement.appendChild(this.querySelect);
+    this.toggleQueryTextAreaButton = document.createElement('button');
+    this.toggleQueryTextAreaButton.innerText = '▶';
+    interfaceElement.appendChild(this.toggleQueryTextAreaButton);
+    this.form = document.createElement('form');
+    interfaceElement.appendChild(this.form);
+    this.queryTextArea = document.createElement('textarea');
+    this.queryTextArea.setAttribute('rows', '20');
+    this.queryTextArea.setAttribute('style', 'display:none');
+    this.form.appendChild(this.queryTextArea);
+    const submitButton = document.createElement('input');
+    submitButton.setAttribute('type', 'submit');
+    submitButton.setAttribute('value', 'Send');
+    this.form.appendChild(submitButton);
+    const formatLabel = document.createElement('label');
+    formatLabel.innerText = 'Results Format: ';
+    interfaceElement.appendChild(formatLabel);
+    this.resultSelect = document.createElement('select');
+    interfaceElement.appendChild(this.resultSelect);
+    this.resetButton = document.createElement('button');
+    this.resetButton.innerText = 'Clear Graph';
+    interfaceElement.appendChild(this.resetButton);
+    this.dataView = document.createElement('div');
+    this.dataView.className = 'box-selection';
+    interfaceElement.appendChild(this.dataView);
   }
 }

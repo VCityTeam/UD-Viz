@@ -1,40 +1,50 @@
 import * as d3 from 'd3';
-import { SparqlQueryWindow } from '../View/SparqlQueryWindow';
-
-// TODO remove dependency on parent window
+import * as THREE from 'three';
 
 /** @class */
-export class Table {
+export class Table extends THREE.EventDispatcher {
   /**
    * Create a new Table using D3.
    *
-   * @param {SparqlQueryWindow} window The window the table is attached to.
    */
-  constructor(window) {
-    this.window = window;
-    this.data = undefined;
+  constructor() {
+    super();
+    /** @type {HTMLElement} */
+    this.domElement = null;
+
+    /** @type {HTMLElement} */
+    this.filterSelect = null;
+
+    /** @type {HTMLElement} */
+    this.noResultDiv = null;
+
+    this.initHtml();
+
+    this.data = null;
     this.columns = [];
-    this.sortAscending = undefined;
-    this.table = undefined;
-    this.thead = undefined;
-    this.tbody = undefined;
-    this.rows = undefined;
+    this.sortAscending = null;
+    this.thead = null;
+    this.tbody = null;
+    this.rows = null;
+    this.table = d3
+      .select(this.domElement)
+      .append('table')
+      .style('overflow', 'scroll');
   }
 
   /**
-   * Render the table.
+   * Format and update the data in the table with data.
    *
    * @param {object} data The data to render.
    * @param {Array} columns The columns to render.
    */
   dataAsTable(data, columns) {
-    // console.log(data);
     this.data = data;
     this.columns = columns;
-    this.filter_div = document.createElement('div');
-    this.filter_div.id = this.filterId;
-    this.filter_div.innerHTML = this.filterHtml;
-    this.window.dataView.appendChild(this.filter_div);
+    const options = this.filterSelect.getElementsByTagName('option');
+    for (let i = options.length; i > 0; i--) {
+      this.filterSelect.remove(options.item(i));
+    }
     this.columns.forEach((c) => {
       const option = document.createElement('option');
       option.value = c;
@@ -43,9 +53,6 @@ export class Table {
     });
 
     this.sortAscending = true;
-    this.table = d3.select('#' + this.window.dataViewId).append('table');
-    this.thead = this.table.append('thead');
-    this.tbody = this.table.append('tbody');
 
     Table.update(this, []);
   }
@@ -57,6 +64,8 @@ export class Table {
    */
   static update(table, event) {
     table.clearTable();
+    table.thead = table.table.append('thead');
+    table.tbody = table.table.append('tbody');
     let filterValue = table.filterInput.value;
 
     let column;
@@ -128,13 +137,9 @@ export class Table {
       });
     headers.append('title').text('click to sort');
     if (dataFilter.length == 0) {
-      const noResultDiv = document.createElement('div');
-      noResultDiv.id = 'no_result';
-      noResultDiv.innerHTML = 'No result found, try again!';
-      document
-        .getElementById('_window_sparqlQueryWindow_data_view')
-        .appendChild(noResultDiv);
+      table.noResultDiv.style['display'] = 'block';
     } else {
+      table.noResultDiv.style['display'] = 'none';
       // Create a row for each object in the data
       table.rows = table.tbody
         .selectAll('tr')
@@ -164,10 +169,29 @@ export class Table {
           }
           return '';
         })
-        .on('click', (d) => {
-          const col = d.target.__data__.col;
-          const row = d.target.__data__.row;
-          table.window.sendEvent(Table.EVENT_CELL_CLICKED, row[col].value);
+        .on('click', (event, datum) => {
+          table.dispatchEvent({
+            type: 'click',
+            message: 'cell click event',
+            event: event,
+            datum: datum,
+          });
+        })
+        .on('mouseover', (event, datum) => {
+          table.dispatchEvent({
+            type: 'mouseover',
+            message: 'cell mouseover event',
+            event: event,
+            datum: datum,
+          });
+        })
+        .on('mouseout', (event, datum) => {
+          table.dispatchEvent({
+            type: 'mouseout',
+            message: 'cell mouseout event',
+            event: event,
+            datum: datum,
+          });
         });
     }
   }
@@ -176,52 +200,35 @@ export class Table {
    * Clear table.
    */
   clearTable() {
-    this.table.selectAll('tr').remove();
-    this.table.selectAll('td').remove();
-    const element = document.getElementById('no_result');
-    if (element) element.parentNode.removeChild(element);
+    if (this.table) {
+      this.table.selectAll('thead').remove();
+      this.table.selectAll('tbody').remove();
+    }
+    this.noResultDiv.style['display'] = 'none';
   }
 
-  // Table getters //
-  get filterHtml() {
-    return /* html*/ `
-      <label>Select filter: </label>
-      <select id="${this.filterSelectId}"/>
-      <label>Type filter value: </label>
-      <input id="${this.filterInputId}" type="text" value=""/>`;
-  }
-
-  get tableId() {
-    return `D3_table`;
-  }
-
-  get filterId() {
-    return `${this.tableId}_filter`;
-  }
-
-  get filterSelectId() {
-    return `${this.tableId}_filter_select`;
-  }
-
-  get filterSelect() {
-    return document.getElementById(this.filterSelectId);
-  }
-
-  get filterInputId() {
-    return `${this.tableId}_filter_input`;
-  }
-
-  get filterInput() {
-    return document.getElementById(this.filterInputId);
-  }
-
-  // / EVENTS
-
-  static get EVENT_CELL_CLICKED() {
-    return 'EVENT_CELL_CLICKED';
-  }
-
-  static get EVENT_CELL_MOUSEOVER() {
-    return 'EVENT_CELL_MOUSEOVER';
+  /**
+   * Initialize the html of the view
+   */
+  initHtml() {
+    this.domElement = document.createElement('div');
+    const filterDiv = document.createElement('div');
+    this.domElement.appendChild(filterDiv);
+    const filterLabel = document.createElement('label');
+    filterLabel.innerText = 'Select filter: ';
+    filterDiv.appendChild(filterLabel);
+    this.filterSelect = document.createElement('select');
+    filterDiv.appendChild(this.filterSelect);
+    const typeLabel = document.createElement('label');
+    filterLabel.innerText = 'Type filter value: ';
+    filterDiv.appendChild(typeLabel);
+    this.filterInput = document.createElement('input');
+    this.filterInput.type = 'text';
+    this.filterInput.value = '';
+    filterDiv.appendChild(this.filterInput);
+    this.noResultDiv = document.createElement('div');
+    this.noResultDiv.innerHTML = 'No result found, try again!';
+    this.noResultDiv.style['display'] = 'none';
+    this.domElement.appendChild(this.noResultDiv);
   }
 }

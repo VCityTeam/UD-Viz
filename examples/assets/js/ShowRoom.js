@@ -743,7 +743,6 @@ const ShowRoom = class {
       new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
         configServer
       ),
-      this.frame3DPlanar.itownsView,
       configWidget
     );
 
