@@ -6,7 +6,7 @@ const TEMPORAL_COLOR_OPACITY = {
   noTransaction: {
     color: 'white',
     opacity: 1,
-    priority: 0.5,
+    priority: 0,
   },
   invisible: {
     color: 'blue',
@@ -21,12 +21,12 @@ const TEMPORAL_COLOR_OPACITY = {
   creation: {
     color: 'green',
     opacity: 0.6,
-    priority: 1.5,
+    priority: 1,
   },
   demolition: {
     color: 'red',
     opacity: 0.6,
-    priority: 1.5,
+    priority: 1,
   },
   modification: {
     color: 'yellow',
@@ -299,7 +299,7 @@ export class SpaceTimeCube {
                   feature.getInfo().extensions['3DTILES_temporal'].startDate
                 );
 
-                console.log(transactions);
+                // console.log(transactions);
 
                 // Add transaction linked with the en
                 transactions.forEach((transaction) => {
@@ -314,6 +314,7 @@ export class SpaceTimeCube {
                   : 0;
 
                 feature.userData.oldOffset = oldOffset;
+                level.boudingBoxHelper.updateMatrixWorld();
                 // level.offset = oldOffset;
 
                 tileContent.traverse((child) => {
