@@ -135,6 +135,7 @@ const ShowRoom = class {
    * Add a context menu to copy coord
    */
   addContextMenu() {
+    this.frame3DPlanar.itownsView.controls.enablePan = false;
     const contextMenuDomElement = document.createElement('div');
     contextMenuDomElement.classList.add('context-menu');
     contextMenuDomElement.hidden = true;
