@@ -1,16 +1,16 @@
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-const { Data } = require('@ud-viz/shared');
+import { Data } from '@ud-viz/shared';
 
 const TEMPORAL_COLOR_OPACITY = {
   noTransaction: {
     color: 'white',
     opacity: 1,
-    priority: 0,
+    priority: 0.5,
   },
   invisible: {
     color: 'blue',
-    opacity: 0.2,
+    opacity: 0,
     priority: 0,
   },
   debug: {
@@ -134,26 +134,6 @@ class Level {
   }
 }
 
-// finds the index of element
-/**
- *
- * @param head
- * @param level
- */
-function indexOf(head, level) {
-  let count = 0;
-  let current = head;
-
-  while (current != null) {
-    if (current === level) return count;
-    count++;
-    current = current.next;
-  }
-
-  // not found
-  return -1;
-}
-
 /**
  *
  * @param date
@@ -162,7 +142,7 @@ function indexOf(head, level) {
 function getLevelWithDate(head, date) {
   let current = head;
   while (current != null) {
-    if (current.date === date) return current;
+    if (current.date == date) return current;
     current = current.next;
   }
   return null;
@@ -183,18 +163,85 @@ export class SpaceTimeCube {
       });
     };
 
+    /** @type {Map<string,object>} */
+    const featureDateID2ColorOpacity = new Map();
+
+    /**
+     *
+     */
+    const possibleDates = [];
+
     temporalLayers().forEach((temporalLayer) => {
       temporalLayer.addEventListener(
         itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
         () => {
-          // temporalLayer.tileset.extensions[
-          //   '3DTILES_temporal'
-          // ].transactions.forEach((transaction) => {});
-          const transactions =
-            temporalLayer.tileset.extensions['3DTILES_temporal'].transactions;
+          // Modification
+          temporalLayer.tileset.extensions[
+            '3DTILES_temporal'
+          ].transactions.forEach((transaction) => {
+            const transactionDuration =
+              transaction.endDate - transaction.startDate;
+
+            const firstHalfDate =
+              transaction.startDate + transactionDuration / 3;
+            const secondHalfDate =
+              transaction.endDate - transactionDuration / 3;
+            Data.arrayPushOnce(possibleDates, transaction.startDate);
+            Data.arrayPushOnce(possibleDates, transaction.endDate);
+
+            Data.arrayPushOnce(possibleDates, firstHalfDate);
+            Data.arrayPushOnce(possibleDates, secondHalfDate);
+
+            transaction.source.forEach((fId) => {
+              if (transaction.type == 'modification') {
+                featureDateID2ColorOpacity.set(
+                  fId + firstHalfDate,
+                  TEMPORAL_COLOR_OPACITY.modification
+                );
+                featureDateID2ColorOpacity.set(
+                  fId + secondHalfDate,
+                  TEMPORAL_COLOR_OPACITY.invisible
+                );
+              } else {
+                // all other transaction
+                featureDateID2ColorOpacity.set(
+                  fId + firstHalfDate,
+                  TEMPORAL_COLOR_OPACITY.noTransaction
+                );
+                featureDateID2ColorOpacity.set(
+                  fId + secondHalfDate,
+                  TEMPORAL_COLOR_OPACITY.noTransaction
+                );
+              }
+            });
+            transaction.destination.forEach((fId) => {
+              if (transaction.type == 'modification') {
+                featureDateID2ColorOpacity.set(
+                  fId + firstHalfDate,
+                  TEMPORAL_COLOR_OPACITY.invisible
+                );
+                featureDateID2ColorOpacity.set(
+                  fId + secondHalfDate,
+                  TEMPORAL_COLOR_OPACITY.modification
+                );
+              } else {
+                // all other transaction
+                featureDateID2ColorOpacity.set(
+                  fId + firstHalfDate,
+                  TEMPORAL_COLOR_OPACITY.noTransaction
+                );
+                featureDateID2ColorOpacity.set(
+                  fId + secondHalfDate,
+                  TEMPORAL_COLOR_OPACITY.noTransaction
+                );
+              }
+            });
+          });
+
+          // handle demolition/creation which are not in batchTable/extension
+          possibleDates.sort((a, b) => a - b);
 
           let head;
-          // Features
           for (const [
             tileId,
             tileFeatures,
@@ -237,24 +284,51 @@ export class SpaceTimeCube {
                 newLevel.previous = current;
                 current.next = newLevel;
               } else {
-                console.log('existing');
                 levelExisting.addFeature(feature);
               }
             }
           }
 
-          // for (const [date, level] of levels) {
-          //   // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
-          //   level.offset = (date - minDate) * 100;
-          // }
-
           if (!head) return;
+
           const minDate = head.date;
           let current = head;
-          console.log(head);
           while (current != null) {
+            // update elevation
             const elevation = current.previous ? current.previous.height : 100;
             current.offset = (current.date - minDate) * elevation;
+
+            // Set demoliton and construction
+            for (let index = 0; index < possibleDates.length - 1; index++) {
+              const date = possibleDates[index];
+              const nextDate = possibleDates[index + 1];
+              current.features.forEach((feature) => {
+                const featureTransaction =
+                  feature.getInfo().extensions['3DTILES_temporal'];
+                console.log(featureTransaction);
+                console.log(nextDate);
+
+                if (featureTransaction.endDate == date) {
+                  const featureDateID = featureTransaction.featureId + nextDate;
+                  if (!featureDateID2ColorOpacity.has(featureDateID)) {
+                    featureDateID2ColorOpacity.set(
+                      featureDateID,
+                      TEMPORAL_COLOR_OPACITY.demolition
+                    );
+                    console.log('demolition');
+                  }
+                }
+                if (featureTransaction.startDate == nextDate) {
+                  const featureDateID = featureTransaction.featureId + date;
+                  if (!featureDateID2ColorOpacity.has(featureDateID))
+                    featureDateID2ColorOpacity.set(
+                      featureDateID,
+                      TEMPORAL_COLOR_OPACITY.creation
+                    );
+                  console.log('creation');
+                }
+              });
+            }
 
             current = current.next;
           }
@@ -267,19 +341,24 @@ export class SpaceTimeCube {
                   feature.tileId
                 );
 
-                const level = getLevelWithDate(
-                  feature.getInfo().extensions['3DTILES_temporal'].startDate,
-                  head
-                );
+                let level = null;
+                //  getLevelWithDate(
+                //   feature.getInfo().extensions['3DTILES_temporal'].startDate,
+                //   head
+                // );
+
+                const date =
+                  feature.getInfo().extensions['3DTILES_temporal'].startDate;
+
+                let current = head;
+                while (current != null) {
+                  if (current.date == date) {
+                    level = current;
+                  }
+                  current = current.next;
+                }
 
                 if (!tileContent || !level) return;
-
-                // Add transaction linked with the en
-                transactions.forEach((transaction) => {
-                  if (level.date == transaction.startDate)
-                    Data.arrayPushOnce(level.transactions, transaction);
-                  if (transaction.type == 'creation') console.log(transaction);
-                });
 
                 // Checker la bb, si le delta est trop petit par rapport à l'offset faire un ecart avec la bb
                 const oldOffset = feature.userData.oldOffset
@@ -289,7 +368,6 @@ export class SpaceTimeCube {
                 feature.userData.oldOffset = oldOffset;
                 level.boudingBoxHelper.updateMatrixWorld();
                 // level.offset = oldOffset;
-
                 tileContent.traverse((child) => {
                   if (child.geometry && child.geometry.attributes._BATCHID) {
                     feature.groups.forEach((group) => {
@@ -311,47 +389,36 @@ export class SpaceTimeCube {
                   }
                 });
               }
+              view.notifyChange();
             }
-
-            const transactionTypeColor = (transactionType) => {
-              switch (transactionType) {
-                case 'modification':
-                  return TEMPORAL_COLOR_OPACITY.modification;
-                case 'creation':
-                  console.log('creation');
-                  return TEMPORAL_COLOR_OPACITY.creation;
-                case 'noTransaction':
-                  return TEMPORAL_COLOR_OPACITY.noTransaction;
-                case 'demolition':
-                  return TEMPORAL_COLOR_OPACITY.demolition;
-                case 'invisible':
-                  return TEMPORAL_COLOR_OPACITY.invisible;
-                default:
-                  break;
-              }
-            };
 
             const computeColorOpacity = (c3DTileFeature) => {
               const temporalExtension =
                 c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
-
               const result = [];
-              let level = head;
-              while (level != null) {
-                level.transactions.forEach((transaction) => {
-                  transaction.source.forEach((source) => {
-                    if (source == temporalExtension.featureId)
-                      Data.arrayPushOnce(
-                        result,
-                        transactionTypeColor(transaction.type)
-                      );
-                  });
-                });
-                level = level.next;
-              }
-              Data.arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.noTransaction);
+
+              possibleDates.forEach((date) => {
+                if (
+                  temporalExtension.startDate <= date &&
+                  temporalExtension.endDate >= date
+                ) {
+                  Data.arrayPushOnce(
+                    result,
+                    TEMPORAL_COLOR_OPACITY.noTransaction
+                  );
+                }
+
+                const featureDateID = temporalExtension.featureId + date;
+                if (featureDateID2ColorOpacity.has(featureDateID)) {
+                  Data.arrayPushOnce(
+                    result,
+                    featureDateID2ColorOpacity.get(featureDateID)
+                  );
+                }
+              });
+              Data.arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.invisible);
+
               result.sort((a, b) => b.priority - a.priority);
-              // console.log(result);
               return result[0];
             };
 
