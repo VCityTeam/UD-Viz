@@ -724,7 +724,7 @@ class Maptastic {
       this.localStorageKey,
       JSON.stringify(this.getLayout(this.layers))
     );
-    console.log(JSON.stringify(this.getLayout(this.layers)));
+    // console.log(JSON.stringify(this.getLayout(this.layers)));
   }
 
   loadSettings() {
