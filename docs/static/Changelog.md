@@ -1,3 +1,38 @@
+# v3.2.0
+
+## @ud-viz
+
+    - Fix socket.io dependencies
+    - Update with node18
+    - Prettier harmonization
+    - Improve `Readme.md`
+    - Examples:
+      - Showroom download coordinate on right click
+      - Add workspace widget example
+    - Doc:
+      - bin scripts documentation
+      - nvm doc
+      - fix comments prePublish script
+    - CI:
+      - Add test of the `RequestAnimationFrame` 
+
+## @ud-viz/shared
+    
+    - Remove `EventSender` class to use `THREE.EventDispatcher` instead 
+
+## @ud-viz/node
+
+## @ud-viz/browser
+
+    - Widgets view reference their dom element as attribute
+    - C3DTiles widget display bounding box of the C3DTFeature selected
+    - Add Workspace module
+    - Refacto of the SPARQL module
+    - Expose `RequestAnimationFrame` in API
+    - Fix bug Frame3DPlanar render labels
+    - THREEUtil encoding => colorSpace
+    - Update itowns 2.40.0
+
 # v3.1.1
 
 ## @ud-viz
