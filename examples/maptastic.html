@@ -85,12 +85,18 @@
 
           /* Hide the domElement without dispose the widget */
           window.addEventListener('keydown', hideUIListener);
-          const maptastic = new Maptastic({
-            htmlElements: [frame3DPlanar.domElementWebGL, slideShow.domElement]
+
+          const maptasticClass = new Maptastic({
+            showLabelsNames: false,
+            autoLoad: true,
+            autoSave: true
           });
 
-          maptastic.init();
-          maptastic.loadSettings();
+          maptasticClass.addListeners();
+          maptasticClass.addLayers([
+            frame3DPlanar.domElementWebGL,
+            slideShow.domElement
+          ]);
         });
     </script>
     SCRIPT_TAG_RELOAD

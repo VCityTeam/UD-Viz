@@ -1,4 +1,4 @@
-// eslint-disable
+/* eslint-disable */
 /*
 Numeric Javascript
 Copyright (C) 2011 by Sébastien Loisel
@@ -23,19 +23,72 @@ THE SOFTWARE.
 */
 
 /** code inspired by {@link https://github.com/glowbox/maptasticjs} */
+
+// geometries functions
+function distanceTo(x1, y1, x2, y2) {
+  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+function pointInTriangle(point, a, b, c) {
+  let s =
+    a[1] * c[0] -
+    a[0] * c[1] +
+    (c[1] - a[1]) * point[0] +
+    (a[0] - c[0]) * point[1];
+  let t =
+    a[0] * b[1] -
+    a[1] * b[0] +
+    (a[1] - b[1]) * point[0] +
+    (b[0] - a[0]) * point[1];
+
+  if (s < 0 != t < 0) {
+    return false;
+  }
+
+  let A =
+    -b[1] * c[0] + a[1] * (c[0] - b[0]) + a[0] * (b[1] - c[1]) + b[0] * c[1];
+  if (A < 0.0) {
+    s = -s;
+    t = -t;
+    A = -A;
+  }
+
+  return s > 0 && t > 0 && s + t < A;
+}
+
+// determine if a point is inside a layer quad.
+function pointInLayer(point, layer) {
+  const a = pointInTriangle(
+    point,
+    layer.targetPoints[0],
+    layer.targetPoints[1],
+    layer.targetPoints[2]
+  );
+  const b = pointInTriangle(
+    point,
+    layer.targetPoints[3],
+    layer.targetPoints[0],
+    layer.targetPoints[2]
+  );
+  return a || b;
+}
+
+function clonePoints(points) {
+  const clone = [];
+  for (let p = 0; p < points.length; p++) {
+    clone.push(points[p].slice(0, 2));
+  }
+  return clone;
+}
+
 class Maptastic {
   constructor(config) {
-    this.showLayerNames = this.getProp(config, 'labels', true);
-    this.showCrosshairs = this.getProp(config, 'crosshairs', false);
-    this.showScreenBounds = this.getProp(config, 'screenbounds', false);
-    this.autoSave = this.getProp(config, 'autoSave', true);
-    this.autoLoad = this.getProp(config, 'autoLoad', true);
-    this.layerList = this.getProp(config, 'layers', []);
-    this.layoutChangeListener = this.getProp(
-      config,
-      'onchange',
-      function () {}
-    );
+    this.showLabelsNames = config.showLabelsNames !== false; //default true
+    this.showScreenBounds = config.showScreenBounds === true; //default false
+    this.autoSave = config.autoSave === true; //default false
+    this.autoLoad = config.autoLoad !== false; //default true
+    this.layerList = config.layersList || [];
+    this.layoutChangeListener = config.layoutChangeListener || function () {};
     this.localStorageKey = 'maptastic.layers';
 
     this.canvas = null;
@@ -60,66 +113,48 @@ class Maptastic {
     this.mouseDelta = [];
     this.mouseDownPoint = [];
 
-    this.htmlElements = config.htmlElements;
+    this.init();
   }
 
-  getProp(conf, key, defaultVal) {
-    if (
-      conf &&
-      Object.prototype.hasOwnProperty.call(conf, key) &&
-      conf[key] !== null
-    ) {
-      return conf[key];
-    }
-    return defaultVal;
+  init() {
+    this.canvas = document.createElement('canvas');
+
+    this.canvas.style.display = 'none';
+    this.canvas.style.position = 'fixed';
+    this.canvas.style.top = '0px';
+    this.canvas.style.left = '0px';
+    this.canvas.style.zIndex = '1000000';
+
+    this.context = this.canvas.getContext('2d');
+
+    document.body.appendChild(this.canvas);
   }
 
-  distanceTo(x1, y1, x2, y2) {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  addListeners() {
+    window.addEventListener('resize', this.resize);
+
+    // UI events
+    window.addEventListener('mousemove', this.mouseMove.bind(this));
+    window.addEventListener('mouseup', this.mouseUp.bind(this));
+    window.addEventListener('mousedown', this.mouseDown.bind(this));
+    window.addEventListener('keydown', this.keyDown.bind(this));
   }
 
-  pointInTriangle(point, a, b, c) {
-    let s =
-      a[1] * c[0] -
-      a[0] * c[1] +
-      (c[1] - a[1]) * point[0] +
-      (a[0] - c[0]) * point[1];
-    let t =
-      a[0] * b[1] -
-      a[1] * b[0] +
-      (a[1] - b[1]) * point[0] +
-      (b[0] - a[0]) * point[1];
+  addLayers(htmlElements) {
+    this.resize();
 
-    if (s < 0 != t < 0) {
-      return false;
-    }
-
-    let A =
-      -b[1] * c[0] + a[1] * (c[0] - b[0]) + a[0] * (b[1] - c[1]) + b[0] * c[1];
-    if (A < 0.0) {
-      s = -s;
-      t = -t;
-      A = -A;
+    for (let i = 0; i < htmlElements.length; i++) {
+      if (
+        htmlElements[i] instanceof HTMLElement ||
+        typeof htmlElements[i] === 'string'
+      ) {
+        this.addLayer(htmlElements[i]);
+      }
     }
 
-    return s > 0 && t > 0 && s + t < A;
-  }
-
-  // determine if a point is inside a layer quad.
-  pointInLayer(point, layer) {
-    const a = this.pointInTriangle(
-      point,
-      layer.targetPoints[0],
-      layer.targetPoints[1],
-      layer.targetPoints[2]
-    );
-    const b = this.pointInTriangle(
-      point,
-      layer.targetPoints[3],
-      layer.targetPoints[0],
-      layer.targetPoints[2]
-    );
-    return a || b;
+    if (this.autoLoad) {
+      this.loadSettings();
+    }
   }
 
   notifyChangeListener() {
@@ -290,39 +325,6 @@ class Maptastic {
     layerPoints[index1][1] = layerPoints[index2][1];
     layerPoints[index2][0] = tx;
     layerPoints[index2][1] = ty;
-  }
-
-  init() {
-    this.canvas = document.createElement('canvas');
-
-    this.canvas.style.display = 'none';
-    this.canvas.style.position = 'fixed';
-    this.canvas.style.top = '0px';
-    this.canvas.style.left = '0px';
-    this.canvas.style.zIndex = '1000000';
-
-    this.context = this.canvas.getContext('2d');
-
-    document.body.appendChild(this.canvas);
-
-    window.addEventListener('resize', this.resize);
-
-    // UI events
-    window.addEventListener('mousemove', this.mouseMove.bind(this));
-    window.addEventListener('mouseup', this.mouseUp.bind(this));
-    window.addEventListener('mousedown', this.mouseDown.bind(this));
-    window.addEventListener('keydown', this.keyDown.bind(this));
-
-    this.resize();
-
-    for (let i = 0; i < this.htmlElements.length; i++) {
-      if (
-        this.htmlElements[i] instanceof HTMLElement ||
-        typeof this.htmlElements[i] === 'string'
-      ) {
-        this.addLayer(this.htmlElements[i]);
-      }
-    }
   }
 
   rotateLayer(layer, angle) {
@@ -568,7 +570,7 @@ class Maptastic {
           for (let p = 0; p < layer.targetPoints.length; p++) {
             const point = layer.targetPoints[p];
             if (
-              this.distanceTo(point[0], point[1], mouseX, mouseY) <
+              distanceTo(point[0], point[1], mouseX, mouseY) <
               this.selectionRadius
             ) {
               this.canvas.style.cursor = 'pointer';
@@ -583,7 +585,7 @@ class Maptastic {
       for (let i = 0; i < this.layers.length; i++) {
         if (
           this.layers[i].visible &&
-          this.pointInLayer(this.mousePosition, this.layers[i])
+          pointInLayer(this.mousePosition, this.layers[i])
         ) {
           this.hoveringLayer = this.layers[i];
           break;
@@ -637,8 +639,7 @@ class Maptastic {
       for (let p = 0; p < layer.targetPoints.length; p++) {
         const point = layer.targetPoints[p];
         if (
-          this.distanceTo(point[0], point[1], mouseX, mouseY) <
-          this.selectionRadius
+          distanceTo(point[0], point[1], mouseX, mouseY) < this.selectionRadius
         ) {
           this.selectedLayer = layer;
           this.selectedPoint = point;
@@ -699,7 +700,7 @@ class Maptastic {
     );
 
     if (targetPoints) {
-      layer.targetPoints = this.clonePoints(targetPoints);
+      layer.targetPoints = clonePoints(targetPoints);
     } else {
       layer.targetPoints.push(
         [0, 0],
@@ -733,12 +734,8 @@ class Maptastic {
       for (let i = 0; i < data.length; i++) {
         for (let n = 0; n < this.layers.length; n++) {
           if (this.layers[n].element.id == data[i].id) {
-            this.layers[n].targetPoints = this.clonePoints(
-              data[i].targetPoints
-            );
-            this.layers[n].sourcePoints = this.clonePoints(
-              data[i].sourcePoints
-            );
+            this.layers[n].targetPoints = clonePoints(data[i].targetPoints);
+            this.layers[n].sourcePoints = clonePoints(data[i].sourcePoints);
           }
         }
       }
@@ -789,14 +786,6 @@ class Maptastic {
     }
   }
 
-  clonePoints(points) {
-    const clone = [];
-    for (let p = 0; p < points.length; p++) {
-      clone.push(points[p].slice(0, 2));
-    }
-    return clone;
-  }
-
   resize() {
     this.viewWidth = window.innerWidth;
     this.viewHeight = window.innerHeight;
@@ -811,8 +800,8 @@ class Maptastic {
     for (let i = 0; i < this.layers.length; i++) {
       layout.push({
         id: this.layers[i].element.id,
-        targetPoints: this.clonePoints(this.layers[i].targetPoints),
-        sourcePoints: this.clonePoints(this.layers[i].sourcePoints),
+        targetPoints: clonePoints(this.layers[i].targetPoints),
+        sourcePoints: clonePoints(this.layers[i].sourcePoints),
       });
     }
     return layout;
