@@ -134,58 +134,38 @@ class Level {
   }
 }
 
-class LinkedList {
-  constructor(head = null) {
-    this.head = head;
-    this.size = 0;
+// finds the index of element
+/**
+ *
+ * @param head
+ * @param level
+ */
+function indexOf(head, level) {
+  let count = 0;
+  let current = head;
+
+  while (current != null) {
+    if (current === level) return count;
+    count++;
+    current = current.next;
   }
 
-  /**
-   * TO-DO method static
-   *
-   * @param {Level} level
-   */
-  add(level) {
-    const l = level;
-    let current;
-    if (this.head == null) {
-      this.head = l;
-    } else {
-      current = this.head;
-      while (current.next != null) {
-        current = current.next;
-      }
-      current.next = l;
-      l.previous = current;
-    }
-    this.size++;
+  // not found
+  return -1;
+}
+
+/**
+ *
+ * @param date
+ * @param head
+ */
+function getLevelWithDate(head, date) {
+  let current = head;
+  while (current != null) {
+    if (current.date === date) return current;
+    current = current.next;
   }
-
-  // TO-DO method static
-  // finds the index of element
-  indexOf(level) {
-    let count = 0;
-    let current = this.head;
-
-    while (current != null) {
-      if (current === level) return count;
-      count++;
-      current = current.next;
-    }
-
-    // not found
-    return -1;
-  }
-
-  // find date
-  getLevelWithDate(date) {
-    let current = this.head;
-    while (current != null) {
-      if (current.date === date) return current;
-      current = current.next;
-    }
-    return null;
-  }
+  return null;
 }
 
 export class SpaceTimeCube {
@@ -194,11 +174,6 @@ export class SpaceTimeCube {
    * @param {itowns.PlanarView} view
    */
   constructor(view) {
-    /** @type {Map<number,Level>} */
-    const levels = new Map();
-
-    const levelsList = new LinkedList();
-
     const temporalLayers = () => {
       return view.getLayers().filter((el) => {
         return (
@@ -218,6 +193,7 @@ export class SpaceTimeCube {
           const transactions =
             temporalLayer.tileset.extensions['3DTILES_temporal'].transactions;
 
+          let head;
           // Features
           for (const [
             tileId,
@@ -231,60 +207,58 @@ export class SpaceTimeCube {
 
               const date =
                 feature.getInfo().extensions['3DTILES_temporal'].startDate;
+              // If no head
+              if (!head) {
+                head = new Level(
+                  date,
+                  feature.userData.worldInitialBox3.clone(),
+                  [feature]
+                );
+              }
 
-              const levelExisting = levelsList.getLevelWithDate(date);
+              // add level if doesnt existed
+              const levelExisting = getLevelWithDate(head, date);
               if (!levelExisting) {
                 const newLevel = new Level(
                   date,
                   feature.userData.worldInitialBox3.clone(),
                   [feature]
                 );
-                levelsList.add(newLevel);
+
+                // Add next
+                let current = head;
+                if (current == null) {
+                  head = newLevel;
+                  return;
+                }
+                while (current.next) {
+                  current = current.next;
+                }
+                newLevel.previous = current;
+                current.next = newLevel;
               } else {
+                console.log('existing');
                 levelExisting.addFeature(feature);
               }
-
-              // TO-DO Remove
-              if (levels)
-                if (!levels.has(date)) {
-                  const newLevel = new Level(
-                    date,
-                    feature.userData.worldInitialBox3.clone(),
-                    [feature]
-                  );
-                  levels.set(date, newLevel);
-
-                  // levelsList.add(newLevel);
-
-                  view.scene.add(newLevel.boudingBoxHelper);
-                } else {
-                  // add feature
-                  levels.get(date).addFeature(feature);
-                }
             }
           }
-
-          let minDate;
-          if (levelsList.head) minDate = levelsList.head.date;
 
           // for (const [date, level] of levels) {
           //   // TODO : ca marche pas le level.height il faut tenir compte des levels en dessous
           //   level.offset = (date - minDate) * 100;
           // }
 
-          if (levelsList.head) {
-            let current = levelsList.head;
-            while (current != null) {
-              const elevation = current.previous
-                ? current.previous.height
-                : 100;
-              current.offset = (current.date - minDate) * elevation;
+          if (!head) return;
+          const minDate = head.date;
+          let current = head;
+          console.log(head);
+          while (current != null) {
+            const elevation = current.previous ? current.previous.height : 100;
+            current.offset = (current.date - minDate) * elevation;
 
-              current = current.next;
-            }
+            current = current.next;
           }
 
-          console.log(levelsList);
           temporalLayers().forEach((layer) => {
             for (const [tileId, tileFeatures] of layer.tilesC3DTileFeatures) {
               for (const [batchId, feature] of tileFeatures) {
@@ -293,13 +267,12 @@ export class SpaceTimeCube {
                   feature.tileId
                 );
 
-                if (!tileContent) return;
-
-                const level = levelsList.getLevelWithDate(
-                  feature.getInfo().extensions['3DTILES_temporal'].startDate
+                const level = getLevelWithDate(
+                  feature.getInfo().extensions['3DTILES_temporal'].startDate,
+                  head
                 );
 
-                // console.log(transactions);
+                if (!tileContent || !level) return;
 
                 // Add transaction linked with the en
                 transactions.forEach((transaction) => {
@@ -363,7 +336,7 @@ export class SpaceTimeCube {
                 c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
 
               const result = [];
-              let level = levelsList.head;
+              let level = head;
               while (level != null) {
                 level.transactions.forEach((transaction) => {
                   transaction.source.forEach((source) => {
