@@ -43,7 +43,7 @@ class Level {
     /** @type {THREE.Box3Helper} */
     this.boudingBoxHelper = new THREE.Box3Helper(
       this.boundingBox,
-      new THREE.Color(1, 0, 0)
+      new THREE.Color(1, 1, 0)
     );
 
     /** @type {Array<itowns.C3DTFeature>} */
@@ -152,8 +152,9 @@ export class SpaceTimeCube {
   /**
    *
    * @param {itowns.PlanarView} view
+   * @param delta
    */
-  constructor(view) {
+  constructor(view, delta) {
     const temporalLayers = () => {
       return view.getLayers().filter((el) => {
         return (
@@ -166,10 +167,10 @@ export class SpaceTimeCube {
     /** @type {Map<string,object>} */
     const featureDateID2ColorOpacity = new Map();
 
-    /**
-     *
-     */
+    /** @type {Array} */
     const possibleDates = [];
+
+    this.delta = delta;
 
     temporalLayers().forEach((temporalLayer) => {
       temporalLayer.addEventListener(
@@ -295,8 +296,8 @@ export class SpaceTimeCube {
           let current = head;
           while (current != null) {
             // update elevation
-            const elevation = current.previous ? current.previous.height : 100;
-            current.offset = (current.date - minDate) * elevation;
+            const elevation = current.previous ? current.previous.height : 0;
+            current.offset = (current.date - minDate) * this.delta + elevation;
 
             // Set demoliton and construction
             for (let index = 0; index < possibleDates.length - 1; index++) {
@@ -305,9 +306,6 @@ export class SpaceTimeCube {
               current.features.forEach((feature) => {
                 const featureTransaction =
                   feature.getInfo().extensions['3DTILES_temporal'];
-                console.log(featureTransaction);
-                console.log(nextDate);
-
                 if (featureTransaction.endDate == date) {
                   const featureDateID = featureTransaction.featureId + nextDate;
                   if (!featureDateID2ColorOpacity.has(featureDateID)) {
@@ -315,7 +313,6 @@ export class SpaceTimeCube {
                       featureDateID,
                       TEMPORAL_COLOR_OPACITY.demolition
                     );
-                    console.log('demolition');
                   }
                 }
                 if (featureTransaction.startDate == nextDate) {
@@ -325,13 +322,14 @@ export class SpaceTimeCube {
                       featureDateID,
                       TEMPORAL_COLOR_OPACITY.creation
                     );
-                  console.log('creation');
                 }
               });
             }
 
             current = current.next;
           }
+
+          console.log(head);
 
           temporalLayers().forEach((layer) => {
             for (const [tileId, tileFeatures] of layer.tilesC3DTileFeatures) {
@@ -342,10 +340,6 @@ export class SpaceTimeCube {
                 );
 
                 let level = null;
-                //  getLevelWithDate(
-                //   feature.getInfo().extensions['3DTILES_temporal'].startDate,
-                //   head
-                // );
 
                 const date =
                   feature.getInfo().extensions['3DTILES_temporal'].startDate;
@@ -360,31 +354,53 @@ export class SpaceTimeCube {
 
                 if (!tileContent || !level) return;
 
-                // Checker la bb, si le delta est trop petit par rapport à l'offset faire un ecart avec la bb
-                const oldOffset = feature.userData.oldOffset
-                  ? feature.userData.oldOffset
-                  : 0;
-
-                feature.userData.oldOffset = oldOffset;
                 level.boudingBoxHelper.updateMatrixWorld();
-                // level.offset = oldOffset;
                 tileContent.traverse((child) => {
                   if (child.geometry && child.geometry.attributes._BATCHID) {
                     feature.groups.forEach((group) => {
                       const positionIndexStart = group.start * 3;
                       const positionIndexCount =
                         (group.start + group.count) * 3;
-
                       for (
                         let index = positionIndexStart;
                         index < positionIndexCount;
                         index += 3
                       ) {
                         child.geometry.attributes.position.array[index + 2] +=
-                          -oldOffset + level.offset;
-
-                        // TO-DO: dupliquer la géometry quand c'est du construction ou demolition
+                          level.offset;
                       }
+                    });
+                    possibleDates.forEach((pdate) => {
+                      const fiD =
+                        feature.getInfo().extensions['3DTILES_temporal']
+                          .featureId;
+                      if (featureDateID2ColorOpacity.has(fiD + pdate))
+                        if (
+                          featureDateID2ColorOpacity.get(fiD + pdate).color ==
+                          'green'
+                        ) {
+                          const mesh = child.clone();
+                          mesh.material = new THREE.MeshBasicMaterial({
+                            color: 'purple',
+                          });
+                          console.log(child);
+                          mesh.modelViewMatrix.setFromMatrix3(
+                            layer.object3d.modelViewMatrix
+                          );
+                          mesh.position.set(
+                            1842053.9098248922,
+                            5176299.459828501,
+                            386.5279561991405
+                          );
+                          // mesh.parent = child.parent;
+                          // console.log(mesh);
+                          mesh.scale.set(10, 10, 10);
+                          // child.add(mesh);
+                          // child.parent.children.push(mesh);
+                          console.log(mesh);
+                          mesh.updateMatrixWorld();
+                          view.scene.add(mesh);
+                        }
                     });
                   }
                 });
