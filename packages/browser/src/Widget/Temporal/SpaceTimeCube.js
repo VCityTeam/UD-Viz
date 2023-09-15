@@ -357,6 +357,7 @@ export class SpaceTimeCube {
                 level.boudingBoxHelper.updateMatrixWorld();
                 tileContent.traverse((child) => {
                   if (child.geometry && child.geometry.attributes._BATCHID) {
+                    const verticesDuplicated = [];
                     feature.groups.forEach((group) => {
                       const positionIndexStart = group.start * 3;
                       const positionIndexCount =
@@ -368,6 +369,11 @@ export class SpaceTimeCube {
                       ) {
                         child.geometry.attributes.position.array[index + 2] +=
                           level.offset;
+                        verticesDuplicated.push(
+                          child.geometry.attributes.position.array[index],
+                          child.geometry.attributes.position.array[index + 1],
+                          child.geometry.attributes.position.array[index + 2]
+                        );
                       }
                     });
                     possibleDates.forEach((pdate) => {
@@ -379,26 +385,30 @@ export class SpaceTimeCube {
                           featureDateID2ColorOpacity.get(fiD + pdate).color ==
                           'green'
                         ) {
-                          const mesh = child.clone();
-                          mesh.material = new THREE.MeshBasicMaterial({
-                            color: 'purple',
+                          for (
+                            let index = 0;
+                            index < verticesDuplicated.length;
+                            index += 3
+                          ) {
+                            verticesDuplicated[index + 2] =
+                              verticesDuplicated[index + 2] -
+                              level.previous.offset;
+                          }
+                          const geometry = new THREE.BufferGeometry();
+                          geometry.setAttribute(
+                            'position',
+                            new THREE.BufferAttribute(
+                              new Float32Array(verticesDuplicated),
+                              3
+                            )
+                          );
+
+                          const material = new THREE.MeshPhongMaterial({
+                            color: 'green',
                           });
-                          console.log(child);
-                          mesh.modelViewMatrix.setFromMatrix3(
-                            layer.object3d.modelViewMatrix
-                          );
-                          mesh.position.set(
-                            1842053.9098248922,
-                            5176299.459828501,
-                            386.5279561991405
-                          );
-                          // mesh.parent = child.parent;
-                          // console.log(mesh);
-                          mesh.scale.set(10, 10, 10);
-                          // child.add(mesh);
-                          // child.parent.children.push(mesh);
-                          console.log(mesh);
-                          mesh.updateMatrixWorld();
+
+                          const mesh = new THREE.Mesh(geometry, material);
+                          mesh.applyMatrix4(child.matrixWorld);
                           view.scene.add(mesh);
                         }
                     });
