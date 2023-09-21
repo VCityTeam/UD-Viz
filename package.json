@@ -4,8 +4,7 @@
   "version": "3.2.0",
   "description": "Urban Data VIsualiZation framework",
   "scripts": {
-    "clean": "rm -f -r node_modules && rm -f package-lock.json && npm run clean-dist  && rm -f  -r ./packages/**/node_modules",
-    "clean-dist": "rm -f  -r ./packages/**/dist && rm -f -r ./dist",
+    "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f -r ./dist  && rm -f  -r ./packages/**/node_modules",
     "clear-node": "sudo killall -9 node",
     "reset": "npm run clean && npm i",
     "build-examples": "cross-env NODE_ENV=production webpack --config=./webpack.config.js",
@@ -14,16 +13,13 @@
     "eslint": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\" ",
     "eslint-quiet": "eslint --quiet --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\" ",
     "eslint-fix": "eslint --ignore-path .gitignore \"packages/**/*.js\" \"examples/*.html\" \"examples/assets/js/*.js\"  --fix",
+    "test-unit": "cross-env NODE_ENV=production node ./test/unit.js",
     "test-functional": "cross-env NODE_ENV=production node ./test/functional.js",
     "test-links": "node ./test/links.js",
-    "local-ci": "npm run eslint && npm run test --workspaces && npm run test-functional && npm audit --audit-level=low && npm run test-links",
+    "local-ci": "npm run eslint && npm run test-unit && npm run test-functional && npm audit --audit-level=low && npm run test-links",
     "pre-publish": "node ./bin/prePublish.js",
-    "docs-shared": "cross-env PACKAGE=shared jsdoc -c ./docs/jsdocConfig/jsdoc.js",
-    "docs-browser": "cross-env PACKAGE=browser jsdoc -c ./docs/jsdocConfig/jsdoc.js",
-    "docs-node": "cross-env PACKAGE=node jsdoc -c ./docs/jsdocConfig/jsdoc.js",
-    "docs-home": "cross-env PACKAGE=home jsdoc -c ./docs/jsdocConfig/jsdoc.js",
-    "docs": "rm -rf ./docs/html && node ./bin/docScriptTag.js include && npm run docs-browser ; npm run docs-node ; npm run docs-shared ; npm run docs-home && node ./bin/docScriptTag.js",
-    "dev-docs": "nodemon --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/node/src --delay 2500ms --exec npm run docs",
+    "docs": "rm -rf ./docs/html && node ./bin/generateJsDoc.js ",
+    "dev-docs": "nodemon --signal SIGKILL --trace-warnings --verbose --watch ./packages/show_room/src --watch ./packages/extensions_3d_tiles_temporal/src  --watch ./packages/frame3d/src  --watch ./packages/game_browser/src  --watch ./packages/game_browser_template/src  --watch ./packages/game_node/src  --watch ./packages/game_node_template/src  --watch ./packages/game_shared/src  --watch ./packages/game_shared_template/src  --watch ./packages/smdb/src  --watch ./packages/utils_browser/src  --watch ./packages/utils_node/src  --watch ./packages/utils_shared/src  --watch ./packages/widget_3d_tiles/src  --watch ./packages/widget_base_map/src  --watch ./packages/widget_bookmark/src  --watch ./packages/widget_camera_positioner/src  --watch ./packages/widget_extensions_3d_tiles_temporal/src  --watch ./packages/widget_geocoding/src  --watch ./packages/widget_layer_choice/src  --watch ./packages/widget_planar_controls/src  --watch ./packages/widget_slide_show/src  --watch ./packages/widget_sparql/src  --watch ./packages/widget_workspace/src --delay 2500ms --exec npm run docs -e js,css",
     "back-end": "cross-env NODE_ENV=production node ./bin/backEnd.js",
     "start": "npm run build-examples && npm run back-end"
   },
@@ -60,7 +56,6 @@
     "string-replace-middleware": "1.0.2",
     "style-loader": "3.3.1",
     "webpack": "^5.88.2",
-    "webpack-cli": "^4.9.2",
-    "webpack-node-externals": "2.5.2"
+    "webpack-cli": "^4.9.2"
   }
 }

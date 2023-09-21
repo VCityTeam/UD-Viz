@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const exec = require('child-process-promise').exec;
 const spawn = require('child_process').spawn;
 const path = require('path');
@@ -11,15 +9,12 @@ const printExec = function (result) {
 
 const packageName = require(path.resolve(process.cwd(), './package.json')).name;
 
-const noTest = process.argv[2] === 'no_test' || false;
+const noTest = process.argv[2] === 'no-test' || false;
 
-console.log('build developpement bundle  ', packageName);
-exec('npm run build-dev')
+console.log('build examples bundle  ', packageName);
+exec('cd .. && npm run build-dev-examples')
   .catch((error) => {
-    console.error(
-      packageName + ' failed building developpement bundle ',
-      error
-    );
+    console.error(packageName + ' failed building examples bundle ', error);
   })
   .then(printExec)
   .then(() => {

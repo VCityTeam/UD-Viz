@@ -4,8 +4,6 @@
   "description": "utils methods interpretable in a browser environment with the itowns framework",
   "main": "src",
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config=../../webpack.config.js",
-    "build-dev": "cross-env NODE_ENV=development webpack --config=../../webpack.config.js",
     "test": "node ../../bin/browserTest.js ./test",
     "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
   },

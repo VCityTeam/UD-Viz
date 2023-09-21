@@ -1,21 +1,10 @@
 const path = require('path');
-const fs = require('fs');
-const nodeExternals = require('webpack-node-externals'); // to build nodejs bundle
-
-// go read in package folder webpack.params
-const params = JSON.parse(
-  fs.readFileSync(path.resolve(process.cwd(), './webpack.params.json'))
-);
-
-if (!params.libraryName || !params.entry) {
-  throw new Error('wrong webpack params');
-}
 
 const result = {
-  entry: params.entry,
+  entry: './bin/indexExamples.js',
   output: {
     filename: 'bundle.js',
-    library: params.libraryName,
+    library: 'udviz',
     libraryTarget: 'umd',
     umdNamedDefine: true,
   },
@@ -30,22 +19,14 @@ const result = {
   },
 };
 
-// node
-if (params.targetNode) {
-  result.target = 'node';
-  result.externals = [nodeExternals()];
-}
-
-// inject css in bundle
-if (params.withCss) {
-  result.module.rules.push({
-    test: /\.css$/,
-    use: [
-      'style-loader', // Tells webpack how to append CSS to the DOM as a style tag.
-      'css-loader', // Tells webpack how to read a CSS file.
-    ],
-  });
-}
+// inject css in bundle (show_room and game_browser_template are using css)
+result.module.rules.push({
+  test: /\.css$/,
+  use: [
+    'style-loader', // Tells webpack how to append CSS to the DOM as a style tag.
+    'css-loader', // Tells webpack how to read a CSS file.
+  ],
+});
 
 // production or development
 if (process.env.NODE_ENV == 'production') {

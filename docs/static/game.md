@@ -5,18 +5,15 @@ This document gives an overview of how the game part works. Here are some differ
 ## Prerequisites
 
 - Run a back-end in node.js with express. See [MDN DOC](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction).
-- See [here](../../packages/browser/Readme.md#how-to-use-it-in-your-demo) how to import @ud-viz/browser framework.
+- See [here](./how_to_import.md) how to import @ud-viz/game_browser framework.
 
 ## Creating a singleplayer simple game 
 
 The goal of this section is to learn how to set a singleplayer simple game structure:
 
-You can see the final result of this tutorial ?todo to check where every code sample should be added (this example import @ud-viz/browser with bundle). <== WIP
-
-
 **Create a scene**
 
-Initialize a `Frame3DPlanar` which creates a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
+Initialize a `Planar` part of @ud-viz/frame3d which creates a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
 
 ```js
 // Define geographic extent: CRS, min/max X, min/max Y
@@ -28,40 +25,39 @@ const extent = new udvizBrowser.itowns.Extent(
   5178412.82698
 );
 
-const frame3DPlanar = new udvizBrowser.Frame3DPlanar(extent, {
+const frame3DPlanar = new frame3d.Planar(extent, {
   hasItownsControls: true,
 });
 
 ```
 
-**Create a `udvizBrowser.Game.External.SinglePlanarProcess`**
+**Create a `SinglePlanarProcess`**
 
-Initialize a `SinglePlanarProcess`, gameObject3D defines your game model and `SinglePlanarProcess` is stepping your game over time.
+Initialize a `SinglePlanarProcess` with a `AssetManager` and a `InputManager` part of @ud-viz/game_browser, an `Object3D` part of @ud-viz/game_shared defines your game model and `SinglePlanarProcess` is stepping your game over time.
 
 ```js
-const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
+const gameObject3D = new Object3D({
   static: true,
 });
 
-const game = new udvizBrowser.Game.External.SinglePlanarProcess(
+const game = new SinglePlanarProcess(
   gameObject3D,
   frame3DPlanar,
-  new udvizBrowser.AssetManager(),
-  new udvizBrowser.InputManager()
+  new AssetManager(),
+  new InputManager()
 );
 
 game.start();
 ```
 
-**Add two types of script to your `udvizBrowser.Shared.Game.Object3D`**
+**Add two types of script to your `Object3D`**
 
-A game is composed of two contexts `udvizBrowser.Shared.Game.Context` (handle collisions, add/remove gameobject3D, process commands, trigger `udvizBrowser.Shared.Game.ScriptBase` event, ...) and `udvizBrowser.Game.External.Context` (handle rendering, inputs of user, audio, trigger `udvizBrowser.Game.External.ScriptBase` event, ...)
+A game is composed of two contexts `Context` (handle collisions, add/remove gameobject3D, process commands, trigger `ScriptBase` event, ...) part of @ud-viz/game_shared and `Context` (handle rendering, inputs of user, audio, trigger `ScriptBase` event, ...) part of @ud-viz/game_browser
 
 >The game part is divided into two context to handle a multiplayer game. Typically the game external context is running on the client side and the game context is running on the server side. In this example both context are running on the client side (ie your web browser) 
 
 ```js
-const GameContextScript = class extends udvizBrowser.Shared.Game
-.ScriptBase {
+const GameContextScript = class extends ScriptBase {
   init() {
     console.log('hello from game context');
   }
@@ -70,8 +66,7 @@ const GameContextScript = class extends udvizBrowser.Shared.Game
   }
 };
 
-const GameExternalContextScript = class extends udvizBrowser.Game.External
-.ScriptBase {
+const GameExternalContextScript = class extends ScriptBase {
   init() {
     console.log('hello from game external context ');
   }
@@ -80,7 +75,7 @@ const GameExternalContextScript = class extends udvizBrowser.Game.External
   }
 };
 
-const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
+const gameObject3D = new Object3D({
   static: true,
   components: {
     GameScript: {
@@ -92,11 +87,11 @@ const gameObject3D = new udvizBrowser.Shared.Game.Object3D({
   },
 });
 
-const game = new udvizBrowser.Game.External.SinglePlanarProcess(
+const game = new SinglePlanarProcess(
   gameObject3D,
   frame3DPlanar,
-  new udvizBrowser.AssetManager(),
-  new udvizBrowser.InputManager(),
+  new AssetManager(),
+  new InputManager(),
   {
     gameScriptClass: [GameContextScript],
     externalGameScriptClass: [GameExternalContextScript],
@@ -113,7 +108,7 @@ In the `init` of `GameContextScript` add these lines
 this.goCubes = [];
 const extentCenter = extent.center();
 setInterval(() => {
-  const newGOCube = new udvizBrowser.Shared.Game.Object3D({
+  const newGOCube = new Object3D({
     components: {
       Render: {
         idRenderData: 'cube',
@@ -158,14 +153,16 @@ this.context.inputManager.addMouseCommand(
   'command_id',
   'click',
   () => {
-    return new udvizBrowser.Shared.Command({
+    return new Command({
       type: 'toggle_pause',
     });
   }
 );
 ```
 
-This sends a command on the mouse click to `udvizBrowser.Shared.Game.Context`. Then in the `init` of `GameContextScript` add these lines:
+> `Command` is part of @ud-viz/game_shared
+
+This sends a command on the mouse click to  GameContextScript. Then in the `init` of `GameContextScript` add these lines:
 
 ```js
 this.pause = false;
@@ -224,15 +221,15 @@ run enjoy
 
 Singleplayer one: 
 
-* [ZeppelinGame](../../examples/ZeppelinGame.html)
-* [AvatarGame](../../examples/AvatarGame.html)
-* [DragAndDropAvatar](../../examples/DragAndDropAvatar.html)
-* [AvatarGameShader](../../examples/AvatarGameShader.html)
+* [game zeppelin](../../examples/game_zeppelin.html)
+* [game avatar](../../examples/game_avatar.html)
+* [game drag and drop avatar](../../examples/game_drag_and_drop_avatar.html)
+* [game avatar shared](../../examples/game_avatar_shader.html)
 
-These examples require some knowledge of [@ud-viz/shared game](./ud_viz_shared/shared_game.md) and [@ud-viz/browser game](./ud_viz_browser/browser_game.md)
+This example requires knowledge about [@ud-viz/game_shared](../../packages/game_shared/Readme.md) and [@ud-viz/game_browser](../../packages/game_browser/Readme.md)
 
 Multiplayer one:
 
-* [MultiPlanarProcess](../../examples/MultiPlanarProcess.html)
+* [game note](../../examples/game_note.html)
 
-This example requires the same knowledge as singleplayer plus [@ud-viz/node game](./ud_viz_node/node_game.md)
+This example requires the same knowledge as singleplayer plus [@ud-viz/game_node](../../packages/game_node/Readme.md)

@@ -4,8 +4,6 @@ import {
 } from '@ud-viz/widget_sparql';
 import { getUriLocalname } from '@ud-viz/utils_browser';
 
-export { SparqlEndpointResponseProvider };
-
 /**
  * The SPARQL query window class which provides the user interface for querying
  * a SPARQL endpoint and displaying the endpoint response.

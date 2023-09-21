@@ -8,7 +8,13 @@ const server = http.createServer(function (req, res) {
   if (req.url === '/favicon.ico') {
     res.end('okay');
   } else {
-    res.end(fs.readFileSync(req.url));
+    const filePath = req.url;
+    if (fs.existsSync(filePath)) {
+      res.end(fs.readFileSync(filePath));
+    } else {
+      res.statusCode(404);
+      res.end();
+    }
   }
 });
 

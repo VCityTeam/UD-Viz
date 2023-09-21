@@ -4,40 +4,69 @@
 [![CI status](https://travis-ci.com/VCityTeam/UD-Viz.svg?branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://vcityteam.github.io/UD-Viz/html/index.html)
 
-UD-Viz is a 3-package JavaScript framework for creating web applications for visualizing and interacting with geospatial 3D urban data.
+UD-Viz is a javascript mono repository for creating web applications for visualizing and interacting with geospatial 3D urban data.
 
 [Online documentation](https://vcityteam.github.io/UD-Viz/html/index.html) &mdash;
 [Developers](./docs/static/Developers.md) &mdash;
 [License](./LICENSE.md) &mdash;
 [Getting Started](#getting-started) &mdash;
-[Architecture](./docs/static/Architecture.md)
+[Architecture](./docs/static/architecture.md)
 
 **Online demos**:
 
 <p>
-  <a href="https://ud-viz.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/UDVIZ-Examples.png" alt="UD-VizExamples Mosaic" width="32.5%"></a>
-  <a href="https://www.imuvirtuel.fr/"><img src="examples/assets/img/readme/IMUV_Homepage.png" alt="IMUV Flying Campus Mosaic" width="32.5%"></a>
-  <a href="https://deambulation-bron.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/Deambulation Bron.png" alt="Deambulation Bron Mosaic" width="32.5%"></a>
+  <a href="https://ud-viz.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UDVIZ-Examples.png" alt="UD-VizExamples Mosaic" width="32.5%"></a>
+  <a href="https://www.imuvirtuel.fr/"><img src="./img/IMUV_Homepage.png" alt="IMUV Flying Campus Mosaic" width="32.5%"></a>
+  <a href="https://deambulation-bron.vcityliris.data.alpha.grandlyon.com/"><img src="./img/Deambulation Bron.png" alt="Deambulation Bron Mosaic" width="32.5%"></a>
 </p>
 <p>
-  <a href="https://ui-driven-data-lyon.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/UI_Data_Driven.png" alt="UI Data Driven Mosaic" width="32.5%"></a>
-  <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
+  <a href="https://ui-driven-data-lyon.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UI_Data_Driven.png" alt="UI Data Driven Mosaic" width="32.5%"></a>
+  <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
 </p>
 
 _3D tiles related_
 
 <p>
-  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
-  <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
+  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
+  <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
 </p>
 
 **UD-Viz Packages:**
 
 Split-code by interpretation environment:
 
-- [@ud-viz/browser](./packages/browser/Readme.md) package is interpretable by the **browser**
-- [@ud-viz/game_node](./packages/node/Readme.md) package is interpretable by **Node.js**
-- [@ud-viz/utils_shared](./packages/shared/Readme.md) interpretable by **both** environments
+package is interpretable by **Node.js**
+
+- [@ud-viz/game_node](./packages/game_node/Readme.md)
+- [@ud-viz/game_node_template](./packages/game_node_template/Readme.md)
+- [@ud-viz/utils_node](./packages/utils_node/Readme.md)
+
+package is interpretable by the **browser**
+
+- [@ud-viz/extensions_3d_tiles_temporal](./packages/extensions_3d_tiles_temporal/Readme.md)
+- [@ud-viz/frame3d](./packages/frame3d/Readme.md)
+- [@ud-viz/game_browser](./packages/game_browser/Readme.md)
+- [@ud-viz/game_browser_template](./packages/game_browser_template/Readme.md)
+- [@ud-viz/show_room](./packages/show_room/Readme.md)
+- [@ud-viz/smdb](./packages/smdb/Readme.md)
+- [@ud-viz/utils_browser](./packages/utils_browser/Readme.md)
+- [@ud-viz/widget_3d_tiles](./packages/widget_3d_tiles/Readme.md)
+- [@ud-viz/widget_base_map](./packages/widget_base_map/Readme.md)
+- [@ud-viz/widget_bookmark](./packages/widget_bookmark/Readme.md)
+- [@ud-viz/widget_camera_positioner](./packages/widget_camera_positioner/Readme.md)
+- [@ud-viz/widget_extensions_3d_tiles_temporal](./packages/widget_extensions_3d_tiles_temporal/Readme.md)
+- [@ud-viz/widget_geocoding](./packages/widget_geocoding/Readme.md)
+- [@ud-viz/widget_layer_choice](./packages/widget_layer_choice/Readme.md)
+- [@ud-viz/widget_planar_controls](./packages/widget_planar_controls/Readme.md)
+- [@ud-viz/widget_slide_show](./packages/widget_slide_show/Readme.md)
+- [@ud-viz/widget_sparql](./packages/widget_sparql/Readme.md)
+- [@ud-viz/widget_workspace](./packages/widget_workspace/Readme.md)
+
+interpretable by **both** environments
+
+- [@ud-viz/game_shared](./packages/game_shared/Readme.md)
+- [@ud-viz/game_shared_template](./packages/game_shared_template/Readme.md)
+- [@ud-viz/utils_shared](./packages/utils_shared/Readme.md)
 
 ```mermaid
 flowchart TD

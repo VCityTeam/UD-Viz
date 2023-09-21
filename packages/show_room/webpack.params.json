@@ -1,5 +1,0 @@
-{
-  "entry": "./src/indexBundle.js",
-  "libraryName": "showRoom",
-  "withCss": true
-}
