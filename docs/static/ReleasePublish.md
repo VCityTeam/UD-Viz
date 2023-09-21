@@ -13,11 +13,13 @@
         - Doc:
         - CI:
 
-    ## @ud-viz/shared
+    
+    ## @ud-viz/frame3d
 
-    ## @ud-viz/node
+    ## @ud-viz/game_browser
 
-    ## @ud-viz/browser
+    ....
+    
     ```
 4. Run `npm run docs`.  Generate the documentation with [JSDoc](https://jsdoc.app/).
    

@@ -7,7 +7,7 @@
  */
 
 const fs = require('fs');
-const exec = require('child-process-promise').exec;
+const { exec } = require('child-process-promise');
 
 /**
  * The version argument provided from the command line.
@@ -33,7 +33,7 @@ subStringVersion.forEach((digit) => {
   }
 });
 
-console.log('Change ud-viz-monorepo version to ', version);
+console.log('Change ud-viz monorepo version to ', version);
 
 /**
  * Prints the stdout and stderr of a command execution result.
@@ -54,14 +54,13 @@ const printExec = function (result) {
  */
 const changeVersionPackageJSON = function (path) {
   return new Promise((resolve) => {
-    console.log(path, '[x]');
     const content = JSON.parse(fs.readFileSync(path));
     content.version = version;
 
-    // Update dependencies
-    for (const key in content.dependencies) {
+    // Update peerDep
+    for (const key in content.peerDependencies) {
       if (key.startsWith('@ud-viz/')) {
-        content.dependencies[key] = version;
+        content.peerDependencies[key] = version;
       }
     }
 
@@ -72,29 +71,44 @@ const changeVersionPackageJSON = function (path) {
   });
 };
 
-// Update version and dependencies for multiple package.json files
-changeVersionPackageJSON('./packages/shared/package.json').then(() => {
-  changeVersionPackageJSON('./packages/browser/package.json').then(() => {
-    changeVersionPackageJSON('./packages/node/package.json').then(() => {
-      changeVersionPackageJSON('./package.json').then(() => {
-        const commandReset = `npm run reset`;
-        console.log('EXEC', commandReset);
+const changeMonoRepoVersion = () => {
+  return new Promise((resolve, reject) => {
+    const promises = [];
 
-        // Execute reset command
-        exec(commandReset)
-          .then(printExec)
-          .then(() => {
-            const commandGenerateChangelog = `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`;
-            console.log('EXEC', commandGenerateChangelog);
+    promises.push(changeVersionPackageJSON('./package.json'));
 
-            // Generate changelog diffs
-            exec(commandGenerateChangelog).then(() => {
-              console.log(
-                'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'
-              );
-            });
-          });
+    // packages
+    const dirents = fs.readdirSync('./packages', { withFileTypes: true });
+    dirents.forEach(async (dirent) => {
+      if (dirent.isDirectory()) {
+        promises.push(
+          changeVersionPackageJSON(
+            './packages/' + dirent.name + '/package.json'
+          )
+        );
+      }
+    });
+
+    Promise.all(promises).then(resolve).catch(reject);
+  });
+};
+
+changeMonoRepoVersion().then(() => {
+  const commandReset = `npm run reset`;
+  console.log('EXEC', commandReset);
+
+  // Execute reset command
+  exec(commandReset)
+    .then(printExec)
+    .then(() => {
+      const commandGenerateChangelog = `git describe --tags --match v* --abbrev=0 | xargs -I tag sh -c 'git log tag..HEAD --pretty=format:%s > ./docs/static/ChangelogDiff.txt'`;
+      console.log('EXEC', commandGenerateChangelog);
+
+      // Generate changelog diffs
+      exec(commandGenerateChangelog).then(() => {
+        console.log(
+          'PrePublish done, you have to update ./docs/static/Changelog.md with ./docs/static/ChangelogDiff.txt'
+        );
       });
     });
-  });
 });

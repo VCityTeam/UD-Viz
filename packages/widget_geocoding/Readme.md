@@ -1,98 +1,149 @@
-# @ud-viz/browser
+# @ud-viz/widget_geocoding
 
-[![NPM package version](https://badgen.net/npm/v/@ud-viz/browser)](https://npmjs.com/package/@ud-viz/browser)
+[![NPM package version](https://badgen.net/npm/v/@ud-viz/widget_geocoding)](https://npmjs.com/package/@ud-viz/widget_geocoding)
 
-[@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) for creating front-end web applications to visualize, analyze, and interact with geospatial 3D urban data. It also depends on [@ud-viz/utils_shared](https://npmjs.com/package/@ud-viz/utils_shared) package.
+# Geocoding module
 
-- [@ud-viz/browser](#ud-vizbrowser)
-  - [Directory Hierarchy](#directory-hierarchy)
-  - [Getting started](#getting-started)
-  - [Developers](#developers)
-    - [Npm scripts](#npm-scripts)
-    - [Debugging](#debugging)
-  - [How to use it in your demo?](#how-to-use-it-in-your-demo)
-    - [With npm](#with-npm)
-    - [From a release bundle](#from-a-release-bundle)
+The purpose of the geocoding module is to navigate through the city by entering addresses or place names.
 
-### Directory Hierarchy
+## Module description
 
-```
-UD-Viz/packages/browser
-├── bin                                           # Global NodeJS development
-├── examples                                      # Application Examples (html files importing the bundle)
-├── src                                           # Package JS, CSS files
-|    ├── AllWidget                                # UI template for ud-viz demo using widgets
-|    ├── Component                                # Components used to compose applications
-|    |    ├── AssetManager                        # Manage asset loading
-|    |    ├── ExternalGame                        # Browser-side game engine
-|    |    ├── Frame3D                             # 3D view
-|    |    ├── Itowns                              # iTowns framework customization
-|    |    ├── Widget                              # UI components for data interaction
-|    |    ├── Component.js                        # API of Component module
-|    |    ├── FileUtil.js                         # Utils to manipulate files
-|    |    ├── HTMLUtil.js                         # Utils to manipulate html
-|    |    ├── InputManager.js                     # Manage user inputs
-|    |    ├── RequestAnimationFrameProcess.js     # Used to launch an asynchronous process
-|    |    ├── SocketIOWrapper.js                  # Manage a websocket communication
-|    |    ├── THREEUtil.js                        # Utils to manipulate THREE library
-|    ├── SinglePlayerGamePlanar                   # Single player game template for using ud-viz game engine
-|    ├── index.js                                 # API description (webpack entry point)
-├── webpackConfig                                 # Configs of bundles' creation
-├── package.json                                  # Global npm project description
-├── Readme.md                                     # It's a me, Mario!
+The module view adds a search bar to the main content div, centered at the top. The user can type a query (example: "Basilique Fourvière"), then the module will geocode this query and display the results in the view by adding pins and moving the camera.
+
+## Installation and configuration
+
+### Installation
+
+To install the module in your demo, you must first create the service and then the view.
+
+The service takes 3 parameters : a `RequestService` used to perform the REST call, the view extent and the global configuration (both provided by the `BaseDemo`).
+
+The view takes the service as a first parameter, but also takes two arguments from `BaseDemo` : the camera controls and the view.
+
+The view can then be added in the `BaseDemo`.
+
+```js
+const geocodingService = new udvcore.GeocodingService(requestService, baseDemo.extent, baseDemo.config);
+const geocodingView = new udvcore.GeocodingView(geocodingService, baseDemo.controls, baseDemo.view);
+
+// You can specify a more explicit name than 'geocoding' for the menu button
+baseDemo.addWidgetView('geocoding', geocodingView, {name: 'Address search'});
 ```
 
-## Getting started
+### Configuration
 
-See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-started).
+The geocoding module will use REST calls to a web service to compute coordinates from query strings. The module was tested with three different services ([Google](https://developers.google.com/maps/documentation/geocoding/start), [OpenCage](https://opencagedata.com/api) and [Nominatim](https://nominatim.openstreetmap.org/)), and is theoritically compatible with most service providers. In order to configure the module, you should specify informations about the web service you want to call. This information includes :
 
-## Developers
+- URL of the geocoding service endpoint
+- URL parameters to add to the request
+- Credit to the service provider
+- Description of the result.
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Developers.md#pre-requisites).
+The configuration file must have the following structure :
 
-### Npm scripts
-
-| Script                | Description                                                                                                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js)   |
-| `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
-| `npm run test`        | Run browser test scripts and examples html. Uses [this test script](./bin/test.js)                                                                                            |
-| `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
-
-### Debugging
-
-For debugging run:
-
-```bash
-npm run debug
+```json
+{
+  "type": "class",
+  "geocoding":{
+    "url":"",
+    "credit": "© ...",
+    "requestTimeIntervalMs": "",
+    "result":{
+      "format": "json",
+      "basePath": "",
+      "lng": "",
+      "lat": ""
+    },
+    "parameters":{
+      "param_name_1":{
+        "fill": "value",
+        "optional": "",
+        "value": ""
+      },
+      "param_name_2":{
+        "fill": "",
+        "optional": "",
+      },
+      "param_name_n":{
+        "fill": "",
+        "optional": "",
+      },
+    }
+  }
+}
 ```
 
-This runs a watched routine [debug.js](./bin/debug.js) with [nodemon](https://www.npmjs.com/package/nodemon) which:
+The `url` field represents the base URL of geocoding requests. For example, to use the Google API services, https://maps.googleapis.com/maps/api/geocode/json is the base URL.
 
-- Runs a `npm run build-debug`
-- May run `npm run test` (not by default).
+The `credit` field is the string that will be displayed under the search bar in the web application. It is used to clearly display attribution for the third party service. For OpenStreetMap's Nominatim for example, you should use "© OpenStreetMap contributors" as specified on their [copyright page](https://www.openstreetmap.org/copyright).
 
-## How to use it in your demo?
+The `requestTimeIntervalMs` is an optional parameter used to specify a minimal time interval between requests (value must be a number of milliseconds). It can be used to avoid doing too many requests to a server in a short time. For example, the usage policy of Nominatim specifies that an application is allowed to make at most one request per second.
 
-You can use it through npm (the preferred way) or download a bundle from our GitHub release page.
+The `result` object describes how the result should be interpreted. The goal is for the geocoding service to find the different geographical coordinates from the query's response. It assumes that the response will be a json object which either is or contains an array of results. It will search for the array in the `basePath` attribute path (nested attributes should be separated by dots). If the response itself is an array, `basePath` should be an empty string.  
+The two other fields, `lat` and `lng`, specify the path of the coordinates in each array item.
 
-### With npm
+The `parameters` dictionary represents query parameters that will be added to the URL to perform the appropriate geocoding request. Each parameter is described as a `"name": descriptor` pair, where `name` will be the name of the parameter in the request and `descriptor` describes how the value will be filled. To do that, the descriptor must contain a field named `fill` which can take 3 different values :
 
-In your demo:
+|Fill value|Description|
+|----------|------|
+|`"value"`|Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.|
+|`"query"`|Fills the parameter with the query string, formatted as a URI component.|
+|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string in which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates.|
 
-```bash
-npm install --save @ud-viz/browser
+### Example configuration
+
+An example configuration for the Nominatim service is provided in the `generalDemoConfig.json` file (under `examples/data/config`). You can find a extract below :
+
+```json
+"geocoding":{
+  "url":"https://nominatim.openstreetmap.org/search",
+  "credit": "© OpenStreetMap contributors under <a href=\"https://www.openstreetmap.org/copyright\">ODbL</a>",
+  "requestTimeIntervalMs": "1000",
+  "result":{
+    "format": "json",
+    "basePath": "",
+    "lng": "lon",
+    "lat": "lat"
+  },
+  "parameters":{
+    "q":{
+      "fill": "query"
+    },
+    "format":{
+      "fill": "value",
+      "value": "json"
+    },
+    "viewbox":{
+      "fill": "extent",
+      "format": "WEST,SOUTH,EAST,NORTH"
+    }
+  }
+}
 ```
 
-If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import).
+With this configuration, the request takes three parameters :
 
-> See https://github.com/VCityTeam/UD-Viz-template
+- `q` contains the query string.
+- `format` contains the value `json`. It specifies the output format for the Nominatim service.
+- `viewbox` sets a result preference extent. As specified on their [api documentation](https://nominatim.org/release-docs/develop/api/Search/), the string must match the following format : `viewbox=<x1>,<y1>,<x2>,<y2>`, which translates to `WEST,SOUTH,EAST,NORTH` in our configuration file.
 
-### From a release bundle
+Here is a sample result of a request for the query "charpennes" (some fields are eluded):
 
-See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly recommend using the last release every time.
+```json
+[
+  {
+    "place_id": 18301952,
+    "lat": "45.7711641",
+    "lon": "4.8658947",
+    ...
+  },
+  {
+    "place_id": 7155630,
+    "lat": "45.7701877",
+    "lon": "4.8631919",
+    ...
+  }
+]
+```
 
-> - This bundle also contains the dependencies
-> - First release bundle -> 3.1.0
-
-:warning: You can see a bundle-usage in [examples](../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.
+As you can see, the response is a JSON array containing the results, hence the `"basePath": ""` configuration. In each query result, the latitude is stored unter a `lat` field, and the longitude under `lon`. We specify that in our configuration file with `"lat": "lat"` and `"lng": "lon"`.

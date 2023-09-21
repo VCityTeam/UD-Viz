@@ -52,7 +52,10 @@ const main = async function () {
   console.info('\nFunctional test of game tutorials');
 
   const gameBackEndFork = cp.fork(
-    path.resolve(__dirname, './tutorials/game/multiplayerSimpleGame/backend.js')
+    path.resolve(
+      __dirname,
+      './tutorials/game/game_multiplayer_backend/backend.js'
+    )
   );
 
   gameBackEndFork.on('error', () => {

@@ -4,13 +4,13 @@ This document makes a link between configuration files inside this directory and
 
 | Directory / File                               | Javascript files using it                                                         | Description                                             |
 | ---------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| layer                                          | [itowns.Layer](http://www.itowns-project.org/itowns/docs/#api/Layer/Layer)        | Directory with itowns layer configuration [see](#layer) |
-| server                                         | [Widget.Server](../../../packages/browser/src/Widget/Server/)                     | Directory with server configuration [see](#server)      |
-| widget                                         | [Widget](../../../packages/browser/src/Widget/)                                   | Directory with widget configuration [see](#widget)      |
-| [assetManager.json](./assetManager.json)       | [AssetManager](../../../packages/browser/src/AssetManager/AssetManager.js)        | Sound + RenderData                                      |
+| layer                                          | [itowns.Layer](http://www.itowns-project.org/itowns/docs/#api/Layer/Layer)        | itowns layer configuration [see](#layer) |
+| server                                         | x                     | server configuration [see](#server)      |
+| widget                                         | x                                   | widget configuration [see](#widget)      |
+| [assetManager.json](./assetManager.json)       | [AssetManager](../../../packages/game_browser/src/AssetManager.js)        | Sound + RenderData                                      |
 | [crs.json](./crs.json)                         | [proj4](http://proj4js.org/)                                                      | Coordinate referential system unknown of proj4          |
 | [extents.json](./extents.json)                 | [itowns.Extent](http://www.itowns-project.org/itowns/docs/#api/Geographic/Extent) | Array of differerent Extent configuration               |
-| [frame3D_planars.json](./frame3D_planars.json) | [Frame3DPlanar](../../../packages/browser/src/Frame3D/Frame3DPlanar.js)           | Array of different Frame3DPlanar configuration          |
+| [frame3D_planars.json](./frame3D_planars.json) | [Planar](../../../packages/frame3d/src/Planar.js)           | Array of different Planar configuration          |
 
 ## layer
 
@@ -28,13 +28,13 @@ This document makes a link between configuration files inside this directory and
 
 | File                                                                                   | Javascript files using it                                                                                    | Description                                                                                                   |
 | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| [server/geocoding_server.json](./server/geocoding_server.json)                         | [GeocodingService](../../../packages/browser/src/Widget/Server/Geocoding/services/GeocodingService.js)       | Configure how to treat http request with a geocoding service                                                  |
-| [server/sparql_server.json](./server/sparql_server.json)                               | [SparqlEndpointService](../../../packages/browser/src/Widget/Server/SPARQL/Service/SparqlEndpointService.js) | Configure how to treat http request with a sparql service                                                     |
-| [server/spatial_multimedia_db_server.json](./server/spatial_multimedia_db_server.json) | [DocumentProvider](../../../packages/browser/src/Widget/Server/Document/Core/ViewModel/DocumentProvider.js)  | Configure how to treat http request with a [smdb service](https://github.com/VCityTeam/Spatial-Multimedia-DB) |
+| [server/geocoding_server.json](./server/geocoding_server.json)                         | [GeocodingService](../../../packages/widget_geocoding/src/geocoding/services/GeocodingService.js)       | Configure how to treat http request with a geocoding service                                                  |
+| [server/sparql_server.json](./server/sparql_server.json)                               | [SparqlEndpointService](../../../packages/widget_sparql/src/service/SparqlEndpointResponseProvider.js) | Configure how to treat http request with a sparql service                                                     |
+| [server/spatial_multimedia_db_server.json](./server/spatial_multimedia_db_server.json) | [DocumentProvider](../../../packages/smdb/src/Core/ViewModel/DocumentProvider.js)  | Configure how to treat http request with a [smdb service](https://github.com/VCityTeam/Spatial-Multimedia-DB) |
 
 ## widget
 
 | File                                                     | Javascript files using it                                                                         | Description                        |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| [widget/slide_show.json](./widget/slide_show.json)       | [SlideShow](../../../packages/browser/src/Widget/SlideShow/SlideShow.js)                          | Configure SlideShow widget         |
-| [widget/sparql_widget.json](./widget/sparql_widget.json) | [SparqlQueryWindow](../../../packages/browser/src/Widget/Server/SPARQL/View/SparqlQueryWindow.js) | Configure SparqlQueryWindow widget |
+| [widget/slide_show.json](./widget/slide_show.json)       | [SlideShow](../../../packages/widget_slide_show/src/index.js)                          | Configure SlideShow widget         |
+| [widget/sparql_widget.json](./widget/sparql_widget.json) | [SparqlQueryWindow](../../../packages/widget_sparql/src/view/SparqlQueryWindow.js) | Configure SparqlQueryWindow widget |

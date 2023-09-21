@@ -2,7 +2,7 @@ const exec = require('child-process-promise').exec;
 const fs = require('fs');
 const { computeFileFormat } = require('@ud-viz/utils_shared');
 
-const FAILURE_THRESHOLD = 200; // TODO; this should be zero
+const FAILURE_THRESHOLD = 0;
 
 exec('npx remark -u validate-links .').then((result) => {
   console.log(result.stderr);

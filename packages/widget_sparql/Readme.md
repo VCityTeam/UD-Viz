@@ -1,98 +1,154 @@
-# @ud-viz/browser
+# @ud-viz/widget_sparql
 
-[![NPM package version](https://badgen.net/npm/v/@ud-viz/browser)](https://npmjs.com/package/@ud-viz/browser)
+[![NPM package version](https://badgen.net/npm/v/@ud-viz/widget_sparql)](https://npmjs.com/package/@ud-viz/widget_sparql)
 
-[@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) for creating front-end web applications to visualize, analyze, and interact with geospatial 3D urban data. It also depends on [@ud-viz/utils_shared](https://npmjs.com/package/@ud-viz/utils_shared) package.
+# SPARQL Module
 
-- [@ud-viz/browser](#ud-vizbrowser)
-  - [Directory Hierarchy](#directory-hierarchy)
-  - [Getting started](#getting-started)
-  - [Developers](#developers)
-    - [Npm scripts](#npm-scripts)
-    - [Debugging](#debugging)
-  - [How to use it in your demo?](#how-to-use-it-in-your-demo)
-    - [With npm](#with-npm)
-    - [From a release bundle](#from-a-release-bundle)
+The SPARQL Module adds basic functionality to query and visualize Semantic Web data stored in a Strabon Triple-store from a UD-Viz interface.
 
-### Directory Hierarchy
+## Basic functionalities
 
-```
-UD-Viz/packages/browser
-├── bin                                           # Global NodeJS development
-├── examples                                      # Application Examples (html files importing the bundle)
-├── src                                           # Package JS, CSS files
-|    ├── AllWidget                                # UI template for ud-viz demo using widgets
-|    ├── Component                                # Components used to compose applications
-|    |    ├── AssetManager                        # Manage asset loading
-|    |    ├── ExternalGame                        # Browser-side game engine
-|    |    ├── Frame3D                             # 3D view
-|    |    ├── Itowns                              # iTowns framework customization
-|    |    ├── Widget                              # UI components for data interaction
-|    |    ├── Component.js                        # API of Component module
-|    |    ├── FileUtil.js                         # Utils to manipulate files
-|    |    ├── HTMLUtil.js                         # Utils to manipulate html
-|    |    ├── InputManager.js                     # Manage user inputs
-|    |    ├── RequestAnimationFrameProcess.js     # Used to launch an asynchronous process
-|    |    ├── SocketIOWrapper.js                  # Manage a websocket communication
-|    |    ├── THREEUtil.js                        # Utils to manipulate THREE library
-|    ├── SinglePlayerGamePlanar                   # Single player game template for using ud-viz game engine
-|    ├── index.js                                 # API description (webpack entry point)
-├── webpackConfig                                 # Configs of bundles' creation
-├── package.json                                  # Global npm project description
-├── Readme.md                                     # It's a me, Mario!
-```
+The basic functionalities of the SPARQL module include:
 
-## Getting started
+- Query a [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint) via HTTP request.
+- Data is returned in the form of RDF and vizualised with [D3.js](https://d3js.org/) as a graph.
+- The vizualised graph data can be used to select, focus on, and highlight corresponding to city objects.
 
-See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-started).
+## Usage
 
-## Developers
+For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](../../examples/widget_sparql.html)
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Developers.md#pre-requisites).
+### User Interface
 
-### Npm scripts
+The Interface is composed of a **SPARQL Query** window containing a text box for composing queries to send to a [SPARQL Endpoint](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#SPARQL-Endpoint).
 
-| Script                | Description                                                                                                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js)   |
-| `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
-| `npm run test`        | Run browser test scripts and examples html. Uses [this test script](./bin/test.js)                                                                                            |
-| `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
+![SPARQL widget interface](./img/interface.png)
 
-### Debugging
+The _Results Format_ dropdown menu can be used to select how the query results will be visualised. Currently 3 formats are supported:
 
-For debugging run:
+- [Graph](#graph-view)
+- [Table](#table)
+- [JSON](#json)
 
-```bash
-npm run debug
-```
+#### Graph View
 
-This runs a watched routine [debug.js](./bin/debug.js) with [nodemon](https://www.npmjs.com/package/nodemon) which:
+A displayed graph can be zoomed in and out using the mouse wheel and panned by clicking and dragging the background of the graph. In addition, nodes can be moved by clicking and dragging them.
 
-- Runs a `npm run build-debug`
-- May run `npm run test` (not by default).
+![Vizualize SPARQL query result in D3](./img/sparql-widget-demo.gif)
 
-## How to use it in your demo?
+In order to propery colorize the nodes of a graph a SPARQL query must be formulated following a simple subject-predicate-object [RDF triple](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#triple) structure. Colors will be assigned as a function each node's `rdf:type`. Thus 4 data must be selected:
 
-You can use it through npm (the preferred way) or download a bundle from our GitHub release page.
+- ?subject
+- ?object
+- ?predicate
+- ?subjectType
+- ?objectType
 
-### With npm
+For example the following query on [this](https://github.com/VCityTeam/UD-Graph/blob/sparql-demo/SPARQL_Demo/data/LYON_1ER_BATI_2015-20_bldg-patched.rdf) RDF dataset returns all building city objects in a city model:
 
-In your demo:
+```sql
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX gmlowl:  <http://www.opengis.net/ont/gml#>
+PREFIX units: <http://www.opengis.net/def/uom/OGC/1.0/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX strdf: <http://strdf.di.uoa.gr/ontology#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX core: <http://www.opengis.net/citygml/2.0/core#>
+PREFIX bldg: <http://www.opengis.net/citygml/building/2.0/building#>
 
-```bash
-npm install --save @ud-viz/browser
+# Return all CityGML City Objects
+SELECT ?subject ?subjectType ?predicate ?object ?objectType
+WHERE {
+  ?subject a core:CityModel ;
+    ?predicate ?object .
+  ?subject a ?subjectType .
+  ?object a bldg:Building .
+  ?object a ?objectType .
+
+  FILTER(?subjectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
+  FILTER(?objectType != <http://www.w3.org/2002/07/owl#NamedIndividual>)
+}
 ```
 
-If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import).
+If the URIs of nodes in the graph correspond with identifiers of objects in the tileset batch table, they can be selected as shown below.
 
-> See https://github.com/VCityTeam/UD-Viz-template
+![Pick City Object from Graph](./img/pickcityobjectfromgraph.gif)
 
-### From a release bundle
+#### Table
 
-See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly recommend using the last release every time.
+The table view features a filter for searching for data within a column. In addition rows can be sorted in ascending or descending order by column.
 
-> - This bundle also contains the dependencies
-> - First release bundle -> 3.1.0
+![Table view demonstraction](./img/sparql-widget-table-demo.gif)
 
-:warning: You can see a bundle-usage in [examples](../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.
+#### JSON
+
+The JSON view returns a collapsible representation of the query reponse.
+
+![JSON view demonstraction](./img/sparql-widget-json-demo.gif)
+
+## Code architecture
+
+The SPARQL code is divided into 3 subfolders:
+
+```mermaid
+flowchart TD
+  A(SPARQL) --> Model
+  A(SPARQL) --> Server
+  A(SPARQL) --> View
+```
+
+- The model classes are responsible for providing data structures for storing and formating the data returned by the server.
+  - The `Table` and `Graph` classes use the [D3.js](https://d3js.org/) library to provide data structures for formating data from the `SparqlEndpointService`.
+  - The `URI` class provides a data structure for storing URI strings.
+- The server classes are responsible for providing an interface or adapter for transmitting data between the other module classes and the server.
+  - The class responsible for making the requests is the `SparqlEndpointService`. Using a SPARQL query, it fetches [RDF](https://github.com/VCityTeam/UD-SV/blob/master/Vocabulary/Readme.md#resource-description-framework) data from the server as a JSON Object data structure.
+  - The `SparqlEndpointResponseProvider` is an `EventSender` for informing classes subscribed to its events, when the `SparqlEndpointService` sends or receives data.
+- The view is responsible for displaying the data retrieved from the view model and providing a user interface. It has a `SparqlWidgetView` class which manages a `SparqlQueryWindow` window class. This window is responsible for providing the user a form for entering and executing queries using the `SparqlEndpointResponseProvider` class and vizualising the data returned by the provider.
+
+## Module Configuration
+
+The module takes two configuration files:
+
+1. Server configuration
+2. Widget (view+model) configuration
+
+### Widget Configuration
+
+The minimal configuration required to make a SPARQL server class work is the following :
+
+```json
+{
+  "url": "http://localhost:9999/strabon/",
+  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+}
+```
+
+- `sparqlModule.url` represents the base URL for the server.
+- `sparqlModule.url_parameters` represents the URL parameters to query the server via an HTTP request.
+
+The SPARQL Query Service for interfacing with Strabon expects the URL to correspond to a REST API, where query routes are in the form `{url}{url_parameters}`
+
+Parameters can also be configured to define custom queries in the interface:
+See the [SparqlEndpointService](https://vcityteam.github.io/UD-Viz/html/browser/SparqlEndpointService.html) documentation for more information
+
+### View/Model Configuration
+
+The minimal configuration required to make a SPARQL Widget class work is the following :
+
+```json
+{
+  "height": 500,
+  "width": 500,
+  "fontSize": 4
+}
+```
+
+- `height` the height (in pixels) of a d3 canvas for visualizing graphs
+- `width` the width (in pixels) of a d3 canvas for visualizing graphs
+- `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
+
+Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [graph](https://vcityteam.github.io/UD-Viz/html/browser/Graph_Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/browser/SparqlQueryWindow.html) documentation for more information

@@ -22,7 +22,7 @@ jobs:
         - npm run eslint
       name: 'Lint code sources'
     - script:
-        - npm run test --workspaces
+        - npm run test-unit
       name: 'Unit test'
     - script:
         - npm run test-functional

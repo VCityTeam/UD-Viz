@@ -7,10 +7,10 @@ const name = require(path.resolve(process.cwd(), './package.json')).name;
 console.log(name + ' test start');
 
 const bundlePath = path.resolve(
-  process.cwd(),
+  __dirname,
   process.env.NODE_ENV === 'development'
-    ? './dist/development/bundle.js'
-    : './dist/production/bundle.js'
+    ? '../dist/development/bundle.js'
+    : '../dist/production/bundle.js'
 );
 
 const forceBuild =
@@ -19,11 +19,12 @@ const forceBuild =
 const run = async () => {
   // build bundle if there is not
   if (!fs.existsSync(bundlePath) || forceBuild) {
-    console.log('build bundle ', bundlePath);
+    console.log('build bundle examples', bundlePath);
+
     if (process.env.NODE_ENV === 'development') {
-      await exec('npm run build-dev');
+      await exec('cd .. && npm run build-dev-examples');
     } else {
-      await exec('npm run build');
+      await exec('cd .. && npm run build-examples');
     }
   }
 

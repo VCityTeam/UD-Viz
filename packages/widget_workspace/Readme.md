@@ -1,98 +1,30 @@
-# @ud-viz/browser
+# @ud-viz/widget_workspace
 
-[![NPM package version](https://badgen.net/npm/v/@ud-viz/browser)](https://npmjs.com/package/@ud-viz/browser)
+[![NPM package version](https://badgen.net/npm/v/@ud-viz/widget_workspace)](https://npmjs.com/package/@ud-viz/widget_workspace)
 
-[@ud-viz/browser](https://npmjs.com/package/@ud-viz/browser) is a npm package based on [iTowns](https://github.com/itowns/itowns) for creating front-end web applications to visualize, analyze, and interact with geospatial 3D urban data. It also depends on [@ud-viz/utils_shared](https://npmjs.com/package/@ud-viz/utils_shared) package.
+# Workspace Module
 
-- [@ud-viz/browser](#ud-vizbrowser)
-  - [Directory Hierarchy](#directory-hierarchy)
-  - [Getting started](#getting-started)
-  - [Developers](#developers)
-    - [Npm scripts](#npm-scripts)
-    - [Debugging](#debugging)
-  - [How to use it in your demo?](#how-to-use-it-in-your-demo)
-    - [With npm](#with-npm)
-    - [From a release bundle](#from-a-release-bundle)
+The Workspace Module is an extension of the SPARQL Module that adds functionality to query and visualize Workspace, and CityGML Versioning data stored in an RDF Triple-store from a UD-Viz interface.
 
-### Directory Hierarchy
+See the [SPARQL module](../widget_sparql/Readme.md) for more documentation on generic SPARQL functions.
 
-```
-UD-Viz/packages/browser
-├── bin                                           # Global NodeJS development
-├── examples                                      # Application Examples (html files importing the bundle)
-├── src                                           # Package JS, CSS files
-|    ├── AllWidget                                # UI template for ud-viz demo using widgets
-|    ├── Component                                # Components used to compose applications
-|    |    ├── AssetManager                        # Manage asset loading
-|    |    ├── ExternalGame                        # Browser-side game engine
-|    |    ├── Frame3D                             # 3D view
-|    |    ├── Itowns                              # iTowns framework customization
-|    |    ├── Widget                              # UI components for data interaction
-|    |    ├── Component.js                        # API of Component module
-|    |    ├── FileUtil.js                         # Utils to manipulate files
-|    |    ├── HTMLUtil.js                         # Utils to manipulate html
-|    |    ├── InputManager.js                     # Manage user inputs
-|    |    ├── RequestAnimationFrameProcess.js     # Used to launch an asynchronous process
-|    |    ├── SocketIOWrapper.js                  # Manage a websocket communication
-|    |    ├── THREEUtil.js                        # Utils to manipulate THREE library
-|    ├── SinglePlayerGamePlanar                   # Single player game template for using ud-viz game engine
-|    ├── index.js                                 # API description (webpack entry point)
-├── webpackConfig                                 # Configs of bundles' creation
-├── package.json                                  # Global npm project description
-├── Readme.md                                     # It's a me, Mario!
-```
+## Workspace functionalities
+This module extends the functionality of the [SPARQL module](../widget_sparql/Readme.md) with the ability to update the displayed 3D model by clicking on **Version** and **VersionTransition**. These nodes are displayed in a D3 graph created from Workspace and Versioning graph data from a SPARQL backend service.
 
-## Getting started
+If a **VersionTransition** is selected and highlight changes between the related versions of the 3D city model will be highlighted.
 
-See [here](https://github.com/VCityTeam/UD-Viz/blob/master/Readme.md#getting-started).
+## Data requirements
+Note that for this functionality to work RDF data in the SPARQL endpoint must be conformant to the ontologies proposed here:
+- [CityGML 3.0](https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/)
+- [CityGML 3.0 Workspace ADE](https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/Workspace/3.0/)
 
-## Developers
+Additionally, the 3DTiles conforming to the `3DTILES_temporal` extension can be used to visualize the 3D model(s) supported by the [Temporal](../extensions_3d_tiles_temporal/Readme.md) module.
+If the data in the batch table extension of the 3DTileset is interoperable with the data stored in the RDF triple-store these data can be used together to visualize scenarios of urban evolution.
+For an example of how to the SPARQL Widget extension with the [Temporal](../extensions_3d_tiles_temporal/Readme.md) module, see the [Workspace Widget example](../../examples/widget_workspace.html)
 
-For pre-requisites see [here](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Developers.md#pre-requisites).
+## Setup
+To configure the SPARQL workspace module extension
+- A [SPARQL Endpoint Response Provider](../widget_sparql/src/service/SparqlEndpointResponseProvider.js)
 
-### Npm scripts
-
-| Script                | Description                                                                                                                                                                   |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run build`       | Create a [webpack](https://webpack.js.org/) bundle in [production](./webpackConfig/webpack.config.prod.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js)   |
-| `npm run build-debug` | Create a [webpack](https://webpack.js.org/) bundle in [developpement](./webpackConfig/webpack.config.dev.js) mode. See [webpack.config.js](./webpackConfig/webpack.config.js) |
-| `npm run test`        | Run browser test scripts and examples html. Uses [this test script](./bin/test.js)                                                                                            |
-| `npm run debug`       | Launch a watcher for debugging. See [here](#debugging) for more information                                                                                                   |
-
-### Debugging
-
-For debugging run:
-
-```bash
-npm run debug
-```
-
-This runs a watched routine [debug.js](./bin/debug.js) with [nodemon](https://www.npmjs.com/package/nodemon) which:
-
-- Runs a `npm run build-debug`
-- May run `npm run test` (not by default).
-
-## How to use it in your demo?
-
-You can use it through npm (the preferred way) or download a bundle from our GitHub release page.
-
-### With npm
-
-In your demo:
-
-```bash
-npm install --save @ud-viz/browser
-```
-
-If you're using a module bundler (like [webback](https://webpack.js.org/concepts/)), you can directly write `import * as udvizBrowser from '@ud-viz/browser'` in your code. See [import doc](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Statements/import).
-
-> See https://github.com/VCityTeam/UD-Viz-template
-
-### From a release bundle
-
-See our [release page](https://github.com/VCityTeam/UD-Viz/releases/). We highly recommend using the last release every time.
-
-> - This bundle also contains the dependencies
-> - First release bundle -> 3.1.0
-
-:warning: You can see a bundle-usage in [examples](../../examples/) but it's not from a **release bundle**, you can't copy paste directly, src attribute has to be changed in the script tag.
+## Usage
+Clicking on a **Version** or **VersionTransition** will adjust the 3D scene to display the appropriate 3D city model.
