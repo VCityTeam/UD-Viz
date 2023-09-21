@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>game zeppelin</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      const GameContextManager = class extends udviz.gameShared.ScriptBase {
+        load() {
+          const promises = [];
+
+          this.zeppelinGO = new udviz.gameShared.Object3D({
+            name: 'zeppelin',
+            static: false, // => this Game.Object3D is going to move
+            components: {
+              GameScript: {
+                idScripts: [ZeppelinGameScript.ID_SCRIPT],
+              },
+              Render: { idRenderData: 'zeppelin' },
+              Collider: {
+                shapes: [
+                  {
+                    type: 'Circle',
+                    center: { x: 0, y: 0 },
+                    radius: 10,
+                  },
+                ],
+              },
+            },
+          });
+
+          promises.push(this.context.addObject3D(this.zeppelinGO));
+
+          // Add collectable sphere at random position
+          const range = 400;
+          const minRange = 50;
+          for (let i = 0; i < 10; i++) {
+            let x = (Math.random() - 0.5) * range;
+            let y = (Math.random() - 0.5) * range;
+
+            if (x > 0) {
+              x += minRange;
+            } else {
+              x -= minRange;
+            }
+
+            if (y > 0) {
+              y += minRange;
+            } else {
+              y -= minRange;
+            }
+            const s = this.createCollectableSphere(x, y);
+            promises.push(this.context.addObject3D(s));
+          }
+
+          return Promise.all(promises);
+        }
+        createCollectableSphere(x, y) {
+          const size = 10;
+
+          const result = new udviz.gameShared.Object3D({
+            name: 'collectable_sphere',
+            static: true,
+            components: {
+              Render: {
+                idRenderData: 'sphere',
+                color: [Math.random(), Math.random(), Math.random(), 1],
+              },
+              Collider: {
+                shapes: [
+                  {
+                    type: 'Circle',
+                    center: { x: 0, y: 0 },
+                    radius: size / 2,
+                  },
+                ],
+              },
+            },
+          });
+
+          result.position.set(x, y, size);
+          result.scale.set(size, size, size);
+
+          return result;
+        }
+
+        static get ID_SCRIPT() {
+          return 'game_context_manager_id';
+        }
+      };
+
+      const ZeppelinGameScript = class extends udviz.gameShared.ScriptBase {
+        // Called when this gameobject collider components collides with another one collider components
+        onEnterCollision(goCollided) {
+          this.context.removeObject3D(goCollided.uuid);
+
+          const gameManager = this.context.object3D.getObjectByProperty(
+            'name',
+            'root'
+          );
+
+          const externalScriptComp = gameManager.getComponent(
+            udviz.gameShared.ExternalScriptComponent.TYPE
+          );
+
+          // change variables of an external script
+          externalScriptComp.getModel().variables.sphereCount += 1;
+          gameManager.setOutdated(true); // notify external onOutdated event
+        }
+
+        static get ID_SCRIPT() {
+          return 'zeppelin_game_script_id';
+        }
+      };
+
+      const ExternalGameContextManager = class extends udviz.gameBrowser
+        .ScriptBase {
+        init() {
+          this.ui = document.createElement('div');
+          this.ui.style.zIndex = 98; // le neuf et le 8
+          this.ui.style.position = 'absolute';
+          this.context.frame3D.domElementUI.appendChild(this.ui);
+          this.updateUI();
+
+          this.cameraManager = this.context.findExternalScriptWithID(
+            udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT
+          );
+
+          const zeppelin = this.context.object3D.getObjectByProperty(
+            'name',
+            'zeppelin'
+          );
+
+          this.cameraManager.followObject3D(
+            zeppelin,
+            this.variables.camera_distance,
+            new udviz.THREE.Vector3(0, 0, 15),
+            this.variables.camera_angle
+          );
+
+          udviz.gameBrowserTemplate.addNativeCommands(
+            this.context.inputManager,
+            zeppelin.uuid
+          );
+        }
+
+        updateUI() {
+          this.ui.innerHTML = 'Sphere count: ' + this.variables.sphereCount;
+        }
+
+        onOutdated() {
+          this.updateUI();
+          // conf has changed meaning a shpereCount has incremented => play a sound
+          const audioComp = this.object3D.getComponent(
+            udviz.gameShared.AudioComponent.TYPE
+          );
+          audioComp.getController().play('ballon_pop');
+        }
+
+        static get ID_SCRIPT() {
+          return 'external_game_context_id';
+        }
+      };
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/assetManager.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/geoJSONs.json',
+        ])
+        .then((configs) => {
+          const assetManager = new udviz.gameBrowser.AssetManager();
+          assetManager.loadFromConfig(configs['assetManager']).then(() => {
+            udviz.proj4.default.defs(
+              configs['crs'][0].name,
+              configs['crs'][0].transform
+            );
+
+            const extent = new udviz.itowns.Extent(
+              configs['extents'][0].name,
+              parseInt(configs['extents'][0].west),
+              parseInt(configs['extents'][0].east),
+              parseInt(configs['extents'][0].south),
+              parseInt(configs['extents'][0].north)
+            );
+
+            const gameObject3D = new udviz.gameShared.Object3D({
+              name: 'root',
+              static: true,
+              components: {
+                Audio: {
+                  sounds: ['ballon_pop'],
+                },
+                GameScript: {
+                  idScripts: [
+                    GameContextManager.ID_SCRIPT,
+                    udviz.gameSharedTemplate.NativeCommandManager.ID_SCRIPT,
+                  ],
+                  variables: {
+                    defaultSpeedRotate: 0.0005,
+                  },
+                },
+                ExternalScript: {
+                  variables: {
+                    sphereCount: 0,
+                    camera_distance: 60,
+                    camera_angle: 0.2,
+                  },
+                  idScripts: [
+                    ExternalGameContextManager.ID_SCRIPT,
+                    udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
+                  ],
+                },
+              },
+            });
+
+            const frame3DPlanar = new udviz.frame3d.Planar(
+              extent,
+              configs['frame3D_planars'][0]
+            );
+
+            // eslint-disable-next-line no-constant-condition
+            if ('RUN_MODE' == 'production')
+              loadingScreen(frame3DPlanar.itownsView, [
+                'UD-VIZ',
+                'UDVIZ_VERSION',
+              ]);
+
+            const game = new udviz.gameBrowser.SinglePlanarProcess(
+              gameObject3D,
+              frame3DPlanar,
+              assetManager,
+              new udviz.gameBrowser.InputManager(),
+              {
+                gameScriptClass: [
+                  udviz.gameSharedTemplate.NativeCommandManager,
+                  GameContextManager,
+                  ZeppelinGameScript,
+                ],
+                externalGameScriptClass: [
+                  udviz.gameBrowserTemplate.CameraManager,
+                  ExternalGameContextManager,
+                ],
+                gameOrigin: {
+                  x: extent.center().x,
+                  y: extent.center().y,
+                  z: 300,
+                },
+              }
+            );
+
+            game.start();
+
+            // /// ADD LAYERS
+            {
+              frame3DPlanar.itownsView.addLayer(
+                new udviz.itowns.ColorLayer(
+                  configs['base_maps'][0]['layer_name'],
+                  {
+                    updateStrategy: {
+                      type: udviz.itowns.STRATEGY_DICHOTOMY,
+                      options: {},
+                    },
+                    source: new udviz.itowns.WMSSource({
+                      extent: extent,
+                      name: configs['base_maps'][0]['name'],
+                      url: configs['base_maps'][0]['url'],
+                      version: configs['base_maps'][0]['version'],
+                      crs: extent.crs,
+                      format: configs['base_maps'][0]['format'],
+                    }),
+                    transparent: true,
+                  }
+                )
+              );
+
+              configs['geoJSONs'].forEach((layerConfig) => {
+                frame3DPlanar.itownsView.addLayer(
+                  new udviz.itowns.ColorLayer(layerConfig.id, {
+                    name: layerConfig.id,
+                    transparent: true,
+                    source: new udviz.itowns.FileSource({
+                      url: layerConfig.url,
+                      crs: extent.crs,
+                      format: 'application/json',
+                    }),
+                    style: new udviz.itowns.Style(layerConfig.style),
+                  })
+                );
+              });
+
+              configs['3DTiles'].forEach((layerConfig) => {
+                udviz.itowns.View.prototype.addLayer.call(
+                  frame3DPlanar.itownsView,
+                  new udviz.itowns.C3DTilesLayer(
+                    layerConfig['id'],
+                    {
+                      name: layerConfig['id'],
+                      source: new udviz.itowns.C3DTilesSource({
+                        url: layerConfig['url'],
+                      }),
+                    },
+                    frame3DPlanar.itownsView
+                  )
+                );
+              });
+
+              const isTextureFormat =
+                configs['elevation']['format'] == 'image/jpeg' ||
+                configs['elevation']['format'] == 'image/png';
+              frame3DPlanar.itownsView.addLayer(
+                new udviz.itowns.ElevationLayer(
+                  configs['elevation']['layer_name'],
+                  {
+                    useColorTextureElevation: isTextureFormat,
+                    colorTextureElevationMinZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMinZ']
+                      : null,
+                    colorTextureElevationMaxZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMaxZ']
+                      : null,
+                    source: new udviz.itowns.WMSSource({
+                      extent: extent,
+                      url: configs['elevation']['url'],
+                      name: configs['elevation']['name'],
+                      crs: extent.crs,
+                      heightMapWidth: 256,
+                      format: configs['elevation']['format'],
+                    }),
+                  }
+                )
+              );
+            }
+          });
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

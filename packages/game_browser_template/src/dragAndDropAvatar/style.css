@@ -1,0 +1,22 @@
+.drag_and_drop_avatar {
+  z-index: 2;
+  position: absolute;
+  background-color: #120fd3;
+  color: cornsilk;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: move;
+  width: 50px;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  height: 50px;
+}
+
+.leave_avatar_mode {
+  position: absolute;
+  z-index: 2;
+  width: fit-content;
+  height: fit-content;
+}

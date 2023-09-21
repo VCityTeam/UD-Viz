@@ -1,5 +1,6 @@
 [
   {
+    "domElementClass": "full_screen",
     "hasItownsControls": false,
     "range": 3000,
     "heading": -49.6,
@@ -34,41 +35,7 @@
     }
   },
   {
-    "hasItownsControls": true,
-    "maxSubdivisionLevel": 10,
-    "range": 10000000,
-    "heading": 1,
-    "tilt": 89,
-    "coordinates": {
-      "x": 1842345,
-      "y": 5175327
-    },
-    "sceneConfig": {
-      "cameraFov": 90,
-      "shadowMapSize": 2046,
-      "sky": {
-        "paths": [
-          "./assets/img/sky_cubemap/negX.jpg",
-          "./assets/img/sky_cubemap/posX.jpg",
-          "./assets/img/sky_cubemap/negY.jpg",
-          "./assets/img/sky_cubemap/posY.jpg",
-          "./assets/img/sky_cubemap/posZ.jpg",
-          "./assets/img/sky_cubemap/negZ.jpg"
-        ],
-        "color": {
-          "r": 0.4,
-          "g": 0.6,
-          "b": 0.8
-        },
-        "sun_position": {
-          "offset": 10,
-          "phi": 1,
-          "theta": 0.3
-        }
-      }
-    }
-  },
-  {
+    "domElementClass": "full_screen",
     "hasItownsControls": true,
     "range": 4000,
     "heading": -49.6,
@@ -76,40 +43,6 @@
     "coordinates": {
       "x": 1844753,
       "y": 5174961
-    },
-    "sceneConfig": {
-      "cameraFov": 30,
-      "shadowMapSize": 2046,
-      "sky": {
-        "paths": [
-          "./assets/img/sky_cubemap/negX.jpg",
-          "./assets/img/sky_cubemap/posX.jpg",
-          "./assets/img/sky_cubemap/negY.jpg",
-          "./assets/img/sky_cubemap/posY.jpg",
-          "./assets/img/sky_cubemap/posZ.jpg",
-          "./assets/img/sky_cubemap/negZ.jpg"
-        ],
-        "color": {
-          "r": 0.4,
-          "g": 0.6,
-          "b": 0.8
-        },
-        "sun_position": {
-          "offset": 10,
-          "phi": 1,
-          "theta": 0.3
-        }
-      }
-    }
-  },
-  {
-    "hasItownsControls": true,
-    "range": 3000,
-    "heading": 1,
-    "tilt": 45,
-    "coordinates": {
-      "x": 1846053,
-      "y": 5176061
     },
     "sceneConfig": {
       "cameraFov": 30,

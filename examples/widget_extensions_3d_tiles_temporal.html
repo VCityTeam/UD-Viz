@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget extensions 3d tiles temporal</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link
+      rel="stylesheet"
+      href="./assets/css/wiget_extensions_3d_tiles_temporal.css"
+    />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/3DTiles_temporal.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
+        ])
+        .then((configs) => {
+          // define unknown crs
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          // define extent of the view
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          // add a color layer (base map)
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['layer_name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0]['name'],
+                url: configs['base_maps'][0]['url'],
+                version: configs['base_maps'][0]['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0]['format'],
+              }),
+              transparent: true,
+            })
+          );
+
+          // add an elevation layer
+          const isTextureFormat =
+            configs['elevation']['format'] == 'image/jpeg' ||
+            configs['elevation']['format'] == 'image/png';
+          view.addLayer(
+            new udviz.itowns.ElevationLayer(
+              configs['elevation']['layer_name'],
+              {
+                useColorTextureElevation: isTextureFormat,
+                colorTextureElevationMinZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMinZ']
+                  : null,
+                colorTextureElevationMaxZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMaxZ']
+                  : null,
+                source: new udviz.itowns.WMSSource({
+                  extent: extent,
+                  url: configs['elevation']['url'],
+                  name: configs['elevation']['name'],
+                  crs: extent.crs,
+                  heightMapWidth: 256,
+                  format: configs['elevation']['format'],
+                }),
+              }
+            )
+          );
+
+          // add a 3DTiles temporal layer
+
+          const extensions = new udviz.itowns.C3DTExtensions();
+          extensions.registerExtension(udviz.extensions3DTilesTemporal.ID, {
+            [udviz.itowns.C3DTilesTypes.batchtable]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBatchTable,
+            [udviz.itowns.C3DTilesTypes.boundingVolume]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBoundingVolume,
+            [udviz.itowns.C3DTilesTypes.tileset]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
+          });
+
+          configs['3DTiles_temporal'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+              layerConfig.id,
+              {
+                name: layerConfig.id,
+                source: new udviz.itowns.C3DTilesSource({
+                  url: layerConfig.url,
+                }),
+                registeredExtensions: extensions,
+              },
+              view
+            );
+
+            udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+          });
+
+          const widget = new udviz.widgetExtensions3DTilesTemporal.DateSelector(
+            view
+          );
+          widget.domElement.classList.add('wiget_extensions_3d_tiles_temporal');
+
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+          uiDomElement.appendChild(widget.domElement);
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

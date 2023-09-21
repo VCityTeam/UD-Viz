@@ -1,0 +1,5 @@
+{
+  "targetNode": true,
+  "entry": "./src/index.js",
+  "libraryName": "utilsNode"
+}

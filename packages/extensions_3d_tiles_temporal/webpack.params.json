@@ -1,0 +1,4 @@
+{
+  "entry": "./src/indexBundle.js",
+  "libraryName": "extensions3DTilesTemporal"
+}

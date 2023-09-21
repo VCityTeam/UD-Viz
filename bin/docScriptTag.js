@@ -1,14 +1,14 @@
 /** @file If first argument is `include` script tag are uncommented if nothing is passed script tag are commented */
 
 const fs = require('fs');
-const { Data } = require('@ud-viz/shared');
+const { computeFileFormat } = require('@ud-viz/utils_shared');
 
 const includeScriptTag = process.argv[2] == 'include';
 
 const parseDirectory = (directoryPath) => {
   const dirents = fs.readdirSync(directoryPath, { withFileTypes: true });
   dirents.forEach((dirent) => {
-    if (dirent.isFile() && Data.computeFileFormat(dirent.name) == 'md') {
+    if (dirent.isFile() && computeFileFormat(dirent.name) == 'md') {
       const filePath = directoryPath + '/' + dirent.name;
 
       // read contents of the file

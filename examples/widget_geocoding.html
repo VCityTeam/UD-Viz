@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget geocoding</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/widget_geocoding.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/server/geocoding_server.json',
+          './assets/config/layer/base_maps.json',
+        ])
+        .then((configs) => {
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          // /// ADD LAYERS
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['layer_name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0]['name'],
+                url: configs['base_maps'][0]['url'],
+                version: configs['base_maps'][0]['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0]['format'],
+              }),
+              transparent: true,
+            })
+          );
+
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+
+          const widget = new udviz.widgetGeocoding.GeocodingView(
+            new udviz.widgetGeocoding.GeocodingService(
+              new udviz.RequestService(),
+              extent,
+              configs['geocoding_server']
+            ),
+            view
+          );
+          widget.domElement.classList.add('widget_geocoding');
+
+          uiDomElement.appendChild(widget.domElement);
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

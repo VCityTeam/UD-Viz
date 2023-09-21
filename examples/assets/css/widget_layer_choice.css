@@ -1,0 +1,7 @@
+.widget_layer_choice {
+  z-index: 2;
+  position: absolute;
+  background-color: #313336bb;
+  color: white;
+  padding: 5px;
+}

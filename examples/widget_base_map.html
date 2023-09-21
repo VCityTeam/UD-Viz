@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Base Map Widget example</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/widget_base_map.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/base_maps.json',
+        ])
+        .then((configs) => {
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          // //// BaseMap Widget
+          const baseMap = new udviz.widgetBaseMap.BaseMap(
+            view,
+            [
+              {
+                layer: configs['base_maps'][0],
+                pathIcon: './assets/img/ign_ortho.png',
+                label: 'base map 0',
+              },
+              {
+                layer: configs['base_maps'][1],
+                pathIcon:
+                  'https://imagerie.data.grandlyon.com/geoserver/grandlyon/ows?VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&transparent=false&WIDTH=256&HEIGHT=256&layers=ortho_latest&FORMAT=image/jpeg&CRS=EPSG:3946&BBOX=1844753.50,5173557.50,1846476.88,5174961.00',
+                label: 'base map 1',
+              },
+            ],
+            extent
+          );
+          baseMap.domElement.classList.add('widget_base_map');
+
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+
+          uiDomElement.appendChild(baseMap.domElement);
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

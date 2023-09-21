@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget 3d tiles</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/widget_3dtiles.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/3DTiles.json',
+        ])
+        .then((configs) => {
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          const style = new udviz.itowns.Style({
+            fill: {
+              color: function (feature) {
+                return feature.userData.selectedColor
+                  ? feature.userData.selectedColor
+                  : 'white';
+              },
+            },
+          });
+
+          // create 3DTilesLayers
+          configs['3DTiles'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+              layerConfig['id'],
+              {
+                style: style,
+                name: layerConfig['id'],
+                source: new udviz.itowns.C3DTilesSource({
+                  url: layerConfig['url'],
+                }),
+              },
+              view
+            );
+            udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+          });
+
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+
+          const widget = new udviz.widgetC3DTiles.C3DTiles(view, {
+            overrideStyle: style,
+            parentElement: uiDomElement,
+            layerContainerClassName: 'widgets-3dtiles-layer-container',
+            c3DTFeatureInfoContainerClassName:
+              'widgets-3dtiles-feature-container',
+            urlContainerClassName: 'widgets-3dtiles-url-container',
+          });
+          widget.domElement.setAttribute('id', 'widgets-3dtiles');
+
+          // add on click behavior
+          const contextSelection = {
+            feature: null,
+            layer: null,
+          };
+          view.mainLoop.gfxEngine.renderer.domElement.onclick = (event) => {
+            if (contextSelection.feature) {
+              // reset feature userData
+              contextSelection.feature.userData.selectedColor = null;
+              // and update style of its layer
+              contextSelection.layer.updateStyle();
+              // reset context selection
+              contextSelection.feature = null;
+              contextSelection.layer = null;
+            }
+
+            // get intersects based on the click event
+            const intersects = view.pickObjectsAt(
+              event,
+              0,
+              view.getLayers().filter((el) => el.isC3DTilesLayer)
+            );
+
+            if (intersects.length) {
+              // get featureClicked
+              const featureClicked =
+                intersects[0].layer.getC3DTileFeatureFromIntersectsArray(
+                  intersects
+                );
+              if (featureClicked) {
+                // write in userData the selectedColor
+                featureClicked.userData.selectedColor = 'red';
+                // and update its style layer
+                intersects[0].layer.updateStyle();
+
+                // set contextSelection
+                contextSelection.feature = featureClicked;
+                contextSelection.layer = intersects[0].layer;
+              }
+            }
+
+            // update widget displayed info
+            widget.displayC3DTFeatureInfo(
+              contextSelection.feature,
+              contextSelection.layer
+            );
+
+            view.notifyChange(); // need a redraw of the view
+          };
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "@ud-viz/game_node_template",
+  "version": "3.2.0",
+  "description": "game script template nodejs",
+  "main": "src",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config=../../webpack.config.js",
+    "build-dev": "cross-env NODE_ENV=development webpack --config=../../webpack.config.js",
+    "test": "node ../../bin/nodeTest.js ./test",
+    "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_node_template",
+  "peerDependencies": {
+    "@ud-viz/game_node": "3.2.0",
+    "@ud-viz/game_shared": "3.2.0",
+    "@ud-viz/game_shared_template": "3.2.0",
+    "gm": "1.23.1",
+    "pngjs": "6.0.0",
+    "three": "0.154.0"
+  }
+}

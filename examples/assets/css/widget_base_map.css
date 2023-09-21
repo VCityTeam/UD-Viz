@@ -1,0 +1,21 @@
+:root {
+  --size: 150px;
+}
+
+.widget_base_map {
+  background-color: #313336bb;
+  width: fit-content;
+  z-index: 5;
+  position: absolute;
+  color: white;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  text-align: center;
+}
+
+.widget_base_map img {
+  padding: 5px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: var(--size);
+  cursor: pointer;
+}

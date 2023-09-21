@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Multiplayer Simple Game test</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <script src="../../../dist/production/bundle.js"></script>
+
+    <script>
+      const udviz = window.udviz;
+
+      // Define geographic extent: CRS, min/max X, min/max Y
+      const extent = new udviz.itowns.Extent(
+        'EPSG:4326',
+        1837816.94334,
+        1847692.32501,
+        5170036.4587,
+        5178412.82698
+      );
+
+      // eslint-disable-next-line no-unused-vars
+      const frame3DPlanar = new udviz.frame3d.Planar(extent, {
+        hasItownsControls: true,
+      });
+
+      const GameExternalContextScript = class extends udviz.gameBrowser
+        .ScriptBase {
+        init() {
+          console.log('hello from game external context ');
+
+          this.context.inputManager.addMouseCommand(
+            'command_id',
+            'click',
+            () => {
+              return new udviz.Shared.Command({
+                type: 'toggle_pause',
+              });
+            }
+          );
+        }
+        static get ID_SCRIPT() {
+          return 'game_external_context_script';
+        }
+      };
+      const socketIOWrapper = new udviz.gameBrowser.SocketIOWrapper();
+      socketIOWrapper.connectToServer();
+      const game = new udviz.gameBrowser.MultiPlanarProcess(
+        socketIOWrapper,
+        extent,
+        new udviz.gameBrowser.AssetManager(),
+        new udviz.gameBrowser.InputManager(),
+        {
+          externalGameScriptClass: [GameExternalContextScript],
+          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 },
+        }
+      );
+
+      game.start();
+    </script>
+  </body>
+</html>

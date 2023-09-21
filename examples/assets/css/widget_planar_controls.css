@@ -2,6 +2,6 @@
   background-color: #313336bb;
   width: fit-content;
   color: white;
-  z-index: 2;
-  position: relative;
+  z-index: 5;
+  position: absolute;
 }

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget sparql</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/widget_sparql.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/3DTiles_temporal.json',
+          './assets/config/widget/sparql_widget.json',
+          './assets/config/server/sparql_server.json',
+        ])
+        .then((configs) => {
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          // add a 3DTiles temporal layer
+
+          const extensions = new udviz.itowns.C3DTExtensions();
+          extensions.registerExtension(udviz.extensions3DTilesTemporal.ID, {
+            [udviz.itowns.C3DTilesTypes.batchtable]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBatchTable,
+            [udviz.itowns.C3DTilesTypes.boundingVolume]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBoundingVolume,
+            [udviz.itowns.C3DTilesTypes.tileset]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
+          });
+
+          configs['3DTiles_temporal'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+              layerConfig.id,
+              {
+                name: layerConfig.id,
+                source: new udviz.itowns.C3DTilesSource({
+                  url: layerConfig.url,
+                }),
+                registeredExtensions: extensions,
+              },
+              view
+            );
+
+            udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+          });
+
+          // //// SPARQL MODULE
+          const sparqlWidget = new udviz.widgetSPARQL.SparqlQueryWindow(
+            new udviz.widgetSPARQL.SparqlEndpointResponseProvider(
+              configs['sparql_server']
+            ),
+            configs['sparql_widget']
+          );
+          sparqlWidget.domElement.classList.add('widget_sparql');
+
+          // Add UI
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+          uiDomElement.appendChild(sparqlWidget.domElement);
+
+          // Add listeners for D3Canvas node events. Three events are currently recognized 'click', 'mouseover', and 'mouseout'
+
+          // graph event
+          sparqlWidget.d3Graph.addEventListener('click', (event) => {
+            // Get clicked node's data, if nodeData.type is 'Building', zoom camera on a feature with the same 'gmlid' as nodeData.id
+            const nodeData = sparqlWidget.d3Graph.data.getNodeByIndex(
+              event.datum.index
+            );
+
+            console.debug('node clicked: ', nodeData);
+
+            if (udviz.getUriLocalname(nodeData.type) == 'Building') {
+              const clickedResult = udviz.fetchC3DTileFeatureWithNodeText(
+                view,
+                'gml_id',
+                udviz.getUriLocalname(nodeData.id)
+              );
+              if (!clickedResult) return;
+
+              udviz.focusCameraOn(
+                view,
+                view.controls,
+                clickedResult.layer
+                  .computeWorldBox3(clickedResult.feature)
+                  .getCenter(new udviz.THREE.Vector3()),
+                {
+                  verticalDistance: 200,
+                  horizontalDistance: 200,
+                }
+              );
+            }
+          });
+
+          // graph event
+          sparqlWidget.table.addEventListener('click', (event) => {
+            const col = event.datum.col;
+            const row = event.datum.row;
+            const clickedResult = udviz.fetchC3DTileFeatureWithNodeText(
+              view,
+              'gml_id',
+              udviz.getUriLocalname(row[col].value)
+            );
+            if (!clickedResult) return;
+
+            console.debug('clicked cell value: ', row[col].value);
+
+            udviz.focusCameraOn(
+              view,
+              view.controls,
+              clickedResult.layer
+                .computeWorldBox3(clickedResult.feature)
+                .getCenter(new udviz.THREE.Vector3()),
+              {
+                verticalDistance: 200,
+                horizontalDistance: 200,
+              }
+            );
+          });
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

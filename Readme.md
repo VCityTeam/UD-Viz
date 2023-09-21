@@ -24,7 +24,8 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
   <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
 </p>
 
-*3D tiles related*
+_3D tiles related_
+
 <p>
   <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="examples/assets/img/readme/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
   <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="examples/assets/img/readme/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
@@ -32,10 +33,11 @@ UD-Viz is a 3-package JavaScript framework for creating web applications for vis
 
 **UD-Viz Packages:**
 
-Split-code by interpretation environment:  
+Split-code by interpretation environment:
+
 - [@ud-viz/browser](./packages/browser/Readme.md) package is interpretable by the **browser**
-- [@ud-viz/node](./packages/node/Readme.md) package is interpretable by **Node.js**
-- [@ud-viz/shared](./packages/shared/Readme.md) interpretable by **both** environments
+- [@ud-viz/game_node](./packages/node/Readme.md) package is interpretable by **Node.js**
+- [@ud-viz/utils_shared](./packages/shared/Readme.md) interpretable by **both** environments
 
 ```mermaid
 flowchart TD
@@ -70,17 +72,14 @@ UD-Viz (repo)
 ├── style.css                 # Landing page style
 ```
 
-**Github repositories:** 
+**Github repositories:**
 
-  
 | Repository      | Link                                         | Description                                                                            |
 | --------------- | -------------------------------------------- | -------------------------------------------------------------------------------------- |
 | UD-Viz-docker   | https://github.com/VCityTeam/UD-Viz-docker   | Docker, which performs all the steps described in [Getting Started](#getting-started). |
 | UD-Viz-template | https://github.com/VCityTeam/UD-Viz-template | A basis for creating your application using UD-Viz.                                    |
 
-
 ## Getting Started
-
 
 ### Installing node/npm
 
@@ -108,4 +107,3 @@ npm run start
 ```
 
 After running go to [localhost:8000](http://localhost:8000) which links to [documentation](./docs/) and [examples](./examples/)
-

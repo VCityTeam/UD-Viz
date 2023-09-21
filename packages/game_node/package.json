@@ -1,0 +1,33 @@
+{
+  "name": "@ud-viz/game_node",
+  "version": "3.2.0",
+  "description": "game library nodejs",
+  "main": "src",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config=../../webpack.config.js",
+    "build-dev": "cross-env NODE_ENV=development webpack --config=../../webpack.config.js",
+    "test": "node ../../bin/nodeTest.js ./test",
+    "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
+  },
+  "bin": {
+    "autoMermaid": "bin/autoMermaid.js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_node",
+  "peerDependencies": {
+    "@ud-viz/game_shared": "3.2.0",
+    "@ud-viz/utils_shared": "3.2.0",
+    "socket.io": "4.7.2",
+    "three": "0.154.0"
+  }
+}

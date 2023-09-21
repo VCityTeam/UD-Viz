@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>editor</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <style>
+      .ui * {
+        position: relative;
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/geoJSONs.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/labels.json',
+          './assets/config/layer/3DTiles.json',
+        ])
+        .then((configs) => {
+          udviz.proj4.default.defs(
+            configs['crs'][0].name,
+            configs['crs'][0].transform
+          );
+
+          const extent = new udviz.itowns.Extent(
+            configs['extents'][0].name,
+            parseInt(configs['extents'][0].west),
+            parseInt(configs['extents'][0].east),
+            parseInt(configs['extents'][0].south),
+            parseInt(configs['extents'][0].north)
+          );
+
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
+          );
+
+          let object3D = null;
+
+          const elementToListen =
+            view.mainLoop.gfxEngine.label2dRenderer.domElement;
+          const transformControls = new udviz.TransformControls(
+            view.camera.camera3D,
+            elementToListen
+          );
+          transformControls.addEventListener('dragging-changed', (event) => {
+            view.controls.enabled = !event.value;
+          });
+          transformControls.addEventListener('change', () => {
+            transformControls.updateMatrixWorld();
+            view.notifyChange();
+          });
+          view.addFrameRequester(
+            udviz.itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+            () => {
+              transformControls.updateMatrixWorld();
+            }
+          );
+
+          // initialize ui
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+
+          const inputFile = document.createElement('input');
+          inputFile.setAttribute('type', 'file');
+          inputFile.setAttribute('accept', '.glb, .gltf');
+          uiDomElement.appendChild(inputFile);
+          inputFile.onchange = async (e) => {
+            const gltf = await udviz.readFileAsGltf(e);
+
+            if (object3D) {
+              view.scene.remove(object3D);
+            }
+
+            object3D = gltf.scene;
+            view.scene.add(object3D);
+
+            // to actually see it
+            object3D.position.set(
+              Math.round(extent.center().x),
+              Math.round(extent.center().y),
+              500
+            ); // <== place at the center of the extent
+
+            transformControls.attach(object3D);
+            transformControls.updateMatrixWorld();
+            view.scene.add(transformControls);
+
+            // camera focus
+            udviz.focusCameraOn(view, view.controls, object3D.position);
+
+            view.notifyChange();
+          };
+
+          // gizmo mode ui
+          const addButtonMode = (mode) => {
+            const buttonMode = document.createElement('button');
+            buttonMode.innerText = mode;
+            uiDomElement.appendChild(buttonMode);
+
+            buttonMode.onclick = () => {
+              transformControls.setMode(mode);
+            };
+          };
+          addButtonMode('translate');
+          addButtonMode('rotate');
+          addButtonMode('scale');
+
+          // result
+          const dowloadButton = document.createElement('button');
+          dowloadButton.innerText = 'Download transform';
+          uiDomElement.appendChild(dowloadButton);
+          dowloadButton.onclick = () => {
+            if (!object3D) {
+              alert('no object3D loaded');
+              return;
+            }
+
+            const result = {
+              position: object3D.position.toArray(),
+              rotation: object3D.rotation.toArray(),
+              scale: object3D.scale.toArray(),
+            };
+
+            udviz.downloadObjectAsJson(result, object3D.name);
+          };
+
+          configs['3DTiles'].forEach((layerConfig) => {
+            udviz.itowns.View.prototype.addLayer.call(
+              view,
+              new udviz.itowns.C3DTilesLayer(
+                layerConfig['id'],
+                {
+                  name: layerConfig['id'],
+                  source: new udviz.itowns.C3DTilesSource({
+                    url: layerConfig['url'],
+                  }),
+                },
+                view
+              )
+            );
+          });
+
+          const isTextureFormat =
+            configs['elevation']['format'] == 'image/jpeg' ||
+            configs['elevation']['format'] == 'image/png';
+          view.addLayer(
+            new udviz.itowns.ElevationLayer(
+              configs['elevation']['layer_name'],
+              {
+                useColorTextureElevation: isTextureFormat,
+                colorTextureElevationMinZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMinZ']
+                  : null,
+                colorTextureElevationMaxZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMaxZ']
+                  : null,
+                source: new udviz.itowns.WMSSource({
+                  extent: extent,
+                  url: configs['elevation']['url'],
+                  name: configs['elevation']['name'],
+                  crs: extent.crs,
+                  heightMapWidth: 256,
+                  format: configs['elevation']['format'],
+                }),
+              }
+            )
+          );
+
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['layer_name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0]['name'],
+                url: configs['base_maps'][0]['url'],
+                version: configs['base_maps'][0]['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0]['format'],
+              }),
+              transparent: true,
+            })
+          );
+
+          configs['labels'].forEach((layerConfig) => {
+            if (
+              !layerConfig['id'] ||
+              !layerConfig['url'] ||
+              !layerConfig['sourceType']
+            ) {
+              console.warn(
+                'Your "LabelLayer" field does not have either "url", "id" or "sourceType" properties. '
+              );
+              return;
+            }
+
+            let source = null;
+
+            // Declare the data source for the LabelLayer
+            if (layerConfig['sourceType'] == 'file') {
+              source = new udviz.itowns.FileSource({
+                url: layerConfig.url,
+                crs: extent.crs,
+                format: 'application/json',
+              });
+            } else if (layerConfig['sourceType'] == 'wfs') {
+              source = new udviz.itowns.WFSSource({
+                url: layerConfig.url,
+                version: '2.0.0',
+                typeName: layerConfig.name,
+                crs: extent.crs,
+                format: 'application/json',
+              });
+            } else {
+              console.warn(
+                'Unsupported LabelLayer sourceType ' + layerConfig['sourceType']
+              );
+              return;
+            }
+
+            const layerStyle = new udviz.itowns.Style(layerConfig.style);
+
+            const zoom = { min: 0 };
+            if (layerConfig.zoom) {
+              if (layerConfig.zoom.min) zoom.min = layerConfig.zoom.min;
+              if (layerConfig.zoom.max) zoom.max = layerConfig.zoom.max;
+            }
+
+            const labelLayer = new udviz.itowns.LabelLayer(layerConfig.id, {
+              transparent: true,
+              source: source,
+              style: layerStyle,
+              zoom: zoom,
+            });
+            view.addLayer(labelLayer);
+          });
+          configs['geoJSONs'].forEach((layerConfig) => {
+            view.addLayer(
+              new udviz.itowns.ColorLayer(layerConfig.id, {
+                name: layerConfig.id,
+                transparent: true,
+                source: new udviz.itowns.FileSource({
+                  url: layerConfig.url,
+                  crs: extent.crs,
+                  format: 'application/json',
+                }),
+                style: new udviz.itowns.Style(layerConfig.style),
+              })
+            );
+          });
+        });
+    </script>
+  </body>
+</html>
