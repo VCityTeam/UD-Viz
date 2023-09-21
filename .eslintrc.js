@@ -5,10 +5,8 @@ module.exports = {
     node: true,
   },
   globals: {
-    udvizBrowser: true,
-    ShowRoom: true,
+    udviz: true,
     loadingScreen: true,
-    C3DTilesEditor: true,
     showdown: true,
   }, // bundle umd name + scripts imported in examples
   extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],

@@ -68,18 +68,18 @@
       addToContent('Learn', [
         {
           href: 'https://github.com/VCityTeam/UD-Viz/blob/master/Doc/Devel/LocalGameTutorial.md',
-          label: 'Game tutorial'
-        }
+          label: 'Game tutorial',
+        },
       ]);
 
       addToContent('Community', [
         { href: 'https://projet.liris.cnrs.fr/vcity/', label: 'Website' },
-        { href: '../docs/html/index.html', label: 'Documentation' }
+        { href: '../docs/html/index.html', label: 'Documentation' },
       ]);
 
       addToContent('Code', [
         { href: 'https://github.com/VCityTeam/UD-Viz', label: 'Github' },
-        { href: 'https://www.npmjs.com/package/ud-viz', label: 'Npm package' }
+        { href: 'https://www.npmjs.com/package/ud-viz', label: 'Npm package' },
       ]);
 
       const viewer = document.createElement('div');
@@ -98,11 +98,10 @@
         viewer.appendChild(container);
       };
 
-      createContainer('Application');
-      createContainer('Frame3D');
-      createContainer('Widget');
-      createContainer('Game');
-      createContainer('GUI');
+      createContainer('widget');
+      createContainer('game');
+      createContainer('itowns');
+      createContainer('other');
 
       const addProjectElement = (name, idParent, href, title, srcImg) => {
         const newProject = document.createElement('a');
@@ -124,15 +123,15 @@
 
       addProjectElement(
         '3DTiles loading',
-        'Frame3D',
-        './examples/3DTiles_loading.html',
+        'itowns',
+        './examples/itowns_3d_tiles_loading.html',
         `This example shows how to implements visual feedbacks of 3DTiles loading`,
         './examples/assets/img/mosaic/3DTiles_loading.png'
       );
 
       addProjectElement(
         'Showroom',
-        'Application',
+        'other',
         './examples/show_room.html',
         `This example implements an application used as a show room of @ud-viz/browser features. As of today, this includes :
         \n- Temporal\n- Help & About\n- Documents\n- Contribute\n- Guided tours\n- Authentication\n- Documents to validate\n- Document comments\n- Geocoding\n- Camera positioner\n- Document links`,
@@ -140,200 +139,184 @@
       );
 
       addProjectElement(
-        'C3DTilesEditor',
-        'Application',
-        './examples/C3DTilesEditor.html',
+        'Editor',
+        'other',
+        './examples/editor.html',
         'This example illustrates the C3DTilesEditor which can be used to download transform of a gltf place into a scene',
         './examples/assets/img/mosaic/C3DTilesEditor.png'
       );
 
       addProjectElement(
         'Worldmap',
-        'Frame3D',
-        './examples/WorldMap.html',
+        'itowns',
+        './examples/itowns_worldmap.html',
         'This example use IGN basemap to be able to navigate all over the world',
         './examples/assets/img/mosaic/WorldMap.png'
       );
 
       addProjectElement(
-        'DomElement3D',
         'Frame3D',
-        './examples/dom_element_3D.html',
+        'other',
+        './examples/frame3d.html',
         'This example implements a dom element 3D (ie an embeded html content in a 3D view).',
         './examples/assets/img/mosaic/dom_element_3D.png'
       );
 
       addProjectElement(
         '2D visualization',
-        'Frame3D',
-        './examples/2DVisualization.html',
+        'itowns',
+        './examples/itowns_2d_visualization.html',
         'This example shows how to project C3DTFeature on a flat ground',
         './examples/assets/img/mosaic/2DVisualization.png'
       );
 
       addProjectElement(
-        '3DTilesWireframe',
-        'Frame3D',
-        './examples/3DTilesWireframe.html',
+        '3DTiles wireframe',
+        'itowns',
+        './examples/itowns_3d_tiles_wireframe.html',
         'This example shows a wireframe of the edges of a 3DTiles',
         './examples/assets/img/mosaic/3DTilesWireframe.png'
       );
 
       addProjectElement(
-        '3DTiles Point Cloud',
-        'Frame3D',
-        './examples/3DTilesPointCloud.html',
+        '3DTiles pointcloud',
+        'itowns',
+        './examples/itowns_3d_tiles_pointcloud.html',
         'This example shows a 3DTiles PointCloud',
         './examples/assets/img/mosaic/3DTilesPointCloud.png'
       );
 
       addProjectElement(
-        'Document Widget',
-        'Widget',
-        './examples/widget_document.html',
+        'SMDB',
+        'other',
+        './examples/smdb.html',
         'In this example you can consult documents in a document browser and search them using keywords and other fields.',
         './examples/assets/img/mosaic/DocumentWidget.png'
       );
 
       addProjectElement(
-        'Planar Controls Widget',
-        'Widget',
+        'Planar controls',
+        'widget',
         './examples/widget_planar_controls.html',
         'In this example you can configure itowns.PlanarControls',
         './examples/assets/img/mosaic/widget_planar_controls.png'
       );
 
       addProjectElement(
-        'Geocoding Widget',
-        'Widget',
-        './examples/GeocodingWidget.html',
+        'Geocoding',
+        'widget',
+        './examples/widget_geocoding.html',
         'Geocoding allows a user to navigate in the city by searching addresses or place names.',
         './examples/assets/img/mosaic/GeocodingWidget.png'
       );
 
       addProjectElement(
-        'BaseMap Widget',
-        'Widget',
-        './examples/BaseMapWidget.html',
+        'BaseMap',
+        'widget',
+        './examples/widget_base_map.html',
         'BaseMap widget allows a user to select which background to use between those set up in the config file.',
         './examples/assets/img/mosaic/BaseMapWidget.png'
       );
 
       addProjectElement(
-        '3DTiles Widget',
-        'Widget',
-        './examples/3DTilesWidget.html',
+        '3DTiles',
+        'widget',
+        './examples/widget_3d_tiles.html',
         '3DTiles Widget allow to add/remove 3DTiles and to display info of 3DTile features',
         './examples/assets/img/mosaic/3DTilesWidget.png'
       );
 
       addProjectElement(
-        'Camera Positioner Widget',
-        'Widget',
-        './examples/CameraPositionerWidget.html',
+        'Camera positioner',
+        'widget',
+        './examples/widget_camera_positioner.html',
         'The camera positioner is a tool that show the coordinates and the orientation of the camera.',
         './examples/assets/img/mosaic/CameraPositionerWidget.png'
       );
 
       addProjectElement(
-        'Slideshow Widget',
-        'Widget',
-        './examples/SlideShowWidget.html',
+        'Slideshow',
+        'widget',
+        './examples/widget_slide_show.html',
         'The SlideShow allows to display images and videos on a plane geometry.',
         './examples/assets/img/mosaic/SlideShow.png'
       );
 
       addProjectElement(
-        'LayerChoice Widget',
-        'Widget',
-        './examples/LayerChoiceWidget.html',
+        'Layer choice',
+        'widget',
+        './examples/widget_layer_choice.html',
         'This extensions interact with layers',
         './examples/assets/img/mosaic/LayerChoiceWidget.png'
       );
 
       addProjectElement(
-        'Temporal Widget',
-        'Widget',
-        './examples/TemporalWidget.html',
+        'Temporal',
+        'widget',
+        './examples/widget_extensions_3d_tiles_temporal.html',
         'This extensions allows the user to explore city objects and color them according to filters.',
         './examples/assets/img/mosaic/TemporalWidget.png'
       );
 
       addProjectElement(
-        'Add Layers from config',
-        'Frame3D',
-        './examples/AddLayersFromConfig.html',
+        'Add layers',
+        'itowns',
+        './examples/itowns_add_layers.html',
         `This example show how to add layers (such as geojson, elevation, base map, label, 3DTiles).`,
         './examples/assets/img/mosaic/AddLayersFromConfig.png'
       );
 
       addProjectElement(
         'SPARQL',
-        'Widget',
-        './examples/SPARQLWidget.html',
+        'widget',
+        './examples/widget_sparql.html',
         `This example illustrates the SPARQL Widget`,
         './examples/assets/img/mosaic/SPARQL.png'
       );
 
       addProjectElement(
-        'Avatar Game',
-        'Game',
-        './examples/AvatarGame.html',
+        'Avatar',
+        'game',
+        './examples/game_avatar.html',
         'This example implements a local mini game illustrating an avatar walking in the city',
         './examples/assets/img/mosaic/AvatarGame.png'
       );
 
       addProjectElement(
-        'Avatar Game with Shader',
-        'Game',
-        './examples/AvatarGameShader.html',
+        'Avatar shader',
+        'game',
+        './examples/game_avatar_shader.html',
         'This example implements a local mini game illustrating an avatar walking in the city with collision and shader pass.',
         './examples/assets/img/mosaic/AvatarGameShader.png'
       );
 
       addProjectElement(
-        'Zeppelin Game',
-        'Game',
-        './examples/ZeppelinGame.html',
+        'Zeppelin',
+        'game',
+        './examples/game_zeppelin.html',
         'This example implements a single player game planar',
         './examples/assets/img/mosaic/ZeppelinGame.png'
       );
 
       addProjectElement(
-        'Drag and Drop Avatar',
-        'Game',
-        './examples/DragAndDropAvatar.html',
+        'Drag and drop avatar',
+        'game',
+        './examples/game_drag_and_drop_avatar.html',
         'This example allow to drag and drop an avatar on city',
         './examples/assets/img/mosaic/Drag_and_Drop_Avatar.png'
       );
 
       addProjectElement(
-        'Multi Player Note Game',
-        'Game',
-        './examples/MultiPlanarProcess.html',
+        'Note',
+        'game',
+        './examples/game_note.html',
         'This example allow to share note in city',
         './examples/assets/img/mosaic/Note_Game.png'
       );
 
       addProjectElement(
-        'Authentification',
-        'Widget',
-        './examples/Authentification.html',
-        'This example illustrates the authentication widget',
-        './examples/assets/img/mosaic/AuthentificationWidget.png'
-      );
-
-      addProjectElement(
-        'Guided tour',
-        'Widget',
-        './examples/GuidedTour.html',
-        'This example illustrates the guided tour widget',
-        './examples/assets/img/mosaic/Note_Game.png'
-      );
-
-      addProjectElement(
-        'Widget Bookmark',
-        'Widget',
+        'Bookmark',
+        'widget',
         './examples/widget_bookmark.html',
         'This example illustrates the bookmark widget',
         './examples/assets/img/mosaic/widget_bookmark.png'
@@ -341,24 +324,16 @@
 
       addProjectElement(
         'Workspace',
-        'Widget',
+        'widget',
         './examples/widget_workspace.html',
         'This example illustrates the workspace widget',
         './examples/assets/img/mosaic/workspaces.png'
       );
 
       addProjectElement(
-        'Window',
-        'GUI',
-        './examples/Window.html',
-        'This example illustrates the gui element window',
-        './examples/assets/img/mosaic/Window.png'
-      );
-
-      addProjectElement(
-        '3DTiles Style',
-        'Frame3D',
-        './examples/C3DTilesLayerStyle.html',
+        '3DTiles layer style',
+        'itowns',
+        './examples/itowns_3d_tiles_layer_style.html',
         'This example illustrate how to apply style on 3DTiles features',
         './examples/assets/img/mosaic/C3DTilesLayerStyle.png'
       );

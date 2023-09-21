@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Workspace Widget example</title>
+    <title>widget workspace</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="./assets/css/examples.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/widget_workspace.css" />
   </head>
   <body>
-    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
 
     <script type="text/javascript">
-      /* eslint-disable no-new */
+      const udviz = window.udviz;
 
-      udvizBrowser
+      udviz
         .loadMultipleJSON([
           './assets/config/crs.json',
           './assets/config/extents.json',
-          './assets/config/frame3D_planars.json',
           './assets/config/layer/workspace_tileset.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
@@ -24,12 +26,12 @@
           './assets/config/server/sparql_workspace_server.json',
         ])
         .then((configs) => {
-          udvizBrowser.proj4.default.defs(
+          udviz.proj4.default.defs(
             configs['crs'][0].name,
             configs['crs'][0].transform
           );
 
-          const extent = new udvizBrowser.itowns.Extent(
+          const extent = new udviz.itowns.Extent(
             configs['extents'][0].name,
             parseInt(configs['extents'][0].west),
             parseInt(configs['extents'][0].east),
@@ -37,43 +39,74 @@
             parseInt(configs['extents'][0].north)
           );
 
-          const frame3DPlanar = new udvizBrowser.Frame3DPlanar(
-            extent,
-            configs['frame3D_planars'][2]
+          // create a itowns planar view
+          const viewDomElement = document.createElement('div');
+          viewDomElement.classList.add('full_screen');
+          document.body.appendChild(viewDomElement);
+          const view = new udviz.itowns.PlanarView(viewDomElement, extent);
+
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          // init scene 3D
+          udviz.initScene(
+            view.camera.camera3D,
+            view.mainLoop.gfxEngine.renderer,
+            view.scene
           );
 
-          // /// ADD LAYERS
-          udvizBrowser.Widget.Temporal.add3DTilesTemporalFromConfig(
-            configs['workspace_tileset'],
-            frame3DPlanar.itownsView
-          );
+          // add a 3DTiles temporal layer
 
-          frame3DPlanar.itownsView.addLayer(
-            new udvizBrowser.itowns.ColorLayer(
-              configs['base_maps'][0]['layer_name'],
+          const extensions = new udviz.itowns.C3DTExtensions();
+          extensions.registerExtension(udviz.extensions3DTilesTemporal.ID, {
+            [udviz.itowns.C3DTilesTypes.batchtable]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBatchTable,
+            [udviz.itowns.C3DTilesTypes.boundingVolume]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalBoundingVolume,
+            [udviz.itowns.C3DTilesTypes.tileset]:
+              udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
+          });
+
+          configs['workspace_tileset'].forEach((layerConfig) => {
+            const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+              layerConfig.id,
               {
-                updateStrategy: {
-                  type: udvizBrowser.itowns.STRATEGY_DICHOTOMY,
-                  options: {},
-                },
-                source: new udvizBrowser.itowns.WMSSource({
-                  extent: extent,
-                  name: configs['base_maps'][0]['name'],
-                  url: configs['base_maps'][0]['url'],
-                  version: configs['base_maps'][0]['version'],
-                  crs: extent.crs,
-                  format: configs['base_maps'][0]['format'],
+                name: layerConfig.id,
+                source: new udviz.itowns.C3DTilesSource({
+                  url: layerConfig.url,
                 }),
-                transparent: true,
-              }
-            )
+                registeredExtensions: extensions,
+              },
+              view
+            );
+
+            udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+          });
+
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['layer_name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0]['name'],
+                url: configs['base_maps'][0]['url'],
+                version: configs['base_maps'][0]['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0]['format'],
+              }),
+              transparent: true,
+            })
           );
 
           const isTextureFormat =
             configs['elevation']['format'] == 'image/jpeg' ||
             configs['elevation']['format'] == 'image/png';
-          frame3DPlanar.itownsView.addLayer(
-            new udvizBrowser.itowns.ElevationLayer(
+          view.addLayer(
+            new udviz.itowns.ElevationLayer(
               configs['elevation']['layer_name'],
               {
                 useColorTextureElevation: isTextureFormat,
@@ -83,7 +116,7 @@
                 colorTextureElevationMaxZ: isTextureFormat
                   ? configs['elevation']['colorTextureElevationMaxZ']
                   : null,
-                source: new udvizBrowser.itowns.WMSSource({
+                source: new udviz.itowns.WMSSource({
                   extent: extent,
                   url: configs['elevation']['url'],
                   name: configs['elevation']['name'],
@@ -97,39 +130,41 @@
 
           // //// SPARQL Workspace widget
           const temporalWrappers = new Map();
-          frame3DPlanar.itownsView
+          view
             .getLayers()
             .filter(
               (el) =>
                 el.isC3DTilesLayer &&
                 el.registeredExtensions.isExtensionRegistered(
-                  '3DTILES_temporal'
+                  udviz.extensions3DTilesTemporal.ID
                 )
             )
             .forEach((layer) => {
               temporalWrappers.set(
                 layer.id,
-                new udvizBrowser.Widget.Temporal.Temporal3DTilesLayerWrapper(
+                new udviz.extensions3DTilesTemporal.Temporal3DTilesLayerWrapper(
                   layer
                 )
               );
             });
 
           const sparqlWorkspaceWidgetView =
-            new udvizBrowser.Widget.Server.SparqlWorkspaceQueryWindow(
-              new udvizBrowser.Widget.Server.SparqlEndpointResponseProvider(
+            new udviz.widgetWorkspace.SparqlWorkspaceQueryWindow(
+              new udviz.widgetWorkspace.SparqlEndpointResponseProvider(
                 configs['sparql_workspace_server']
               ),
               configs['workspace_widget']
             );
 
-          sparqlWorkspaceWidgetView.domElement.style.position = 'absolute';
-          sparqlWorkspaceWidgetView.domElement.style.backgroundColor = 'gray';
-          sparqlWorkspaceWidgetView.domElement.style.zIndex = 2;
-
-          frame3DPlanar.domElementUI.appendChild(
-            sparqlWorkspaceWidgetView.domElement
+          sparqlWorkspaceWidgetView.domElement.classList.add(
+            'widget_workspace'
           );
+
+          // Add UI
+          const uiDomElement = document.createElement('div');
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+          uiDomElement.appendChild(sparqlWorkspaceWidgetView.domElement);
 
           // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
           sparqlWorkspaceWidgetView.d3Graph.addEventListener(
@@ -142,7 +177,7 @@
                 sparqlWorkspaceWidgetView.d3Graph.data.getNodeByIndex(
                   event.datum.index
                 );
-              const nodeType = udvizBrowser.getUriLocalname(nodeData.type);
+              const nodeType = udviz.getUriLocalname(nodeData.type);
               if (nodeType == 'Version' || nodeType == 'VersionTransition') {
                 /* find the first scenario that contains the clicked node,
                  * find the temporal the geometry layer with the same name, and
@@ -151,9 +186,9 @@
                 const scenarioLayerName =
                   sparqlWorkspaceWidgetView.getScenarioLayerNameByIndex(
                     event.datum.index,
-                    frame3DPlanar.itownsView
+                    view
                   );
-                const scenarioLayer = frame3DPlanar.itownsView
+                const scenarioLayer = view
                   .getLayers()
                   .filter((el) => el.isC3DTilesLayer)
                   .find((layer) => {
@@ -164,7 +199,7 @@
 
                 // if a layer is found, make sure it is visible and hide all other layers
                 if (scenarioLayer) {
-                  frame3DPlanar.itownsView
+                  view
                     .getLayers()
                     .filter((el) => el.isC3DTilesLayer)
                     .forEach(
@@ -184,7 +219,7 @@
                   temporalWrappers.get(scenarioLayer.id).styleDate =
                     timestampAverage;
 
-                  frame3DPlanar.itownsView.notifyChange();
+                  view.notifyChange();
                 }
               }
             }

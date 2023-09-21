@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>game avatar shader</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/assetManager.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/geoJSONs.json',
+        ])
+        .then((configs) => {
+          const assetManager = new udviz.gameBrowser.AssetManager();
+          assetManager.loadFromConfig(configs['assetManager']).then(() => {
+            udviz.proj4.default.defs(
+              configs['crs'][0].name,
+              configs['crs'][0].transform
+            );
+
+            const extent = new udviz.itowns.Extent(
+              configs['extents'][0].name,
+              parseInt(configs['extents'][0].west),
+              parseInt(configs['extents'][0].east),
+              parseInt(configs['extents'][0].south),
+              parseInt(configs['extents'][0].north)
+            );
+
+            const AvatarExternalGameScript = class extends udviz.gameBrowser
+              .ScriptBase {
+              constructor(context, object3D, variables) {
+                super(context, object3D, variables);
+
+                this.avatar = null;
+                this.intersectionCube = null;
+
+                // Raycaster for avoiding buildings collisions with avatar
+                this.raycaster = new udviz.THREE.Raycaster();
+              }
+
+              addObjectToArray(array, idLayers) {
+                idLayers.forEach((element) => {
+                  const layer =
+                    this.context.frame3D.itownsView.getLayerById(element);
+                  if (layer) {
+                    array.push(layer.root);
+                  }
+                });
+              }
+
+              buildingsHit(origin, direction) {
+                const buildings = [];
+                this.addObjectToArray(buildings, [
+                  'Lyon-1',
+                  'Lyon-2',
+                  'Lyon-3',
+                  'Lyon-4',
+                  'Lyon-5',
+                  'Lyon-6',
+                  'Lyon-7',
+                  'Lyon-8',
+                ]);
+
+                this.raycaster.ray.origin = origin;
+                this.raycaster.ray.direction = direction;
+
+                const intersections = this.raycaster.intersectObjects(
+                  buildings,
+                  true
+                );
+                if (intersections.length) return intersections[0];
+                return null;
+              }
+
+              init() {
+                this.avatar = this.context.object3D.getObjectByProperty(
+                  'name',
+                  'avatar'
+                );
+                if (!this.avatar) throw new Error('no avatar in context');
+
+                // TODO : Replace with updateZ call after loading ground texture
+                // Hard code player position
+                this.avatar.position.set(
+                  22.6835333218409,
+                  41.05505905740597,
+                  -132.45098039215685
+                );
+
+                this.cameraManager = this.context.findExternalScriptWithID(
+                  udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT
+                );
+
+                this.cameraManager.followObject3D(
+                  this.avatar,
+                  this.variables.camera_distance,
+                  new udviz.THREE.Vector3(0, 0, 2),
+                  this.variables.camera_angle
+                );
+
+                const scene = this.context.frame3D.scene;
+                if (!this.context.frame3D.itownsView)
+                  throw new Error('this script works with Frame3DPlanar');
+                const worldOrigin = this.context.object3D.position;
+
+                // Input manager of the game
+                const inputManager = this.context.inputManager;
+
+                // Intersection cube
+                const geometry = new udviz.THREE.BoxGeometry(1, 1, 1);
+                const material = new udviz.THREE.MeshBasicMaterial({
+                  color: 0x00ff00,
+                });
+                this.intersectionCube = new udviz.THREE.Mesh(
+                  geometry,
+                  material
+                );
+                scene.add(this.intersectionCube);
+
+                const translationSpeed = 0.03;
+                const speedRotate = 0.0006;
+
+                const checkCollisionFun = (direction) => {
+                  const origin = this.avatar.position
+                    .clone()
+                    .add(worldOrigin)
+                    .add(new udviz.THREE.Vector3(0, 0, 1));
+                  const intersection = this.buildingsHit(origin, direction);
+                  const depth = intersection ? intersection.distance : Infinity;
+
+                  if (depth != Infinity) {
+                    this.intersectionCube.visibility = true;
+                    this.intersectionCube.position.copy(intersection.point);
+                    this.intersectionCube.updateMatrixWorld();
+                  } else {
+                    this.intersectionCube.visibility = false;
+                  }
+
+                  return translationSpeed * this.context.dt > depth;
+                };
+
+                const updateZ = () => {
+                  const zAvatar =
+                    udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
+                      this.context.frame3D.itownsView.tileLayer,
+                      this.variables.update_z_crs
+                    );
+
+                  if (!isNaN(zAvatar)) {
+                    this.avatar.position.z = zAvatar;
+                  }
+                };
+
+                const Object3D = udviz.gameShared.Object3D;
+
+                // FORWARD
+                inputManager.addKeyCommand('move_forward', ['z'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeForward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // BACKWARD
+                inputManager.addKeyCommand('move_backward', ['s'], () => {
+                  // eslint-disable-next-line no-unused-vars
+                  const dt = this.context.dt;
+                  const direction = Object3D.computeBackward(this.avatar);
+                  if (checkCollisionFun(direction)) return;
+                  this.avatar.position.add(
+                    direction.setLength(translationSpeed * this.context.dt)
+                  );
+                  updateZ();
+                });
+                // LEFT
+                inputManager.addKeyCommand('rotate_left', ['q'], () => {
+                  const dt = this.context.dt;
+                  this.avatar.rotateZ(speedRotate * dt);
+                });
+                // RIGHT
+                inputManager.addKeyCommand('rotate_right', ['d'], () => {
+                  const dt = this.context.dt;
+                  this.avatar.rotateZ(-speedRotate * dt);
+                });
+              }
+
+              static get ID_SCRIPT() {
+                return 'avatar_game_id';
+              }
+            };
+
+            const gameObject3D = new udviz.gameShared.Object3D({
+              name: 'GameManager',
+              static: true,
+              components: {
+                ExternalScript: {
+                  variables: {
+                    update_z_crs: configs['crs'][0].name,
+                    camera_distance: 5,
+                    camera_angle: 0,
+                  },
+                  idScripts: [
+                    AvatarExternalGameScript.ID_SCRIPT,
+                    udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
+                  ],
+                },
+              },
+              children: [
+                {
+                  name: 'avatar',
+                  gameContextUpdate: false, // this object is not using the gamecontext (maybe create a template dedicate)
+                  components: {
+                    Render: { idRenderData: 'avatar' },
+                  },
+                },
+              ],
+            });
+
+            const frame3DPlanar = new udviz.frame3d.Planar(
+              extent,
+              configs['frame3D_planars'][0]
+            );
+
+            // eslint-disable-next-line no-constant-condition
+            if ('RUN_MODE' == 'production')
+              loadingScreen(frame3DPlanar.itownsView, [
+                'UD-VIZ',
+                'UDVIZ_VERSION',
+              ]);
+
+            const game = new udviz.gameBrowser.SinglePlanarProcess(
+              gameObject3D,
+              frame3DPlanar,
+              assetManager,
+              new udviz.gameBrowser.InputManager(),
+              {
+                externalGameScriptClass: [
+                  AvatarExternalGameScript,
+                  udviz.gameBrowserTemplate.CameraManager,
+                ],
+                gameOrigin: {
+                  x: extent.center().x,
+                  y: extent.center().y,
+                  z: 300,
+                },
+              }
+            );
+
+            game.start().then(() => {
+              // set custom render pass
+              const MYMAT = new udviz.THREE.ShaderMaterial({
+                uniforms: {},
+                vertexShader: `
+             #define NORMAL
+             varying vec3 vNormal;
+             varying vec2 vHighPrecisionZW;
+             varying float vDistance;
+             #include <common>
+             #include <logdepthbuf_pars_vertex>
+             void main() {
+               #include <beginnormal_vertex>
+               #include <defaultnormal_vertex>
+               #include <begin_vertex>
+               #include <project_vertex>
+               #include <logdepthbuf_vertex>
+               vNormal = normal;
+               vHighPrecisionZW = gl_Position.zw;
+               vDistance = length((modelViewMatrix * vec4(position.xyz, 1.)).xyz);
+               vDistance /= 1000.;
+             }
+           `,
+                fragmentShader: `
+             #define NORMAL
+             varying vec3 vNormal;
+             varying vec2 vHighPrecisionZW;
+             varying float vDistance;
+             #include <packing>
+             #include <normalmap_pars_fragment>
+             #include <logdepthbuf_pars_fragment>
+             void main() {
+               #include <clipping_planes_fragment>
+               #include <logdepthbuf_fragment>
+               #include <normal_fragment_begin>
+               #include <normal_fragment_maps>
+
+               float depth = vDistance;
+               depth = clamp(depth, 0., 1.);
+               gl_FragColor = vec4(packNormalToRGB( normal ), depth);
+             }
+           `,
+              });
+
+              const MySobelOperatorShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tDepth: { value: null },
+                  resolution: new udviz.THREE.Uniform(
+                    new udviz.THREE.Vector2()
+                  ),
+                },
+
+                vertexShader: /* glsl */ `
+           varying vec2 vUv;
+           void main() {
+           	vUv = uv;
+           	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+           }
+           `,
+
+                fragmentShader: /* glsl */ `
+             uniform sampler2D tDiffuse;
+             uniform sampler2D tDepth;
+             uniform vec2 resolution;
+             varying vec2 vUv;
+             vec4 getTex(in vec2 uv)
+             {
+               return vec4(
+                 texture2D(tDiffuse, uv)
+               );
+             }
+             void main() {
+               vec2 texel = vec2( 1.0 / resolution.x, 1.0 / resolution.y );
+               // kernel definition (in glsl matrices are filled in column-major order)
+               const mat3 Gx = mat3( -1, -2, -1, 0, 0, 0, 1, 2, 1 ); // x direction kernel
+               const mat3 Gy = mat3( -1, 0, 1, -2, 0, 2, -1, 0, 1 ); // y direction kernel
+               // fetch the 3x3 neighbourhood of a fragment
+               // first column
+               vec4 tx0y0 = getTex(vUv + texel * vec2( -1, -1 ) );
+               vec4 tx0y1 = getTex(vUv + texel * vec2( -1,  0 ) );
+               vec4 tx0y2 = getTex(vUv + texel * vec2( -1,  1 ) );
+               // second column
+               vec4 tx1y0 = getTex(vUv + texel * vec2(  0, -1 ) );
+               vec4 tx1y1 = getTex(vUv + texel * vec2(  0,  0 ) );
+               vec4 tx1y2 = getTex(vUv + texel * vec2(  0,  1 ) );
+               // third column
+               vec4 tx2y0 = getTex(vUv + texel * vec2(  1, -1 ) );
+               vec4 tx2y1 = getTex(vUv + texel * vec2(  1,  0 ) );
+               vec4 tx2y2 = getTex(vUv + texel * vec2(  1,  1 ) );
+               // gradient value in x direction
+               vec4 valueGx = Gx[0][0] * tx0y0 + Gx[1][0] * tx1y0 + Gx[2][0] * tx2y0 +
+                 Gx[0][1] * tx0y1 + Gx[1][1] * tx1y1 + Gx[2][1] * tx2y1 +
+                 Gx[0][2] * tx0y2 + Gx[1][2] * tx1y2 + Gx[2][2] * tx2y2;
+               // gradient value in y direction
+               vec4 valueGy = Gy[0][0] * tx0y0 + Gy[1][0] * tx1y0 + Gy[2][0] * tx2y0 +
+                 Gy[0][1] * tx0y1 + Gy[1][1] * tx1y1 + Gy[2][1] * tx2y1 +
+                 Gy[0][2] * tx0y2 + Gy[1][2] * tx1y2 + Gy[2][2] * tx2y2;
+               // magnitute of the total gradient
+               gl_FragColor = sqrt( ( valueGx * valueGx ) + ( valueGy * valueGy ) );
+             }
+           `,
+              };
+
+              const MaskShader = {
+                uniforms: {
+                  tDiffuse: { value: null },
+                  tMask: { value: null },
+                  resolution: new udviz.THREE.Uniform(
+                    new udviz.THREE.Vector2()
+                  ),
+                },
+
+                vertexShader: /* glsl */ `
+           varying vec2 vUv;
+           void main() {
+           	vUv = uv;
+           	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+           }
+           `,
+
+                fragmentShader: /* glsl */ `
+           uniform sampler2D tDiffuse;
+           uniform sampler2D tMask;
+           uniform vec2 resolution;
+           varying vec2 vUv;
+           void main() {
+               gl_FragColor = vec4(0.);
+               vec4 maskTexel = texture2D(tMask, vUv);
+               float maskFactor = max(max(max(maskTexel.x, maskTexel.y), maskTexel.z), maskTexel.w);
+               if(maskFactor <= 0.05)
+               {
+                 gl_FragColor = texture2D(tDiffuse, vUv);
+               }
+               #include <tonemapping_fragment>
+               #include <colorspace_fragment>
+               #include <fog_fragment>
+               #include <premultiplied_alpha_fragment>
+               #include <dithering_fragment>
+           }
+           `,
+              };
+
+              // renderTarget for special effects
+              const renderTargetFX = new udviz.THREE.WebGLRenderTarget(0, 0, {
+                depthBuffer: true,
+                stencilBuffer: false,
+                format: udviz.THREE.RGBAFormat,
+                type: udviz.THREE.FloatType,
+              });
+
+              // create custom render pass
+              const renderer = game.frame3DPlanar.renderer;
+              const camera = game.frame3DPlanar.camera;
+              const scene = game.frame3DPlanar.scene;
+
+              const edgeDetectionComposer = new udviz.EffectComposer(
+                renderer,
+                renderTargetFX
+              );
+              const normalsPass = new udviz.RenderPass(scene, camera, MYMAT);
+              edgeDetectionComposer.addPass(normalsPass);
+              const sobelPass = new udviz.ShaderPass(MySobelOperatorShader);
+
+              edgeDetectionComposer.addPass(sobelPass);
+              edgeDetectionComposer.renderToScreen = false;
+
+              const finalComposer = new udviz.EffectComposer(renderer);
+              const renderPass = new udviz.RenderPass(scene, camera);
+              finalComposer.addPass(renderPass);
+              const compositionPass = new udviz.ShaderPass(MaskShader);
+              compositionPass.uniforms.tMask.value = renderTargetFX.texture;
+              finalComposer.addPass(compositionPass);
+
+              // update variables on resize
+              const updateResize = function () {
+                renderTargetFX.setSize(
+                  frame3DPlanar.domElementWebGL.clientWidth,
+                  frame3DPlanar.domElementWebGL.clientHeight
+                );
+
+                sobelPass.uniforms.resolution.value = new udviz.THREE.Vector2(
+                  edgeDetectionComposer.writeBuffer.width,
+                  edgeDetectionComposer.writeBuffer.height
+                );
+                compositionPass.uniforms.resolution.value =
+                  new udviz.THREE.Vector2(
+                    finalComposer.writeBuffer.width,
+                    finalComposer.writeBuffer.height
+                  );
+              };
+
+              // record in resize event
+              game.frame3DPlanar.on(
+                udviz.frame3d.Base.EVENT.RESIZE,
+                updateResize
+              );
+
+              // resize event to init
+              game.frame3DPlanar.onResize();
+
+              // define the custom render pass
+              const customRender = function () {
+                edgeDetectionComposer.reset(renderTargetFX);
+                finalComposer.reset();
+                edgeDetectionComposer.render();
+                finalComposer.render();
+              };
+
+              // set the custom render pass
+              game.frame3DPlanar.setRender(customRender);
+            });
+
+            // /// ADD LAYERS
+            {
+              frame3DPlanar.itownsView.addLayer(
+                new udviz.itowns.ColorLayer(
+                  configs['base_maps'][0]['layer_name'],
+                  {
+                    updateStrategy: {
+                      type: udviz.itowns.STRATEGY_DICHOTOMY,
+                      options: {},
+                    },
+                    source: new udviz.itowns.WMSSource({
+                      extent: extent,
+                      name: configs['base_maps'][0]['name'],
+                      url: configs['base_maps'][0]['url'],
+                      version: configs['base_maps'][0]['version'],
+                      crs: extent.crs,
+                      format: configs['base_maps'][0]['format'],
+                    }),
+                    transparent: true,
+                  }
+                )
+              );
+
+              configs['geoJSONs'].forEach((layerConfig) => {
+                frame3DPlanar.itownsView.addLayer(
+                  new udviz.itowns.ColorLayer(layerConfig.id, {
+                    name: layerConfig.id,
+                    transparent: true,
+                    source: new udviz.itowns.FileSource({
+                      url: layerConfig.url,
+                      crs: extent.crs,
+                      format: 'application/json',
+                    }),
+                    style: new udviz.itowns.Style(layerConfig.style),
+                  })
+                );
+              });
+
+              configs['3DTiles'].forEach((layerConfig) => {
+                udviz.itowns.View.prototype.addLayer.call(
+                  frame3DPlanar.itownsView,
+                  new udviz.itowns.C3DTilesLayer(
+                    layerConfig['id'],
+                    {
+                      name: layerConfig['id'],
+                      source: new udviz.itowns.C3DTilesSource({
+                        url: layerConfig['url'],
+                      }),
+                    },
+                    frame3DPlanar.itownsView
+                  )
+                );
+              });
+
+              const isTextureFormat =
+                configs['elevation']['format'] == 'image/jpeg' ||
+                configs['elevation']['format'] == 'image/png';
+              frame3DPlanar.itownsView.addLayer(
+                new udviz.itowns.ElevationLayer(
+                  configs['elevation']['layer_name'],
+                  {
+                    useColorTextureElevation: isTextureFormat,
+                    colorTextureElevationMinZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMinZ']
+                      : null,
+                    colorTextureElevationMaxZ: isTextureFormat
+                      ? configs['elevation']['colorTextureElevationMaxZ']
+                      : null,
+                    source: new udviz.itowns.WMSSource({
+                      extent: extent,
+                      url: configs['elevation']['url'],
+                      name: configs['elevation']['name'],
+                      crs: extent.crs,
+                      heightMapWidth: 256,
+                      format: configs['elevation']['format'],
+                    }),
+                  }
+                )
+              );
+            }
+          });
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

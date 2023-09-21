@@ -1,0 +1,29 @@
+{
+  "name": "@ud-viz/frame3d",
+  "version": "3.2.0",
+  "description": "wrapper of a THREE scene + camera + renderer allowing to add dom element 3D",
+  "main": "src",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config=../../webpack.config.js",
+    "build-dev": "cross-env NODE_ENV=development webpack --config=../../webpack.config.js",
+    "test": "node ../../bin/browserTest.js ./test",
+    "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/frame3d",
+  "peerDependencies": {
+    "@ud-viz/utils_browser": "3.2.0",
+    "itowns": "2.40.0",
+    "three": "0.154.0"
+  }
+}

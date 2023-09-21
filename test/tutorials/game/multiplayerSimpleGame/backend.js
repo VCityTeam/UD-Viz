@@ -1,23 +1,24 @@
 /** @file It illustrates backend implementations of a this tutorial {@link game} */
 
-const udvizNode = require('@ud-viz/node');
-const { Game } = require('@ud-viz/shared');
+const { SocketService } = require('@ud-viz/game_node');
+const { Object3D } = require('@ud-viz/game_shared');
+const express = require('express');
 const path = require('path');
-const Constant = require('../../../../bin/Constant');
+const { DEFAULT_PORT, MESSAGE } = require('../../../../bin/constant');
 
 console.log('Run backend simple game');
 
-const app = udvizNode.express();
-app.use(udvizNode.express.static('.'));
+const app = express();
+app.use(express.static('.'));
 
-const httpServer = app.listen(Constant.DEFAULT_PORT, function () {
-  console.log(`app listening on port ${Constant.DEFAULT_PORT}!`);
+const httpServer = app.listen(DEFAULT_PORT, function () {
+  console.log(`app listening on port ${DEFAULT_PORT}!`);
 });
 
 // initialize examples game socket service
-const gameSocketService = new udvizNode.Game.SocketService(httpServer);
+const gameSocketService = new SocketService(httpServer);
 
-const gameObject3D = new Game.Object3D({
+const gameObject3D = new Object3D({
   static: true,
   components: {
     GameScript: {
@@ -35,5 +36,5 @@ gameSocketService
     path.resolve(__dirname, './gameThreadChild.js')
   )
   .then(() => {
-    if (process.send) process.send(Constant.MESSAGE.READY);
+    if (process.send) process.send(MESSAGE.READY);
   });

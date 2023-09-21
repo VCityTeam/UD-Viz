@@ -4,11 +4,13 @@
  *
  * Add a loading screen which add itself to document.body then remove it self when view layer initialize event it fires
  *
- * @param {udvizBrowser.itowns.PlanarView} view - itowns view
+ * @param {udviz.itowns.PlanarView} view - itowns view
  * @param {Array<string>} labels - array of label to display
  */
 // eslint-disable-next-line no-unused-vars
 const loadingScreen = function (view, labels) {
+  const udviz = window.udviz;
+
   const root = document.createElement('div');
   root.classList.add('loading_screen');
   document.body.appendChild(root);
@@ -43,13 +45,13 @@ const loadingScreen = function (view, labels) {
       root.addEventListener('transitionend', () => root.remove());
     }
     view.removeEventListener(
-      udvizBrowser.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
+      udviz.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
       removeLoadingScreen
     );
   };
 
   view.addEventListener(
-    udvizBrowser.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
+    udviz.itowns.VIEW_EVENTS.LAYERS_INITIALIZED,
     removeLoadingScreen
   );
 

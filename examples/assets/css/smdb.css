@@ -1,0 +1,26 @@
+.smdb {
+  overflow-y: scroll;
+  max-width: 300px;
+  height: 100%;
+  background-color: aliceblue;
+  position: absolute;
+  z-index: 2;
+}
+
+.smdb img {
+  width: 100%;
+  height: 100%;
+}
+
+.smdb li,
+button {
+  cursor: pointer;
+}
+
+.visualizer {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

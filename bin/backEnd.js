@@ -4,18 +4,26 @@
  * The behavior adapts based on the environment mode (NODE_ENV) inject in process.env with cross-env package.
  * See {@link https://nodejs.org/api/process.html#processenv-env}, {@link https://www.npmjs.com/package/cross-env}
  *
- * requires {@link https://www.npmjs.com/package/@ud-viz/node}
- * requires {@link https://www.npmjs.com/package/@ud-viz/shared}
+ * requires {@link https://www.npmjs.com/package/@ud-viz/game_node}
+ * requires {@link https://www.npmjs.com/package/@ud-viz/utils_shared}
  * requires {@link https://www.npmjs.com/package/reload}
  * requires {@link https://www.npmjs.com/package/string-replace-middleware}
  */
 
-const udvizNode = require('@ud-viz/node');
 const udvizVersion = require('../package.json').version;
-const { Game } = require('@ud-viz/shared');
-const Constant = require('./Constant');
+
+const path = require('path');
+const { MESSAGE, RELOAD_PORT, DEFAULT_PORT } = require('./constant');
 const reload = require('reload');
 const { stringReplace } = require('string-replace-middleware');
+const express = require('express');
+const { SocketService } = require('@ud-viz/game_node');
+const { NoteGameManager } = require('@ud-viz/game_node_template');
+const { Object3D } = require('@ud-viz/game_shared');
+const {
+  NativeCommandManager,
+  constant,
+} = require('@ud-viz/game_shared_template');
 
 /**
  * The environment mode.
@@ -24,27 +32,20 @@ const { stringReplace } = require('string-replace-middleware');
  */
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-/**
- * The runtime mode determined by the environment.
- *
- * @type {string}
- */
-const runMode = NODE_ENV === 'production' ? 'release' : 'debug';
-
-console.log('Back-end starting in', runMode, 'mode');
+console.log('Back-end starting in', NODE_ENV, 'mode');
 
 /**
  * Express application instance.
  *
  * @type {object}
  */
-const app = new udvizNode.express();
+const app = new express();
 
 // Apply string replacements for different values in HTML responses
 app.use(
   stringReplace(
     {
-      RUN_MODE: runMode,
+      RUN_MODE: NODE_ENV,
     },
     {
       contentTypeFilterRegexp: /text\/html/,
@@ -56,7 +57,7 @@ app.use(
   stringReplace(
     {
       SCRIPT_TAG_RELOAD:
-        runMode == 'debug' ? '<script src="/reload/reload.js"></script>' : '',
+        NODE_ENV == 'debug' ? '<script src="/reload/reload.js"></script>' : '',
     },
     {
       contentTypeFilterRegexp: /text\/html/,
@@ -76,41 +77,41 @@ app.use(
 );
 
 // Serve static files
-app.use(udvizNode.express.static('./'));
+app.use(express.static(path.resolve(__dirname, '../')));
 
 /**
  * The HTTP server instance.
  *
  * @type {object}
  */
-const httpServer = app.listen(Constant.DEFAULT_PORT, (err) => {
+const httpServer = app.listen(DEFAULT_PORT, (err) => {
   if (err) {
     console.error('Server could not start');
     return;
   }
-  console.log('Http server listening on port', Constant.DEFAULT_PORT);
+  console.log('Http server listening on port', DEFAULT_PORT);
 });
 
 // Initialize examples game socket service
-const gameSocketService = new udvizNode.Game.SocketService(httpServer);
+const gameSocketService = new SocketService(httpServer);
 gameSocketService
   .loadGameThreads(
     [
       // Define the game thread
-      new Game.Object3D({
+      new Object3D({
         name: 'Note Game',
         static: true,
         components: {
           GameScript: {
             idScripts: [
-              udvizNode.Game.ScriptTemplate.NoteGameManager.ID_SCRIPT,
-              Game.ScriptTemplate.NativeCommandManager.ID_SCRIPT,
+              NoteGameManager.ID_SCRIPT,
+              NativeCommandManager.ID_SCRIPT,
             ],
           },
           ExternalScript: {
             idScripts: [
-              Game.ScriptTemplate.Constants.ID_SCRIPT.NoteUI,
-              Game.ScriptTemplate.Constants.ID_SCRIPT.CameraManager,
+              constant.ID_SCRIPT.NOTE_UI,
+              constant.ID_SCRIPT.CAMERA_MANAGER,
             ],
           },
         },
@@ -122,7 +123,7 @@ gameSocketService
     console.log('Game SocketService initialized');
     // Notify parent process if possible
     if (process.send) {
-      process.send(Constant.MESSAGE.READY);
+      process.send(MESSAGE.READY);
     }
-    reload(app, { port: Constant.RELOAD_PORT });
+    reload(app, { port: RELOAD_PORT });
   });

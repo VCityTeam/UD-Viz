@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Application show room example</title>
+    <title>show_room</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
-    <link rel="stylesheet" href="./assets/css/show_room.css" />
-    <link rel="stylesheet" href="./assets/css/loadingScreen.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
   </head>
   <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/loadingScreen.js"></script>
-    <script src="../packages/browser/dist/RUN_MODE/bundle.js"></script>
-    <script src="./assets/js/ShowRoom.js"></script>
     <script src="./assets/js/libs/showdown.min.js"></script>
 
     <script type="text/javascript">
-      udvizBrowser
+      const udviz = window.udviz;
+
+      udviz
         .loadMultipleJSON([
           './assets/config/assetManager.json',
           './assets/config/extents.json',
@@ -33,12 +33,12 @@
           './assets/config/layer/labels.json',
         ])
         .then((configs) => {
-          udvizBrowser.proj4.default.defs(
+          udviz.proj4.default.defs(
             configs['crs'][0].name,
             configs['crs'][0].transform
           );
 
-          const extent = new udvizBrowser.itowns.Extent(
+          const extent = new udviz.itowns.Extent(
             configs['extents'][0].name,
             parseInt(configs['extents'][0].west),
             parseInt(configs['extents'][0].east),
@@ -46,16 +46,18 @@
             parseInt(configs['extents'][0].north)
           );
 
-          const app = new ShowRoom(
+          const app = new udviz.showRoom.ShowRoom(
             extent,
-            configs['frame3D_planars'][2],
+            configs['frame3D_planars'][1],
             'UDVIZ_VERSION'
           );
 
-          loadingScreen(app.frame3DPlanar.itownsView, [
-            'UD-VIZ',
-            'UDVIZ_VERSION',
-          ]);
+          // eslint-disable-next-line no-constant-condition
+          if ('RUN_MODE' == 'production')
+            loadingScreen(app.frame3DPlanar.itownsView, [
+              'UD-VIZ',
+              'UDVIZ_VERSION',
+            ]);
 
           app.addLayers({
             $3DTiles: configs['3DTiles'],
@@ -71,11 +73,6 @@
             './assets/img/logo/logo-liris.png',
             './assets/img/logo/logo-univ-lyon.png',
           ]);
-
-          app.addWidgetAuthentication(
-            configs['spatial_multimedia_db_server'],
-            './assets/svg/user-solid.svg'
-          );
 
           app.addURLButton('./assets/img/icons/link.png');
 
@@ -120,7 +117,7 @@
             './assets/svg/geocoding.svg'
           );
 
-          app.addWidgetDocument(
+          app.addWidgetSMDB(
             configs['spatial_multimedia_db_server'],
             './assets/svg/documents.svg'
           );
@@ -147,7 +144,7 @@
             './assets/svg/sparqlModule.svg'
           );
 
-          const assetManager = new udvizBrowser.AssetManager();
+          const assetManager = new udviz.gameBrowser.AssetManager();
           assetManager.loadFromConfig(configs['assetManager']).then(() => {
             app.addDragAndDropAvatar(
               './assets/svg/user-solid.svg',

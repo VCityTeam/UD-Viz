@@ -1,0 +1,8 @@
+.widget_camera_positioner {
+  background-color: #313336bb;
+  width: fit-content;
+  display: table-caption;
+  color: white;
+  position: absolute;
+  z-index: 5;
+}

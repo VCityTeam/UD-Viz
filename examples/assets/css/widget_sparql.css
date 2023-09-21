@@ -1,0 +1,7 @@
+.widget_sparql {
+  background-color: #313336bb;
+  width: fit-content;
+  color: white;
+  z-index: 5;
+  position: absolute;
+}

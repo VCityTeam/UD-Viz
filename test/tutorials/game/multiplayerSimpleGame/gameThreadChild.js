@@ -1,7 +1,7 @@
-const { Child } = require('@ud-viz/node/src/Game/Thread');
-const { Game } = require('@ud-viz/shared/src');
+const { thread } = require('@ud-viz/game_node');
+const { ScriptBase, Object3D } = require('@ud-viz/game_shared');
 
-const GameContextScript = class extends Game.ScriptBase {
+const GameContextScript = class extends ScriptBase {
   init() {
     console.log('hello from game context');
 
@@ -9,7 +9,7 @@ const GameContextScript = class extends Game.ScriptBase {
     this.pause = false;
     setInterval(() => {
       if (this.pause) return;
-      const newGOCube = new Game.Object3D({
+      const newGOCube = new Object3D({
         components: {
           Render: {
             idRenderData: 'cube',
@@ -30,7 +30,6 @@ const GameContextScript = class extends Game.ScriptBase {
   }
 
   tick() {
-
     if (this.pause) return;
 
     for (let index = this.goCubes.length - 1; index >= 0; index--) {
@@ -50,5 +49,5 @@ const GameContextScript = class extends Game.ScriptBase {
   }
 };
 
-const child = new Child();
+const child = new thread.Child();
 child.start([GameContextScript]);
