@@ -101,9 +101,12 @@ export class MultiPlanarProcess {
 
   /**
    * Start game communication with server
+   *
+   * @param {object} options - options
+   * @param {string} options.entryGameObject3DUUID - uuid of the game object3D to connect with SocketService
    */
-  start() {
-    this.externalGameContext.sendCommandToGameContext = (cmds) => {
+  start(options = {}) {
+    this.externalGameContext.sendCommandsToGameContext = (cmds) => {
       this.socketIOWrapper.emit(constant.WEBSOCKET.MSG_TYPE.COMMANDS, cmds);
     };
 
@@ -170,6 +173,9 @@ export class MultiPlanarProcess {
       this.interpolator.onNewDiff(new StateDiff(diff));
     });
 
-    this.socketIOWrapper.emit(constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME);
+    this.socketIOWrapper.emit(
+      constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME,
+      options.entryGameObject3DUUID
+    );
   }
 }

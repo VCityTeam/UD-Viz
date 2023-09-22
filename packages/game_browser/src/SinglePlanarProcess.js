@@ -124,7 +124,7 @@ export class SinglePlanarProcess {
         });
 
         // indicate to the external context how to send command to gamecontext (could be with websocket)
-        this.externalGameContext.sendCommandToGameContext = (cmds) => {
+        this.externalGameContext.sendCommandsToGameContext = (cmds) => {
           this.gameContext.onCommands(cmds);
         };
 

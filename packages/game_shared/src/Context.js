@@ -534,9 +534,7 @@ const Context = class {
    * @param {Array} args - Params to passed to listeners
    */
   dispatch(eventID, args) {
-    if (!this.listeners[eventID]) {
-      console.warn('no listener on event ', eventID);
-    } else {
+    if (this.listeners[eventID]) {
       this.listeners[eventID].forEach(function (cb) {
         cb(args);
       });

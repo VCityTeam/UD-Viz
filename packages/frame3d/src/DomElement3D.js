@@ -16,17 +16,15 @@ const BLANK_MATERIAL = new THREE.MeshBasicMaterial({
 });
 
 /** @class */
-export class DomElement3D {
+export class DomElement3D extends THREE.Object3D {
   /**
    * Composed of a {@link CSS3DObject} containing html and a {@link THREE.Object3D} superposing each other
    *
    * @param {HTMLElement} domElement - dom element
-   * @param {THREE.Vector3} position - position in world referential
-   * @param {THREE.Vector3} rotation - rotation in world referential
-   * @param {THREE.Vector3} scale - scale in world referential
-   * @param {number} [scalar=1] - increase size of html element
    */
-  constructor(domElement, position, rotation, scale, scalar = 1) {
+  constructor(domElement) {
+    super();
+
     /**
      * uuid
      *
@@ -39,41 +37,18 @@ export class DomElement3D {
       @type {HTMLElement} */
     this.domElement = domElement;
 
-    // scale html size
-    this.domElement.style.width = scalar * scale.x + 'px';
-    this.domElement.style.height = scalar * scale.y + 'px';
-
-    // initialize css3Dobject
-    const newElement = new CSS3DObject(this.domElement);
-    newElement.position.copy(position);
-    newElement.rotation.setFromVector3(rotation);
-
-    const css3DScale = scale.clone();
-    css3DScale.x *= 1 / scalar;
-    css3DScale.y *= 1 / scalar;
-    css3DScale.z *= 1 / scalar;
-
-    newElement.scale.copy(css3DScale);
-
     /**
      * css3D object
      *
       @type {CSS3DObject}  */
-    this.css3DObject = newElement;
-
-    // initiliaze THREE.Object3D (mask)
-    const geometry = new THREE.PlaneGeometry(scale.x, scale.y);
-    const plane = new THREE.Mesh(geometry, BLANK_MATERIAL);
-    plane.position.copy(position);
-    plane.rotation.setFromVector3(rotation);
-    plane.scale.copy(scale);
-    plane.updateMatrixWorld();
+    this.css3DObject = new CSS3DObject(this.domElement);
 
     /**
      * mask superposing css3DObject
      *
       @type {THREE.Object3D} */
-    this.maskObject = plane;
+    this.maskObject = new THREE.Mesh(new THREE.PlaneGeometry(), BLANK_MATERIAL);
+    this.add(this.maskObject);
 
     /**
      * selected (css style is different if true or false)
@@ -81,6 +56,28 @@ export class DomElement3D {
       @type {boolean} */
     this.isSelected = false;
     this.select(this.isSelected);
+  }
+
+  updateMatrixWorld(...args) {
+    super.updateMatrixWorld(...args);
+
+    const worldPosition = new THREE.Vector3();
+    const worldQuaternion = new THREE.Quaternion();
+    const worldScale = new THREE.Vector3();
+
+    this.maskObject.matrixWorld.decompose(
+      worldPosition,
+      worldQuaternion,
+      worldScale
+    );
+
+    // update also css element
+    this.css3DObject.position.copy(worldPosition);
+    this.css3DObject.quaternion.copy(worldQuaternion);
+
+    // TODO : understand how this is working
+    this.domElement.style.width = (worldScale.x * 39) / 500 + '%'; // 41 600
+    this.domElement.style.height = (worldScale.y * 50) / 500 + '%'; // 67 600
   }
 
   /**
@@ -95,15 +92,5 @@ export class DomElement3D {
     } else {
       this.domElement.style.filter = 'grayscale(100%)';
     }
-  }
-
-  /**
-   * Optionally, the x, y and z components of the world space position. Rotates the object to face a point in world space. This method does not support objects having non-uniformly-scaled parent(s).
-   *
-   * @param {THREE.Vector3} vector - vector to lookAt
-   */
-  lookAt(vector) {
-    this.maskObject.lookAt(vector);
-    this.css3DObject.lookAt(vector);
   }
 }

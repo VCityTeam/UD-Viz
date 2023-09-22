@@ -8,13 +8,7 @@
     const frame3DBase = new udviz.frame3d.Base();
     console.log('frame3DBase initialized');
 
-    const el = new udviz.frame3d.DomElement3D(
-      document.createElement('div'),
-      new udviz.THREE.Vector3(),
-      new udviz.THREE.Vector3(),
-      new udviz.THREE.Vector3(),
-      10
-    );
+    const el = new udviz.frame3d.DomElement3D(document.createElement('div'));
 
     frame3DBase.appendDomElement3D(el);
     frame3DBase.removeDomElement3D(el);

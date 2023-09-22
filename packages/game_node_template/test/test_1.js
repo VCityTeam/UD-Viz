@@ -1,4 +1,4 @@
-const { Map, NoteGameManager } = require('../src/index');
+const { Map, NoteManager } = require('../src/index');
 
 const { Object3D } = require('@ud-viz/game_shared');
 const { SocketService } = require('@ud-viz/game_node');
@@ -12,7 +12,7 @@ service.loadGameThreads(
     new Object3D({
       components: {
         GameScript: {
-          idScripts: [Map.ID_SCRIPT, NoteGameManager.ID_SCRIPT],
+          idScripts: [Map.ID_SCRIPT, NoteManager.ID_SCRIPT],
           variables: {
             clientFolder: path.resolve(__dirname, './assets/'),
             heightmap_path: './heightmap.jpeg',

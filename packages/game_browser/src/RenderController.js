@@ -33,10 +33,10 @@ export class RenderController extends Controller {
       this.renderData = this.assetManager.createRenderData(
         this.model.getIdRenderData()
       );
-      const animations = this.renderData.getAnimations();
+      const animations = this.renderData.animations;
       if (animations && animations.length) {
         this.animationMixer = new THREE.AnimationMixer(
-          this.renderData.getObject3D()
+          this.renderData.object3D
         );
         animations.forEach((animClip) => {
           const action = this.animationMixer.clipAction(animClip);
@@ -48,7 +48,7 @@ export class RenderController extends Controller {
     }
 
     // register in parent
-    this.object3D.add(this.renderData.getObject3D());
+    this.object3D.add(this.renderData.object3D);
 
     // update color
     this.setColor(this.model.getColor());
@@ -60,7 +60,7 @@ export class RenderController extends Controller {
    * @param {THREE.Object3D} obj - object3D to add
    */
   addObject3D(obj) {
-    this.renderData.getObject3D().add(obj);
+    this.renderData.object3D.add(obj);
     this.setColor(this.model.getColor());
   }
 
@@ -69,7 +69,7 @@ export class RenderController extends Controller {
    * @returns {THREE.Object3D} - object3D controller
    */
   getObject3D() {
-    return this.renderData.getObject3D();
+    return this.renderData.object3D;
   }
 
   /**
@@ -85,7 +85,7 @@ export class RenderController extends Controller {
     this.model.setColor(color);
     // update color in the controller attributes
     const threeColor = new THREE.Color().fromArray(color);
-    this.renderData.getObject3D().traverse((child) => {
+    this.renderData.object3D.traverse((child) => {
       if (child.material) {
         child.material.color = threeColor;
         if (alpha < 1) {

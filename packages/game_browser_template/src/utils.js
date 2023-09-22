@@ -9,10 +9,14 @@ import * as THREE from 'three';
  *
  * @param {THREE.Object3D} object3D - object3D
  * @param {itowns.TiledGeometryLayer} tileLayer - tile layer used to compute elevation
- * @param {string} crs - coordinates referential system
+ * @param {string} [crs=EPSG:3946] - coordinates referential system
  * @returns {number} - relative elevation
  */
-export function computeRelativeElevationFromGround(object3D, tileLayer, crs) {
+export function computeRelativeElevationFromGround(
+  object3D,
+  tileLayer,
+  crs = 'EPSG:3946'
+) {
   const parentGOWorldPos = new THREE.Vector3();
   object3D.parent.matrixWorld.decompose(
     parentGOWorldPos,

@@ -37,5 +37,6 @@ module.exports = {
     NOTE_ELEMENT: 'note_element_id',
     NOTE_SOCKET_SERVICE: 'note_socket_service_id',
     NOTE_UI: 'note_ui_id',
+    AVATAR_JITSI: 'avatar_jitsi_id',
   },
 };

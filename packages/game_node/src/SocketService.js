@@ -95,7 +95,8 @@ const SocketService = class {
     const promises = [];
 
     // default gameobject3D when socket connect
-    this.entryGameObject3DUUID = entryGameObject3DUUID || gameObjects3D[0].uuid;
+    this.defaultEntryGameObject3DUUID =
+      entryGameObject3DUUID || gameObjects3D[0].uuid;
 
     gameObjects3D.forEach((gameObject3D) => {
       this.threads[gameObject3D.uuid] = new Parent(threadProcessPath);
@@ -128,25 +129,29 @@ const SocketService = class {
     this.socketWrappers[socket.id] = socketWrapper; // register
 
     // wait for client to be ready for game
-    socket.on(constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME, () => {
-      if (!this.threads[this.entryGameObject3DUUID]) {
-        console.warn('no thread');
-        return;
+    socket.on(
+      constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME,
+      (entryGameObject3DUUID) => {
+        entryGameObject3DUUID =
+          entryGameObject3DUUID || this.defaultEntryGameObject3DUUID;
+
+        if (!this.threads[entryGameObject3DUUID]) {
+          console.warn('no thread');
+          return;
+        }
+
+        // apply promises
+        const promises = [];
+        this.socketReadyForGamePromises.forEach((c) => {
+          const p = c(socketWrapper, this.threads[entryGameObject3DUUID]);
+          if (p) promises.push(p);
+        });
+
+        Promise.all(promises).then(() => {
+          this.threads[entryGameObject3DUUID].addSocketWrapper(socketWrapper);
+        });
       }
-
-      // apply promises
-      const promises = [];
-      this.socketReadyForGamePromises.forEach((c) => {
-        const p = c(socketWrapper, this.threads[this.entryGameObject3DUUID]);
-        if (p) promises.push(p);
-      });
-
-      Promise.all(promises).then(() => {
-        this.threads[this.entryGameObject3DUUID].addSocketWrapper(
-          socketWrapper
-        );
-      });
-    });
+    );
 
     socket.on('disconnect', () => {
       console.log('socket', socket.id, 'disconnected');
