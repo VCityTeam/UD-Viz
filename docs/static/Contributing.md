@@ -16,7 +16,7 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 ## Submitting an issue
 
 - Create an issue with explicit name and a description
-- Add at least one label of task category, priority and related component (package, widget...)
+- Add at least one label of task category, priority and related package
 - If it's a bug report add steps to reproduce.
 
 ## Submiting Pull Request (PR)
@@ -26,13 +26,16 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 - Commit (`git commit`) with representative messages (commit messages end-up collected in the PR message and eventually release explanations).
 - Make sure your code is mature for a review.
 - `git rebase origin/master`, in order to resolve merge conflicts to master. Doc : [git-rebase](https://git-scm.com/docs/git-rebase). If you are not able to resolve all of the conflicts of your rebase, please open a new [discussion](https://github.com/VCityTeam/UD-Viz/discussions).
-- `npm run assert-code` must finish with no errors.
+ > note that after a `git rebase` you have to `git push --force`
+- `npm run eslint` must finish with no errors.
+- `npm run test-unit` must finish with no errors.
+- `npm run test-functional` must finish with no errors.
 - `npm audit` must finish without vulnerabilities lower than _high_.
-- `npm run validate-links` must finish with no errors.
+- `npm run test-links` must finish with no errors.
 
 ⚠️ When your PR is open each push on your branch will trigger Travis CI jobs.
 
-> `npm run assert-code` will `npm run eslint` and `npm run test`. Also ran by CI. See [here](./Developers.md#npm-scripts) for more information.
+> See [here](./Developers.md#npm-scripts) for more information.
 
 Before submitting a pull request, and because [UD-Viz still misses some tests](https://github.com/VCityTeam/UD-SV/issues/34),
 **non-regression testing must be done manually**.

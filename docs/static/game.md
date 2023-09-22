@@ -5,7 +5,7 @@ This document gives an overview of how the game part works. Here are some differ
 ## Prerequisites
 
 - Run a back-end in node.js with express. See [MDN DOC](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction).
-- See [here](./how_to_import.md) how to import @ud-viz/game_browser framework.
+- See [here](./how_to_import.md) how to import `@ud-viz/game_browser` framework.
 
 ## Creating a singleplayer simple game 
 
@@ -13,7 +13,7 @@ The goal of this section is to learn how to set a singleplayer simple game struc
 
 **Create a scene**
 
-Initialize a `Planar` part of @ud-viz/frame3d which creates a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
+Initialize a `Planar` part of `@ud-viz/frame3d` which creates a [itowns PlanarView](http://www.itowns-project.org/itowns/docs/#api/View/PlanarView).
 
 ```js
 // Define geographic extent: CRS, min/max X, min/max Y
@@ -33,7 +33,7 @@ const frame3DPlanar = new frame3d.Planar(extent, {
 
 **Create a `SinglePlanarProcess`**
 
-Initialize a `SinglePlanarProcess` with a `AssetManager` and a `InputManager` part of @ud-viz/game_browser, an `Object3D` part of @ud-viz/game_shared defines your game model and `SinglePlanarProcess` is stepping your game over time.
+Initialize a `SinglePlanarProcess` with a `AssetManager` and a `InputManager` part of `@ud-viz/game_browser`, an `Object3D` part of `@ud-viz/game_shared` defines your game model and `SinglePlanarProcess` is stepping your game over time.
 
 ```js
 const gameObject3D = new Object3D({
@@ -52,7 +52,7 @@ game.start();
 
 **Add two types of script to your `Object3D`**
 
-A game is composed of two contexts `Context` (handle collisions, add/remove gameobject3D, process commands, trigger `ScriptBase` event, ...) part of @ud-viz/game_shared and `Context` (handle rendering, inputs of user, audio, trigger `ScriptBase` event, ...) part of @ud-viz/game_browser
+A game is composed of two contexts `Context` (handle collisions, add/remove gameobject3D, process commands, trigger `ScriptBase` event, ...) part of `@ud-viz/game_shared` and `Context` (handle rendering, inputs of user, audio, trigger `ScriptBase` event, ...) part of `@ud-viz/game_browser`
 
 >The game part is divided into two context to handle a multiplayer game. Typically the game external context is running on the client side and the game context is running on the server side. In this example both context are running on the client side (ie your web browser) 
 
@@ -160,7 +160,7 @@ this.context.inputManager.addMouseCommand(
 );
 ```
 
-> `Command` is part of @ud-viz/game_shared
+> `Command` is part of `@ud-viz/game_shared`
 
 This sends a command on the mouse click to  GameContextScript. Then in the `init` of `GameContextScript` add these lines:
 
@@ -226,10 +226,10 @@ Singleplayer one:
 * [game drag and drop avatar](../../examples/game_drag_and_drop_avatar.html)
 * [game avatar shared](../../examples/game_avatar_shader.html)
 
-This example requires knowledge about [@ud-viz/game_shared](../../packages/game_shared/Readme.md) and [@ud-viz/game_browser](../../packages/game_browser/Readme.md)
+This example requires knowledge about [`@ud-viz`/game_shared](../../packages/game_shared/Readme.md) and [`@ud-viz`/game_browser](../../packages/game_browser/Readme.md)
 
 Multiplayer one:
 
 * [game note](../../examples/game_note.html)
 
-This example requires the same knowledge as singleplayer plus [@ud-viz/game_node](../../packages/game_node/Readme.md)
+This example requires the same knowledge as singleplayer plus [`@ud-viz`/game_node](../../packages/game_node/Readme.md)

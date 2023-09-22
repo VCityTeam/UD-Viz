@@ -10,7 +10,7 @@ To **generate** the documentation :
 git clone https://github.com/VCityTeam/UD-Viz.git
 cd UD-Viz
 npm install
-npm run host # This command serve local doc at http://localhost:8000/docs/html/
+npm run back-end # This command serve local doc at http://localhost:8000/docs/html/
 npm run docs # Generate doc
 ```
 
@@ -22,4 +22,4 @@ The produced documentation should be in the [docs/html](./html/) repository.
 
 To document source code, refer to [JSDOC](https://jsdoc.app/) syntax. You can run `npm run dev-docs` command to regenerate documentation each time you change packages' sources.
 
-To document everything else (application behavior, add diagrams, etc...), simply add them to the [static](./static/) directory. See [jsdoc-tutorials](https://jsdoc.app/about-tutorials.html) for more information.
+To document everything else (diagrams, tutorials, etc...), simply add them to the [static](./static/) directory. See [jsdoc-tutorials](https://jsdoc.app/about-tutorials.html) for more information.
