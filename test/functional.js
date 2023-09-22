@@ -71,7 +71,11 @@ const main = async function () {
       gameBackEndFork.on('message', async (backEndMessage) => {
         if (backEndMessage == MESSAGE.READY) {
           // test front end
-          await test.html('./test/tutorials/game', DEFAULT_PORT);
+          await test
+            .html('./test/tutorials/game', DEFAULT_PORT)
+            .catch((error) => {
+              throw error;
+            });
           resolve();
         }
       });
