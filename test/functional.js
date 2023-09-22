@@ -38,8 +38,12 @@ const main = async function () {
         if (message == MESSAGE.READY) {
           console.log('Back-end is ready');
           // index.html
-          await test.html('.', DEFAULT_PORT);
-          await test.html('./examples', DEFAULT_PORT);
+          await test.html('.', DEFAULT_PORT).catch((error) => {
+            throw error;
+          });
+          await test.html('./examples', DEFAULT_PORT).catch((error) => {
+            throw error;
+          });
           resolve();
         }
       });
