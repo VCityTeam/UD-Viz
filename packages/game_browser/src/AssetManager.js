@@ -122,7 +122,7 @@ export class AssetManager {
   initNativeRenderData() {
     const geometryBox = new THREE.BoxGeometry();
     const cube = new THREE.Mesh(geometryBox, DEFAULT_MATERIAL);
-    this.renderData['cube'] = new RenderData(cube);
+    this.renderData['cube'] = new RenderData(cube, { anchor: 'center_min' });
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
     const sphere = new THREE.Mesh(geometrySphere, DEFAULT_MATERIAL);
@@ -361,14 +361,6 @@ export class RenderData {
     this.object3D.name = childObject3D.name + '_set_up_';
 
     this.animations = animations;
-  }
-
-  getObject3D() {
-    return this.object3D;
-  }
-
-  getAnimations() {
-    return this.animations;
   }
 
   /**

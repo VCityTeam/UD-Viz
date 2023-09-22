@@ -69,7 +69,7 @@ export class SocketService extends ScriptBase {
 
       // edit name
       nameInput.onchange = () => {
-        this.context.sendCommandToGameContext([
+        this.context.sendCommandsToGameContext([
           new Command({
             type: constant.COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES,
             data: {
@@ -101,7 +101,7 @@ export class SocketService extends ScriptBase {
       this.domElement.appendChild(sphereScale);
 
       const sendCommandScale = (value) => {
-        this.context.sendCommandToGameContext([
+        this.context.sendCommandsToGameContext([
           new Command({
             type: constant.COMMAND.UPDATE_TRANSFORM,
             data: {
@@ -177,7 +177,7 @@ export class SocketService extends ScriptBase {
           this.menuEditNote.domElement.remove();
           this.menuEditNote = null;
 
-          this.context.sendCommandToGameContext([
+          this.context.sendCommandsToGameContext([
             new Command({
               type: constant.COMMAND.ADD_NOTE,
               data: {

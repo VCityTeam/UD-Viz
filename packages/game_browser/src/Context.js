@@ -593,7 +593,7 @@ export class Context {
    *
    * @param {Command[]} cmds - commands to send to game context
    */
-  sendCommandToGameContext(cmds) {
+  sendCommandsToGameContext(cmds) {
     console.log(cmds, ' cant be sent');
     console.error('this method has to be implement in your app template');
   }
@@ -628,7 +628,10 @@ export class ScriptBase {
      *
       @type {Context}  */
     this.context = context;
-    /** object3D attach to this script@type {Object3D}  */
+    /**
+     * object3D attach to this script
+     * 
+     @type {Object3D}  */
     this.object3D = object3D;
     /**
      * custom variables attach to this script

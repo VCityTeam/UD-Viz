@@ -79,7 +79,7 @@ export class DragAndDropAvatar extends ScriptBase {
     this.leaveAvatarModeButton.onclick = () => {
       if (!this.avatar) return;
 
-      this.context.sendCommandToGameContext([
+      this.context.sendCommandsToGameContext([
         new Command({
           type: constant.COMMAND.REMOVE_AVATAR,
         }),
@@ -110,7 +110,7 @@ export class DragAndDropAvatar extends ScriptBase {
       );
 
       // add an avatar
-      this.context.sendCommandToGameContext([
+      this.context.sendCommandsToGameContext([
         new Command({
           type: constant.COMMAND.ADD_AVATAR,
           data: worldPosition.sub(this.context.object3D.position), // position in game context referential
@@ -133,7 +133,7 @@ export class DragAndDropAvatar extends ScriptBase {
   tick() {
     if (this.avatar) {
       // send Z_Update to game context
-      this.context.sendCommandToGameContext([
+      this.context.sendCommandsToGameContext([
         new Command({
           type: constant.COMMAND.UPDATE_TRANSFORM,
           data: {

@@ -75,7 +75,7 @@ export class Element extends ScriptBase {
       this.containerButtons.appendChild(deleteNoteButton);
 
       deleteNoteButton.onclick = () => {
-        this.context.sendCommandToGameContext([
+        this.context.sendCommandsToGameContext([
           new Command({
             type: constant.COMMAND.REMOVE_OBJECT3D,
             data: {

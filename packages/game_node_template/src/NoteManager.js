@@ -6,7 +6,7 @@ const THREE = require('three');
 /**
  * @classdesc note game manager (add/remove socket game object + add note)
  */
-module.exports = class NoteGameManager extends ScriptBase {
+module.exports = class NoteManager extends ScriptBase {
   init() {
     /**
      * sockets object3D connected

@@ -58,7 +58,7 @@
         }
 
         tick() {
-          this.context.sendCommandToGameContext([
+          this.context.sendCommandsToGameContext([
             new udviz.gameShared.Command({
               type: udviz.gameSharedTemplate.constant.COMMAND.UPDATE_TRANSFORM,
               data: {

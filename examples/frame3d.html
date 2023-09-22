@@ -130,14 +130,34 @@
           const iframe = document.createElement('iframe');
           iframe.src = './assets/html/billboard.html';
 
-          const domElement3D = new udviz.frame3d.DomElement3D(
-            iframe,
-            new udviz.THREE.Vector3(center.x, center.y, 600),
-            new udviz.THREE.Vector3(Math.PI * 0.5, -Math.PI * 1.7, 0),
-            new udviz.THREE.Vector3(20, 20, 20),
-            100
-          );
+          const domElement3D = new udviz.frame3d.DomElement3D(iframe);
+
+          domElement3D.rotation.set(Math.PI * 0.5, 0, 0);
+          domElement3D.position.set(center.x, center.y, 600);
+
           frame3DPlanar.appendDomElement3D(domElement3D);
+
+          const process = new udviz.RequestAnimationFrameProcess();
+          let currentDt = 0;
+          const duration = 10000;
+
+          process.start((dt) => {
+            currentDt += dt;
+            currentDt %= duration;
+            const ratio = currentDt / duration;
+
+            let size = -1;
+            if (ratio < 0.5) {
+              size = 50 * ratio + 2000 * (1 - ratio);
+            } else {
+              size = 2000 * ratio + 50 * (1 - ratio);
+            }
+            domElement3D.scale.set(size, size, size);
+
+            domElement3D.updateMatrixWorld();
+
+            frame3DPlanar.itownsView.notifyChange();
+          });
         });
     </script>
     SCRIPT_TAG_RELOAD

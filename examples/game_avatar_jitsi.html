@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>game note</title>
+    <title>game avatar jitsi</title>
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,7 +24,6 @@
           './assets/config/layer/3DTiles.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
-          './assets/config/layer/geoJSONs.json',
         ])
         .then((configs) => {
           const assetManager = new udviz.gameBrowser.AssetManager();
@@ -52,8 +51,7 @@
                 {
                   frame3DPlanarOptions: configs['frame3D_planars'][1],
                   externalGameScriptClass: [
-                    udviz.gameBrowserTemplate.CameraManager,
-                    udviz.gameBrowserTemplate.note,
+                    udviz.gameBrowserTemplate.AvatarJitsi,
                   ],
                   sceneConfig: configs['scene'],
                   gameOrigin: {
@@ -70,7 +68,15 @@
                   'UDVIZ_VERSION',
                 ]);
 
-              multiGame.start();
+              multiGame.start({
+                entryGameObject3DUUID: 'avatar_jitsi_game_uuid',
+              });
+
+              // DEBUG
+              udviz.localStorageSetCameraMatrix(
+                multiGame.frame3DPlanar.camera,
+                'debug_avatar_jitsi'
+              );
 
               // /// ADD LAYERS
               {
@@ -94,21 +100,6 @@
                     }
                   )
                 );
-
-                configs['geoJSONs'].forEach((layerConfig) => {
-                  multiGame.frame3DPlanar.itownsView.addLayer(
-                    new udviz.itowns.ColorLayer(layerConfig.id, {
-                      name: layerConfig.id,
-                      transparent: true,
-                      source: new udviz.itowns.FileSource({
-                        url: layerConfig.url,
-                        crs: extent.crs,
-                        format: 'application/json',
-                      }),
-                      style: new udviz.itowns.Style(layerConfig.style),
-                    })
-                  );
-                });
 
                 configs['3DTiles'].forEach((layerConfig) => {
                   udviz.itowns.View.prototype.addLayer.call(

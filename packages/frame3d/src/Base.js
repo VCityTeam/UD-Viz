@@ -286,11 +286,11 @@ export class Base {
   /**
    *
    * @param {DomElement3D} domElement3D - domElement3D to add in frame3D
+   * @param {THREE.Object3D} parent - parent of the maskElement
    */
-  appendDomElement3D(domElement3D) {
+  appendDomElement3D(domElement3D, parent = this.scene) {
     if (!this.css3DRenderer) this.initCSS3D();
-
-    this.scene.add(domElement3D.maskObject);
+    parent.add(domElement3D);
     this.css3DScene.add(domElement3D.css3DObject);
     this.domElement3DArray.push(domElement3D);
   }
@@ -300,9 +300,8 @@ export class Base {
    * @param {DomElement3D} domElement3D - domElement3D to remove
    */
   removeDomElement3D(domElement3D) {
-    this.scene.remove(domElement3D.maskObject);
+    domElement3D.parent.remove(domElement3D);
     this.css3DScene.remove(domElement3D.css3DObject);
-
     const index = this.domElement3DArray.indexOf(domElement3D);
     this.domElement3DArray.splice(index, 1);
   }

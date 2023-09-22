@@ -18,7 +18,10 @@ const reload = require('reload');
 const { stringReplace } = require('string-replace-middleware');
 const express = require('express');
 const { SocketService } = require('@ud-viz/game_node');
-const { NoteGameManager } = require('@ud-viz/game_node_template');
+const {
+  NoteManager,
+  AvatarJitsiManager,
+} = require('@ud-viz/game_node_template');
 const { Object3D } = require('@ud-viz/game_shared');
 const {
   NativeCommandManager,
@@ -57,7 +60,9 @@ app.use(
   stringReplace(
     {
       SCRIPT_TAG_RELOAD:
-        NODE_ENV == 'debug' ? '<script src="/reload/reload.js"></script>' : '',
+        NODE_ENV == 'development'
+          ? '<script src="/reload/reload.js"></script>'
+          : '',
     },
     {
       contentTypeFilterRegexp: /text\/html/,
@@ -99,20 +104,43 @@ gameSocketService
     [
       // Define the game thread
       new Object3D({
-        name: 'Note Game',
+        name: 'Note game',
         static: true,
         components: {
           GameScript: {
-            idScripts: [
-              NoteGameManager.ID_SCRIPT,
-              NativeCommandManager.ID_SCRIPT,
-            ],
+            idScripts: [NoteManager.ID_SCRIPT, NativeCommandManager.ID_SCRIPT],
           },
           ExternalScript: {
             idScripts: [
               constant.ID_SCRIPT.NOTE_UI,
               constant.ID_SCRIPT.CAMERA_MANAGER,
             ],
+          },
+        },
+      }),
+      new Object3D({
+        uuid: 'avatar_jitsi_game_uuid',
+        name: 'Avatar jitsi game',
+        static: true,
+        components: {
+          GameScript: {
+            idScripts: [
+              AvatarJitsiManager.ID_SCRIPT,
+              NativeCommandManager.ID_SCRIPT,
+            ],
+            variables: {
+              idRenderDataAvatar: 'cube',
+              domElement3D: {
+                position: { x: 0, y: 0.52, z: 0.5 },
+                rotation: { x: Math.PI * 0.5, y: Math.PI, z: 0 },
+                scale: { x: 1, y: 1, z: 1 },
+              },
+              defaultSpeedTranslate: 0.5,
+              defaultSpeedRotate: 0.001,
+            },
+          },
+          ExternalScript: {
+            idScripts: [],
           },
         },
       }),

@@ -1,4 +1,5 @@
 module.exports = {
   Map: require('./Map'),
-  NoteGameManager: require('./NoteGameManager'),
+  NoteManager: require('./NoteManager'),
+  AvatarJitsiManager: require('./AvatarJitsiManager'),
 };

@@ -237,10 +237,9 @@ class Child {
               });
 
               console.log(
-                'Child process ',
+                'child process',
                 this.gameContext.object3D.name,
-                ' initialized',
-                this.gameContext.object3D.uuid
+                'loaded'
               );
 
               this.dispatch(
