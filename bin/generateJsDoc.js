@@ -106,7 +106,7 @@ const generateArchitectureDoc = () => {
 
   fs.writeFileSync(
     filePath,
-    '# @ud-viz packages architecture\n\n<!-- <script src="./jsdoc-tuts-mermaid.js"></script> -->\n'
+    '# @ud-viz packages architecture\n\n<!-- <script src="../js/jsdoc-tuts-mermaid.js"></script> -->\n'
   );
 
   // mermaid graph generation
