@@ -53,14 +53,6 @@ export class GeocodingView {
   }
 
   /**
-   * Remove domElement and the meshes added in scene
-   */
-  dispose() {
-    this.domElement.remove();
-    this.removePins();
-  }
-
-  /**
    * Removes places pins, then makes a new search geocoding query. If at least
    * one result is found, places pins at appropriate places and focuses the
    * camera on the first result.
