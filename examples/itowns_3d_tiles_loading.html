@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
-    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
 
     <style>
       .loading {
@@ -35,7 +34,6 @@
   </head>
   <body>
     <script src="../dist/RUN_MODE/bundle.js"></script>
-    <script src="./assets/js/loadingScreen.js"></script>
 
     <script type="text/javascript">
       const udviz = window.udviz;
@@ -67,10 +65,6 @@
           viewDomElement.classList.add('full_screen');
           document.body.appendChild(viewDomElement);
           const view = new udviz.itowns.PlanarView(viewDomElement, extent);
-
-          // eslint-disable-next-line no-constant-condition
-          if ('RUN_MODE' == 'production')
-            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
 
           // init scene 3D
           udviz.initScene(
