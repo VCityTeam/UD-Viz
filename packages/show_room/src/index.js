@@ -436,7 +436,9 @@ export class ShowRoom {
 
     sideBarButton.onclick = () => {
       if (this.geocodingView.domElement.parentElement) {
-        this.geocodingView.dispose();
+        this.panMenuSideBar.remove(this.geocodingView.domElement);
+        this.geocodingView.removePins();
+        this.geocodingView.domElement.remove();
         sideBarButton.classList.remove(
           '_sidebar_widget_menu_sidebar_img_selected'
         );
