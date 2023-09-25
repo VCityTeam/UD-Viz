@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/extensions_3d_tiles_temporal",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "description": "extensions 3DTiles temporal of the itowns framework",
   "main": "src",
   "scripts": {
@@ -21,6 +21,6 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/extensions_3d_tiles_temporal",
   "peerDependencies": {
     "itowns": "2.40.0",
-    "@ud-viz/utils_shared": "3.2.0"
+    "@ud-viz/utils_shared": "4.0.0"
   }
 }
