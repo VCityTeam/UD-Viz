@@ -124,6 +124,6 @@ const generateArchitectureDoc = () => {
   });
 };
 
-docScriptTag(true);
 generateArchitectureDoc();
+docScriptTag(true);
 generateDoc().then(() => docScriptTag(false));
