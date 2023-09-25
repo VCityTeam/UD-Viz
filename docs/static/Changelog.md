@@ -1,3 +1,15 @@
+# v4.0.0
+
+## @ud-viz
+
+    - Refact(ud-viz)! split into multiples packages
+    - Add loading screen in examples
+    - Fix show room
+    - Add avatar jitsi game example
+    - Doc:
+        - fix doc
+        - update doc
+
 # v3.2.0
 
 ## @ud-viz
