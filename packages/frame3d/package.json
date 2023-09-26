@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/frame3d",
   "version": "4.0.2",
-  "description": "wrapper of a THREE scene + camera + renderer allowing to add dom element 3D",
+  "description": "THREE.js 3D rendering frame in which DomElement 3D can be added",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/browserTest.js ./test",
