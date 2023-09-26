@@ -297,7 +297,7 @@ export class SpaceTimeCube {
           while (current != null) {
             // update elevation
             const elevation = current.previous ? current.previous.height : 0;
-            current.offset = (current.date - minDate) * this.delta + elevation;
+            current.offset = (current.date - minDate) * this.delta;
 
             // Set demoliton and construction
             for (let index = 0; index < possibleDates.length - 1; index++) {
@@ -367,20 +367,23 @@ export class SpaceTimeCube {
                         index < positionIndexCount;
                         index += 3
                       ) {
-                        child.geometry.attributes.position.array[index + 2] +=
-                          level.offset;
                         verticesDuplicated.push(
                           child.geometry.attributes.position.array[index],
                           child.geometry.attributes.position.array[index + 1],
                           child.geometry.attributes.position.array[index + 2]
                         );
+
+                        child.geometry.attributes.position.array[index + 2] +=
+                          level.offset;
                       }
                     });
+
+                    // testing if feature is a creation or destruction
+                    const fiD =
+                      feature.getInfo().extensions['3DTILES_temporal']
+                        .featureId;
                     possibleDates.forEach((pdate) => {
-                      const fiD =
-                        feature.getInfo().extensions['3DTILES_temporal']
-                          .featureId;
-                      if (featureDateID2ColorOpacity.has(fiD + pdate))
+                      if (featureDateID2ColorOpacity.has(fiD + pdate)) {
                         if (
                           featureDateID2ColorOpacity.get(fiD + pdate).color ==
                           'green'
@@ -390,8 +393,7 @@ export class SpaceTimeCube {
                             index < verticesDuplicated.length;
                             index += 3
                           ) {
-                            verticesDuplicated[index + 2] =
-                              verticesDuplicated[index + 2] -
+                            verticesDuplicated[index + 2] +=
                               level.previous.offset;
                           }
                           const geometry = new THREE.BufferGeometry();
@@ -403,14 +405,45 @@ export class SpaceTimeCube {
                             )
                           );
 
-                          const material = new THREE.MeshPhongMaterial({
+                          const material = new THREE.MeshBasicMaterial({
                             color: 'green',
+                            transparent: true,
+                          });
+
+                          const mesh = new THREE.Mesh(geometry, material);
+                          mesh.applyMatrix4(child.matrixWorld);
+                          view.scene.add(mesh);
+                        } else if (
+                          featureDateID2ColorOpacity.get(fiD + pdate).color ==
+                          'red'
+                        ) {
+                          for (
+                            let index = 0;
+                            index < verticesDuplicated.length;
+                            index += 3
+                          ) {
+                            verticesDuplicated[index + 2] =
+                              verticesDuplicated[index + 2] + level.next.offset;
+                          }
+                          const geometry = new THREE.BufferGeometry();
+                          geometry.setAttribute(
+                            'position',
+                            new THREE.BufferAttribute(
+                              new Float32Array(verticesDuplicated),
+                              3
+                            )
+                          );
+
+                          const material = new THREE.MeshBasicMaterial({
+                            color: 'red',
+                            transparent: true,
                           });
 
                           const mesh = new THREE.Mesh(geometry, material);
                           mesh.applyMatrix4(child.matrixWorld);
                           view.scene.add(mesh);
                         }
+                      }
                     });
                   }
                 });
