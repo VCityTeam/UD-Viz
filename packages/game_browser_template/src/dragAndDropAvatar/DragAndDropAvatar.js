@@ -74,7 +74,7 @@ export class DragAndDropAvatar extends ScriptBase {
 
     /** @type {HTMLDivElement} */
     this.leaveAvatarModeButton = document.createElement('button');
-    this.leaveAvatarModeButton.innerHTML = 'Leave avatar mode';
+    this.leaveAvatarModeButton.innerText = 'Leave avatar mode';
     this.leaveAvatarModeButton.classList.add('leave_avatar_mode');
     this.leaveAvatarModeButton.onclick = () => {
       if (!this.avatar) return;
@@ -89,7 +89,7 @@ export class DragAndDropAvatar extends ScriptBase {
     /** @type {HTMLDivElement} */
     this.dragAndDropElement = document.createElement('div');
     this.dragAndDropElement.classList.add('drag_and_drop_avatar');
-    this.dragAndDropElement.innerHTML = 'Drag And Drop Avatar';
+    this.dragAndDropElement.innerText = 'Drag And Drop Avatar';
     this.dragAndDropElement.draggable = true;
 
     /** @type {HTMLElement} */

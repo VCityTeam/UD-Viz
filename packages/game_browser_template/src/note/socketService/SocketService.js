@@ -82,7 +82,7 @@ export class SocketService extends ScriptBase {
       };
     } else {
       this.nameLabel = document.createElement('div');
-      this.nameLabel.innerHTML = this.variables.nameSocket;
+      this.nameLabel.innerText = this.variables.nameSocket;
       this.domElement.appendChild(this.nameLabel);
     }
 
@@ -220,7 +220,7 @@ export class SocketService extends ScriptBase {
   onOutdated() {
     if (this.nameLabel) {
       // update innerHtml name
-      this.nameLabel.innerHTML = this.variables.nameSocket;
+      this.nameLabel.innerText = this.variables.nameSocket;
     }
   }
 
@@ -249,11 +249,11 @@ class MenuEditNote {
     this.domElement.appendChild(this.textAreaMessage);
 
     this.closeButton = document.createElement('button');
-    this.closeButton.innerHTML = 'Close';
+    this.closeButton.innerText = 'Close';
     this.domElement.appendChild(this.closeButton);
 
     this.addNoteButton = document.createElement('button');
-    this.addNoteButton.innerHTML = 'Add note';
+    this.addNoteButton.innerText = 'Add note';
     this.domElement.appendChild(this.addNoteButton);
 
     this.textAreaMessage.focus(); // cant focus textarea force it there (patch)

@@ -173,7 +173,7 @@ export class SparqlQueryWindow {
    * Clear the DataView of content.
    */
   clearDataView() {
-    this.dataView.innerHTML = '';
+    this.dataView.innerText = '';
     this.dataView.style['height'] = '100%';
     this.dataView.style['overflow'] = 'auto';
   }
@@ -199,7 +199,7 @@ export class SparqlQueryWindow {
 
   /**
    * Update this.querySelect options using an array of queries. For each element in the array,
-   * create an option element, set the innerHTML of the option to the query's title,
+   * create an option element, set the innerText of the option to the query's title,
    * set the value of the option to the index of the query in the array, then append
    * the option to this.querySelect
    *
@@ -208,7 +208,7 @@ export class SparqlQueryWindow {
   updateQueryDropdown(queries) {
     for (let index = 0; index < queries.length; index++) {
       const option = document.createElement('option');
-      option.innerHTML = queries[index].title;
+      option.innerText = queries[index].title;
       option.value = index;
       this.querySelect.appendChild(option);
     }
@@ -230,7 +230,7 @@ export class SparqlQueryWindow {
     formats.forEach(([k, v]) => {
       const option = document.createElement('option');
       option.value = k;
-      option.innerHTML = v;
+      option.innerText = v;
       this.resultSelect.appendChild(option);
     });
   }

@@ -127,7 +127,7 @@ export class ValidationView {
     );
 
     this.validateButton = document.createElement('button');
-    this.validateButton.innerHTML = 'Validate';
+    this.validateButton.innerText = 'Validate';
     this.validateButton.onclick = () => this._validateDocument();
     this.parentElementValidateButton.appendChild(this.validateButton);
   }

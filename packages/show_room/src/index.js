@@ -386,7 +386,7 @@ export class ShowRoom {
       // title
       const titleNavBar = document.createElement('div');
       titleNavBar.classList.add('ud-viz-label');
-      titleNavBar.innerHTML = 'UD-VIZ ' + version;
+      titleNavBar.innerText = 'UD-VIZ ' + version;
       this.menuSideBar.appendChild(titleNavBar);
 
       // hr
@@ -475,7 +475,7 @@ export class ShowRoom {
     );
 
     const visualizeButton = document.createElement('button');
-    visualizeButton.innerHTML = 'Visualize';
+    visualizeButton.innerText = 'Visualize';
     visualizeButton.onclick = async () => {
       await visualizerView.startTravelToDisplayedDocument();
       this.frame3DPlanar.domElementUI.appendChild(visualizerView.domElement);
@@ -497,7 +497,7 @@ export class ShowRoom {
     );
 
     const updateButton = document.createElement('button');
-    updateButton.innerHTML = 'Update';
+    updateButton.innerText = 'Update';
     updateButton.onclick = async () => {
       await documentContribute.updateWindow.updateFromDisplayedDocument();
       while (parentHtmlFeature.firstChild) {
@@ -508,7 +508,7 @@ export class ShowRoom {
     this.documentCore.view.inspectorWindow.domElement.appendChild(updateButton);
 
     const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = 'Delete';
+    deleteButton.innerText = 'Delete';
     deleteButton.onclick = async () => {
       if (
         !confirm(
@@ -527,7 +527,7 @@ export class ShowRoom {
     this.documentCore.view.inspectorWindow.domElement.appendChild(deleteButton);
 
     const createDocumentButton = document.createElement('button');
-    createDocumentButton.innerHTML = 'Create new document';
+    createDocumentButton.innerText = 'Create new document';
     createDocumentButton.onclick = () => {
       while (parentHtmlFeature.firstChild) {
         parentHtmlFeature.firstChild.remove();
@@ -560,7 +560,7 @@ export class ShowRoom {
     );
 
     const commentButton = document.createElement('button');
-    commentButton.innerHTML = 'Comment';
+    commentButton.innerText = 'Comment';
     commentButton.onclick = async () => {
       while (parentHtmlFeature.firstChild) {
         parentHtmlFeature.firstChild.remove();
@@ -858,7 +858,7 @@ class PanMenuSideBar {
 
   add(label, el) {
     const newContainer = document.createElement('div');
-    newContainer.innerHTML = label;
+    newContainer.innerText = label;
     newContainer.classList.add('_sidebar_widget_pan_menu_sidebar_container');
     newContainer.appendChild(el);
     this.containers.push(newContainer);

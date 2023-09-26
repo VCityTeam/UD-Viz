@@ -14,11 +14,11 @@ export class Element extends ScriptBase {
     // html message note
     this.noteMessageDomElement = document.createElement('div');
     this.noteMessageDomElement.classList.add('note_message');
-    this.noteMessageDomElement.innerHTML = this.variables.message;
+    this.noteMessageDomElement.innerText = this.variables.message;
 
     // close note button
     const closeNoteButton = document.createElement('button');
-    closeNoteButton.innerHTML = 'Close';
+    closeNoteButton.innerText = 'Close';
     this.noteMessageDomElement.appendChild(closeNoteButton);
 
     closeNoteButton.onclick = (event) => {
@@ -33,9 +33,9 @@ export class Element extends ScriptBase {
 
     const threshold = 10;
     if (this.variables.message.length <= threshold) {
-      noteButton.innerHTML = this.variables.message + '';
+      noteButton.innerText = this.variables.message + '';
     } else {
-      noteButton.innerHTML = this.variables.message.slice(0, threshold) + '...'; // display a part of the message
+      noteButton.innerText = this.variables.message.slice(0, threshold) + '...'; // display a part of the message
     }
 
     /** 
@@ -71,7 +71,7 @@ export class Element extends ScriptBase {
 
     if (scriptParent.isSocketScript) {
       const deleteNoteButton = document.createElement('button');
-      deleteNoteButton.innerHTML = 'Delete';
+      deleteNoteButton.innerText = 'Delete';
       this.containerButtons.appendChild(deleteNoteButton);
 
       deleteNoteButton.onclick = () => {

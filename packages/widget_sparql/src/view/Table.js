@@ -227,7 +227,7 @@ export class Table extends THREE.EventDispatcher {
     this.filterInput.value = '';
     filterDiv.appendChild(this.filterInput);
     this.noResultDiv = document.createElement('div');
-    this.noResultDiv.innerHTML = 'No result found, try again!';
+    this.noResultDiv.innerText = 'No result found, try again!';
     this.noResultDiv.style['display'] = 'none';
     this.domElement.appendChild(this.noResultDiv);
   }
