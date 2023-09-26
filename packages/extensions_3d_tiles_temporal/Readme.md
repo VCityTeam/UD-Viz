@@ -68,3 +68,5 @@ view.notifyChange(); // refresh view
 ```
 
 > you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/extensions_3d_tiles_temporal.html)
+
+> [Documentation](https://vcityteam.github.io/UD-Viz/html/extensions_3d_tiles_temporal/)
