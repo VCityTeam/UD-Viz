@@ -58,7 +58,7 @@ export class LayerChoice {
    */
   innerContentColorLayers() {
     const list = this.colorLayersSpoilerBoxElement;
-    list.innerHTML = '';
+    list.innerText = '';
     const layers = this.itownView
       .getLayers()
       .filter((el) => el.isColorLayer == true);
@@ -96,7 +96,7 @@ export class LayerChoice {
    */
   innerContentElevationLayers() {
     const list = this.elevationLayersSpoilerBoxElement;
-    list.innerHTML = '';
+    list.innerText = '';
     const layers = this.itownView
       .getLayers()
       .filter((el) => el.isElevationLayer == true);
@@ -122,7 +122,7 @@ export class LayerChoice {
    */
   innerContentGeometryLayers() {
     const list = this.geometryLayersSpoilerBoxElement;
-    list.innerHTML = '';
+    list.innerText = '';
     const layers = this.itownView
       .getLayers()
       .filter((el) => el.isGeometryLayer == true);

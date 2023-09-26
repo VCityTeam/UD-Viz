@@ -229,7 +229,7 @@ class LoadingView {
     /** @type {HTMLDivElement} */
     const label = document.createElement('label');
     label.classList.add('loadingLabel_Assets');
-    label.innerHTML = 'Loading assets';
+    label.innerText = 'Loading assets';
     this.parentLoadingBar.appendChild(label);
 
     /**
@@ -265,7 +265,7 @@ class LoadingView {
     parent.appendChild(progress);
 
     const label = document.createElement('div');
-    label.innerHTML = id;
+    label.innerText = id;
     parent.appendChild(label);
 
     this.loadingBars[id] = progress;

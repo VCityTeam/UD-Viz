@@ -185,7 +185,7 @@ export class DocumentNavigatorWindow {
    */
   _onFilteredDocumentsUpdate(documents) {
     const list = this.documentListElement;
-    list.innerHTML = '';
+    list.innerText = '';
     for (const doc of documents) {
       const item = document.createElement('li');
       item.innerHTML = /* html*/ `
@@ -200,7 +200,7 @@ export class DocumentNavigatorWindow {
       };
       list.appendChild(item);
     }
-    this.docCountElement.innerHTML = documents.length;
+    this.docCountElement.innerText = documents.length;
   }
 
   /**

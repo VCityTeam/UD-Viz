@@ -427,7 +427,7 @@ export class SlideShow {
 
     const matchExtentButton = document.createElement('button');
     matchExtentButton.id = '_button_match_extent';
-    matchExtentButton.innerHTML = 'Match Extent';
+    matchExtentButton.innerText = 'Match Extent';
     this.callbacksHTMLEl.push({
       event: 'click',
       element: matchExtentButton,
@@ -459,7 +459,7 @@ export class SlideShow {
 
     const labelAspectRatio = document.createElement('label');
     labelAspectRatio.htmlFor = aspectRatioCheckbox.id;
-    labelAspectRatio.innerHTML = 'Aspect Ratio';
+    labelAspectRatio.innerText = 'Aspect Ratio';
     aspectRatioDiv.appendChild(labelAspectRatio);
 
     const loopDiv = document.createElement('div');
@@ -484,7 +484,7 @@ export class SlideShow {
 
     const labelLoopSlideShow = document.createElement('label');
     labelLoopSlideShow.htmlFor = loopCheckbox.id;
-    labelLoopSlideShow.innerHTML = 'Loop SlideShow';
+    labelLoopSlideShow.innerText = 'Loop SlideShow';
     loopDiv.appendChild(labelLoopSlideShow);
 
     const durationLoopInSecDiv = document.createElement('div');
@@ -513,12 +513,12 @@ export class SlideShow {
 
     const durationLoopInSecLabel = document.createElement('label');
     durationLoopInSecLabel.htmlFor = durationLoopInSecInput.id;
-    durationLoopInSecLabel.innerHTML = 'Duration Loop (s)';
+    durationLoopInSecLabel.innerText = 'Duration Loop (s)';
     durationLoopInSecDiv.appendChild(durationLoopInSecLabel);
 
     const counterLoopTimeDiv = document.createElement('div');
     counterLoopTimeDiv.id = 'counterLoopTimeDivSlideShow';
-    counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
+    counterLoopTimeDiv.innerText = this.durationLoopInSec;
 
     this.counterLoopTimeDiv = counterLoopTimeDiv;
     durationLoopInSecDiv.appendChild(counterLoopTimeDiv);
@@ -529,7 +529,7 @@ export class SlideShow {
 
     const unsetOptionSlide = document.createElement('option');
     unsetOptionSlide.value = 'null';
-    unsetOptionSlide.innerHTML = 'Select config slide';
+    unsetOptionSlide.innerText = 'Select config slide';
     slideSelect.appendChild(unsetOptionSlide);
     this.slideSelect = slideSelect;
 
@@ -538,7 +538,7 @@ export class SlideShow {
         const element = this.slides[i];
         const option = document.createElement('option');
         option.value = i;
-        option.innerHTML = element.name;
+        option.innerText = element.name;
         slideSelect.appendChild(option);
       }
       this.callbacksHTMLEl.push({
@@ -647,17 +647,17 @@ export class SlideShow {
    */
   createInputVector(labels, vectorName, step = 0.5) {
     const titleVector = document.createElement('h3');
-    titleVector.innerHTML = vectorName;
+    titleVector.innerText = vectorName;
 
     const inputVector = document.createElement('div');
     inputVector.id = vectorName + '_inputVector';
     inputVector.style.display = 'grid';
     for (let iInput = 0; iInput < labels.length; iInput++) {
       const labelElement = document.createElement('label');
-      labelElement.innerHTML = labels[iInput];
+      labelElement.innerText = labels[iInput];
 
       const componentElement = document.createElement('input');
-      componentElement.id = vectorName + labelElement.innerHTML;
+      componentElement.id = vectorName + labelElement.innerText;
       componentElement.type = 'number';
       componentElement.setAttribute('value', '0');
       componentElement.step = step;
@@ -823,7 +823,7 @@ export class SlideShow {
   loopSlideShow() {
     if (!this.loopSlideShowCheckbox.checked) return;
     const durationInMS = this.durationLoopInSec * 1000; // Loop event
-    this.counterLoopTimeDiv.innerHTML = this.durationLoopInSec;
+    this.counterLoopTimeDiv.innerText = this.durationLoopInSec;
     this.intervalLoop = setInterval(() => {
       this.nextSlide();
     }, durationInMS);
@@ -834,9 +834,9 @@ export class SlideShow {
   }
 
   updateCounterLoop() {
-    const value = parseFloat(this.counterLoopTimeDiv.innerHTML);
+    const value = parseFloat(this.counterLoopTimeDiv.innerText);
     const newValue = value - 0.1 <= 0 ? this.durationLoopInSec : value - 0.1;
-    this.counterLoopTimeDiv.innerHTML = newValue.toFixed(1);
+    this.counterLoopTimeDiv.innerText = newValue.toFixed(1);
   }
 
   stopLoopSlideShow() {

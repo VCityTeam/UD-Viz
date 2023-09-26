@@ -155,7 +155,7 @@ export class GeocodingView {
   async displayError(errorMsg, timeout = 1000) {
     const box = document.createElement('p');
     box.id = this.errorMessageBoxId;
-    box.innerHTML = errorMsg;
+    box.innerText = errorMsg;
     this.domElement.appendChild(box);
     box.addEventListener('transitionend', (evt) => {
       if (evt.propertyName === 'opacity') {

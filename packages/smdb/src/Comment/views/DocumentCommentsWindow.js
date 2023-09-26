@@ -43,7 +43,7 @@ export class DocumentCommentsWindow {
     return new Promise((resolve, reject) => {
       this.documentCommentsService.getComments().then(
         (comments) => {
-          this.commentsLeft.innerHTML = '';
+          this.commentsLeft.innerText = '';
           for (const comment of comments) {
             const text =
               typeof comment.description === 'string'
@@ -59,6 +59,7 @@ export class DocumentCommentsWindow {
                     <p >${new Date(comment.date).toLocaleString()}</p>
                     </div>
                 `;
+
             this.commentsLeft.appendChild(div);
           }
           resolve();

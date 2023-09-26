@@ -114,7 +114,7 @@ export class GuidedTour {
    * Initialize the preview of the guided tour
    */
   previewTour() {
-    this.tourCpt.innerHTML =
+    this.tourCpt.innerText =
       'Tour: ' +
       this.tourIndex +
       ' out of ' +
@@ -135,14 +135,14 @@ export class GuidedTour {
     this.guidedTourStartButton.style.display = 'block';
 
     const currentTour = this.guidedTourController.getCurrentTour();
-    this.guidedTourTitle.innerHTML = currentTour
+    this.guidedTourTitle.innerText = currentTour
       ? currentTour.name
       : 'No guided tour';
-    this.guidedTourText1.innerHTML = currentTour
+    this.guidedTourText1.innerText = currentTour
       ? currentTour.description
       : 'Please add guided tours';
     this.guidedTourText1.style.height = '45%';
-    this.guidedTourStepTitle.innerHTML = null;
+    this.guidedTourStepTitle.innerText = null;
   }
 
   /**
@@ -155,8 +155,8 @@ export class GuidedTour {
     this.documentBrowser.currentDoc =
       this.guidedTourController.getCurrentStep().document;
     this.documentBrowser.updateBrowser();
-    this.guidedTourText1.innerHTML = this.currentStep.text1;
-    this.guidedTourStepTitle.innerHTML = this.currentStep.title;
+    this.guidedTourText1.innerText = this.currentStep.text1;
+    this.guidedTourStepTitle.innerText = this.currentStep.title;
     this.documentBrowser.focusOnDoc();
   }
 

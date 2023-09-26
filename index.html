@@ -23,7 +23,7 @@
       header.appendChild(h1);
 
       const labelH1 = document.createElement('div');
-      labelH1.innerHTML = 'ud-viz';
+      labelH1.innerText = 'ud-viz';
       h1.appendChild(labelH1);
 
       const versionLink = document.createElement('a');
@@ -33,7 +33,7 @@
         'href',
         'https://github.com/VCityTeam/UD-Viz/releases'
       );
-      versionLink.innerHTML = 'UDVIZ_VERSION';
+      versionLink.innerText = 'UDVIZ_VERSION';
       h1.appendChild(versionLink);
 
       const contentWrapper = document.createElement('div');
@@ -46,7 +46,7 @@
 
       const addToContent = (title, list) => {
         const contentH2 = document.createElement('h2');
-        contentH2.innerHTML = title;
+        contentH2.innerText = title;
         content.appendChild(contentH2);
 
         const contentUl = document.createElement('ul');
@@ -60,7 +60,7 @@
 
           const link = document.createElement('a');
           link.setAttribute('href', href);
-          link.innerHTML = label;
+          link.innerText = label;
           li.appendChild(link);
         });
       };
@@ -89,7 +89,7 @@
       const createContainer = function (id) {
         const titleContainer = document.createElement('h1');
         titleContainer.classList.add('projects_section_title');
-        titleContainer.innerHTML = id;
+        titleContainer.innerText = id;
         viewer.appendChild(titleContainer);
 
         const container = document.createElement('div');
@@ -117,7 +117,7 @@
         newProject.appendChild(newProjectImg);
 
         const newProjectNameHoverDiv = document.createElement('div');
-        newProjectNameHoverDiv.innerHTML = name;
+        newProjectNameHoverDiv.innerText = name;
         newProject.appendChild(newProjectNameHoverDiv);
       };
 
