@@ -46,4 +46,4 @@ To publish the package to [npmjs](https://www.npmjs.com/) package repository
    Note:
    - Ask username and password to login at an admin
    - Because the npmjs authentication mode of the `vcity`account is currently configured to [One-Time-Password (OTP) over email](https://docs.npmjs.com/receiving-a-one-time-password-over-email) you will need to be part of the `vcity@liris.cnrs.fr` email alias forwarder to receive the OTP and be patient about it (the reception delay can be up to a couple minutes).
-2. `npm publish --workspaces` (`workspaces` option refer to the `workspaces` field in the [package.json](../../package.json)).
+2. `npm publish --workspaces --access public` (`workspaces` option refer to the `workspaces` field in the [package.json](../../package.json)).
