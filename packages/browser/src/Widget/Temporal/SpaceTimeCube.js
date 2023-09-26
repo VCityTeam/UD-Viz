@@ -41,10 +41,16 @@ class Level {
     this.boundingBox = boundingBox;
 
     /** @type {THREE.Box3Helper} */
-    this.boudingBoxHelper = new THREE.Box3Helper(
+    this.boundingBoxHelper = new THREE.Box3Helper(
       this.boundingBox,
       new THREE.Color(1, 1, 0)
     );
+
+    /** @type {THREE.PlaneGeometry} */
+    this.planeGeometry;
+
+    /** @type {THREE.Mesh} */
+    this.plane = null;
 
     /** @type {Array<itowns.C3DTFeature>} */
     this.features = features;
@@ -55,7 +61,10 @@ class Level {
     this.date = date;
 
     /** @type {number} */
-    this._offset = 0;
+    this._offsetZ = 0;
+
+    /** @type {number} */
+    this._offsetY = 0;
 
     /** @type {Level} */
     this._previous = null;
@@ -64,18 +73,39 @@ class Level {
     this._next = null;
   }
 
-  set offset(value) {
-    this.boundingBox.min.z -= this._offset;
-    this.boundingBox.max.z -= this._offset;
+  set offsetZ(value) {
+    this.boundingBox.min.z -= this._offsetZ;
+    this.boundingBox.max.z -= this._offsetZ;
 
-    this._offset = value;
+    this._offsetZ = value;
 
-    this.boundingBox.min.z += this._offset;
-    this.boundingBox.max.z += this._offset;
+    this.boundingBox.min.z += this._offsetZ;
+    this.boundingBox.max.z += this._offsetZ;
   }
 
-  get offset() {
-    return this._offset;
+  set offsetY(value) {
+    this.boundingBox.min.y -= this._offsetY;
+    this.boundingBox.max.y -= this._offsetY;
+
+    this._offsetY = value;
+
+    this.boundingBox.min.y += this._offsetY;
+    this.boundingBox.max.y += this._offsetY;
+  }
+
+  get offsetZ() {
+    return this._offsetZ;
+  }
+
+  get offsetY() {
+    return this._offsetY;
+  }
+  get width() {
+    return this.boundingBox.max.x - this.boundingBox.min.x;
+  }
+
+  get lenght() {
+    return this.boundingBox.max.y - this.boundingBox.min.y;
   }
 
   get height() {
@@ -98,6 +128,19 @@ class Level {
     this._next = level;
   }
 
+  createPlane(width, lenght, position) {
+    this.planeGeometry = new THREE.PlaneGeometry(width, lenght);
+
+    /** @type {THREE.Mesh} */
+    const planeMesh = new THREE.Mesh(
+      this.planeGeometry,
+      new THREE.MeshBasicMaterial({ color: 'white', side: THREE.DoubleSide })
+    );
+
+    planeMesh.position.set(position.x, position.y, position.z);
+    this.plane = planeMesh;
+  }
+
   addFeature(feature) {
     this.features.push(feature);
 
@@ -112,9 +155,9 @@ class Level {
     );
     this.boundingBox.min.z =
       Math.min(
-        this.boundingBox.min.z - this._offset,
+        this.boundingBox.min.z - this._offsetZ,
         feature.userData.worldInitialBox3.min.z
-      ) + this._offset;
+      ) + this._offsetZ;
 
     this.boundingBox.max.x = Math.max(
       this.boundingBox.max.x,
@@ -126,11 +169,11 @@ class Level {
     );
     this.boundingBox.max.z =
       Math.max(
-        this.boundingBox.max.z - this._offset,
+        this.boundingBox.max.z - this._offsetZ,
         feature.userData.worldInitialBox3.max.z
-      ) + this._offset;
+      ) + this._offsetZ;
 
-    this.boudingBoxHelper.updateMatrixWorld();
+    this.boundingBoxHelper.updateMatrixWorld();
   }
 }
 
@@ -297,7 +340,8 @@ export class SpaceTimeCube {
           while (current != null) {
             // update elevation
             const elevation = current.previous ? current.previous.height : 0;
-            current.offset = (current.date - minDate) * this.delta;
+            current.offsetZ = (current.date - minDate) * this.delta;
+            current.offsetY = (current.date - minDate) * (this.delta + 50);
 
             // Set demoliton and construction
             for (let index = 0; index < possibleDates.length - 1; index++) {
@@ -324,6 +368,26 @@ export class SpaceTimeCube {
                     );
                 }
               });
+            }
+
+            // Set plane
+            if (current.plane == null) {
+              // Update bounding box
+              current.boundingBoxHelper.updateMatrixWorld();
+              view.scene.add(current.boundingBoxHelper);
+
+              current.createPlane(
+                current.width,
+                current.lenght,
+                new THREE.Vector3(
+                  current.boundingBox.min.x + current.width / 2,
+                  current.boundingBox.min.y + current.lenght / 2,
+                  current.boundingBox.min.z
+                )
+              );
+
+              current.plane.updateMatrixWorld();
+              view.scene.add(current.plane);
             }
 
             current = current.next;
@@ -354,7 +418,6 @@ export class SpaceTimeCube {
 
                 if (!tileContent || !level) return;
 
-                level.boudingBoxHelper.updateMatrixWorld();
                 tileContent.traverse((child) => {
                   if (child.geometry && child.geometry.attributes._BATCHID) {
                     const verticesDuplicated = [];
@@ -373,8 +436,10 @@ export class SpaceTimeCube {
                           child.geometry.attributes.position.array[index + 2]
                         );
 
+                        child.geometry.attributes.position.array[index + 1] +=
+                          level.offsetY;
                         child.geometry.attributes.position.array[index + 2] +=
-                          level.offset;
+                          level.offsetZ;
                       }
                     });
 
@@ -412,7 +477,7 @@ export class SpaceTimeCube {
 
                           const mesh = new THREE.Mesh(geometry, material);
                           mesh.applyMatrix4(child.matrixWorld);
-                          view.scene.add(mesh);
+                          // view.scene.add(mesh);
                         } else if (
                           featureDateID2ColorOpacity.get(fiD + pdate).color ==
                           'red'
@@ -438,10 +503,10 @@ export class SpaceTimeCube {
                             color: 'red',
                             transparent: true,
                           });
-
                           const mesh = new THREE.Mesh(geometry, material);
                           mesh.applyMatrix4(child.matrixWorld);
-                          view.scene.add(mesh);
+                          level.boundingBoxHelper.updateMatrixWorld();
+                          // view.scene.add(mesh);
                         }
                       }
                     });
