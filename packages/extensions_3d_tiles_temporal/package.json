@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/extensions_3d_tiles_temporal",
   "version": "4.0.2",
-  "description": "extensions 3DTiles temporal of the itowns framework",
+  "description": "itowns C3DTExtensions 3DTILES_temporal",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/browserTest.js ./test",
