@@ -1,6 +1,5 @@
 # @ud-viz packages architecture
 
-<!-- <script src="../js/jsdoc-tuts-mermaid.js"></script> -->
 
 ```mermaid
 flowchart TB
