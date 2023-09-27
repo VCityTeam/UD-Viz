@@ -10,6 +10,8 @@ export {
   C3DTTemporalTileset,
 };
 
+export * from './SpaceTimeCube';
+
 export const ID = '3DTILES_temporal';
 
 const TEMPORAL_COLOR_OPACITY = {
