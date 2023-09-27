@@ -6,7 +6,7 @@ const docScriptTag = (injectMermaidScriptTag) => {
   console.info('include script tag in ./docs/static ', injectMermaidScriptTag);
 
   const SCRIPT_TAG_MERMAID =
-    '<script src="../js/jsdoc-tuts-mermaid.js"></script>';
+    '\n' + '<script src="../js/jsdoc-tuts-mermaid.js"></script>';
 
   const parseDirectory = (directoryPath) => {
     const dirents = fs.readdirSync(directoryPath, { withFileTypes: true });
@@ -21,9 +21,8 @@ const docScriptTag = (injectMermaidScriptTag) => {
 
         if (data.includes('```mermaid')) {
           // contains mermaid graph
-          console.log(filePath);
           if (injectMermaidScriptTag) {
-            data += '\n' + SCRIPT_TAG_MERMAID;
+            data += SCRIPT_TAG_MERMAID;
             fs.writeFileSync(filePath, data);
           } else {
             fs.writeFileSync(
@@ -37,7 +36,7 @@ const docScriptTag = (injectMermaidScriptTag) => {
       }
     });
   };
-  parseDirectory('./docs/static');
+  parseDirectory('.');
 };
 
 const printExec = function (result) {
@@ -124,5 +123,4 @@ const generateArchitectureDoc = () => {
 
 generateArchitectureDoc();
 docScriptTag(true);
-docScriptTag(false);
-// generateDoc().then(() => docScriptTag(false));
+generateDoc().then(() => docScriptTag(false));
