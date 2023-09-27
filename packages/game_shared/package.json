@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/game_shared",
   "version": "4.0.2",
-  "description": "game library interpretable in a nodejs + a browser environment",
+  "description": "Game library interpretable in a nodejs and in a browser environment based on THREE.js",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/nodeTest.js ./test",
