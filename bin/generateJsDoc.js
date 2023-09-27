@@ -2,8 +2,11 @@ const fs = require('fs');
 const { computeFileFormat } = require('@ud-viz/utils_shared');
 const { exec } = require('child-process-promise');
 
-const docScriptTag = (includeScriptTag) => {
-  console.info('include script tag in ./docs/static ', includeScriptTag);
+const docScriptTag = (injectMermaidScriptTag) => {
+  console.info('include script tag in ./docs/static ', injectMermaidScriptTag);
+
+  const SCRIPT_TAG_MERMAID =
+    '<script src="../js/jsdoc-tuts-mermaid.js"></script>';
 
   const parseDirectory = (directoryPath) => {
     const dirents = fs.readdirSync(directoryPath, { withFileTypes: true });
@@ -12,24 +15,22 @@ const docScriptTag = (includeScriptTag) => {
         const filePath = directoryPath + '/' + dirent.name;
 
         // read contents of the file
-        const data = fs.readFileSync(filePath, {
+        let data = fs.readFileSync(filePath, {
           encoding: 'utf-8',
         });
 
-        if (!includeScriptTag) {
-          fs.writeFileSync(
-            filePath,
-            data
-              .replace(/<script/g, '<!-- <script')
-              .replace(/script>/g, 'script> -->')
-          );
-        } else {
-          fs.writeFileSync(
-            filePath,
-            data
-              .replace(/<!-- <script/g, '<script')
-              .replace(/script> -->/g, 'script>')
-          );
+        if (data.includes('```mermaid')) {
+          // contains mermaid graph
+          console.log(filePath);
+          if (injectMermaidScriptTag) {
+            data += '\n' + SCRIPT_TAG_MERMAID;
+            fs.writeFileSync(filePath, data);
+          } else {
+            fs.writeFileSync(
+              filePath,
+              data.replace(new RegExp(SCRIPT_TAG_MERMAID, 'g'), '')
+            );
+          }
         }
       } else if (dirent.isDirectory()) {
         parseDirectory(directoryPath + '/' + dirent.name); // recursive
@@ -104,10 +105,7 @@ const generateArchitectureDoc = () => {
 
   const filePath = './docs/static/architecture.md';
 
-  fs.writeFileSync(
-    filePath,
-    '# @ud-viz packages architecture\n\n<!-- <script src="../js/jsdoc-tuts-mermaid.js"></script> -->\n'
-  );
+  fs.writeFileSync(filePath, '# @ud-viz packages architecture\n\n');
 
   // mermaid graph generation
   [
@@ -126,4 +124,5 @@ const generateArchitectureDoc = () => {
 
 generateArchitectureDoc();
 docScriptTag(true);
-generateDoc().then(() => docScriptTag(false));
+docScriptTag(false);
+// generateDoc().then(() => docScriptTag(false));
