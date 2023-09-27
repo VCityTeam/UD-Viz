@@ -1,6 +1,6 @@
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-import { Data } from '@ud-viz/shared';
+import { arrayPushOnce } from '@ud-viz/utils_shared';
 
 const TEMPORAL_COLOR_OPACITY = {
   noTransaction: {
@@ -230,11 +230,11 @@ export class SpaceTimeCube {
               transaction.startDate + transactionDuration / 3;
             const secondHalfDate =
               transaction.endDate - transactionDuration / 3;
-            Data.arrayPushOnce(possibleDates, transaction.startDate);
-            Data.arrayPushOnce(possibleDates, transaction.endDate);
+            arrayPushOnce(possibleDates, transaction.startDate);
+            arrayPushOnce(possibleDates, transaction.endDate);
 
-            Data.arrayPushOnce(possibleDates, firstHalfDate);
-            Data.arrayPushOnce(possibleDates, secondHalfDate);
+            arrayPushOnce(possibleDates, firstHalfDate);
+            arrayPushOnce(possibleDates, secondHalfDate);
 
             transaction.source.forEach((fId) => {
               if (transaction.type == 'modification') {
@@ -526,21 +526,18 @@ export class SpaceTimeCube {
                   temporalExtension.startDate <= date &&
                   temporalExtension.endDate >= date
                 ) {
-                  Data.arrayPushOnce(
-                    result,
-                    TEMPORAL_COLOR_OPACITY.noTransaction
-                  );
+                  arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.noTransaction);
                 }
 
                 const featureDateID = temporalExtension.featureId + date;
                 if (featureDateID2ColorOpacity.has(featureDateID)) {
-                  Data.arrayPushOnce(
+                  arrayPushOnce(
                     result,
                     featureDateID2ColorOpacity.get(featureDateID)
                   );
                 }
               });
-              Data.arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.invisible);
+              arrayPushOnce(result, TEMPORAL_COLOR_OPACITY.invisible);
 
               result.sort((a, b) => b.priority - a.priority);
               return result[0];
