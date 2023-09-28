@@ -54,7 +54,6 @@ Context-->|create|state
 
 ```js
 const { ScriptBase, Context, Object3D } = require('@ud-viz/game_shared');
-const THREE = require('three');
 
 // Create a game script to compose your Object3D
 const GameScript = class extends ScriptBase {

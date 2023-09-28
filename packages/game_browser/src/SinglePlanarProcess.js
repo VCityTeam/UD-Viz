@@ -22,8 +22,8 @@ export class SinglePlanarProcess {
    *
    * @param {Object3D} gameObject3D - root game object3D of your game
    * @param {Planar} frame3DPlanar - frame3DPlanar where the game is taking place
-   * @param {AssetManager} assetManager - assetManager of the game {@link AssetManager}
-   * @param {InputManager} inputManager - input manager of the game {@link InputManager}
+   * @param {AssetManager} [assetManager] - assetManager of the game {@link AssetManager}
+   * @param {InputManager} [inputManager] - input manager of the game {@link InputManager}
    * @param {object} options - single player game planar options
    * @param {Object<string,ScriptBase>=} options.gameScriptClass - custom game scripts class of your object3D
    * @param {Object<string,ExternalScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
@@ -32,8 +32,8 @@ export class SinglePlanarProcess {
   constructor(
     gameObject3D,
     frame3DPlanar,
-    assetManager,
-    inputManager,
+    assetManager = new AssetManager(),
+    inputManager = new InputManager(),
     options = {}
   ) {
     /**

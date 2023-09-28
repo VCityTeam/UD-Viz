@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/game_browser",
   "version": "4.0.2",
-  "description": "game framework base on itowns",
+  "description": "Game library interpretable in a browser environment based on itowns",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/browserTest.js ./test",

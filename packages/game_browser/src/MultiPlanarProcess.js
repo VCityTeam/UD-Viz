@@ -37,8 +37,8 @@ export class MultiPlanarProcess {
   constructor(
     socketIOWrapper,
     extent,
-    assetManager,
-    inputManager,
+    assetManager = new AssetManager(),
+    inputManager = new InputManager(),
     options = {}
   ) {
     /**
