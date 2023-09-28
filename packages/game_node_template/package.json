@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/game_node_template",
   "version": "4.0.2",
-  "description": "game script template nodejs",
+  "description": "Collection of script base on @ud-viz/game_node",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/nodeTest.js ./test",
