@@ -36,13 +36,11 @@ _3D tiles related_
 
 ```
 UD-Viz (repo)
-├── bin                       # Global NodeJS development and deployment
-├── docs                      # Developer and User documentation
+├── bin                       # Monorepo scripts
+├── docs                      # Documentation
 ├── examples                  # Examples of the ud-viz framework
+├── test                      # Monorepo test scripts
 ├── packages                  # Packages folder
-|    ├── browser              # UD-Viz Browser-side framework
-|    ├── shared               # UD-Viz shared (Browser+Node) framework
-|    ├── node                 # UD-Viz Node-side framework
 ├── .eslintrc.js              # Linting rules and configuration
 ├── .gitignore                # Files/folders ignored by Git
 ├── .prettierrc               # Formatting rules
