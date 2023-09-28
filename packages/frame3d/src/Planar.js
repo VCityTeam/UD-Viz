@@ -16,7 +16,7 @@ import * as THREE from 'three';
  * @property {number} [range=3000] -  Camera range placement
  * @property {number} [tilt=10] - Camera tilt placement
  * @property {number} [maxSubdivisionLevel=5] - Maximum subdivision level for PlanarLayer
- * @property {import('../THREEUtil').SceneConfig} sceneConfig - scene config
+ * @property {import('@ud-viz/utils_browser').SceneConfig} sceneConfig - scene config
  */
 
 /** @classdesc It's a class that extends the {@link Base} class and adds a PlanarView to it */

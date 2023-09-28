@@ -21,8 +21,9 @@ export class DomElement3D extends THREE.Object3D {
    * Composed of a {@link CSS3DObject} containing html and a {@link THREE.Object3D} superposing each other
    *
    * @param {HTMLElement} domElement - dom element
+   * @param {number} scalar - scale domelement content
    */
-  constructor(domElement) {
+  constructor(domElement, scalar = 1) {
     super();
 
     /**
@@ -36,6 +37,9 @@ export class DomElement3D extends THREE.Object3D {
      *
       @type {HTMLElement} */
     this.domElement = domElement;
+
+    /** @type {number} */
+    this.scalar = scalar;
 
     /**
      * css3D object
@@ -74,10 +78,12 @@ export class DomElement3D extends THREE.Object3D {
     // update also css element
     this.css3DObject.position.copy(worldPosition);
     this.css3DObject.quaternion.copy(worldQuaternion);
+    this.css3DObject.scale.copy(
+      new THREE.Vector3(1 / this.scalar, 1 / this.scalar, 1 / this.scalar)
+    );
 
-    // TODO : understand how this is working
-    this.domElement.style.width = (worldScale.x * 39) / 500 + '%'; // 41 600
-    this.domElement.style.height = (worldScale.y * 50) / 500 + '%'; // 67 600
+    this.domElement.style.width = this.scalar * worldScale.x + 'px';
+    this.domElement.style.height = this.scalar * worldScale.y + 'px';
   }
 
   /**
