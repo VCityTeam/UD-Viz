@@ -18,7 +18,7 @@ export class AvatarJitsi extends ScriptBase {
     iframe.src = './assets/html/billboard.html';
 
     // dom element 3d creation
-    this.domEl3D = new DomElement3D(iframe);
+    this.domEl3D = new DomElement3D(iframe, 10);
     this.domEl3D.position.set(
       this.variables.domElement3D.position.x,
       this.variables.domElement3D.position.y,
