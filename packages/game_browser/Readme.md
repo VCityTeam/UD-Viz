@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/game_browser)](https://npmjs.com/package/@ud-viz/game_browser)
 
-Game library interpretable in a browser environment based on itowns. Before to start you should start with [@ud-viz/game_shared](../game_shared/Readme.md).
+Game library interpretable in a browser environment based on itowns. Before to start you should read [@ud-viz/game_shared](../game_shared/Readme.md).
 
 There is two `Context` in @ud-viz/game_xxx, one is in `@ud-viz/game_shared` let's call it GameContext and the other is in `@ud-viz/game_browser` let's call it ExternalContext.
 

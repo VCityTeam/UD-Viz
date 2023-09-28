@@ -1,7 +1,7 @@
 {
   "name": "@ud-viz/game_node",
   "version": "4.0.2",
-  "description": "game library nodejs",
+  "description": "Game library interpretable in a nodejs environment",
   "main": "src",
   "scripts": {
     "test": "node ../../bin/nodeTest.js ./test",
