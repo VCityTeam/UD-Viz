@@ -20,7 +20,7 @@ const express = require('express');
 const { SocketService } = require('@ud-viz/game_node');
 const {
   NoteManager,
-  AvatarJitsiManager,
+  DomElement3DCubeManager,
 } = require('@ud-viz/game_node_template');
 const { Object3D } = require('@ud-viz/game_shared');
 const {
@@ -119,17 +119,17 @@ gameSocketService
         },
       }),
       new Object3D({
-        uuid: 'avatar_jitsi_game_uuid',
+        uuid: 'dom_element_3d_cube_game_uuid',
         name: 'Avatar jitsi game',
         static: true,
         components: {
           GameScript: {
             idScripts: [
-              AvatarJitsiManager.ID_SCRIPT,
+              DomElement3DCubeManager.ID_SCRIPT,
               NativeCommandManager.ID_SCRIPT,
             ],
             variables: {
-              idRenderDataAvatar: 'cube',
+              idRenderData: 'cube',
               domElement3D: {
                 position: { x: 0, y: 0.52, z: 0.5 },
                 rotation: { x: Math.PI * 0.5, y: Math.PI, z: 0 },
