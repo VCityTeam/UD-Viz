@@ -2,7 +2,7 @@ const { ScriptBase, Object3D } = require('@ud-viz/game_shared');
 const { constant } = require('@ud-viz/game_shared_template');
 const { thread } = require('@ud-viz/game_node');
 
-module.exports = class AvatarJitsiManager extends ScriptBase {
+module.exports = class DomElement3DCubeManager extends ScriptBase {
   init() {
     this.socketObjects3D = new Map();
 
@@ -11,11 +11,11 @@ module.exports = class AvatarJitsiManager extends ScriptBase {
         static: false,
         components: {
           Render: {
-            idRenderData: this.variables.idRenderDataAvatar,
+            idRenderData: this.variables.idRenderData,
             color: [Math.random(), Math.random(), Math.random(), 1],
           },
           ExternalScript: {
-            idScripts: [constant.ID_SCRIPT.AVATAR_JITSI],
+            idScripts: [constant.ID_SCRIPT.DOM_ELEMENT_3D_CUBE_ID],
             variables: {
               domElement3D: this.variables.domElement3D,
               socketID: socketID,
@@ -39,6 +39,6 @@ module.exports = class AvatarJitsiManager extends ScriptBase {
   }
 
   static get ID_SCRIPT() {
-    return 'avatar_jitsi_manager_id';
+    return 'dom_element_3d_cube_manager_id';
   }
 };

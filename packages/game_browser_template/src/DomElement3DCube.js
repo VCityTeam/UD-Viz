@@ -7,7 +7,7 @@ import {
 import { Command, RenderComponent } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
 
-export class AvatarJitsi extends ScriptBase {
+export class DomElement3DCube extends ScriptBase {
   init() {
     // add a domElement3D iframe instead of the face
     const renderController = this.object3D
@@ -63,6 +63,6 @@ export class AvatarJitsi extends ScriptBase {
   }
 
   static get ID_SCRIPT() {
-    return constant.ID_SCRIPT.AVATAR_JITSI;
+    return constant.ID_SCRIPT.DOM_ELEMENT_3D_CUBE_ID;
   }
 }
