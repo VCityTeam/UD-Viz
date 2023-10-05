@@ -33,6 +33,7 @@ export class MultiPlanarProcess {
    * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
    * @param {Object<string,ExternalScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
    * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
+   * @param {boolean} options.computeBandWidth - compute bandwidth of the interpolator or not
    */
   constructor(
     socketIOWrapper,
@@ -72,7 +73,10 @@ export class MultiPlanarProcess {
      * interpolator to smooth comminucation between the two process
      *  
      @type {StateInterpolator} */
-    this.interpolator = new StateInterpolator(options.interpolatorDelay);
+    this.interpolator = new StateInterpolator(
+      options.interpolatorDelay,
+      options.computeBandWidth
+    );
 
     /** 
      * render audio external script context
@@ -126,6 +130,8 @@ export class MultiPlanarProcess {
 
         // check if a game was already running
         if (this.interpolator._getLastStateReceived()) {
+          // TODO: reuse the same view
+
           // replace frame3D
           this.frame3DPlanar.dispose();
 

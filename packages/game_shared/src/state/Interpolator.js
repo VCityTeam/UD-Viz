@@ -11,8 +11,9 @@ class Interpolator {
    * Very inspired (quite identical) from there {@link https://victorzhou.com/blog/build-an-io-game-part-1/#7-client-state}
    *
    * @param {number} [delay=100] - delay between state received and state delivered/computed
+   * @param {boolean} [computeBandWidth=false] - compute bandwidth of state
    */
-  constructor(delay) {
+  constructor(delay, computeBandWidth = false) {
     /**
      * delay between state received and state delivered
      *
@@ -56,6 +57,19 @@ class Interpolator {
     this.lastTimeState = 0;
 
     /**
+     * @type {number}
+     */
+    this.bandWidthState = 0;
+
+    /** @type {boolean} */
+    this.computeBandWidth = computeBandWidth;
+
+    /**
+     * @type {number}
+     */
+    this.lastMinuteState = 0;
+
+    /**
      * time between last state received and the previous one
      *
      * @type {number}
@@ -85,6 +99,20 @@ class Interpolator {
     const now = Date.now();
     this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
+
+    console.log(this.computeBandWidth);
+    if (this.computeBandWidth) {
+      this.lastMinuteState += this.ping;
+
+      const size = new TextEncoder().encode(JSON.stringify(state)).length;
+      const kiloBytes = size / 1024;
+      if (this.lastMinuteState > 1000) {
+        this.lastMinuteState = 0;
+        this.bandWidthState = kiloBytes;
+      } else {
+        this.bandWidthState += kiloBytes;
+      }
+    }
 
     this.states.push(state);
 
