@@ -6,12 +6,12 @@ const { Object3D, constant } = require('@ud-viz/game_shared');
 
 /**
  * @callback SocketCallback
- * @param {socketio.Socket} socket
+ * @param {SocketWrapper} socketWrapper
  */
 
 /**
  * @callback SocketThreadCallback
- * @param {socketio.Socket} socket
+ * @param {SocketWrapper} socketWrapper
  * @param {Parent} thread
  */
 

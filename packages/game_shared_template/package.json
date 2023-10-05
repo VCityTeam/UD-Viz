@@ -21,7 +21,7 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_shared_template",
   "peerDependencies": {
     "@ud-viz/game_shared": "4.0.0",
-    "@ud-viz/utils_shared": "4.0.0",
+    "@ud-viz/utils_shared": "file:../utils_shared/",
     "three": "0.154.0"
   }
 }
