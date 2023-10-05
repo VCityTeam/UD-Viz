@@ -457,10 +457,11 @@ function arrayPushOnce(array, element) {
  */
 function removeFromArray(array, element) {
   const index = array.indexOf(element);
-  if (index) {
+  if (index >= 0) {
     array.splice(index, 1);
     return true;
   }
+
   return false;
 }
 

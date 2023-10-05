@@ -15,7 +15,7 @@ export class DomElement3DCube extends ScriptBase {
       .getController();
 
     const iframe = document.createElement('iframe');
-    iframe.src = './assets/html/billboard.html';
+    iframe.src = './assets/html/billboard.html'; // TODO hardcoded value should be in variables
 
     // dom element 3d creation
     this.domEl3D = new DomElement3D(iframe, 10);

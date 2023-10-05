@@ -278,7 +278,6 @@ class Child {
           );
           break;
         default:
-          console.warn(objectMessage[MESSAGE_KEY.TYPE], ' not handle natively');
       }
 
       if (applyUUID) {
