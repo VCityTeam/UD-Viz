@@ -465,7 +465,40 @@ function removeFromArray(array, element) {
   return false;
 }
 
+/**
+ * Insert a string in another one
+ *
+ * @param {string} originalString - base string
+ * @param {number} index - where to insert the string
+ * @param {string} string - string to insert
+ * @returns {string} inserted string
+ */
+function insert(originalString, index, string) {
+  if (index > 0) {
+    return (
+      originalString.substring(0, index) +
+      string +
+      originalString.substring(index, originalString.length)
+    );
+  }
+
+  return string + originalString;
+}
+
+/**
+ * Round a number
+ *
+ * @param {number} number - the number to round
+ * @returns {string} the rounded number
+ */
+function round(number) {
+  const x = Math.round(number * 10) + '';
+  return insert(x, x.length - 1, ',');
+}
+
 module.exports = {
+  round: round,
+  insert: insert,
   isNumeric: isNumeric,
   arrayEquals: arrayEquals,
   checkIfSubStringIsEuler: checkIfSubStringIsEuler,
