@@ -1,5 +1,6 @@
 const State = require('./State');
 const Diff = require('./Diff');
+const { round } = require('@ud-viz/utils_shared');
 
 /** @class */
 class Interpolator {
@@ -100,7 +101,6 @@ class Interpolator {
     this.ping = now - this.lastTimeState;
     this.lastTimeState = now;
 
-    console.log(this.computeBandWidth);
     if (this.computeBandWidth) {
       this.lastMinuteState += this.ping;
 
@@ -111,6 +111,7 @@ class Interpolator {
         this.bandWidthState = kiloBytes;
       } else {
         this.bandWidthState += kiloBytes;
+        this.bandWidthState = parseFloat(round(this.bandWidthState));
       }
     }
 
