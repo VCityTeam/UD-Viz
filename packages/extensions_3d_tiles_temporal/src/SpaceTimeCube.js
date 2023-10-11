@@ -35,6 +35,8 @@ const TEMPORAL_COLOR_OPACITY = {
   },
 };
 
+const translateMatrix = new THREE.Matrix4();
+
 class Level {
   constructor(date, boundingBox, features) {
     /** @type {THREE.Box3} */
@@ -134,7 +136,7 @@ class Level {
     /** @type {THREE.Mesh} */
     const planeMesh = new THREE.Mesh(
       this.planeGeometry,
-      new THREE.MeshBasicMaterial({ color: 'white', side: THREE.DoubleSide })
+      new THREE.MeshStandardMaterial({ color: 'white', side: THREE.DoubleSide })
     );
 
     planeMesh.position.set(position.x, position.y, position.z);
@@ -385,8 +387,10 @@ export class SpaceTimeCube {
                   current.boundingBox.min.z
                 )
               );
-
+              current.plane.wireframe = true;
+              current.plane.quaternion.set(0.0871557, 0, 0, 0.9961947);
               current.plane.updateMatrixWorld();
+              /* The above code is adding a plane object to the scene in a JavaScript program. */
               view.scene.add(current.plane);
             }
 
@@ -430,16 +434,43 @@ export class SpaceTimeCube {
                         index < positionIndexCount;
                         index += 3
                       ) {
-                        verticesDuplicated.push(
-                          child.geometry.attributes.position.array[index],
+                        // verticesDuplicated.push(
+                        //   child.geometry.attributes.position.array[index],
+                        //   child.geometry.attributes.position.array[index + 1],
+                        //   child.geometry.attributes.position.array[index + 2]
+                        // );
+
+                        // Set Transformation matrice
+
+                        const pos = new THREE.Vector3(
+                          0,
                           child.geometry.attributes.position.array[index + 1],
                           child.geometry.attributes.position.array[index + 2]
                         );
 
-                        child.geometry.attributes.position.array[index + 1] +=
-                          level.offsetY;
-                        child.geometry.attributes.position.array[index + 2] +=
-                          level.offsetZ;
+                        translateMatrix.makeTranslation(
+                          0,
+                          level.offsetY,
+                          level.offsetZ
+                        );
+
+                        pos.applyMatrix4(translateMatrix);
+
+                        // translateMatrix.makeRotationFromQuaternion(
+                        //   new THREE.Quaternion(-0.6427876, 0, 0, 0.7660444)
+                        // );
+                        translateMatrix.makeRotationAxis(
+                          new THREE.Vector3(1, 0, 0),
+                          0.174533
+                        );
+
+                        pos.applyMatrix4(translateMatrix);
+
+                        child.geometry.attributes.position.array[index + 1] =
+                          pos.y;
+                        child.geometry.attributes.position.array[index + 2] =
+                          pos.z;
+                        level.offsetZ;
                       }
                     });
 
@@ -510,6 +541,13 @@ export class SpaceTimeCube {
                         }
                       }
                     });
+                    // The initial rotation is at -90 on x
+                    // child.lookAt(
+                    //   view.camera.camera3D.position.x,
+                    //   view.camera.camera3D.position.y
+                    // );
+                    // child.quaternion.set(-0.6427876, 0, 0, 0.7660444);
+                    child.updateMatrixWorld();
                   }
                 });
               }
