@@ -51,6 +51,42 @@ export class GuidedTour {
     this.itownsView = itownsView;
 
     /**
+     * Name of the GuidedTour
+     * 
+      @type {string}*/
+    this.name = configGuidedTour.name || 'GuidedTour';
+
+    /**
+     * Description of the GuidedTour
+     * 
+      @type {string}*/
+    this.description = configGuidedTour.description || '';
+
+    /**
+     * Index of the first step of the GuidedTour
+     * 
+      @type {number}*/
+    this.startIndex = configGuidedTour.startIndex;
+
+    /**
+     * Index of the last step of the GuidedTour
+     * 
+      @type {number}*/
+    this.endIndex = configGuidedTour.endIndex;
+
+    /**
+     * Array of steps
+     * 
+      @type {Array<object>}*/
+    this.steps = configGuidedTour.steps;
+
+    /**
+     * Index of the current step
+     * 
+      @type {number}*/
+    this.currentIndex = this.startIndex;
+
+    /**
      * Root html of GuidedTour view 
      *
       @type {HTMLElement} */
