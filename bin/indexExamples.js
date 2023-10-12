@@ -33,6 +33,7 @@ export * as widgetLayerChoice from '@ud-viz/widget_layer_choice';
 export * as widgetSlideShow from '@ud-viz/widget_slide_show';
 export * as widgetSPARQL from '@ud-viz/widget_sparql';
 export * as widgetWorkspace from '@ud-viz/widget_workspace';
+export * as widgetGuidedTour from '@ud-viz/widget_guided_tour';
 
 // peerDep
 import * as THREE from 'three';
