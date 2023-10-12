@@ -1,0 +1,13 @@
+.widget_guided_tour {
+  background-color: white;
+  display: flex;
+  width: fit-content;
+  color: white;
+  z-index: 5;
+  position: absolute;
+}
+
+.widget_guided_tour button {
+  width: 80px;
+  height: 30px;
+}
