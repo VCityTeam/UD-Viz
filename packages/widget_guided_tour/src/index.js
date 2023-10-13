@@ -1,4 +1,5 @@
 import * as itowns from 'itowns';
+import * as THREE from 'three';
 
 /**
  * @typedef {object} Step
@@ -134,7 +135,22 @@ export class GuidedTour {
    */
   goToStep(index) {
     this.currentIndex = index;
-    console.log(this.currentIndex);
+    const step = this.getCurrentStep();
+    if (step.position && step.rotation)
+      this.travelToPosition(step.position, step.rotation, this.itownsView);
+  }
+
+  /**
+   * Travel to the targeted position and rotation
+   *
+   * @param {object} position Target postion
+   * @param {object} rotation Target rotation
+   * @param {itowns.PlanarView} view iTowns view
+   */
+  travelToPosition(position, rotation, view) {
+    const pos = new THREE.Vector3(...Object.values(position));
+    const quat = new THREE.Quaternion(...Object.values(rotation));
+    view.controls.initiateTravel(pos, 'auto', quat, true);
   }
 
   /**
