@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>widget slide show</title>
+    <title>widget guided tour</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
@@ -19,6 +19,9 @@
         .loadMultipleJSON([
           './assets/config/extents.json',
           './assets/config/crs.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
           './assets/config/widget/guided_tour.json',
         ])
         .then((configs) => {
@@ -52,22 +55,67 @@
             view.scene
           );
 
-          const fitExtent = () => {
-            udviz.cameraFitRectangle(
-              view.camera.camera3D,
-              new udviz.THREE.Vector2(extent.west, extent.south),
-              new udviz.THREE.Vector2(extent.east, extent.north)
+          // /// ADD LAYERS
+          configs['3DTiles'].forEach((layerConfig) => {
+            udviz.itowns.View.prototype.addLayer.call(
+              view,
+              new udviz.itowns.C3DTilesLayer(
+                layerConfig['id'],
+                {
+                  name: layerConfig['id'],
+                  source: new udviz.itowns.C3DTilesSource({
+                    url: layerConfig['url'],
+                  }),
+                },
+                view
+              )
             );
-            view.notifyChange(view.camera.camera3D);
-          };
-          fitExtent();
-          view.camera.camera3D.rotation.set(0, 0, 0);
+          });
+
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['layer_name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0]['name'],
+                url: configs['base_maps'][0]['url'],
+                version: configs['base_maps'][0]['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0]['format'],
+              }),
+              transparent: true,
+            })
+          );
+
+          view.addLayer(
+            new udviz.itowns.ElevationLayer(
+              configs['elevation']['layer_name'],
+              {
+                useColorTextureElevation: true,
+                colorTextureElevationMinZ:
+                  configs['elevation']['colorTextureElevationMinZ'],
+                colorTextureElevationMaxZ:
+                  configs['elevation']['colorTextureElevationMaxZ'],
+                source: new udviz.itowns.WMSSource({
+                  extent: extent,
+                  url: configs['elevation']['url'],
+                  name: configs['elevation']['name'],
+                  crs: extent.crs,
+                  heightMapWidth: 256,
+                  format: configs['elevation']['format'],
+                }),
+              }
+            )
+          );
 
           // /// GUIDED TOUR MODULE
           // 3D Setup
           const guidedTour = new udviz.widgetGuidedTour.GuidedTour(
             view,
-            configs['guided_tour'],
+            configs['guided_tour']
           );
           guidedTour.domElement.classList.add('widget_guided_tour');
 
@@ -76,6 +124,12 @@
           uiDomElement.classList.add('full_screen');
           document.body.appendChild(uiDomElement);
           uiDomElement.appendChild(guidedTour.domElement);
+
+          const button = document.createElement('button');
+          button.addEventListener('click', function () {
+            console.log(view.camera);
+          });
+          uiDomElement.appendChild(button);
         });
     </script>
     SCRIPT_TAG_RELOAD
