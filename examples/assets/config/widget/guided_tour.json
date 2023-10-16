@@ -7,7 +7,19 @@
         {
             "previous": 0,
             "next": 1,
-            "layers": [],
+            "layers": [
+                "planar",
+                "Base_Map",
+                "Lyon-1",
+                "Lyon-2",
+                "Lyon-3",
+                "Lyon-4",
+                "Lyon-5",
+                "Lyon-6",
+                "Lyon-7",
+                "Lyon-8",
+                "Lyon-9"
+            ],
             "medias": [],
             "position": {
                 "x": 1844817,
@@ -24,7 +36,17 @@
         {
             "previous": 0,
             "next": 2,
-            "layers": [],
+            "layers": [
+                "planar",
+                "Base_Map",
+                "Lyon-1",
+                "Lyon-2",
+                "Lyon-3",
+                "Lyon-4",
+                "Lyon-5",
+                "Lyon-6",
+                "Lyon-7"
+            ],
             "medias": [],
             "position": {
                 "x": 1841860,
@@ -41,7 +63,11 @@
         {
             "previous": 1,
             "next": 3,
-            "layers": [],
+            "layers": [
+                "planar",
+                "Base_Map",
+                "Lyon-1"
+            ],
             "medias": [],
             "position": {
                 "x": 1842432,
@@ -58,7 +84,11 @@
         {
             "previous": 2,
             "next": 3,
-            "layers": [],
+            "layers": [
+                "planar",
+                "Base_Map",
+                "Lyon-3"
+            ],
             "medias": [],
             "position": {
                 "x": 1844393,
