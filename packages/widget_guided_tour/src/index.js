@@ -137,7 +137,8 @@ export class GuidedTour {
     this.currentIndex = index;
     const step = this.getCurrentStep();
     if (step.position && step.rotation)
-      this.travelToPosition(step.position, step.rotation, this.itownsView);
+      this.travelToPosition(step.position, step.rotation);
+    this.filterLayers(step.layers);
   }
 
   /**
@@ -145,12 +146,21 @@ export class GuidedTour {
    *
    * @param {object} position Target postion
    * @param {object} rotation Target rotation
-   * @param {itowns.PlanarView} view iTowns view
    */
-  travelToPosition(position, rotation, view) {
+  travelToPosition(position, rotation) {
     const pos = new THREE.Vector3(...Object.values(position));
     const quat = new THREE.Quaternion(...Object.values(rotation));
-    view.controls.initiateTravel(pos, 'auto', quat, true);
+    this.itownsView.controls.initiateTravel(pos, 'auto', quat, true);
+  }
+
+  /**
+   * Filters layers, displaying only those whose ID appears in the list
+   *
+   * @param {Array<string>} layerIds Array of layer IDs
+   */
+  filterLayers(layerIds) {
+    for (const layer of this.itownsView.getLayers())
+      layer.visible = layerIds.includes(layer.id);
   }
 
   /**
