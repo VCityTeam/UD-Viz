@@ -21,6 +21,7 @@
         './assets/config/extents.json',
         './assets/config/crs.json',
         './assets/config/layer/3DTiles_temporal.json',
+        './assets/config/layer/3DTiles.json',
         './assets/config/layer/base_maps.json',
         './assets/config/layer/elevation.json'
       ])
@@ -112,6 +113,20 @@
             udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
         });
 
+        udviz.itowns.View.prototype.addLayer.call(
+            view,
+            new udviz.itowns.C3DTilesLayer(
+              configs['3DTiles'][1]['id'],
+              {
+                name: configs['3DTiles'][1]['id'],
+                source: new udviz.itowns.C3DTilesSource({
+                  url: configs['3DTiles'][1]['url'],
+                }),
+              },
+              view
+            )
+          );
+
         const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
           configs['3DTiles_temporal'][0].id,
           {
@@ -134,7 +149,7 @@
         // DEBUG
         udviz.localStorageSetCameraMatrix(
           view.camera.camera3D,
-          'debug_STC'
+          'debug_temporal'
         );
       });
   </script>
