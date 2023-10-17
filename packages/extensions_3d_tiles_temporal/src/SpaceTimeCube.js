@@ -209,6 +209,15 @@ export class SpaceTimeCube {
       });
     };
 
+    const layers = () => {
+      return view.getLayers().filter((el) => {
+        return (
+          el.isC3DTilesLayer &&
+          !el.registeredExtensions.isExtensionRegistered('3DTILES_temporal')
+        );
+      });
+    };
+
     /** @type {Map<string,object>} */
     const featureDateID2ColorOpacity = new Map();
 
@@ -541,12 +550,6 @@ export class SpaceTimeCube {
                         }
                       }
                     });
-                    // The initial rotation is at -90 on x
-                    // child.lookAt(
-                    //   view.camera.camera3D.position.x,
-                    //   view.camera.camera3D.position.y
-                    // );
-                    // child.quaternion.set(-0.6427876, 0, 0, 0.7660444);
                     child.updateMatrixWorld();
                   }
                 });
@@ -598,5 +601,82 @@ export class SpaceTimeCube {
         }
       );
     });
+
+    // Other way to display in 3D spaces
+    const points = [];
+    const layer = layers()[0];
+    const layersTemporal = [];
+
+    for (let i = 0; i < 360; i += 72) {
+      const angle = (i * Math.PI) / 180;
+      points.push(
+        new THREE.Vector3(2000 * Math.cos(angle), 2000 * Math.sin(angle), 0)
+      );
+      const C3DTiles = new udviz.itowns.C3DTilesLayer(
+        layer.id + i,
+        {
+          name: layer.id + i,
+          source: new udviz.itowns.C3DTilesSource({
+            url: layer.source.url,
+          }),
+        },
+        view
+      );
+      layersTemporal.push(C3DTiles);
+      itowns.View.prototype.addLayer.call(view, C3DTiles);
+    }
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    const line = new THREE.Line(geometry, material);
+    line.position.set(1842436, 5176138, 200);
+    line.updateMatrixWorld();
+    view.scene.add(line);
+
+    layer.addEventListener(
+      itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+      () => {
+        const width = layer.extent.east - layer.extent.west;
+        const height = layer.extent.north - layer.extent.south;
+
+        const centroid = new THREE.Vector3(
+          layer.extent.west + width / 2,
+          layer.extent.south + height / 2,
+          500
+        );
+        line.position.set(centroid.x, centroid.y, centroid.z);
+        line.updateMatrixWorld();
+
+        // Update with circle coordinates
+        let i = 0;
+        layersTemporal.forEach((layertemporal) => {
+          if (
+            layertemporal.object3d.children != undefined &&
+            layertemporal.object3d.children.length != 0
+          ) {
+            layertemporal.object3d.children.forEach((child) => {
+              child.children.forEach((object3d) => {
+                object3d.position.set(
+                  line.geometry.attributes.position.array[i] + line.position.x,
+                  line.geometry.attributes.position.array[i + 1] +
+                    line.position.y,
+                  line.position.z
+                );
+                i += 3;
+                object3d.updateMatrixWorld();
+              });
+
+              const boundingBoxHelper = new THREE.Box3Helper(
+                layertemporal.object3d.children[0].boundingVolume.box,
+                new THREE.Color(1, 0, 1)
+              );
+              boundingBoxHelper.updateMatrixWorld();
+              view.scene.add(boundingBoxHelper);
+            });
+            view.notifyChange();
+          }
+        });
+      }
+    );
   }
 }
