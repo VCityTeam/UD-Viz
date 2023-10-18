@@ -195,6 +195,7 @@ export class GuidedTour {
   filterLayers(layerIds) {
     for (const layer of this.itownsView.getLayers())
       layer.visible = layerIds.includes(layer.id);
+    this.itownsView.notifyChange();
   }
 
   /**
@@ -251,6 +252,7 @@ export class GuidedTour {
    */
   dispose() {
     this.domElement.remove();
+    for (const layer of this.itownsView.getLayers()) layer.visible = true;
     this.itownsView.notifyChange();
   }
 
