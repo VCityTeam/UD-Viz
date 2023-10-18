@@ -9,6 +9,7 @@
 
     const instance = new udviz.widgetGuidedTour.GuidedTour(
       new udviz.itowns.View(crs, document.createElement('div')),
+      null,
       null
     );
 
