@@ -1,13 +1,29 @@
 .widget_guided_tour {
-  background-color: white;
+  background-color: #fffdf2;
   display: flex;
+  flex-direction: column;
   width: fit-content;
+  height: fit-content;
+  max-width: 30vw;
+  max-height: 96vh;
   color: white;
   z-index: 5;
   position: absolute;
+  top: 1vh;
+  left: 1vw;
+  border-radius: 25px;
+  padding: 10px;
 }
 
+.widget_guided_tour p {
+  color: black;
+  margin: 10px;
+}
 .widget_guided_tour button {
   width: 80px;
   height: 30px;
+}
+
+.media_container {
+  overflow: auto;
 }
