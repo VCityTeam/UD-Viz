@@ -606,11 +606,12 @@ export class SpaceTimeCube {
     const points = [];
     const layer = layers()[0];
     const layersTemporal = [];
+    const RAYON = 1500;
 
     for (let i = 0; i < 360; i += 72) {
       const angle = (i * Math.PI) / 180;
       points.push(
-        new THREE.Vector3(2000 * Math.cos(angle), 2000 * Math.sin(angle), 0)
+        new THREE.Vector3(RAYON * Math.cos(angle), RAYON * Math.sin(angle), 0)
       );
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
         layer.id + i,
@@ -662,16 +663,47 @@ export class SpaceTimeCube {
                     line.position.y,
                   line.position.z
                 );
+                object3d.scale.set(0.5, 0.5, 0.5);
                 i += 3;
                 object3d.updateMatrixWorld();
-              });
 
-              const boundingBoxHelper = new THREE.Box3Helper(
-                layertemporal.object3d.children[0].boundingVolume.box,
-                new THREE.Color(1, 0, 1)
-              );
-              boundingBoxHelper.updateMatrixWorld();
-              view.scene.add(boundingBoxHelper);
+                // Helper
+                const boundingBoxHelper = new THREE.Box3Helper(
+                  new THREE.Box3().setFromObject(object3d),
+                  new THREE.Color(1, 0, 1)
+                );
+                boundingBoxHelper.position.set(
+                  object3d.position.x,
+                  object3d.position.y,
+                  object3d.position.z
+                );
+                boundingBoxHelper.updateMatrixWorld();
+                view.scene.add(boundingBoxHelper);
+
+                // Plane
+                const planeGeometry = new THREE.PlaneGeometry(
+                  boundingBoxHelper.box.max.x - boundingBoxHelper.box.min.x,
+                  boundingBoxHelper.box.max.y - boundingBoxHelper.box.min.y
+                );
+
+                const planeMesh = new THREE.Mesh(
+                  planeGeometry,
+                  new THREE.MeshStandardMaterial({
+                    color: 'white',
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.8,
+                  })
+                );
+
+                planeMesh.position.set(
+                  object3d.position.x,
+                  object3d.position.y,
+                  object3d.position.z - 10
+                );
+                planeMesh.updateMatrixWorld();
+                view.scene.add(planeMesh);
+              });
             });
             view.notifyChange();
           }
