@@ -51,15 +51,15 @@ export class GuidedTour {
    *
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
-   * @param {object} [configGuidedTour] - The configuration of the widget
-   * @param {string} configGuidedTour.name - Name of the GuidedTour
-   * @param {string} configGuidedTour.description - Description of the GuidedTour
-   * @param {number} configGuidedTour.startIndex - Index of the first step of the tour
-   * @param {number} configGuidedTour.endIndex - Index of the last step of the tour
-   * @param {Array<Step>} configGuidedTour.steps - Array of steps
+   * @param {object} [tourConfig] - The configuration of the widget
+   * @param {string} tourConfig.name - Name of the GuidedTour
+   * @param {string} tourConfig.description - Description of the GuidedTour
+   * @param {number} tourConfig.startIndex - Index of the first step of the tour
+   * @param {number} tourConfig.endIndex - Index of the last step of the tour
+   * @param {Array<Step>} tourConfig.steps - Array of steps
    * @param {Array<Media>} mediaConfig - All media of the tour
    */
-  constructor(itownsView, configGuidedTour, mediaConfig) {
+  constructor(itownsView, tourConfig, mediaConfig) {
     /** @type {import('itowns').PlanarView} */
     this.itownsView = itownsView;
 
@@ -67,31 +67,31 @@ export class GuidedTour {
      * Name of the GuidedTour
      * 
       @type {string}*/
-    this.name = configGuidedTour.name || 'GuidedTour';
+    this.name = tourConfig.name || 'GuidedTour';
 
     /**
      * Description of the GuidedTour
      * 
       @type {string}*/
-    this.description = configGuidedTour.description || '';
+    this.description = tourConfig.description || '';
 
     /**
      * Index of the first step of the GuidedTour
      * 
       @type {number}*/
-    this.startIndex = configGuidedTour.startIndex;
+    this.startIndex = tourConfig.startIndex;
 
     /**
      * Index of the last step of the GuidedTour
      * 
       @type {number}*/
-    this.endIndex = configGuidedTour.endIndex;
+    this.endIndex = tourConfig.endIndex;
 
     /**
      * Array of steps
      * 
       @type {Array<object>}*/
-    this.steps = configGuidedTour.steps;
+    this.steps = tourConfig.steps;
 
     /**
      * Index of the current step
