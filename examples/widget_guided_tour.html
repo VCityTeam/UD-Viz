@@ -115,7 +115,8 @@
           // 3D Setup
           const guidedTour = new udviz.widgetGuidedTour.GuidedTour(
             view,
-            configs['guided_tour']
+            configs['guided_tour'].tour,
+            configs['guided_tour'].media
           );
           guidedTour.goToStep(guidedTour.startIndex);
           guidedTour.domElement.classList.add('widget_guided_tour');

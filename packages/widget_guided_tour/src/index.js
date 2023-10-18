@@ -12,6 +12,13 @@ import * as THREE from 'three';
  */
 
 /**
+ * @typedef {object} Media
+ * @property {string} id - ID of the media
+ * @property {string} type - The type of the media (text, image, video or audio)
+ * @property {string} value - Value of the media. It can be either an URL or raw text
+ */
+
+/**
  * @example
  * Config Example
  * {
@@ -50,8 +57,9 @@ export class GuidedTour {
    * @param {number} configGuidedTour.startIndex - Index of the first step of the tour
    * @param {number} configGuidedTour.endIndex - Index of the last step of the tour
    * @param {Array<Step>} configGuidedTour.steps - Array of steps
+   * @param {Array<Media>} mediaConfig - All media of the tour
    */
-  constructor(itownsView, configGuidedTour) {
+  constructor(itownsView, configGuidedTour, mediaConfig) {
     /** @type {import('itowns').PlanarView} */
     this.itownsView = itownsView;
 
@@ -90,6 +98,12 @@ export class GuidedTour {
      * 
       @type {number}*/
     this.currentIndex = this.startIndex;
+
+    /**
+     * Config of all media of the tour
+     *
+     @type {Array<object>}*/
+    this.mediaConfig = mediaConfig;
 
     /**
      * Root html of GuidedTour view 
@@ -158,6 +172,7 @@ export class GuidedTour {
     if (step.position && step.rotation)
       this.travelToPosition(step.position, step.rotation);
     this.filterLayers(step.layers);
+    this.addMedia(step.media);
   }
 
   /**
@@ -183,6 +198,55 @@ export class GuidedTour {
   }
 
   /**
+   * Add media in the media container
+   *
+   * @param {Array<string>} mediaIds The list of media IDs
+   */
+  addMedia(mediaIds) {
+    const mediaDivs = [];
+    for (const mediaId of mediaIds) {
+      const media = this.getMediaById(mediaId);
+      mediaDivs.push(this.createMediaDiv(media));
+    }
+    this.mediaContainer.replaceChildren(...mediaDivs);
+  }
+
+  /**
+   * Creates a HTML element from a media config
+   *
+   * @param {Media} media The media config
+   * @returns {HTMLElement} The media as a HTML element
+   */
+  createMediaDiv(media) {
+    let mediaDiv = null;
+    switch (media.type) {
+      case 'text':
+        mediaDiv = document.createElement('p');
+        mediaDiv.innerText = media.value;
+        break;
+      case 'video':
+        mediaDiv = document.createElement('video');
+        mediaDiv.src = media.value;
+        mediaDiv.controls = true;
+        mediaDiv.muted = false;
+        break;
+      case 'image':
+        mediaDiv = document.createElement('img');
+        mediaDiv.src = media.value;
+        break;
+      case 'audio':
+        mediaDiv = document.createElement('audio');
+        mediaDiv.src = media.value;
+        mediaDiv.controls = true;
+        mediaDiv.muted = false;
+        break;
+      default:
+        console.log('Unkown media type');
+    }
+    return mediaDiv;
+  }
+
+  /**
    * Dispose the DOM element
    */
   dispose() {
@@ -197,5 +261,18 @@ export class GuidedTour {
    */
   getCurrentStep() {
     return this.steps[this.currentIndex];
+  }
+
+  /**
+   * Returns the media config with the matching ID
+   *
+   * @param {string} mediaId The ID of the media
+   * @returns {Media} The media config
+   */
+  getMediaById(mediaId) {
+    for (const media of this.mediaConfig) {
+      if (media.id == mediaId) return media;
+    }
+    return undefined;
   }
 }
