@@ -96,6 +96,25 @@ export class GuidedTour {
      *
       @type {HTMLElement} */
     this.domElement = null;
+
+    /**
+     * Html div containing media of the step 
+     *
+      @type {HTMLElement} */
+    this.mediaContainer = null;
+
+    /**
+     * Button to go to previous step 
+     *
+      @type {HTMLElement} */
+    this.previousButton = null;
+
+    /**
+     * Button to go to next step 
+     *
+      @type {HTMLElement} */
+    this.nextButton = null;
+
     this.initHtml();
   }
 
@@ -104,28 +123,28 @@ export class GuidedTour {
    */
   initHtml() {
     this.domElement = document.createElement('div');
-    const mediaContainer = document.createElement('div');
-    this.domElement.appendChild(mediaContainer);
+    this.mediaContainer = document.createElement('div');
+    this.domElement.appendChild(this.mediaContainer);
 
-    const previousButton = document.createElement('button');
-    previousButton.addEventListener(
+    this.previousButton = document.createElement('button');
+    this.previousButton.addEventListener(
       'click',
       function () {
         const previousIndex = this.getCurrentStep().previous;
         this.goToStep(previousIndex);
       }.bind(this)
     );
-    this.domElement.appendChild(previousButton);
+    this.domElement.appendChild(this.previousButton);
 
-    const nextButton = document.createElement('button');
-    nextButton.addEventListener(
+    this.nextButton = document.createElement('button');
+    this.nextButton.addEventListener(
       'click',
       function () {
         const nextIndex = this.getCurrentStep().next;
         this.goToStep(nextIndex);
       }.bind(this)
     );
-    this.domElement.appendChild(nextButton);
+    this.domElement.appendChild(this.nextButton);
   }
 
   /**

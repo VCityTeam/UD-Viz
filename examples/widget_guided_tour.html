@@ -119,18 +119,15 @@
           );
           guidedTour.goToStep(guidedTour.startIndex);
           guidedTour.domElement.classList.add('widget_guided_tour');
+          guidedTour.mediaContainer.classList.add('media_container');
+          guidedTour.previousButton.innerText = 'Previous';
+          guidedTour.nextButton.innerText = 'Next';
 
           // Add UI
           const uiDomElement = document.createElement('div');
           uiDomElement.classList.add('full_screen');
           document.body.appendChild(uiDomElement);
           uiDomElement.appendChild(guidedTour.domElement);
-
-          const button = document.createElement('button');
-          button.addEventListener('click', function () {
-            console.log(view.camera);
-          });
-          uiDomElement.appendChild(button);
         });
     </script>
     SCRIPT_TAG_RELOAD
