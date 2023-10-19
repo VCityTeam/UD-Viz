@@ -140,15 +140,12 @@ class Maptastic {
     window.addEventListener('keydown', this.keyDown.bind(this));
   }
 
-  addLayers(htmlElements) {
+  addLayers(targets) {
     this.resize();
 
-    for (let i = 0; i < htmlElements.length; i++) {
-      if (
-        htmlElements[i] instanceof HTMLElement ||
-        typeof htmlElements[i] === 'string'
-      ) {
-        this.addLayer(htmlElements[i]);
+    for (let i = 0; i < targets.length; i++) {
+      if (targets[i] instanceof HTMLElement || typeof targets[i] === 'string') {
+        this.addLayer(targets[i]);
       }
     }
 
@@ -657,7 +654,6 @@ class Maptastic {
 
   addLayer(target, targetPoints) {
     let element;
-
     if (typeof target == 'string') {
       element = document.getElementById(target);
       if (!element) {
@@ -672,6 +668,14 @@ class Maptastic {
         console.error('element is already in layers array');
         return;
       }
+    }
+
+    if (!element.id) {
+      console.warn(
+        'save and load are not supported on element:',
+        element,
+        'cause it has no id'
+      );
     }
 
     const offsetX = element.offsetLeft;
@@ -724,7 +728,6 @@ class Maptastic {
       this.localStorageKey,
       JSON.stringify(this.getLayout(this.layers))
     );
-    // console.log(JSON.stringify(this.getLayout(this.layers)));
   }
 
   loadSettings() {
@@ -798,11 +801,13 @@ class Maptastic {
   getLayout() {
     const layout = [];
     for (let i = 0; i < this.layers.length; i++) {
-      layout.push({
-        id: this.layers[i].element.id,
-        targetPoints: clonePoints(this.layers[i].targetPoints),
-        sourcePoints: clonePoints(this.layers[i].sourcePoints),
-      });
+      if (this.layers[i].element.id) {
+        layout.push({
+          id: this.layers[i].element.id,
+          targetPoints: clonePoints(this.layers[i].targetPoints),
+          sourcePoints: clonePoints(this.layers[i].sourcePoints),
+        });
+      }
     }
     return layout;
   }
