@@ -77,10 +77,7 @@
           view.scene.add(slideShow.plane);
 
           // Add UI
-          const uiDomElement = document.createElement('div');
-          uiDomElement.classList.add('full_screen');
-          document.body.appendChild(uiDomElement);
-          uiDomElement.appendChild(slideShow.domElement);
+          document.body.appendChild(slideShow.domElement);
 
           const hideUIListener = (event) => {
             if (event.key.toLowerCase() != 's') return;
@@ -92,25 +89,50 @@
             }
           };
 
-          // slideShow.domElement.id = 'idSlideShow';
-          // frame3DPlanar.domElementWebGL.id = 'idDomElementWebGL';
+          slideShow.domElement.id = 'idSlideShow';
 
           /* Hide the domElement without dispose the widget */
           window.addEventListener('keydown', hideUIListener);
 
           const maptasticClass = new Maptastic({
             showLabelsNames: false,
-            autoLoad: true,
-            autoSave: true,
+            autoLoad: false,
+            autoSave: false,
           });
 
           maptasticClass.addListeners();
-          maptasticClass.addLayers([
-            viewDomElement,
-            slideShow.domElement,
-          ]);
+          maptasticClass.addLayers([slideShow.domElement, viewDomElement]);
         });
     </script>
+
+    <pre
+      style="
+        z-index: 15;
+        position: fixed;
+        background-color: #ffffffa6;
+        top: 0;
+        right: 0;
+        margin: 0;
+      "
+    >
+      SHIFT-Space: Toggle edit mode
+
+      In Edit Mode
+
+      click / drag:       select and move quads/corner points
+      SHIFT + drag:       move selcted quad/corner point with 10x precision
+      ALT + drag:         rotate/scale selected quad
+      Arrow keys:         move selected quad/corner point
+      SHIFT + Arrow keys: move selected quad/corner point by 10 pixels
+      ALT + Arrow keys:   rotate/scale selected quad
+      's':                Solo/unsolo selected quad
+      'c':                Toggle mouse cursor crosshairs
+      'r':                Rotate selected layer 90 degrees clock-wise
+      'h':                Flip selected layer horizontally
+      'v':                Flip selected layer vertically
+      'b':                Show/Hide projector bounds
+        
+    </pre>
     SCRIPT_TAG_RELOAD
   </body>
 </html>
