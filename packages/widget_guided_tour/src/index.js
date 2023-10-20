@@ -51,7 +51,7 @@ export class GuidedTour {
    *
    *
    * @param {itowns.PlanarView} itownsView - The itowns view.
-   * @param {object} [tourConfig] - The configuration of the widget
+   * @param {object} tourConfig - The configuration of the widget
    * @param {string} tourConfig.name - Name of the GuidedTour
    * @param {string} tourConfig.description - Description of the GuidedTour
    * @param {number} tourConfig.startIndex - Index of the first step of the tour
