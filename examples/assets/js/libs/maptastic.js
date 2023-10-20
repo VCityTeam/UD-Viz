@@ -131,7 +131,7 @@ class Maptastic {
   }
 
   addListeners() {
-    window.addEventListener('resize', this.resize);
+    window.addEventListener('resize', this.resize.bind(this));
 
     // UI events
     window.addEventListener('mousemove', this.mouseMove.bind(this));
