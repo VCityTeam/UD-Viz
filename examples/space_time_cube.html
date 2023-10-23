@@ -146,6 +146,20 @@
           view, 100
         );
 
+        const elementVectorRepresentation = document.createElement('button');
+        elementVectorRepresentation.textContent = 'Vector';
+        elementVectorRepresentation.style = 'position: absolute; top: 0%; z-index:10';
+        viewDomElement.appendChild(elementVectorRepresentation);
+
+        const elementCircleRepresentation = document.createElement('button');
+        elementCircleRepresentation.textContent = 'Circle';
+        elementCircleRepresentation.style = 'position: absolute; top: 5%; z-index:10';
+        viewDomElement.appendChild(elementCircleRepresentation);
+
+        elementVectorRepresentation.onclick = stc.vectorRepresentation();
+        elementCircleRepresentation.onclick = stc.circleRepresentation();
+
+
         // DEBUG
         udviz.localStorageSetCameraMatrix(
           view.camera.camera3D,
