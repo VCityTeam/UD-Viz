@@ -200,6 +200,8 @@ export class SpaceTimeCube {
    * @param delta
    */
   constructor(view, delta) {
+    this.view = view;
+
     const temporalLayers = () => {
       return view.getLayers().filter((el) => {
         return (
@@ -603,10 +605,10 @@ export class SpaceTimeCube {
     });
 
     // Other way to display in 3D spaces
-    const points = [];
-    const layer = layers()[0];
-    const layersTemporal = [];
-    const RAYON = 1500;
+    const points = [],
+      layer = layers()[0],
+      layersTemporal = [],
+      RAYON = 1000;
 
     for (let i = 0; i < 360; i += 72) {
       const angle = (i * Math.PI) / 180;
@@ -629,10 +631,10 @@ export class SpaceTimeCube {
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    const line = new THREE.Line(geometry, material);
-    line.position.set(1842436, 5176138, 200);
-    line.updateMatrixWorld();
-    view.scene.add(line);
+    const circle = new THREE.Line(geometry, material);
+    circle.position.set(1842436, 5176138, 200);
+    circle.updateMatrixWorld();
+    view.scene.add(circle);
 
     layer.addEventListener(
       itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
@@ -645,8 +647,8 @@ export class SpaceTimeCube {
           layer.extent.south + height / 2,
           500
         );
-        line.position.set(centroid.x, centroid.y, centroid.z);
-        line.updateMatrixWorld();
+        circle.position.set(centroid.x, centroid.y, centroid.z);
+        circle.updateMatrixWorld();
 
         // Update with circle coordinates
         let i = 0;
@@ -658,10 +660,11 @@ export class SpaceTimeCube {
             layertemporal.object3d.children.forEach((child) => {
               child.children.forEach((object3d) => {
                 object3d.position.set(
-                  line.geometry.attributes.position.array[i] + line.position.x,
-                  line.geometry.attributes.position.array[i + 1] +
-                    line.position.y,
-                  line.position.z
+                  this.circle.geometry.attributes.position.array[i] +
+                    this.circle.position.x,
+                  this.circle.geometry.attributes.position.array[i + 1] +
+                    this.circle.position.y,
+                  this.circle.position.z
                 );
                 object3d.scale.set(0.5, 0.5, 0.5);
                 i += 3;
@@ -710,5 +713,23 @@ export class SpaceTimeCube {
         });
       }
     );
+
+    // animate();
+
+    /**
+     *
+     */
+    function animate() {
+      // console.log(this.circle);
+      if (circle != undefined) {
+        circle.rotation.x += 0.005;
+        circle.rotation.z += 0.01;
+
+        circle.updateMatrixWorld();
+        view.notifyChange();
+
+        requestAnimationFrame(animate);
+      }
+    }
   }
 }
