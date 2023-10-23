@@ -660,11 +660,11 @@ export class SpaceTimeCube {
             layertemporal.object3d.children.forEach((child) => {
               child.children.forEach((object3d) => {
                 object3d.position.set(
-                  this.circle.geometry.attributes.position.array[i] +
-                    this.circle.position.x,
-                  this.circle.geometry.attributes.position.array[i + 1] +
-                    this.circle.position.y,
-                  this.circle.position.z
+                  circle.geometry.attributes.position.array[i] +
+                    circle.position.x,
+                  circle.geometry.attributes.position.array[i + 1] +
+                    circle.position.y,
+                  circle.position.z
                 );
                 object3d.scale.set(0.5, 0.5, 0.5);
                 i += 3;
