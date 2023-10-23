@@ -202,7 +202,7 @@ export class SpaceTimeCube {
   constructor(view, delta) {
     this.view = view;
 
-    const temporalLayers = () => {
+    this.temporalLayers = () => {
       return view.getLayers().filter((el) => {
         return (
           el.isC3DTilesLayer &&
@@ -211,7 +211,7 @@ export class SpaceTimeCube {
       });
     };
 
-    const layers = () => {
+    this.layers = () => {
       return view.getLayers().filter((el) => {
         return (
           el.isC3DTilesLayer &&
@@ -221,14 +221,16 @@ export class SpaceTimeCube {
     };
 
     /** @type {Map<string,object>} */
-    const featureDateID2ColorOpacity = new Map();
+    this.featureDateID2ColorOpacity = new Map();
 
     /** @type {Array} */
-    const possibleDates = [];
+    this.possibleDates = [];
 
     this.delta = delta;
+  }
 
-    temporalLayers().forEach((temporalLayer) => {
+  vectorRepresentation() {
+    this.temporalLayers().forEach((temporalLayer) => {
       temporalLayer.addEventListener(
         itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
         () => {
@@ -243,29 +245,29 @@ export class SpaceTimeCube {
               transaction.startDate + transactionDuration / 3;
             const secondHalfDate =
               transaction.endDate - transactionDuration / 3;
-            arrayPushOnce(possibleDates, transaction.startDate);
-            arrayPushOnce(possibleDates, transaction.endDate);
+            arrayPushOnce(this.possibleDates, transaction.startDate);
+            arrayPushOnce(this.possibleDates, transaction.endDate);
 
-            arrayPushOnce(possibleDates, firstHalfDate);
-            arrayPushOnce(possibleDates, secondHalfDate);
+            arrayPushOnce(this.possibleDates, firstHalfDate);
+            arrayPushOnce(this.possibleDates, secondHalfDate);
 
             transaction.source.forEach((fId) => {
               if (transaction.type == 'modification') {
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + firstHalfDate,
                   TEMPORAL_COLOR_OPACITY.modification
                 );
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + secondHalfDate,
                   TEMPORAL_COLOR_OPACITY.invisible
                 );
               } else {
                 // all other transaction
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + firstHalfDate,
                   TEMPORAL_COLOR_OPACITY.noTransaction
                 );
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + secondHalfDate,
                   TEMPORAL_COLOR_OPACITY.noTransaction
                 );
@@ -273,21 +275,21 @@ export class SpaceTimeCube {
             });
             transaction.destination.forEach((fId) => {
               if (transaction.type == 'modification') {
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + firstHalfDate,
                   TEMPORAL_COLOR_OPACITY.invisible
                 );
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + secondHalfDate,
                   TEMPORAL_COLOR_OPACITY.modification
                 );
               } else {
                 // all other transaction
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + firstHalfDate,
                   TEMPORAL_COLOR_OPACITY.noTransaction
                 );
-                featureDateID2ColorOpacity.set(
+                this.featureDateID2ColorOpacity.set(
                   fId + secondHalfDate,
                   TEMPORAL_COLOR_OPACITY.noTransaction
                 );
@@ -296,7 +298,7 @@ export class SpaceTimeCube {
           });
 
           // handle demolition/creation which are not in batchTable/extension
-          possibleDates.sort((a, b) => a - b);
+          this.possibleDates.sort((a, b) => a - b);
 
           let head;
           for (const [
@@ -357,16 +359,20 @@ export class SpaceTimeCube {
             current.offsetY = (current.date - minDate) * (this.delta + 50);
 
             // Set demoliton and construction
-            for (let index = 0; index < possibleDates.length - 1; index++) {
-              const date = possibleDates[index];
-              const nextDate = possibleDates[index + 1];
+            for (
+              let index = 0;
+              index < this.possibleDates.length - 1;
+              index++
+            ) {
+              const date = this.possibleDates[index];
+              const nextDate = this.possibleDates[index + 1];
               current.features.forEach((feature) => {
                 const featureTransaction =
                   feature.getInfo().extensions['3DTILES_temporal'];
                 if (featureTransaction.endDate == date) {
                   const featureDateID = featureTransaction.featureId + nextDate;
-                  if (!featureDateID2ColorOpacity.has(featureDateID)) {
-                    featureDateID2ColorOpacity.set(
+                  if (!this.featureDateID2ColorOpacity.has(featureDateID)) {
+                    this.featureDateID2ColorOpacity.set(
                       featureDateID,
                       TEMPORAL_COLOR_OPACITY.demolition
                     );
@@ -374,8 +380,8 @@ export class SpaceTimeCube {
                 }
                 if (featureTransaction.startDate == nextDate) {
                   const featureDateID = featureTransaction.featureId + date;
-                  if (!featureDateID2ColorOpacity.has(featureDateID))
-                    featureDateID2ColorOpacity.set(
+                  if (!this.featureDateID2ColorOpacity.has(featureDateID))
+                    this.featureDateID2ColorOpacity.set(
                       featureDateID,
                       TEMPORAL_COLOR_OPACITY.creation
                     );
@@ -387,7 +393,7 @@ export class SpaceTimeCube {
             if (current.plane == null) {
               // Update bounding box
               current.boundingBoxHelper.updateMatrixWorld();
-              view.scene.add(current.boundingBoxHelper);
+              this.view.scene.add(current.boundingBoxHelper);
 
               current.createPlane(
                 current.width,
@@ -402,7 +408,7 @@ export class SpaceTimeCube {
               current.plane.quaternion.set(0.0871557, 0, 0, 0.9961947);
               current.plane.updateMatrixWorld();
               /* The above code is adding a plane object to the scene in a JavaScript program. */
-              view.scene.add(current.plane);
+              this.view.scene.add(current.plane);
             }
 
             current = current.next;
@@ -410,7 +416,7 @@ export class SpaceTimeCube {
 
           console.log(head);
 
-          temporalLayers().forEach((layer) => {
+          this.temporalLayers().forEach((layer) => {
             for (const [tileId, tileFeatures] of layer.tilesC3DTileFeatures) {
               for (const [batchId, feature] of tileFeatures) {
                 const tileContent = layer.object3d.getObjectByProperty(
@@ -489,11 +495,11 @@ export class SpaceTimeCube {
                     const fiD =
                       feature.getInfo().extensions['3DTILES_temporal']
                         .featureId;
-                    possibleDates.forEach((pdate) => {
-                      if (featureDateID2ColorOpacity.has(fiD + pdate)) {
+                    this.possibleDates.forEach((pdate) => {
+                      if (this.featureDateID2ColorOpacity.has(fiD + pdate)) {
                         if (
-                          featureDateID2ColorOpacity.get(fiD + pdate).color ==
-                          'green'
+                          this.featureDateID2ColorOpacity.get(fiD + pdate)
+                            .color == 'green'
                         ) {
                           for (
                             let index = 0;
@@ -521,8 +527,8 @@ export class SpaceTimeCube {
                           mesh.applyMatrix4(child.matrixWorld);
                           // view.scene.add(mesh);
                         } else if (
-                          featureDateID2ColorOpacity.get(fiD + pdate).color ==
-                          'red'
+                          this.featureDateID2ColorOpacity.get(fiD + pdate)
+                            .color == 'red'
                         ) {
                           for (
                             let index = 0;
@@ -556,7 +562,7 @@ export class SpaceTimeCube {
                   }
                 });
               }
-              view.notifyChange();
+              this.view.notifyChange();
             }
 
             const computeColorOpacity = (c3DTileFeature) => {
@@ -564,7 +570,7 @@ export class SpaceTimeCube {
                 c3DTileFeature.getInfo().extensions['3DTILES_temporal'];
               const result = [];
 
-              possibleDates.forEach((date) => {
+              this.possibleDates.forEach((date) => {
                 if (
                   temporalExtension.startDate <= date &&
                   temporalExtension.endDate >= date
@@ -573,10 +579,10 @@ export class SpaceTimeCube {
                 }
 
                 const featureDateID = temporalExtension.featureId + date;
-                if (featureDateID2ColorOpacity.has(featureDateID)) {
+                if (this.featureDateID2ColorOpacity.has(featureDateID)) {
                   arrayPushOnce(
                     result,
-                    featureDateID2ColorOpacity.get(featureDateID)
+                    this.featureDateID2ColorOpacity.get(featureDateID)
                   );
                 }
               });
@@ -598,15 +604,16 @@ export class SpaceTimeCube {
                 },
               },
             });
-            view.notifyChange();
+            this.view.notifyChange();
           });
         }
       );
     });
+  }
 
-    // Other way to display in 3D spaces
+  circleRepresentation() {
     const points = [],
-      layer = layers()[0],
+      layer = this.layers()[0],
       layersTemporal = [],
       RAYON = 1000;
 
@@ -623,10 +630,10 @@ export class SpaceTimeCube {
             url: layer.source.url,
           }),
         },
-        view
+        this.view
       );
       layersTemporal.push(C3DTiles);
-      itowns.View.prototype.addLayer.call(view, C3DTiles);
+      itowns.View.prototype.addLayer.call(this.view, C3DTiles);
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -634,7 +641,7 @@ export class SpaceTimeCube {
     const circle = new THREE.Line(geometry, material);
     circle.position.set(1842436, 5176138, 200);
     circle.updateMatrixWorld();
-    view.scene.add(circle);
+    this.view.scene.add(circle);
 
     layer.addEventListener(
       itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
@@ -681,7 +688,7 @@ export class SpaceTimeCube {
                   object3d.position.z
                 );
                 boundingBoxHelper.updateMatrixWorld();
-                view.scene.add(boundingBoxHelper);
+                this.view.scene.add(boundingBoxHelper);
 
                 // Plane
                 const planeGeometry = new THREE.PlaneGeometry(
@@ -705,10 +712,10 @@ export class SpaceTimeCube {
                   object3d.position.z - 10
                 );
                 planeMesh.updateMatrixWorld();
-                view.scene.add(planeMesh);
+                this.view.scene.add(planeMesh);
               });
             });
-            view.notifyChange();
+            this.view.notifyChange();
           }
         });
       }
@@ -720,16 +727,13 @@ export class SpaceTimeCube {
      *
      */
     function animate() {
-      // console.log(this.circle);
-      if (circle != undefined) {
-        circle.rotation.x += 0.005;
-        circle.rotation.z += 0.01;
+      circle.rotation.x += 0.005;
+      circle.rotation.z += 0.01;
 
-        circle.updateMatrixWorld();
-        view.notifyChange();
+      circle.updateMatrixWorld();
+      this.view.notifyChange();
 
-        requestAnimationFrame(animate);
-      }
+      requestAnimationFrame(animate);
     }
   }
 }
