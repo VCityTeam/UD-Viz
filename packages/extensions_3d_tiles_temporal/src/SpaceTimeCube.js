@@ -227,6 +227,37 @@ export class SpaceTimeCube {
     this.possibleDates = [];
 
     this.delta = delta;
+
+    this.centerLayer = this.layers()[0];
+    this.layersTemporal = [];
+    const points = [],
+      RAYON = 1000;
+
+    for (let i = 0; i < 360; i += 72) {
+      const angle = (i * Math.PI) / 180;
+      points.push(
+        new THREE.Vector3(RAYON * Math.cos(angle), RAYON * Math.sin(angle), 0)
+      );
+      const C3DTiles = new udviz.itowns.C3DTilesLayer(
+        this.centerLayer.id + i,
+        {
+          name: this.centerLayer.id + i,
+          source: new udviz.itowns.C3DTilesSource({
+            url: this.centerLayer.source.url,
+          }),
+        },
+        this.view
+      );
+      this.layersTemporal.push(C3DTiles);
+      itowns.View.prototype.addLayer.call(this.view, C3DTiles);
+    }
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    this.circle = new THREE.Line(geometry, material);
+    this.circle.position.set(0, 0, 0);
+    this.circle.updateMatrixWorld();
+    this.view.scene.add(this.circle);
   }
 
   vectorRepresentation() {
@@ -612,128 +643,108 @@ export class SpaceTimeCube {
   }
 
   circleRepresentation() {
-    const points = [],
-      layer = this.layers()[0],
-      layersTemporal = [],
-      RAYON = 1000;
+    const view = this.view;
+    const width = this.centerLayer.extent.east - this.centerLayer.extent.west;
+    const height =
+      this.centerLayer.extent.north - this.centerLayer.extent.south;
 
-    for (let i = 0; i < 360; i += 72) {
-      const angle = (i * Math.PI) / 180;
-      points.push(
-        new THREE.Vector3(RAYON * Math.cos(angle), RAYON * Math.sin(angle), 0)
-      );
-      const C3DTiles = new udviz.itowns.C3DTilesLayer(
-        layer.id + i,
-        {
-          name: layer.id + i,
-          source: new udviz.itowns.C3DTilesSource({
-            url: layer.source.url,
-          }),
-        },
-        this.view
-      );
-      layersTemporal.push(C3DTiles);
-      itowns.View.prototype.addLayer.call(this.view, C3DTiles);
-    }
-
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    const circle = new THREE.Line(geometry, material);
-    circle.position.set(1842436, 5176138, 200);
-    circle.updateMatrixWorld();
-    this.view.scene.add(circle);
-
-    layer.addEventListener(
-      itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
-      () => {
-        const width = layer.extent.east - layer.extent.west;
-        const height = layer.extent.north - layer.extent.south;
-
-        const centroid = new THREE.Vector3(
-          layer.extent.west + width / 2,
-          layer.extent.south + height / 2,
-          500
-        );
-        circle.position.set(centroid.x, centroid.y, centroid.z);
-        circle.updateMatrixWorld();
-
-        // Update with circle coordinates
-        let i = 0;
-        layersTemporal.forEach((layertemporal) => {
-          if (
-            layertemporal.object3d.children != undefined &&
-            layertemporal.object3d.children.length != 0
-          ) {
-            layertemporal.object3d.children.forEach((child) => {
-              child.children.forEach((object3d) => {
-                object3d.position.set(
-                  circle.geometry.attributes.position.array[i] +
-                    circle.position.x,
-                  circle.geometry.attributes.position.array[i + 1] +
-                    circle.position.y,
-                  circle.position.z
-                );
-                object3d.scale.set(0.5, 0.5, 0.5);
-                i += 3;
-                object3d.updateMatrixWorld();
-
-                // Helper
-                const boundingBoxHelper = new THREE.Box3Helper(
-                  new THREE.Box3().setFromObject(object3d),
-                  new THREE.Color(1, 0, 1)
-                );
-                boundingBoxHelper.position.set(
-                  object3d.position.x,
-                  object3d.position.y,
-                  object3d.position.z
-                );
-                boundingBoxHelper.updateMatrixWorld();
-                this.view.scene.add(boundingBoxHelper);
-
-                // Plane
-                const planeGeometry = new THREE.PlaneGeometry(
-                  boundingBoxHelper.box.max.x - boundingBoxHelper.box.min.x,
-                  boundingBoxHelper.box.max.y - boundingBoxHelper.box.min.y
-                );
-
-                const planeMesh = new THREE.Mesh(
-                  planeGeometry,
-                  new THREE.MeshStandardMaterial({
-                    color: 'white',
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    opacity: 0.8,
-                  })
-                );
-
-                planeMesh.position.set(
-                  object3d.position.x,
-                  object3d.position.y,
-                  object3d.position.z - 10
-                );
-                planeMesh.updateMatrixWorld();
-                this.view.scene.add(planeMesh);
-              });
-            });
-            this.view.notifyChange();
-          }
-        });
-      }
+    const centroid = new THREE.Vector3(
+      this.centerLayer.extent.west + width / 2,
+      this.centerLayer.extent.south + height / 2,
+      500
     );
 
-    // animate();
+    this.circle.position.set(centroid.x, centroid.y, centroid.z);
+    this.circle.updateMatrixWorld();
+    const object3DCircle = [];
+
+    // Update with circle coordinates
+    let i = 0;
+    this.layersTemporal.forEach((layertemporal) => {
+      if (
+        layertemporal.object3d.children != undefined &&
+        layertemporal.object3d.children.length != 0
+      ) {
+        layertemporal.object3d.children.forEach((child) => {
+          child.children.forEach((object3d) => {
+            object3d.position.set(
+              this.circle.geometry.attributes.position.array[i] +
+                this.circle.position.x,
+              this.circle.geometry.attributes.position.array[i + 1] +
+                this.circle.position.y,
+              this.circle.position.z
+            );
+            object3d.scale.set(0.5, 0.5, 0.5);
+            i += 3;
+            object3d.updateMatrixWorld();
+            object3DCircle.push(object3d);
+
+            // Helper
+            const boundingBoxHelper = new THREE.Box3Helper(
+              new THREE.Box3().setFromObject(object3d),
+              new THREE.Color(1, 0, 1)
+            );
+            boundingBoxHelper.position.set(
+              object3d.position.x,
+              object3d.position.y,
+              object3d.position.z
+            );
+            boundingBoxHelper.updateMatrixWorld();
+            view.scene.add(boundingBoxHelper);
+
+            // Plane
+            const planeGeometry = new THREE.PlaneGeometry(
+              boundingBoxHelper.box.max.x - boundingBoxHelper.box.min.x,
+              boundingBoxHelper.box.max.y - boundingBoxHelper.box.min.y
+            );
+
+            const planeMesh = new THREE.Mesh(
+              planeGeometry,
+              new THREE.MeshStandardMaterial({
+                color: 'white',
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.8,
+              })
+            );
+
+            planeMesh.position.set(
+              object3d.position.x,
+              object3d.position.y,
+              object3d.position.z - 10
+            );
+            planeMesh.updateMatrixWorld();
+            view.scene.add(planeMesh);
+          });
+        });
+        view.notifyChange();
+      }
+    });
+
+    rotateObjects();
 
     /**
      *
      */
-    function animate() {
-      circle.rotation.x += 0.005;
-      circle.rotation.z += 0.01;
+    function rotateObjects() {
+      object3DCircle.forEach((object3D) => {
+        const yAxis = new THREE.Vector3();
+        const vectorToCamera = new THREE.Vector3(
+          object3D.position.x - view.camera.camera3D.position.x,
+          object3D.position.y - view.camera.camera3D.position.y,
+          object3D.position.z - view.camera.camera3D.position.z
+        ).normalize();
+        object3D.normalMatrix.extractBasis(
+          new THREE.Vector3(),
+          yAxis,
+          new THREE.Vector3()
+        );
 
-      circle.updateMatrixWorld();
-      this.view.notifyChange();
+        const angle = vectorToCamera.angleTo(yAxis.normalize());
+        object3D.rotateOnAxis(new THREE.Vector3(0, 0, 1), angle);
+      });
 
-      requestAnimationFrame(animate);
+      requestAnimationFrame(rotateObjects);
     }
   }
 }
