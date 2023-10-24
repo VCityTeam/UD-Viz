@@ -675,7 +675,6 @@ export class SpaceTimeCube {
               this.circle.position.z
             );
             object3d.scale.set(0.5, 0.5, 0.5);
-            i += 3;
             object3d.updateMatrixWorld();
             object3DCircle.push(object3d);
 
@@ -690,6 +689,7 @@ export class SpaceTimeCube {
               object3d.position.z
             );
             boundingBoxHelper.updateMatrixWorld();
+
             view.scene.add(boundingBoxHelper);
 
             // Plane
@@ -700,11 +700,9 @@ export class SpaceTimeCube {
 
             const planeMesh = new THREE.Mesh(
               planeGeometry,
-              new THREE.MeshStandardMaterial({
+              new THREE.MeshBasicMaterial({
                 color: 'white',
                 side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.8,
               })
             );
 
@@ -717,6 +715,7 @@ export class SpaceTimeCube {
             view.scene.add(planeMesh);
           });
         });
+        i += 3;
         view.notifyChange();
       }
     });
