@@ -79,20 +79,7 @@
           // Add UI
           document.body.appendChild(slideShow.domElement);
 
-          const hideUIListener = (event) => {
-            if (event.key.toLowerCase() != 's') return;
-
-            if (slideShow.domElement.style.display == 'none') {
-              slideShow.domElement.style.display = '';
-            } else {
-              slideShow.domElement.style.display = 'none';
-            }
-          };
-
           slideShow.domElement.id = 'idSlideShow';
-
-          /* Hide the domElement without dispose the widget */
-          window.addEventListener('keydown', hideUIListener);
 
           const maptasticClass = new Maptastic({
             showLabelsNames: false,
@@ -102,37 +89,54 @@
 
           maptasticClass.addListeners();
           maptasticClass.addLayers([slideShow.domElement, viewDomElement]);
+
+          const maptasticControlsUI = document.createElement('pre');
+          maptasticControlsUI.style.zIndex =
+            Number(maptasticClass.canvas.style.zIndex) + 1;
+          maptasticControlsUI.style.position = 'fixed';
+          maptasticControlsUI.style.background = '#ffffffa6';
+          maptasticControlsUI.style.top = '0';
+          maptasticControlsUI.style.right = '0';
+          maptasticControlsUI.style.margin = '0';
+
+          const toggleEditMode = document.createElement('div');
+          toggleEditMode.innerText = 'Toggle Edit Mode';
+          toggleEditMode.style.cursor = 'pointer';
+          toggleEditMode.style.fontWeight = 'bold';
+
+          const divTextControls = document.createElement('div');
+          divTextControls.innerText = `
+              click / drag:       select and move quads/corner points
+              SHIFT + drag:       move selcted quad/corner point with 10x precision
+              ALT + drag:         rotate/scale selected quad
+              Arrow keys:         move selected quad/corner point
+              SHIFT + Arrow keys: move selected quad/corner point by 10 pixels
+              ALT + Arrow keys:   rotate/scale selected quad
+              's':                Solo/unsolo selected quad
+              'c':                Toggle mouse cursor crosshairs
+              'r':                Rotate selected layer 90 degrees clock-wise
+              'h':                Flip selected layer horizontally
+              'v':                Flip selected layer vertically
+              'b':                Show/Hide projector bounds
+              `;
+
+          toggleEditMode.onclick = () => {
+            if (maptasticClass.configActive) {
+              maptasticClass.setConfigEnabled(false);
+              divTextControls.remove();
+              slideShow.addListeners();
+            } else {
+              maptasticClass.setConfigEnabled(true);
+              maptasticControlsUI.appendChild(divTextControls);
+              slideShow.removeListeners();
+            }
+          };
+
+          maptasticControlsUI.appendChild(toggleEditMode);
+          document.body.appendChild(maptasticControlsUI);
         });
     </script>
 
-    <pre
-      style="
-        z-index: 15;
-        position: fixed;
-        background-color: #ffffffa6;
-        top: 0;
-        right: 0;
-        margin: 0;
-      "
-    >
-      SHIFT-Space: Toggle edit mode
-
-      In Edit Mode
-
-      click / drag:       select and move quads/corner points
-      SHIFT + drag:       move selcted quad/corner point with 10x precision
-      ALT + drag:         rotate/scale selected quad
-      Arrow keys:         move selected quad/corner point
-      SHIFT + Arrow keys: move selected quad/corner point by 10 pixels
-      ALT + Arrow keys:   rotate/scale selected quad
-      's':                Solo/unsolo selected quad
-      'c':                Toggle mouse cursor crosshairs
-      'r':                Rotate selected layer 90 degrees clock-wise
-      'h':                Flip selected layer horizontally
-      'v':                Flip selected layer vertically
-      'b':                Show/Hide projector bounds
-        
-    </pre>
     SCRIPT_TAG_RELOAD
   </body>
 </html>

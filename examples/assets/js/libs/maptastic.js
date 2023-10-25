@@ -382,10 +382,6 @@ class Maptastic {
 
   keyDown(event) {
     if (!this.configActive) {
-      if (event.keyCode == 32 && event.shiftKey) {
-        this.setConfigEnabled(true);
-        return;
-      }
       return;
     }
 
@@ -396,14 +392,6 @@ class Maptastic {
     const delta = [0, 0];
 
     switch (key) {
-      case 32: // spacebar
-        if (event.shiftKey) {
-          event.preventDefault();
-          this.setConfigEnabled(false);
-          return;
-        }
-        break;
-
       case 37: // left arrow
         delta[0] -= increment;
         break;
