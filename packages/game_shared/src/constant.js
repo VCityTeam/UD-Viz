@@ -9,4 +9,7 @@ module.exports = {
       COMMANDS: 'commands',
     },
   },
+  SCRIPT: {
+    MAP_TICK_RATE_MS: 'map_tick_rate_ms',
+  },
 };
