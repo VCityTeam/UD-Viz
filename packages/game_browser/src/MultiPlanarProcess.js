@@ -111,7 +111,11 @@ export class MultiPlanarProcess {
    */
   start(options = {}) {
     this.externalGameContext.sendCommandsToGameContext = (cmds) => {
-      this.socketIOWrapper.emit(constant.WEBSOCKET.MSG_TYPE.COMMANDS, cmds);
+      if (!cmds.length) return;
+      this.socketIOWrapper.emit(
+        constant.WEBSOCKET.MSG_TYPE.COMMANDS,
+        cmds.map((el) => el.toJSON())
+      );
     };
 
     // start listening on socket events
@@ -147,13 +151,16 @@ export class MultiPlanarProcess {
           const process = new RequestAnimationFrameProcess(30);
           process.start((dt) => {
             // send commands
-            const commands = this.inputManager.computeCommands();
+            const commands = this.inputManager
+              .computeCommands()
+              .map((el) => el.toJSON());
 
-            this.socketIOWrapper.emit(
-              constant.WEBSOCKET.MSG_TYPE.COMMANDS,
-              commands
-            );
-
+            if (commands.length) {
+              this.socketIOWrapper.emit(
+                constant.WEBSOCKET.MSG_TYPE.COMMANDS,
+                commands
+              );
+            }
             // simulation
             this.externalGameContext.step(
               dt,
@@ -177,6 +184,7 @@ export class MultiPlanarProcess {
     );
 
     this.socketIOWrapper.on(constant.WEBSOCKET.MSG_TYPE.GAME_DIFF, (diff) => {
+      console.log('diff received');
       this.interpolator.onNewDiff(new StateDiff(diff));
     });
 
