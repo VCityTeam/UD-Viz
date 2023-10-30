@@ -43,7 +43,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 try {
-  entryFolderPath = path.join(process.cwd(), entryFolderPath);
+  entryFolderPath = path.resolve(process.cwd(), entryFolderPath);
   fileOutput = fileOutput
     ? path.resolve(fileOutput)
     : path.basename(entryFolderPath);
@@ -268,7 +268,7 @@ function createMermaidDiagramFromFolderPath(
 try {
   fs.readdirSync(entryFolderPath);
 } catch (e) {
-  console.log('Error: Invalid folder path');
+  console.log('Error: Invalid entry folder path', entryFolderPath);
   process.exit(1);
 }
 
