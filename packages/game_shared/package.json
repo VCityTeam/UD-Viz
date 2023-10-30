@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_shared",
   "peerDependencies": {
-    "@ud-viz/utils_shared": "4.0.0",
     "detect-collisions": "2.5.2",
     "three": "0.154.0"
   }
