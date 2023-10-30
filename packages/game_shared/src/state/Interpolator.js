@@ -1,6 +1,5 @@
 const State = require('./State');
 const Diff = require('./Diff');
-const { round } = require('@ud-viz/utils_shared');
 
 /** @class */
 class Interpolator {
@@ -58,7 +57,7 @@ class Interpolator {
     this.lastTimeState = 0;
 
     /**
-     * @type {object<timestamp:number,number:number>}
+     * @type {object}
      */
     this.bandWidthStateValue = null;
 
@@ -68,7 +67,7 @@ class Interpolator {
     /**
      * time between last state received and the previous one
      *
-     * @type {object<timestamp:number,number:number>}
+     * @type {object}
      */
     this.ping = null;
   }
