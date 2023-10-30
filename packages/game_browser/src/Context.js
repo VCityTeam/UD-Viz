@@ -13,6 +13,7 @@ import {
   AudioComponent,
   RenderComponent,
   ScriptController,
+  constant,
 } from '@ud-viz/game_shared';
 import { arrayEquals } from '@ud-viz/utils_shared';
 import * as frame3d from '@ud-viz/frame3d';
@@ -136,6 +137,13 @@ export class Context {
       @type {object}  */
     this.userData = options.userData || {};
 
+    /**
+     * record when a object3D external has been executed for the last time
+     *
+     * @type {object}
+     */
+    this._bufferLastTimeTickObject3D = new Map();
+
     this.initFrame3D(frame3D);
   }
 
@@ -207,10 +215,8 @@ export class Context {
    *
    * @param {number} dt - new delta time context
    * @param {Array<State>} states - new states to update context current gameobject3D
-   * @param {boolean} [updateGameObject=true] - if false controllers are not going to tick
-   * @todo remove updateGameObject
    */
-  step(dt, states, updateGameObject = true) {
+  step(dt, states) {
     this.dt = dt; // ref it for external scripts
 
     /** @type {Object3D[]} */
@@ -221,167 +227,166 @@ export class Context {
 
     // Update currentGameObject3D with the new states
     if (this.currentGameObject3D) {
-      if (updateGameObject) {
-        this.currentGameObject3D.traverse((child) => {
-          if (!child.isGameObject3D) return;
+      this.currentGameObject3D.traverse((child) => {
+        if (!child.isGameObject3D) return;
 
-          const gameContextChild = state
-            .getObject3D()
-            .getObjectByProperty('uuid', child.uuid);
-          if (gameContextChild) {
-            // still present in game context
-            if (child.hasGameContextUpdate()) {
-              if (!child.isStatic()) {
-                // if no static update transform
-                child.position.copy(gameContextChild.position);
-                child.scale.copy(gameContextChild.scale);
-                child.rotation.copy(gameContextChild.rotation);
-              }
-
-              // Stack the same go of all states not consumed yet
-              const bufferedGO = [];
-              states.forEach((s) => {
-                const bGO = s
-                  .getObject3D()
-                  .getObjectByProperty('uuid', child.uuid);
-                if (bGO) bufferedGO.push(bGO);
-              });
-
-              // Update local component for bufferedGO
-              let componentHasBeenUpdated = false; // Flag to know if a change of state occured
-
-              const childRenderComp = child.getComponent(RenderComponent.TYPE);
-              const childExternalScriptComp = child.getComponent(
-                ExternalScriptComponent.TYPE
-              );
-
-              for (let index = 0; index < bufferedGO.length; index++) {
-                const gameContextGONotConsumned = bufferedGO[index];
-
-                // Render comp
-                if (childRenderComp) {
-                  const bufferedRenderComp =
-                    gameContextGONotConsumned.getComponent(
-                      RenderComponent.TYPE
-                    );
-
-                  // Check if color change
-                  if (
-                    !arrayEquals(
-                      childRenderComp.getModel().getColor(),
-                      bufferedRenderComp.getModel().getColor()
-                    )
-                  ) {
-                    console.error('DEPRECATED');
-                    childRenderComp.setColor(bufferedRenderComp.getColor());
-                    componentHasBeenUpdated = true; // Notify change
-                  }
-
-                  // Check if idModel change
-                  if (
-                    childRenderComp.getModel().getIdRenderData() !=
-                    bufferedRenderComp.getModel().getIdRenderData()
-                  ) {
-                    console.error('DEPRECATED');
-                    childRenderComp
-                      .getController()
-                      .setIdRenderData(
-                        bufferedRenderComp.getModel().getIdRenderData()
-                      );
-
-                    componentHasBeenUpdated = true;
-                  }
-                }
-
-                if (
-                  childExternalScriptComp &&
-                  gameContextGONotConsumned.isOutdated()
-                ) {
-                  const bufferedExternalScriptComp =
-                    gameContextGONotConsumned.getComponent(
-                      ExternalScriptComponent.TYPE
-                    );
-
-                  // Replace variables in external script
-                  childExternalScriptComp
-                    .getController()
-                    .setVariables(
-                      bufferedExternalScriptComp.getModel().getVariables()
-                    );
-
-                  // Launch event onOutdated
-                  componentHasBeenUpdated =
-                    componentHasBeenUpdated ||
-                    childExternalScriptComp
-                      .getController()
-                      .execute(Context.EVENT.ON_OUTDATED);
-                }
-              }
-
-              if (componentHasBeenUpdated && childExternalScriptComp) {
-                // Launch event onComponentUpdate
-                childExternalScriptComp
-                  .getController()
-                  .execute(Context.EVENT.ON_COMPONENT_UPDATE);
-              }
-            }
-          } else {
-            // Do not exist remove it
-            child.removeFromParent();
-
-            // external script event remove
-            const scriptComponent = child.getComponent(
-              ExternalScriptComponent.TYPE
-            );
-            if (scriptComponent) {
-              scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
+        const gameContextChild = state
+          .getObject3D()
+          .getObjectByProperty('uuid', child.uuid);
+        if (gameContextChild) {
+          // still present in game context
+          if (child.hasGameContextUpdate()) {
+            if (!child.isStatic()) {
+              // if no static update transform
+              child.position.copy(gameContextChild.position);
+              child.scale.copy(gameContextChild.scale);
+              child.rotation.copy(gameContextChild.rotation);
             }
 
-            // Audio removal
-            const audioComponent = child.getComponent(AudioComponent.TYPE);
-            if (audioComponent) {
-              audioComponent.getController().dispose();
-            }
-
-            // notify other that child is removed
-            this.currentGameObject3D.traverse((otherGameObject) => {
-              if (!otherGameObject.isGameObject3D) return;
-              const externalComp = otherGameObject.getComponent(
-                ExternalScriptComponent.TYPE
-              );
-              if (externalComp) {
-                externalComp
-                  .getController()
-                  .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
-              }
+            // Stack the same go of all states not consumed yet
+            const bufferedGO = [];
+            states.forEach((s) => {
+              const bGO = s
+                .getObject3D()
+                .getObjectByProperty('uuid', child.uuid);
+              if (bGO) bufferedGO.push(bGO);
             });
 
-            delete this.currentUUID[child.uuid];
-          }
-        });
+            // Update local component for bufferedGO
+            let componentHasBeenUpdated = false; // Flag to know if a change of state occured
 
-        state.getObject3D().traverse((child) => {
-          if (!child.isGameObject3D) return; // => this one should be useless since State should be only compose of GameObject3D
-
-          const old = this.currentGameObject3D.getObjectByProperty(
-            'uuid',
-            child.uuid
-          );
-          if (!old) {
-            // New one add it
-            const parent = this.currentGameObject3D.getObjectByProperty(
-              'uuid',
-              child.parentUUID
+            const childRenderComp = child.getComponent(RenderComponent.TYPE);
+            const childExternalScriptComp = child.getComponent(
+              ExternalScriptComponent.TYPE
             );
 
-            parent.add(child);
+            for (let index = 0; index < bufferedGO.length; index++) {
+              const gameContextGONotConsumned = bufferedGO[index];
+
+              // Render comp
+              if (childRenderComp) {
+                const bufferedRenderComp =
+                  gameContextGONotConsumned.getComponent(RenderComponent.TYPE);
+
+                // Check if color change
+                if (
+                  !arrayEquals(
+                    childRenderComp.getModel().getColor(),
+                    bufferedRenderComp.getModel().getColor()
+                  )
+                ) {
+                  console.error('DEPRECATED');
+                  childRenderComp.setColor(bufferedRenderComp.getColor());
+                  componentHasBeenUpdated = true; // Notify change
+                }
+
+                // Check if idModel change
+                if (
+                  childRenderComp.getModel().getIdRenderData() !=
+                  bufferedRenderComp.getModel().getIdRenderData()
+                ) {
+                  console.error('DEPRECATED');
+                  childRenderComp
+                    .getController()
+                    .setIdRenderData(
+                      bufferedRenderComp.getModel().getIdRenderData()
+                    );
+
+                  componentHasBeenUpdated = true;
+                }
+              }
+
+              if (
+                childExternalScriptComp &&
+                gameContextGONotConsumned.isOutdated()
+              ) {
+                const bufferedExternalScriptComp =
+                  gameContextGONotConsumned.getComponent(
+                    ExternalScriptComponent.TYPE
+                  );
+
+                // Replace variables in external script
+                childExternalScriptComp
+                  .getController()
+                  .setVariables(
+                    bufferedExternalScriptComp.getModel().getVariables()
+                  );
+
+                // Launch event onOutdated
+                componentHasBeenUpdated =
+                  componentHasBeenUpdated ||
+                  childExternalScriptComp
+                    .getController()
+                    .execute(Context.EVENT.ON_OUTDATED);
+              }
+            }
+
+            if (componentHasBeenUpdated && childExternalScriptComp) {
+              // Launch event onComponentUpdate
+              childExternalScriptComp
+                .getController()
+                .execute(Context.EVENT.ON_COMPONENT_UPDATE);
+            }
+          }
+        } else {
+          // Do not exist remove it
+          child.removeFromParent();
+
+          // clean buffer
+          this._bufferLastTimeTickObject3D.delete(child.uuid);
+
+          // external script event remove
+          const scriptComponent = child.getComponent(
+            ExternalScriptComponent.TYPE
+          );
+          if (scriptComponent) {
+            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
           }
 
-          if (!this.currentUUID[child.uuid]) {
-            newGO.push(child);
+          // Audio removal
+          const audioComponent = child.getComponent(AudioComponent.TYPE);
+          if (audioComponent) {
+            audioComponent.getController().dispose();
           }
-        });
-      }
+
+          // notify other that child is removed
+          this.currentGameObject3D.traverse((otherGameObject) => {
+            if (!otherGameObject.isGameObject3D) return;
+            const externalComp = otherGameObject.getComponent(
+              ExternalScriptComponent.TYPE
+            );
+            if (externalComp) {
+              externalComp
+                .getController()
+                .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
+            }
+          });
+
+          delete this.currentUUID[child.uuid];
+        }
+      });
+
+      state.getObject3D().traverse((child) => {
+        if (!child.isGameObject3D) return; // => this one should be useless since State should be only compose of GameObject3D
+
+        const old = this.currentGameObject3D.getObjectByProperty(
+          'uuid',
+          child.uuid
+        );
+        if (!old) {
+          // New one add it
+          const parent = this.currentGameObject3D.getObjectByProperty(
+            'uuid',
+            child.parentUUID
+          );
+
+          parent.add(child);
+        }
+
+        if (!this.currentUUID[child.uuid]) {
+          newGO.push(child);
+        }
+      });
     } else {
       // first state
       this.currentGameObject3D = state.getObject3D();
@@ -439,33 +444,72 @@ export class Context {
       );
     }
 
-    // TODO updateGameObject ??? refacto editor
-    if (updateGameObject) {
-      this.currentGameObject3D.traverse((child) => {
-        if (!child.isGameObject3D) return;
+    this.currentGameObject3D.traverse((child) => {
+      if (!child.isGameObject3D) return;
 
-        // Tick local script
-        const scriptComponent = child.getComponent(
-          ExternalScriptComponent.TYPE
-        );
-        if (scriptComponent) {
+      // Tick local script
+      const scriptComponent = child.getComponent(ExternalScriptComponent.TYPE);
+      if (scriptComponent) {
+        const mapTickRateMs =
+          scriptComponent.model.variables[constant.SCRIPT.MAP_TICK_RATE_MS];
+
+        if (mapTickRateMs) {
+          // some script has a time rate
+
+          const now = Date.now();
+
+          const scripts = scriptComponent.getController().scripts;
+          for (const idScript in scripts) {
+            const scriptTickRateMs = mapTickRateMs[idScript];
+            if (!isNaN(scriptTickRateMs)) {
+              // this script has a tick rate
+
+              // intialize object3d
+              if (!this._bufferLastTimeTickObject3D.has(child.uuid)) {
+                this._bufferLastTimeTickObject3D.set(child.uuid, new Map());
+              }
+
+              const bufferObject3D = this._bufferLastTimeTickObject3D.get(
+                child.uuid
+              );
+
+              // initialize script
+              if (!bufferObject3D.has(idScript)) {
+                bufferObject3D.set(idScript, 0);
+              }
+
+              if (now - bufferObject3D.get(idScript) > scriptTickRateMs) {
+                scriptComponent
+                  .getController()
+                  .executeScript(scripts[idScript], Context.EVENT.TICK);
+                bufferObject3D.set(idScript, now);
+              }
+            } else {
+              // no tick rate for this script
+              scriptComponent
+                .getController()
+                .executeScript(scripts[idScript], Context.EVENT.TICK);
+            }
+          }
+        } else {
+          // no time rate
           scriptComponent.getController().execute(Context.EVENT.TICK);
         }
+      }
 
-        // Tick audio component
-        const audioComp = child.getComponent(AudioComponent.TYPE);
-        // Position in world referential
-        if (audioComp) {
-          const camera = this.frame3D.camera;
-          const cameraMatWorldInverse = camera.matrixWorldInverse;
-          audioComp.getController().tick(cameraMatWorldInverse);
-        }
+      // Tick audio component
+      const audioComp = child.getComponent(AudioComponent.TYPE);
+      // Position in world referential
+      if (audioComp) {
+        const camera = this.frame3D.camera;
+        const cameraMatWorldInverse = camera.matrixWorldInverse;
+        audioComp.getController().tick(cameraMatWorldInverse);
+      }
 
-        // Render component
-        const renderComp = child.getComponent(RenderComponent.TYPE);
-        if (renderComp) renderComp.getController().tick(dt);
-      });
-    }
+      // Render component
+      const renderComp = child.getComponent(RenderComponent.TYPE);
+      if (renderComp) renderComp.getController().tick(dt);
+    });
   }
 
   /**
