@@ -1,44 +1,29 @@
 ```mermaid
 flowchart
- subgraph IDwidget5fsparql["widget_sparql"]
-  IDwidget5fsparqlArchitectureGenerated2emd["architectureGenerated.md"]
-  IDwidget5fsparqlPackage2ejson["package.json"]
-  IDwidget5fsparqlReadme2emd["Readme.md"]
-  subgraph IDwidget5fsparqlImg["img"]
-   IDwidget5fsparqlImgInterface2epng["interface.png"]
-   IDwidget5fsparqlImgPickcityobjectfromgraph2egif["pickcityobjectfromgraph.gif"]
-   IDwidget5fsparqlImgSparql2dwidget2ddemo2egif["sparql-widget-demo.gif"]
-   IDwidget5fsparqlImgSparql2dwidget2djson2ddemo2egif["sparql-widget-json-demo.gif"]
-   IDwidget5fsparqlImgSparql2dwidget2dtable2ddemo2egif["sparql-widget-table-demo.gif"]
+ subgraph IDsrc["src"]
+  IDsrcIndex2ejs["index.js"]
+  subgraph IDsrcModel["model"]
+   IDsrcModelGraph2ejs["Graph.js"]
   end
-  subgraph IDwidget5fsparqlSrc["src"]
-   IDwidget5fsparqlSrcIndex2ejs["index.js"]
-   subgraph IDwidget5fsparqlSrcModel["model"]
-    IDwidget5fsparqlSrcModelGraph2ejs["Graph.js"]
-   end
-   subgraph IDwidget5fsparqlSrcService["service"]
-    IDwidget5fsparqlSrcServiceSparqlEndpointResponseProvider2ejs["SparqlEndpointResponseProvider.js"]
-   end
-   subgraph IDwidget5fsparqlSrcView["view"]
-    IDwidget5fsparqlSrcViewD3GraphCanvas2ejs["D3GraphCanvas.js"]
-    IDwidget5fsparqlSrcViewJsonRenderer2ejs["JsonRenderer.js"]
-    IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs["SparqlQueryWindow.js"]
-    IDwidget5fsparqlSrcViewTable2ejs["Table.js"]
-   end
+  subgraph IDsrcService["service"]
+   IDsrcServiceSparqlEndpointResponseProvider2ejs["SparqlEndpointResponseProvider.js"]
   end
-  subgraph IDwidget5fsparqlTest["test"]
-   IDwidget5fsparqlTestTest5f12ejs["test_1.js"]
+  subgraph IDsrcView["view"]
+   IDsrcViewD3GraphCanvas2ejs["D3GraphCanvas.js"]
+   IDsrcViewJsonRenderer2ejs["JsonRenderer.js"]
+   IDsrcViewSparqlQueryWindow2ejs["SparqlQueryWindow.js"]
+   IDsrcViewTable2ejs["Table.js"]
   end
  end
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcViewD3GraphCanvas2ejs
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcViewJsonRenderer2ejs
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcViewTable2ejs
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcServiceSparqlEndpointResponseProvider2ejs
-IDwidget5fsparqlSrcIndex2ejs-.->|import|IDwidget5fsparqlSrcModelGraph2ejs
-IDwidget5fsparqlSrcViewD3GraphCanvas2ejs-.->|import|IDwidget5fsparqlSrcModelGraph2ejs
-IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs-.->|import|IDwidget5fsparqlSrcServiceSparqlEndpointResponseProvider2ejs
-IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs-.->|import|IDwidget5fsparqlSrcViewD3GraphCanvas2ejs
-IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs-.->|import|IDwidget5fsparqlSrcViewTable2ejs
-IDwidget5fsparqlSrcViewSparqlQueryWindow2ejs-.->|import|IDwidget5fsparqlSrcViewJsonRenderer2ejs
+IDsrcIndex2ejs-.->|import|IDsrcViewD3GraphCanvas2ejs
+IDsrcIndex2ejs-.->|import|IDsrcViewJsonRenderer2ejs
+IDsrcIndex2ejs-.->|import|IDsrcViewSparqlQueryWindow2ejs
+IDsrcIndex2ejs-.->|import|IDsrcViewTable2ejs
+IDsrcIndex2ejs-.->|import|IDsrcServiceSparqlEndpointResponseProvider2ejs
+IDsrcIndex2ejs-.->|import|IDsrcModelGraph2ejs
+IDsrcViewD3GraphCanvas2ejs-.->|import|IDsrcModelGraph2ejs
+IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcServiceSparqlEndpointResponseProvider2ejs
+IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewD3GraphCanvas2ejs
+IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewTable2ejs
+IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewJsonRenderer2ejs
 ```

@@ -20,6 +20,7 @@ fs.readdirSync(packagesFolderPath).forEach((packageName) => {
     '/utils_node/bin/autoMermaid.js' +
     ' -e ' +
     packagePath +
+    '/src' +
     ' -o ' +
     path.join(packagePath, 'architectureGenerated');
 

@@ -1,43 +1,35 @@
 ```mermaid
 flowchart
- subgraph IDgame5fbrowser["game_browser"]
-  IDgame5fbrowserArchitectureGenerated2emd["architectureGenerated.md"]
-  IDgame5fbrowserPackage2ejson["package.json"]
-  IDgame5fbrowserReadme2emd["Readme.md"]
-  subgraph IDgame5fbrowserSrc["src"]
-   IDgame5fbrowserSrcAssetManager2ejs["AssetManager.js"]
-   IDgame5fbrowserSrcAudioController2ejs["AudioController.js"]
-   IDgame5fbrowserSrcContext2ejs["Context.js"]
-   IDgame5fbrowserSrcIndex2ejs["index.js"]
-   IDgame5fbrowserSrcInputManager2ejs["InputManager.js"]
-   IDgame5fbrowserSrcMultiPlanarProcess2ejs["MultiPlanarProcess.js"]
-   IDgame5fbrowserSrcRenderController2ejs["RenderController.js"]
-   IDgame5fbrowserSrcSinglePlanarProcess2ejs["SinglePlanarProcess.js"]
-   IDgame5fbrowserSrcSocketIOWrapper2ejs["SocketIOWrapper.js"]
-  end
-  subgraph IDgame5fbrowserTest["test"]
-   IDgame5fbrowserTestTest5f12ejs["test_1.js"]
-  end
+ subgraph IDsrc["src"]
+  IDsrcAssetManager2ejs["AssetManager.js"]
+  IDsrcAudioController2ejs["AudioController.js"]
+  IDsrcContext2ejs["Context.js"]
+  IDsrcIndex2ejs["index.js"]
+  IDsrcInputManager2ejs["InputManager.js"]
+  IDsrcMultiPlanarProcess2ejs["MultiPlanarProcess.js"]
+  IDsrcRenderController2ejs["RenderController.js"]
+  IDsrcSinglePlanarProcess2ejs["SinglePlanarProcess.js"]
+  IDsrcSocketIOWrapper2ejs["SocketIOWrapper.js"]
  end
-IDgame5fbrowserSrcAudioController2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcContext2ejs-.->|import|IDgame5fbrowserSrcRenderController2ejs
-IDgame5fbrowserSrcContext2ejs-.->|import|IDgame5fbrowserSrcAudioController2ejs
-IDgame5fbrowserSrcContext2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcContext2ejs-.->|import|IDgame5fbrowserSrcInputManager2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcAudioController2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcContext2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcInputManager2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcMultiPlanarProcess2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcRenderController2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcSinglePlanarProcess2ejs
-IDgame5fbrowserSrcIndex2ejs-.->|import|IDgame5fbrowserSrcSocketIOWrapper2ejs
-IDgame5fbrowserSrcMultiPlanarProcess2ejs-.->|import|IDgame5fbrowserSrcSocketIOWrapper2ejs
-IDgame5fbrowserSrcMultiPlanarProcess2ejs-.->|import|IDgame5fbrowserSrcInputManager2ejs
-IDgame5fbrowserSrcMultiPlanarProcess2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcMultiPlanarProcess2ejs-.->|import|IDgame5fbrowserSrcContext2ejs
-IDgame5fbrowserSrcRenderController2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcSinglePlanarProcess2ejs-.->|import|IDgame5fbrowserSrcAssetManager2ejs
-IDgame5fbrowserSrcSinglePlanarProcess2ejs-.->|import|IDgame5fbrowserSrcInputManager2ejs
-IDgame5fbrowserSrcSinglePlanarProcess2ejs-.->|import|IDgame5fbrowserSrcContext2ejs
+IDsrcAudioController2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcContext2ejs-.->|import|IDsrcRenderController2ejs
+IDsrcContext2ejs-.->|import|IDsrcAudioController2ejs
+IDsrcContext2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcContext2ejs-.->|import|IDsrcInputManager2ejs
+IDsrcIndex2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcIndex2ejs-.->|import|IDsrcAudioController2ejs
+IDsrcIndex2ejs-.->|import|IDsrcContext2ejs
+IDsrcIndex2ejs-.->|import|IDsrcInputManager2ejs
+IDsrcIndex2ejs-.->|import|IDsrcMultiPlanarProcess2ejs
+IDsrcIndex2ejs-.->|import|IDsrcRenderController2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSinglePlanarProcess2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSocketIOWrapper2ejs
+IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcSocketIOWrapper2ejs
+IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcInputManager2ejs
+IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcContext2ejs
+IDsrcRenderController2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcInputManager2ejs
+IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcContext2ejs
 ```
