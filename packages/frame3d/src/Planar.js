@@ -55,13 +55,14 @@ export class Planar extends Base {
         tilt: tilt,
       },
       maxSubdivisionLevel: maxSubdivisionLevel,
-      noControls: !hasItownsControls,
       controls: {
         handleCollision: false,
         focusOnMouseOver: false,
         focusOnMouseClick: false,
       },
     });
+
+    this.itownsView.controls.enable = hasItownsControls;
 
     // fill parent class attributes create by the itownsView
     /** @type {THREE.Scene} */
