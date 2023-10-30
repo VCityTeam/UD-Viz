@@ -43,7 +43,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 try {
-  entryFolderPath = path.join(process.env.INIT_CWD, entryFolderPath);
+  entryFolderPath = path.join(process.cwd(), entryFolderPath);
   fileOutput = fileOutput
     ? path.resolve(fileOutput)
     : path.basename(entryFolderPath);
@@ -78,17 +78,52 @@ function appendLine(line, filePath) {
 }
 
 /**
+ * The function replaces special characters in a string with their corresponding hexadecimal codes.
+ *
+ * @param {string} string - the input string
+ * @returns {string} a string with special characters replaced.
+ */
+function replaceSpecialCharsByHexCode(string) {
+  const matches = string.match(/[^a-zA-Z0-9]/g);
+
+  for (const char in matches) {
+    string = string.replace(
+      matches[char],
+      matches[char].charCodeAt(0).toString(16)
+    );
+  }
+
+  return string;
+}
+
+/**
  *
  * @param {string} baseID - base ID of the element
  * @param {string} suffixID - suffix ID to add to the base ID
  * @returns {string} Returns the new ID of the element
  */
 function createIDOfElementDiagram(baseID, suffixID = null) {
-  let result = baseID.replace(/[^a-zA-Z0-9]/g, '');
+  let result = replaceSpecialCharsByHexCode(baseID);
   if (suffixID == null) {
     return result;
   }
-  suffixID = suffixID.replace(/[^a-zA-Z0-9]/g, '');
+  suffixID = replaceSpecialCharsByHexCode(suffixID);
+
+  try {
+    suffixID[0] = suffixID[0].toUpperCase();
+  } catch (e) {
+    console.error(
+      'ERROR',
+      e,
+      '\nCould not find suffix',
+      '\n baseID:',
+      baseID,
+      '\n suffixID:',
+      suffixID
+    );
+    process.exit(1);
+  }
+
   return (result += suffixID[0].toUpperCase() + suffixID.slice(1));
 }
 
