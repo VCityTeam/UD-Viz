@@ -1,30 +1,22 @@
 ```mermaid
 flowchart
- subgraph IDutils5fbrowser["utils_browser"]
-  IDutils5fbrowserArchitectureGenerated2emd["architectureGenerated.md"]
-  IDutils5fbrowserPackage2ejson["package.json"]
-  IDutils5fbrowserReadme2emd["Readme.md"]
-  subgraph IDutils5fbrowserSrc["src"]
-   IDutils5fbrowserSrcFile2ejs["file.js"]
-   IDutils5fbrowserSrcHtml2ejs["html.js"]
-   IDutils5fbrowserSrcIndex2ejs["index.js"]
-   IDutils5fbrowserSrcItownsUtil2ejs["itownsUtil.js"]
-   IDutils5fbrowserSrcLocalStorage2ejs["localStorage.js"]
-   IDutils5fbrowserSrcRequestAnimationFrame2ejs["RequestAnimationFrame.js"]
-   IDutils5fbrowserSrcRequestService2ejs["RequestService.js"]
-   IDutils5fbrowserSrcTHREEUtil2ejs["THREEUtil.js"]
-   IDutils5fbrowserSrcUrl2ejs["url.js"]
-  end
-  subgraph IDutils5fbrowserTest["test"]
-   IDutils5fbrowserTestRequest5fanimation5fframe5fprocess2ejs["request_animation_frame_process.js"]
-  end
+ subgraph IDsrc["src"]
+  IDsrcFile2ejs["file.js"]
+  IDsrcHtml2ejs["html.js"]
+  IDsrcIndex2ejs["index.js"]
+  IDsrcItownsUtil2ejs["itownsUtil.js"]
+  IDsrcLocalStorage2ejs["localStorage.js"]
+  IDsrcRequestAnimationFrame2ejs["RequestAnimationFrame.js"]
+  IDsrcRequestService2ejs["RequestService.js"]
+  IDsrcTHREEUtil2ejs["THREEUtil.js"]
+  IDsrcUrl2ejs["url.js"]
  end
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcFile2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcHtml2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcItownsUtil2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcLocalStorage2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcRequestAnimationFrame2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcRequestService2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcTHREEUtil2ejs
-IDutils5fbrowserSrcIndex2ejs-.->|import|IDutils5fbrowserSrcUrl2ejs
+IDsrcIndex2ejs-.->|import|IDsrcFile2ejs
+IDsrcIndex2ejs-.->|import|IDsrcHtml2ejs
+IDsrcIndex2ejs-.->|import|IDsrcItownsUtil2ejs
+IDsrcIndex2ejs-.->|import|IDsrcLocalStorage2ejs
+IDsrcIndex2ejs-.->|import|IDsrcRequestAnimationFrame2ejs
+IDsrcIndex2ejs-.->|import|IDsrcRequestService2ejs
+IDsrcIndex2ejs-.->|import|IDsrcTHREEUtil2ejs
+IDsrcIndex2ejs-.->|import|IDsrcUrl2ejs
 ```
