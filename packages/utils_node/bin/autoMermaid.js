@@ -306,9 +306,11 @@ function addLinesImport() {
         keyP += '.js';
         if (elementsDiagram[keyP]) {
           // console.log('FIND!!!!', keyP, elementsDiagram[keyP]);
-          lines.push(
-            elementsDiagram[key].id + '-.->|import|' + elementsDiagram[keyP].id
-          );
+          const importLine =
+            elementsDiagram[key].id + '-.->|import|' + elementsDiagram[keyP].id;
+          if (!lines.includes(importLine)) {
+            lines.push(importLine);
+          }
         }
       });
     }
