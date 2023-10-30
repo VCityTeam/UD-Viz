@@ -58,24 +58,19 @@ class Interpolator {
     this.lastTimeState = 0;
 
     /**
-     * @type {number}
+     * @type {object<timestamp:number,number:number>}
      */
-    this.bandWidthState = 0;
+    this.bandWidthStateValue = null;
 
     /** @type {boolean} */
     this.computeBandWidth = computeBandWidth;
 
     /**
-     * @type {number}
-     */
-    this.lastMinuteState = 0;
-
-    /**
      * time between last state received and the previous one
      *
-     * @type {number}
+     * @type {object<timestamp:number,number:number>}
      */
-    this.ping = 0;
+    this.ping = null;
   }
 
   /**
@@ -98,21 +93,13 @@ class Interpolator {
 
     // Compute ping
     const now = Date.now();
-    this.ping = now - this.lastTimeState;
+    this.ping = { timestamp: now, number: now - this.lastTimeState };
     this.lastTimeState = now;
 
     if (this.computeBandWidth) {
-      this.lastMinuteState += this.ping;
-
       const size = new TextEncoder().encode(JSON.stringify(state)).length;
       const kiloBytes = size / 1024;
-      if (this.lastMinuteState > 1000) {
-        this.lastMinuteState = 0;
-        this.bandWidthState = kiloBytes;
-      } else {
-        this.bandWidthState += kiloBytes;
-        this.bandWidthState = parseFloat(round(this.bandWidthState));
-      }
+      this.bandWidthStateValue = { number: kiloBytes, timestamp: now };
     }
 
     this.states.push(state);
