@@ -160,10 +160,11 @@ export class MultiPlanarProcess {
               this.interpolator.computeCurrentStates()
             );
 
-            // render
+            // to load 3DTiles + trigger mainloop event
             this.frame3DPlanar.itownsView.notifyChange(
-              this.frame3DPlanar.camera
-            ); // => to load 3DTiles + trigger mainloop event
+              this.frame3DPlanar.camera,
+              false
+            );
             this.frame3DPlanar.render();
           });
         }
