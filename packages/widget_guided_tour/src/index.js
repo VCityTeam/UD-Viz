@@ -269,12 +269,12 @@ export class GuidedTour {
    * Returns the media config with the matching ID
    *
    * @param {string} mediaId The ID of the media
-   * @returns {Media} The media config
+   * @returns {Media|null} The media config
    */
   getMediaById(mediaId) {
     for (const media of this.mediaConfig) {
       if (media.id == mediaId) return media;
     }
-    return undefined;
+    return null;
   }
 }
