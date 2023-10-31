@@ -259,10 +259,12 @@ class Child {
         case MESSAGE_EVENT.ADD_OBJECT3D:
           // add is not sync record in promises for apply
           promises.push(
-            this.gameContext.addObject3D(
-              new Object3D(data.object3D),
-              data.parentUUID
-            )
+            this.gameContext
+              .addObject3D(new Object3D(data.object3D), data.parentUUID)
+              .then(() => {
+                if (data.updateCollisionBuffer)
+                  this.gameContext.updateCollisionBuffer();
+              })
           );
           break;
         case MESSAGE_EVENT.REMOVE_OBJECT3D:
