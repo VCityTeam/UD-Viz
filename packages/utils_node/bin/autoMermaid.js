@@ -62,7 +62,8 @@ try {
   process.exit(1);
 }
 
-if (!fileOutput.includes('.md')) {
+/* Ensures that the output file has the `.md` extension. */
+if (!fileOutput.match(/\.md+$/g)) {
   fileOutput += '.md';
 }
 

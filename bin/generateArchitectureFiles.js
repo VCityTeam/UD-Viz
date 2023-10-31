@@ -14,15 +14,8 @@ fs.readdirSync(packagesFolderPath).forEach((packageName) => {
   if (!isDirectory) {
     return;
   }
-  const autoMermaidCommand =
-    'node ' +
-    packagesFolderPath +
-    '/utils_node/bin/autoMermaid.js' +
-    ' -e ' +
-    packagePath +
-    '/src' +
-    ' -o ' +
-    path.join(packagePath, 'architectureGenerated');
+
+  const autoMermaidCommand = `node ${packagesFolderPath}/utils_node/bin/autoMermaid.js -e ${packagePath}/src -o ${packagePath}/architectureGenerated.md`;
 
   const childExecAutomermaid = exec(autoMermaidCommand);
 
