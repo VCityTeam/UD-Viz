@@ -184,7 +184,6 @@ export class MultiPlanarProcess {
     );
 
     this.socketIOWrapper.on(constant.WEBSOCKET.MSG_TYPE.GAME_DIFF, (diff) => {
-      console.log('diff received');
       this.interpolator.onNewDiff(new StateDiff(diff));
     });
 
