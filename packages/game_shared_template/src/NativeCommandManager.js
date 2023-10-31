@@ -274,20 +274,17 @@ const NativeCommandManager = class extends ScriptBase {
     });
   }
 
+  /**
+   *
+   * @param {Object3D} object3D
+   */
   clampRotation(object3D) {
     // clamp
     object3D.rotation.y = 0;
-    if (object3D.rotation.x > Math.PI) {
-      object3D.rotation.x = Math.max(
-        object3D.rotation.x,
-        this.variables.angleMax
-      );
-    } else {
-      object3D.rotation.x = Math.min(
-        this.variables.angleMin,
-        object3D.rotation.x
-      );
-    }
+    object3D.rotation.x = Math.max(
+      Math.min(this.variables.angleMax, object3D.rotation.x),
+      this.variables.angleMin
+    );
   }
 
   static get ID_SCRIPT() {
