@@ -131,9 +131,10 @@ const SocketService = class {
     // wait for client to be ready for game
     socket.on(
       constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME,
-      (entryGameObject3DUUID) => {
-        entryGameObject3DUUID =
-          entryGameObject3DUUID || this.defaultEntryGameObject3DUUID;
+      (readyForGameParams) => {
+        const entryGameObject3DUUID =
+          readyForGameParams.entryGameObject3DUUID ||
+          this.defaultEntryGameObject3DUUID;
 
         if (!this.threads[entryGameObject3DUUID]) {
           console.warn('no thread');
@@ -143,7 +144,7 @@ const SocketService = class {
         // apply promises
         const promises = [];
         this.socketReadyForGamePromises.forEach((c) => {
-          const p = c(socketWrapper, this.threads[entryGameObject3DUUID]);
+          const p = c(socketWrapper, entryGameObject3DUUID, readyForGameParams);
           if (p) promises.push(p);
         });
 

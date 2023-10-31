@@ -106,10 +106,11 @@ export class MultiPlanarProcess {
   /**
    * Start game communication with server
    *
-   * @param {object} options - options
-   * @param {string} options.entryGameObject3DUUID - uuid of the game object3D to connect with SocketService
+   * @param {object} readyForGameSocketServiceParams - object serialize then send when game is ready to SocketService
+   * @param {string} readyForGameSocketServiceParams.entryGameObject3DUUID - uuid of the game object3D to connect with SocketService
+   * @param {object} readyForGameSocketServiceParams.userData - other information to emit to SocketService
    */
-  start(options = {}) {
+  start(readyForGameSocketServiceParams = {}) {
     this.externalGameContext.sendCommandsToGameContext = (cmds) => {
       if (!cmds.length) return;
       this.socketIOWrapper.emit(
@@ -189,7 +190,7 @@ export class MultiPlanarProcess {
 
     this.socketIOWrapper.emit(
       constant.WEBSOCKET.MSG_TYPE.READY_FOR_GAME,
-      options.entryGameObject3DUUID
+      readyForGameSocketServiceParams
     );
   }
 }
