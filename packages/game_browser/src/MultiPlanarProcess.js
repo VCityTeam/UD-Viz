@@ -6,7 +6,7 @@ import {
   Context as ExternalContext,
 } from './Context';
 
-import { objectOverWrite } from '@ud-viz/utils_shared';
+import { objectOverWrite, objectParseNumeric } from '@ud-viz/utils_shared';
 import {
   StateInterpolator,
   constant,
@@ -132,6 +132,7 @@ export class MultiPlanarProcess {
         );
 
         objectOverWrite(this.externalGameContext.userData, gameData.userData);
+        objectParseNumeric(this.externalGameContext.userData);
 
         // check if a game was already running
         if (this.interpolator._getLastStateReceived()) {

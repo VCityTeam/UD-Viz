@@ -10,9 +10,10 @@ const { Object3D, constant } = require('@ud-viz/game_shared');
  */
 
 /**
- * @callback SocketThreadCallback
+ * @callback ReadyForGameCallback
  * @param {SocketWrapper} socketWrapper
- * @param {Parent} thread
+ * @param {string} entryGameObject3DUUID
+ * @param {object} readyForGameParams
  */
 
 /**
@@ -27,7 +28,7 @@ const SocketService = class {
    * @param {number} [options.pingTimeout=5000] - ping timeout in ms
    * @param {Array<SocketCallback>} [options.socketConnectionCallbacks=[]] - callback to apply when socket is connected
    * @param {Array<SocketCallback>} [options.socketDisconnectionCallbacks=[]] - callback to apply when socket is disconnected
-   * @param {Array<SocketThreadCallback>} [options.socketReadyForGamePromises=[]] - callback to apply when socket is ready for game
+   * @param {Array<ReadyForGameCallback>} [options.socketReadyForGamePromises=[]] - callback to apply when socket is ready for game
    */
   constructor(httpServer, options = {}) {
     /**
@@ -45,7 +46,7 @@ const SocketService = class {
     this.socketDisconnectionCallbacks =
       options.socketDisconnectionCallbacks || [];
 
-    /** @type {Array<SocketThreadCallback>} */
+    /** @type {Array<ReadyForGameCallback>} */
     this.socketReadyForGamePromises = options.socketReadyForGamePromises || [];
 
     this.io.on('connection', this.onSocketConnection.bind(this));
