@@ -400,7 +400,7 @@ function objectParse(object, cb) {
  * @returns {object} - json object parsed
  */
 function objectParseNumeric(json) {
-  return this.parse(json, function (j, key) {
+  return objectParse(json, function (j, key) {
     if (isNumeric(j[key])) {
       j[key] = parseFloat(j[key]);
     }
