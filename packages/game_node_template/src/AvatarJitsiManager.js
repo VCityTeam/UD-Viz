@@ -15,7 +15,7 @@ module.exports = class AvatarJitsiManager extends ScriptBase {
             color: [Math.random(), Math.random(), Math.random(), 1],
           },
           ExternalScript: {
-            idScripts: [constant.ID_SCRIPT.AVATAR_JITSI],
+            scriptParams: [{ id: constant.ID_SCRIPT.AVATAR_JITSI }],
             variables: {
               domElement3D: this.variables.domElement3D,
               socketID: socketID,

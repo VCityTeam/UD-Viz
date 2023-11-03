@@ -21,7 +21,7 @@ const GameScriptModel = class extends Script.Model {
   toJSON() {
     return {
       uuid: this.uuid,
-      idScripts: this.idScripts,
+      scriptParams: this.scriptParams,
       variables: this.variables,
       type: GameScriptComponent.TYPE,
     };

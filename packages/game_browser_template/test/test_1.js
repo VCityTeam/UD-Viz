@@ -11,9 +11,9 @@
       new udviz.gameShared.Object3D({
         components: {
           ExternalScript: {
-            idScripts: [
-              udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
-              udviz.gameBrowserTemplate.DragAndDropAvatar.ID_SCRIPT,
+            scriptParams: [
+              { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
+              { id: udviz.gameBrowserTemplate.DragAndDropAvatar.ID_SCRIPT },
             ],
           },
         },

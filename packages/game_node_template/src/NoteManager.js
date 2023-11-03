@@ -21,7 +21,7 @@ module.exports = class NoteManager extends ScriptBase {
         static: true,
         components: {
           ExternalScript: {
-            idScripts: [constant.ID_SCRIPT.NOTE_SOCKET_SERVICE],
+            scriptParams: [{ id: constant.ID_SCRIPT.NOTE_SOCKET_SERVICE }],
             variables: {
               socketID: socketID, // to know in external script this is the socket pointer
               nameSocket: 'Default name',
@@ -72,7 +72,7 @@ module.exports = class NoteManager extends ScriptBase {
             color: data.color,
           },
           ExternalScript: {
-            idScripts: [constant.ID_SCRIPT.NOTE_ELEMENT],
+            scriptParams: [{ id: constant.ID_SCRIPT.NOTE_ELEMENT }],
             variables: {
               message: data.message,
             },

@@ -65,7 +65,7 @@ export class Element extends ScriptBase {
     const scriptParent = this.object3D.parent
       .getComponent(ExternalScriptComponent.TYPE)
       .getController()
-      .getScripts()[SocketService.ID_SCRIPT];
+      .scripts.get(SocketService.ID_SCRIPT);
 
     scriptParent.addNoteButton(this.containerButtons);
 

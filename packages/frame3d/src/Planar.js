@@ -62,7 +62,7 @@ export class Planar extends Base {
       },
     });
 
-    this.itownsView.controls.enable = hasItownsControls;
+    this.itownsView.controls.enabled = hasItownsControls;
 
     // fill parent class attributes create by the itownsView
     /** @type {THREE.Scene} */
