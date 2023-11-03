@@ -3,6 +3,12 @@ const { Model, Controller } = require('./Component');
 const { objectOverWrite } = require('@ud-viz/utils_shared');
 
 /**
+ * @typedef {object} ScriptOption
+ * @property {number} priority - influence order in which scripts are executed
+ * @property {number} tickRateMs - throttle tick of the script
+ */
+
+/**
  * @see module:Script
  * @class
  */
@@ -21,16 +27,17 @@ const ScriptModel = class extends Model {
     /**
      * ids of scripts
      *
-     * @type {Array<string>}
+     * @type {Map<string, ScriptOption>}
      */
     this.idScripts = json.idScripts || [];
+
 
     /**
      * custom global variables passed to scripts
      *
      * @type {object}
      */
-    this.variables = json.variables || {};
+    this.idScripts.this.variables = json.variables || {};
   }
 
   /**
