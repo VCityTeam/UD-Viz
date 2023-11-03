@@ -7,7 +7,7 @@
   "object": {
     "name": "add object3D test",
     "components": {
-      "GameScript": { "idScripts": ["HELLO SCRIPT ID"] },
+      "GameScript": { "scriptParams": [{ "id": "HELLO SCRIPT ID" }] },
       "Collider": {},
       "Render": {},
       "ExternalScript": {},

@@ -3,9 +3,9 @@ const { Model, Controller } = require('./Component');
 const { objectOverWrite } = require('@ud-viz/utils_shared');
 
 /**
- * @typedef {object} ScriptOption
+ * @typedef {object} ScriptParams
+ * @property {string} id - id of the script
  * @property {number} priority - influence order in which scripts are executed
- * @property {number} tickRateMs - throttle tick of the script
  */
 
 /**
@@ -18,42 +18,25 @@ const ScriptModel = class extends Model {
    *
    * @param {object} json - json to configure script model
    * @param {string} json.uuid - uuid of script model
-   * @param {Array<string>=} json.idScripts - ids of scripts
+   * @param {Array<ScriptParams>=} json.scriptParams - scripts params
    * @param {object=} json.variables - custom global variables for scripts
    */
   constructor(json) {
     super(json);
 
     /**
-     * ids of scripts
+     * scripts params
      *
-     * @type {Map<string, ScriptOption>}
+     * @type {Array<ScriptParams>}
      */
-    this.idScripts = json.idScripts || [];
-
+    this.scriptParams = json.scriptParams || [];
 
     /**
      * custom global variables passed to scripts
      *
      * @type {object}
      */
-    this.idScripts.this.variables = json.variables || {};
-  }
-
-  /**
-   *
-   * @returns {object} - script model variables
-   */
-  getVariables() {
-    return this.variables;
-  }
-
-  /**
-   *
-   * @returns {Array<string>} - script model ids scripts
-   */
-  getIdScripts() {
-    return this.idScripts;
+    this.variables = json.variables || {};
   }
 };
 
@@ -67,7 +50,7 @@ const ScriptController = class extends Controller {
    *
    * @param {ScriptModel} model - model of this controller
    * @param {object} object3D - object3D parent of the script component TODO; cyclic reference why controller need to know their object3D ?
-   * @param {Object<string,object>} scripts - instances of scripts
+   * @param {Map<string,object>} scripts - instances of scripts
    */
   constructor(model, object3D, scripts) {
     super(model, object3D);
@@ -75,7 +58,7 @@ const ScriptController = class extends Controller {
     /**
      * instances of scripts
      *
-     * @type {Object<string,object>}
+     * @type {Map<string,object>}
      */
     this.scripts = scripts;
   }
@@ -87,8 +70,8 @@ const ScriptController = class extends Controller {
    * @param {Array} params - parameters pass to scripts
    */
   execute(event, params) {
-    for (const id in this.scripts) {
-      this.executeScript(this.scripts[id], event, params);
+    for (const [, script] of this.scripts) {
+      this.executeScript(script, event, params);
     }
   }
 
@@ -109,14 +92,6 @@ const ScriptController = class extends Controller {
   }
 
   /**
-   *
-   * @returns {Object<string,object>} - script controllers scripts
-   */
-  getScripts() {
-    return this.scripts;
-  }
-
-  /**
    * Modify variables of the model + overwrite variables in scripts
    *
    * @param {object} variables - new variables of this script controller
@@ -124,7 +99,7 @@ const ScriptController = class extends Controller {
   setVariables(variables) {
     this.model.variables = variables;
     for (const id in this.scripts) {
-      objectOverWrite(this.scripts[id].variables, variables);
+      objectOverWrite(this.scripts.get(id).variables, variables);
     }
   }
 };

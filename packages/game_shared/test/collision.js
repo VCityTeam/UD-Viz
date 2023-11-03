@@ -82,7 +82,7 @@ const Script2 = class extends ScriptBase {
             body: false,
           },
           GameScript: {
-            idScripts: [Script1.ID_SCRIPT],
+            scriptParams: [{ id: Script1.ID_SCRIPT }],
           },
         },
       },
@@ -106,7 +106,7 @@ const gameContext = new Context(
       name: 'Collision Test',
       components: {
         GameScript: {
-          idScripts: [Script2.ID_SCRIPT],
+          scriptParams: [{ id: Script2.ID_SCRIPT }],
         },
       },
     },

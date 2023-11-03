@@ -13,7 +13,6 @@ import {
   AudioComponent,
   RenderComponent,
   ScriptController,
-  constant,
 } from '@ud-viz/game_shared';
 import { arrayEquals } from '@ud-viz/utils_shared';
 import * as frame3d from '@ud-viz/frame3d';
@@ -136,13 +135,6 @@ export class Context {
      *
       @type {object}  */
     this.userData = options.userData || {};
-
-    /**
-     * record when a object3D external has been executed for the last time
-     *
-     * @type {object}
-     */
-    this._bufferLastTimeTickObject3D = new Map();
 
     this.initFrame3D(frame3D);
   }
@@ -308,9 +300,7 @@ export class Context {
                 // Replace variables in external script
                 childExternalScriptComp
                   .getController()
-                  .setVariables(
-                    bufferedExternalScriptComp.getModel().getVariables()
-                  );
+                  .setVariables(bufferedExternalScriptComp.model.variables);
 
                 // Launch event onOutdated
                 componentHasBeenUpdated =
@@ -331,9 +321,6 @@ export class Context {
         } else {
           // Do not exist remove it
           child.removeFromParent();
-
-          // clean buffer
-          this._bufferLastTimeTickObject3D.delete(child.uuid);
 
           // external script event remove
           const scriptComponent = child.getComponent(
@@ -450,48 +437,7 @@ export class Context {
       // Tick local script
       const scriptComponent = child.getComponent(ExternalScriptComponent.TYPE);
       if (scriptComponent) {
-        const now = Date.now();
-
-        const scripts = scriptComponent.getController().scripts;
-        for (const idScript in scripts) {
-          const scriptTickRateMs = scriptComponent.model.idScripts[idScript];
-          if (!isNaN(scriptTickRateMs)) {
-            // this script has a tick rate
-
-            // intialize object3d
-            if (!this._bufferLastTimeTickObject3D.has(child.uuid)) {
-              this._bufferLastTimeTickObject3D.set(child.uuid, new Map());
-            }
-
-            const bufferObject3D = this._bufferLastTimeTickObject3D.get(
-              child.uuid
-            );
-
-            // initialize script
-            if (!bufferObject3D.has(idScript)) {
-              bufferObject3D.set(idScript, 0);
-            }
-
-            if (now - bufferObject3D.get(idScript) > scriptTickRateMs) {
-              scriptComponent
-                .getController()
-                .executeScript(scripts[idScript], Context.EVENT.TICK);
-              bufferObject3D.set(idScript, now);
-            }
-          } else {
-            // no tick rate for this script
-            scriptComponent
-              .getController()
-              .executeScript(scripts[idScript], Context.EVENT.TICK);
-          }
-        }
-
-        if (mapTickRateMs) {
-          // some script has a time rate
-        } else {
-          // no time rate
-          scriptComponent.getController().execute(Context.EVENT.TICK);
-        }
+        scriptComponent.getController().execute(Context.EVENT.TICK);
       }
 
       // Tick audio component
@@ -520,7 +466,7 @@ export class Context {
       if (component.getController()) {
         throw new Error('controller already init ' + go.name);
       }
-      const scripts = {};
+      let scripts = null;
       switch (type) {
         case AudioComponent.TYPE:
           component.initController(
@@ -533,16 +479,37 @@ export class Context {
           );
           break;
         case ExternalScriptComponent.TYPE:
-          component
-            .getModel()
-            .getIdScripts()
-            .forEach((idScript) => {
-              scripts[idScript] = this.createInstanceOf(
-                idScript,
+          scripts = new Map();
+          component.getModel().scriptParams.forEach((sParams) => {
+            scripts.set(
+              sParams.id,
+              this.createInstanceOf(
+                sParams.id,
                 go,
-                component.getModel().getVariables()
-              );
-            });
+                component.getModel().variables
+              )
+            );
+          });
+
+          scripts = new Map(
+            [...scripts.entries()].sort((a, b) => {
+              const aSParam = component
+                .getModel()
+                .scriptParams.filter((el) => el.id === a[0]);
+              const bSParam = component
+                .getModel()
+                .scriptParams.filter((el) => el.id === b[0]);
+
+              const aPrio = !isNaN(aSParam[0].priority)
+                ? aSParam[0].priority
+                : -Infinity;
+              const bPrio = !isNaN(bSParam[0].priority)
+                ? bSParam[0].priority
+                : -Infinity;
+
+              return bPrio - aPrio;
+            })
+          );
           component.initController(
             new ScriptController(component.getModel(), go, scripts)
           );
@@ -591,36 +558,9 @@ export class Context {
 
       if (!externalScriptComp) return;
 
-      const scripts = externalScriptComp.getController().getScripts();
-      if (scripts && scripts[id]) {
-        result = scripts[id];
-        return true;
-      }
-      return false;
-    });
-
-    return result;
-  }
-
-  /**
-   *
-   * @param {string} id - id of script
-   * @returns {Object3D|null} - first game object3D with external script id or null if none are found
-   */
-  findGameObjectWithExternalScriptID(id) {
-    let result = null;
-    this.object3D.traverse(function (child) {
-      if (!child.isGameObject3D) return;
-
-      const externalScriptComp = child.getComponent(
-        ExternalScriptComponent.TYPE
-      );
-
-      if (!externalScriptComp) return;
-
-      const scripts = externalScriptComp.getController().getScripts();
-      if (scripts && scripts[id]) {
-        result = child;
+      const scripts = externalScriptComp.getController().scripts;
+      if (scripts && scripts.has(id)) {
+        result = scripts.get(id);
         return true;
       }
       return false;

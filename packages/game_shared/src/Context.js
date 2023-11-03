@@ -149,11 +149,11 @@ const Context = class {
       obj.traverse(function (child) {
         const scriptC = child.getComponent(GameScript.Component.TYPE);
         if (scriptC) {
-          const scripts = scriptC.getController().getScripts();
-          for (const idScript in scripts) {
+          const scripts = scriptC.getController().scripts;
+          for (const [, script] of scripts) {
             const result = scriptC
               .getController()
-              .executeScript(scripts[idScript], Context.EVENT.LOAD);
+              .executeScript(script, Context.EVENT.LOAD);
             if (result) promises.push(result);
           }
         }
@@ -331,19 +331,41 @@ const Context = class {
         const component = child.getComponent(type);
         if (component.getController())
           throw new Error('controller already init ' + child.name);
-        const scripts = {};
+        let scripts = null;
         switch (type) {
           case GameScript.Component.TYPE:
-            component
-              .getModel()
-              .getIdScripts()
-              .forEach((idScript) => {
-                scripts[idScript] = this.createInstanceOf(
-                  idScript,
+            scripts = new Map();
+            component.getModel().scriptParams.forEach((sParams) => {
+              scripts.set(
+                sParams.id,
+                this.createInstanceOf(
+                  sParams.id,
                   child,
-                  component.getModel().getVariables()
-                );
-              });
+                  component.getModel().variables
+                )
+              );
+            });
+
+            scripts = new Map(
+              [...scripts.entries()].sort((a, b) => {
+                const aSParam = component
+                  .getModel()
+                  .scriptParams.filter((el) => el.id === a[0]);
+                const bSParam = component
+                  .getModel()
+                  .scriptParams.filter((el) => el.id === b[0]);
+
+                const aPrio = !isNaN(aSParam[0].priority)
+                  ? aSParam[0].priority
+                  : -Infinity;
+                const bPrio = !isNaN(bSParam[0].priority)
+                  ? bSParam[0].priority
+                  : -Infinity;
+
+                return bPrio - aPrio;
+              })
+            );
+
             component.initController(
               new Script.Controller(component.getModel(), child, scripts)
             );
@@ -586,9 +608,9 @@ const Context = class {
 
       if (!gameScriptComp) return;
 
-      const scripts = gameScriptComp.getController().getScripts();
-      if (scripts && scripts[id]) {
-        result = scripts[id];
+      const scripts = gameScriptComp.getController().scripts;
+      if (scripts && scripts.has(id)) {
+        result = scripts.get(id);
         return true;
       }
       return false;

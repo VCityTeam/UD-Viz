@@ -15,7 +15,7 @@ module.exports = class DomElement3DCubeManager extends ScriptBase {
             color: [Math.random(), Math.random(), Math.random(), 1],
           },
           ExternalScript: {
-            idScripts: [constant.ID_SCRIPT.DOM_ELEMENT_3D_CUBE_ID],
+            scriptParams: [{ id: constant.ID_SCRIPT.DOM_ELEMENT_3D_CUBE_ID }],
             variables: {
               domElement3D: this.variables.domElement3D,
               socketID: socketID,
