@@ -450,47 +450,44 @@ export class Context {
       // Tick local script
       const scriptComponent = child.getComponent(ExternalScriptComponent.TYPE);
       if (scriptComponent) {
-        const mapTickRateMs =
-          scriptComponent.model.variables[constant.SCRIPT.MAP_TICK_RATE_MS];
+        const now = Date.now();
 
-        if (mapTickRateMs) {
-          // some script has a time rate
+        const scripts = scriptComponent.getController().scripts;
+        for (const idScript in scripts) {
+          const scriptTickRateMs = scriptComponent.model.idScripts[idScript];
+          if (!isNaN(scriptTickRateMs)) {
+            // this script has a tick rate
 
-          const now = Date.now();
+            // intialize object3d
+            if (!this._bufferLastTimeTickObject3D.has(child.uuid)) {
+              this._bufferLastTimeTickObject3D.set(child.uuid, new Map());
+            }
 
-          const scripts = scriptComponent.getController().scripts;
-          for (const idScript in scripts) {
-            const scriptTickRateMs = mapTickRateMs[idScript];
-            if (!isNaN(scriptTickRateMs)) {
-              // this script has a tick rate
+            const bufferObject3D = this._bufferLastTimeTickObject3D.get(
+              child.uuid
+            );
 
-              // intialize object3d
-              if (!this._bufferLastTimeTickObject3D.has(child.uuid)) {
-                this._bufferLastTimeTickObject3D.set(child.uuid, new Map());
-              }
+            // initialize script
+            if (!bufferObject3D.has(idScript)) {
+              bufferObject3D.set(idScript, 0);
+            }
 
-              const bufferObject3D = this._bufferLastTimeTickObject3D.get(
-                child.uuid
-              );
-
-              // initialize script
-              if (!bufferObject3D.has(idScript)) {
-                bufferObject3D.set(idScript, 0);
-              }
-
-              if (now - bufferObject3D.get(idScript) > scriptTickRateMs) {
-                scriptComponent
-                  .getController()
-                  .executeScript(scripts[idScript], Context.EVENT.TICK);
-                bufferObject3D.set(idScript, now);
-              }
-            } else {
-              // no tick rate for this script
+            if (now - bufferObject3D.get(idScript) > scriptTickRateMs) {
               scriptComponent
                 .getController()
                 .executeScript(scripts[idScript], Context.EVENT.TICK);
+              bufferObject3D.set(idScript, now);
             }
+          } else {
+            // no tick rate for this script
+            scriptComponent
+              .getController()
+              .executeScript(scripts[idScript], Context.EVENT.TICK);
           }
+        }
+
+        if (mapTickRateMs) {
+          // some script has a time rate
         } else {
           // no time rate
           scriptComponent.getController().execute(Context.EVENT.TICK);
