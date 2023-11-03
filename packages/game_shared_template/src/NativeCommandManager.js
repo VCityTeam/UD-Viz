@@ -276,7 +276,7 @@ const NativeCommandManager = class extends ScriptBase {
 
   /**
    *
-   * @param {Object3D} object3D
+   * @param {Object3D} object3D - object3d to clamp rotation
    */
   clampRotation(object3D) {
     // clamp

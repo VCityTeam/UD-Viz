@@ -61,7 +61,7 @@ const gameContext = new Context(
       static: false, // this object is going to move in 3D space
       components: {
         GameScript: {
-          idScripts: [Script1.ID_SCRIPT],
+          scriptParams: [{ id: Script1.ID_SCRIPT }],
         },
       },
     },

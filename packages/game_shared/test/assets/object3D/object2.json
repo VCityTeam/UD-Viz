@@ -6,18 +6,22 @@
   },
   "object": {
     "name": "TestState",
-    "components": { "GameScript": { "idScripts": ["HELLO SCRIPT ID"] } },
+    "components": {
+      "GameScript": { "scriptParams": [{ "id": "HELLO SCRIPT ID" }] }
+    },
     "children": [
       {
         "name": "child1",
-        "components": { "GameScript": { "idScripts": ["HELLO SCRIPT ID"] } }
+        "components": {
+          "GameScript": { "scriptParams": [{ "id": "HELLO SCRIPT ID" }] }
+        }
       },
       {
         "name": "child2",
         "components": {
           "ExternalScript": {},
           "GameScript": {
-            "idScripts": ["HELLO SCRIPT ID"]
+            "scriptParams": [{ "id": "HELLO SCRIPT ID" }]
           },
           "Collider": {
             "shapes": [

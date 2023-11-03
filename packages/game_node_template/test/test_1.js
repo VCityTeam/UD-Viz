@@ -12,7 +12,7 @@ service.loadGameThreads(
     new Object3D({
       components: {
         GameScript: {
-          idScripts: [Map.ID_SCRIPT, NoteManager.ID_SCRIPT],
+          scriptParams: [{ id: Map.ID_SCRIPT }, { id: NoteManager.ID_SCRIPT }],
           variables: {
             clientFolder: path.resolve(__dirname, './assets/'),
             heightmap_path: './heightmap.jpeg',

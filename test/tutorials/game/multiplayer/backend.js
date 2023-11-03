@@ -36,10 +36,10 @@ const gameObject3D = new Object3D({
   static: true,
   components: {
     GameScript: {
-      idScripts: ['game_context_script'],
+      scriptParams: [{ id: 'game_context_script' }],
     },
     ExternalScript: {
-      idScripts: ['game_external_context_script'],
+      scriptParams: [{ id: 'game_external_context_script' }],
     },
   },
 });
