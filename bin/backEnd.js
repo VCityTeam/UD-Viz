@@ -108,12 +108,15 @@ gameSocketService
         static: true,
         components: {
           GameScript: {
-            idScripts: [NoteManager.ID_SCRIPT, NativeCommandManager.ID_SCRIPT],
+            scriptParams: [
+              { id: NoteManager.ID_SCRIPT },
+              { id: NativeCommandManager.ID_SCRIPT },
+            ],
           },
           ExternalScript: {
-            idScripts: [
-              constant.ID_SCRIPT.NOTE_UI,
-              constant.ID_SCRIPT.CAMERA_MANAGER,
+            scriptParams: [
+              { id: constant.ID_SCRIPT.NOTE_UI },
+              { id: constant.ID_SCRIPT.CAMERA_MANAGER },
             ],
           },
         },
@@ -124,9 +127,9 @@ gameSocketService
         static: true,
         components: {
           GameScript: {
-            idScripts: [
-              DomElement3DCubeManager.ID_SCRIPT,
-              NativeCommandManager.ID_SCRIPT,
+            scriptParams: [
+              { id: DomElement3DCubeManager.ID_SCRIPT },
+              { id: NativeCommandManager.ID_SCRIPT },
             ],
             variables: {
               idRenderData: 'cube',
@@ -140,7 +143,7 @@ gameSocketService
             },
           },
           ExternalScript: {
-            idScripts: [],
+            scriptParams: [],
           },
         },
       }),

@@ -24,7 +24,7 @@
             static: false, // => this Game.Object3D is going to move
             components: {
               GameScript: {
-                idScripts: [ZeppelinGameScript.ID_SCRIPT],
+                scriptParams: [{ id: ZeppelinGameScript.ID_SCRIPT }],
               },
               Render: { idRenderData: 'zeppelin' },
               Collider: {
@@ -207,9 +207,12 @@
                   sounds: ['ballon_pop'],
                 },
                 GameScript: {
-                  idScripts: [
-                    GameContextManager.ID_SCRIPT,
-                    udviz.gameSharedTemplate.NativeCommandManager.ID_SCRIPT,
+                  scriptParams: [
+                    { id: GameContextManager.ID_SCRIPT },
+                    {
+                      id: udviz.gameSharedTemplate.NativeCommandManager
+                        .ID_SCRIPT,
+                    },
                   ],
                   variables: {
                     defaultSpeedRotate: 0.0005,
@@ -221,9 +224,9 @@
                     camera_distance: 60,
                     camera_angle: 0.2,
                   },
-                  idScripts: [
-                    ExternalGameContextManager.ID_SCRIPT,
-                    udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
+                  scriptParams: [
+                    { id: ExternalGameContextManager.ID_SCRIPT },
+                    { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
                   ],
                 },
               },

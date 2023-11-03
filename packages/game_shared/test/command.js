@@ -31,7 +31,7 @@ const gameContext = new Context(
       name: 'Command Test',
       components: {
         GameScript: {
-          idScripts: [Script1.ID_SCRIPT],
+          scriptParams: [{ id: Script1.ID_SCRIPT }],
         },
       },
     },

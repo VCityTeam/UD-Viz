@@ -112,9 +112,12 @@
               static: true,
               components: {
                 GameScript: {
-                  idScripts: [
-                    AvatarGameScript.ID_SCRIPT,
-                    udviz.gameSharedTemplate.NativeCommandManager.ID_SCRIPT,
+                  scriptParams: [
+                    { id: AvatarGameScript.ID_SCRIPT },
+                    {
+                      id: udviz.gameSharedTemplate.NativeCommandManager
+                        .ID_SCRIPT,
+                    },
                   ],
                   variables: {
                     defaultSpeedRotate: 0.0005,
@@ -126,9 +129,9 @@
                     camera_distance: 5,
                     camera_angle: 0,
                   },
-                  idScripts: [
-                    AvatarExternalGameScript.ID_SCRIPT,
-                    udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
+                  scriptParams: [
+                    { id: AvatarExternalGameScript.ID_SCRIPT },
+                    { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
                   ],
                 },
               },
