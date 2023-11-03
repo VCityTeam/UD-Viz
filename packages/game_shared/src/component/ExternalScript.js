@@ -14,7 +14,10 @@ const ExternalScriptComponent = class extends Component {
    * @returns {boolean } - Return a boolean indicating whether an external script exists in id_scripts of component
    */
   has(externalIDScript) {
-    return this.getModel().scriptParams.includes(externalIDScript);
+    return (
+      this.getModel().scriptParams.filter((el) => el.id == externalIDScript)
+        .length > 0
+    );
   }
 };
 
