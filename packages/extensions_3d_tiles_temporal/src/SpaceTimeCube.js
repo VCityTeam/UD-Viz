@@ -728,27 +728,28 @@ export class SpaceTimeCube {
      *
      */
     function rotateObjects() {
-      const object3D = planes[0];
-      const dirToCamera = new THREE.Vector2(
-        object3D.position.x - view.camera.camera3D.position.x,
-        object3D.position.y - view.camera.camera3D.position.y
-      ).normalize();
+      object3DCircle.forEach((object3D) => {
+        const dirToCamera = new THREE.Vector2(
+          object3D.position.x - view.camera.camera3D.position.x,
+          object3D.position.y - view.camera.camera3D.position.y
+        ).normalize();
 
-      const dirObject = new THREE.Vector2(0, 1);
-      const buffer = dirObject
-        .clone()
-        .rotateAround(
-          new THREE.Vector2(object3D.position.x, object3D.position.y),
-          (object3D.rotation.z * 180) / Math.PI
-        );
+        const dirObject = new THREE.Vector2(0, 1);
+        const buffer = dirObject
+          .clone()
+          .rotateAround(
+            new THREE.Vector2(object3D.position.x, object3D.position.y),
+            (object3D.rotation.z * 180) / Math.PI
+          );
 
-      let angle = dirObject.angleTo(dirToCamera);
-      const orientation =
-        dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
-      if (orientation > 0) angle = 2 * Math.PI - angle;
+        let angle = dirObject.angleTo(dirToCamera);
+        const orientation =
+          dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
+        if (orientation > 0) angle = 2 * Math.PI - angle;
 
-      object3D.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-      object3D.updateMatrixWorld();
+        object3D.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        object3D.updateMatrixWorld();
+      });
 
       requestAnimationFrame(rotateObjects);
     }
