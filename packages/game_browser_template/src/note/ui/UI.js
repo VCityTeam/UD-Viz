@@ -77,7 +77,8 @@ export class UI extends ScriptBase {
           );
           externalScriptComp
             .getController()
-            .scripts[Element.ID_SCRIPT].displayNoteMessageHtml();
+            .scripts.get(Element.ID_SCRIPT)
+            .displayNoteMessageHtml();
         }
       }
     );
