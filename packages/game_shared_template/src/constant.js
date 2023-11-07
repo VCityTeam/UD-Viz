@@ -21,6 +21,7 @@ module.exports = {
     MOVE_RIGHT_END: 'move_right_end',
     ROTATE: 'rotate',
     ADD_OBJECT3D: 'add_object3D',
+    FREEZE: 'freeze',
     // Not native for now
     ADD_AVATAR: 'add_avatar',
     REMOVE_AVATAR: 'remove_avatar',
