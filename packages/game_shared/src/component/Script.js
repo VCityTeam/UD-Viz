@@ -98,8 +98,8 @@ const ScriptController = class extends Controller {
    */
   setVariables(variables) {
     this.model.variables = variables;
-    for (const id in this.scripts) {
-      objectOverWrite(this.scripts.get(id).variables, variables);
+    for (const [, script] of this.scripts) {
+      objectOverWrite(script.variables, variables);
     }
   }
 };
