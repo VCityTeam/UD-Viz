@@ -638,7 +638,7 @@ Context.EVENT = {
 /**
  * @class
  */
-const ScriptBase = class {
+const ScriptBase = class extends THREE.EventDispatcher {
   /**
    * Skeleton of a game context script, different {@link Context.EVENT} are trigger by {@link Context}
    *
@@ -647,6 +647,7 @@ const ScriptBase = class {
    * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
+    super();
     /**
      * context of this script
      *

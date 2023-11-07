@@ -62,9 +62,14 @@ const NativeCommandManager = class extends ScriptBase {
       );
     }
 
+    let updatedObject3DWasOutOfMap = false;
+
     switch (type) {
+      case COMMAND.FREEZE:
+        updatedObject3D[NativeCommandManager.FREEZE_KEY] = data.value;
+        break;
       case COMMAND.MOVE_FORWARD:
-        NativeCommandManager.moveForward(
+        updatedObject3DWasOutOfMap = NativeCommandManager.moveForward(
           updatedObject3D,
           this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
           this.map,
@@ -72,7 +77,7 @@ const NativeCommandManager = class extends ScriptBase {
         );
         break;
       case COMMAND.MOVE_BACKWARD:
-        NativeCommandManager.moveBackward(
+        updatedObject3DWasOutOfMap = NativeCommandManager.moveBackward(
           updatedObject3D,
           this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
           this.map,
@@ -222,6 +227,12 @@ const NativeCommandManager = class extends ScriptBase {
       default:
         break;
     }
+
+    if (updatedObject3DWasOutOfMap)
+      this.dispatchEvent({
+        type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+        object3D: updatedObject3D,
+      });
   }
 
   /**
@@ -242,35 +253,85 @@ const NativeCommandManager = class extends ScriptBase {
     return this.variables.defaultSpeedRotate;
   }
 
+  /**
+   * End Movement of an object3D
+   *
+   * @param {Object3D} object3D - object3D to stop
+   */
+  stop(object3D) {
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_FORWARD_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_BACKWARD_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_LEFT_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_RIGHT_START], object3D);
+  }
+
+  /**
+   * An object3D freezed cant be move by manager
+   *
+   * @param {Object3D} object3D - object3D to freeze or not
+   * @param {boolean} value - freeze or not an object3D
+   */
+  freeze(object3D, value) {
+    object3D.userData[NativeCommandManager.FREEZE_KEY] = value;
+  }
+
   tick() {
     // move objectsMoving
     this.objectsMoving[COMMAND.MOVE_FORWARD_START].forEach((o) => {
-      NativeCommandManager.moveForward(
-        o,
-        this.computeObjectSpeedTranslate(o) * this.context.dt,
-        this.map
-      );
+      if (
+        NativeCommandManager.moveForward(
+          o,
+          this.computeObjectSpeedTranslate(o) * this.context.dt,
+          this.map
+        )
+      ) {
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: o,
+        });
+      }
     });
     this.objectsMoving[COMMAND.MOVE_BACKWARD_START].forEach((o) => {
-      NativeCommandManager.moveBackward(
-        o,
-        this.computeObjectSpeedTranslate(o) * this.context.dt,
-        this.map
-      );
+      if (
+        NativeCommandManager.moveBackward(
+          o,
+          this.computeObjectSpeedTranslate(o) * this.context.dt,
+          this.map
+        )
+      ) {
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: o,
+        });
+      }
     });
     this.objectsMoving[COMMAND.MOVE_LEFT_START].forEach((o) => {
-      NativeCommandManager.moveLeft(
-        o,
-        this.computeObjectSpeedTranslate(o) * this.context.dt,
-        this.map
-      );
+      if (
+        NativeCommandManager.moveLeft(
+          o,
+          this.computeObjectSpeedTranslate(o) * this.context.dt,
+          this.map
+        )
+      ) {
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: o,
+        });
+      }
     });
     this.objectsMoving[COMMAND.MOVE_RIGHT_START].forEach((o) => {
-      NativeCommandManager.moveRight(
-        o,
-        this.computeObjectSpeedTranslate(o) * this.context.dt,
-        this.map
-      );
+      if (
+        NativeCommandManager.moveRight(
+          o,
+          this.computeObjectSpeedTranslate(o) * this.context.dt,
+          this.map
+        )
+      ) {
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: o,
+        });
+      }
     });
   }
 
@@ -290,6 +351,14 @@ const NativeCommandManager = class extends ScriptBase {
   static get ID_SCRIPT() {
     return 'native_command_manager_id';
   }
+
+  static get EVENT() {
+    return { OBJECT_3D_LEAVE_MAP: 'object_3d_leave_map' };
+  }
+
+  static get FREEZE_KEY() {
+    return 'freeze_key';
+  }
 };
 
 /**
@@ -299,6 +368,7 @@ const NativeCommandManager = class extends ScriptBase {
  * @param {number} value - amount to move forward
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
+ * @return {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveForward = function (
   object3D,
@@ -306,7 +376,7 @@ NativeCommandManager.moveForward = function (
   map,
   withMap = true
 ) {
-  NativeCommandManager.move(
+  return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D).setLength(value),
     map,
@@ -321,6 +391,7 @@ NativeCommandManager.moveForward = function (
  * @param {number} value - amount to move backward
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
+ * @return {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveBackward = function (
   object3D,
@@ -328,7 +399,7 @@ NativeCommandManager.moveBackward = function (
   map,
   withMap = true
 ) {
-  NativeCommandManager.move(
+  return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D).negate().setLength(value),
     map,
@@ -343,6 +414,7 @@ NativeCommandManager.moveBackward = function (
  * @param {number} value - amount to move left
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
+ * @return {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveLeft = function (
   object3D,
@@ -350,7 +422,7 @@ NativeCommandManager.moveLeft = function (
   map,
   withMap = true
 ) {
-  NativeCommandManager.move(
+  return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
@@ -367,6 +439,7 @@ NativeCommandManager.moveLeft = function (
  * @param {number} value - amount to move right
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
+ * @return {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveRight = function (
   object3D,
@@ -374,7 +447,7 @@ NativeCommandManager.moveRight = function (
   map,
   withMap = true
 ) {
-  NativeCommandManager.move(
+  return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
       .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
@@ -391,17 +464,21 @@ NativeCommandManager.moveRight = function (
  * @param {THREE.Vector3} vector - move vector
  * @param {AbstractMap} map - map script
  * @param {boolean} withMap - map should be consider
+ * @return {boolean} isOutOfMap - the movement make the object3D leaves the map
  */
 NativeCommandManager.move = function (object3D, vector, map, withMap) {
+  if (object3D.userData[NativeCommandManager.FREEZE_KEY]) return false; // object freezed cant move
   const oldPosition = object3D.position.clone();
   object3D.position.add(vector);
+  let isOutOfMap = false;
   if (map && withMap) {
-    const isOutOfMap = !map.updateElevation(object3D);
+    isOutOfMap = !map.updateElevation(object3D);
     if (isOutOfMap) {
-      object3D.position.copy(oldPosition);
+      object3D.position.copy(oldPosition); // cant leave the map
     }
   }
   object3D.setOutdated(true);
+  return isOutOfMap;
 };
 
 /**
