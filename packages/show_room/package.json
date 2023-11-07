@@ -34,7 +34,7 @@
     "@ud-viz/game_browser_template": "4.0.0",
     "@ud-viz/game_shared": "4.0.0",
     "@ud-viz/game_shared_template": "4.0.0",
-    "itowns": "2.40.0",
+    "itowns": "file:../../../Itowns",
     "three": "0.154.0"
   }
 }

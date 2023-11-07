@@ -13,6 +13,7 @@ const result = {
   },
   resolve: {
     modules: [
+      '../Itowns/node_modules',
       'node_modules', // The default
       'src',
     ],

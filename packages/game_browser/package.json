@@ -25,7 +25,7 @@
     "@ud-viz/utils_browser": "4.0.0",
     "@ud-viz/utils_shared": "4.0.0",
     "howler": "2.2.3",
-    "itowns": "2.40.0",
+    "itowns": "file:../../../Itowns",
     "socket.io-client": "^4.7.2",
     "three": "0.154.0"
   }
