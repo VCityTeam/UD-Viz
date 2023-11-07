@@ -317,16 +317,19 @@ const Object3D = class extends THREE.Object3D {
    *
    * @param {boolean=} [full=true] - component with controllers should be added to the result
    * @param {boolean=} [withMetadata=false] - add metadata to the result
+   * @param {boolean=} [withChildren=true] - add children to the result
    * @returns {object} - object of the object3D if withMetatdata = false, otherwise the object is store in result.object and metadata in result.metadata
    */
-  toJSON(full = true, withMetadata = false) {
+  toJSON(full = true, withMetadata = false, withChildren = true) {
     const result = {};
 
     result.children = [];
-    this.children.forEach((child) => {
-      if (!child.isGameObject3D) return;
-      result.children.push(child.toJSON(full, false));
-    });
+    if (withChildren) {
+      this.children.forEach((child) => {
+        if (!child.isGameObject3D) return;
+        result.children.push(child.toJSON(full, false));
+      });
+    }
 
     // update matrix
     this.updateMatrix();
@@ -375,6 +378,7 @@ const Object3D = class extends THREE.Object3D {
         object: result,
       };
     }
+
     return result;
   }
 };

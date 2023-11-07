@@ -127,21 +127,11 @@ const State = class {
   sub(previousState) {
     const nextStateObjectsUUID = [];
     const objects3DToUpdateJSON = {};
-    const alreadyInObjects3DToUpdateJSON = [];
     this.object3D.traverse((child) => {
       nextStateObjectsUUID.push(child.uuid); // Register all uuid
-      if (!alreadyInObjects3DToUpdateJSON.includes(child.uuid)) {
-        // Not present in objects3DToUpdateJSON
-        if (!previousState.includes(child.uuid) || child.isOutdated()) {
-          // If not in the previous state or outdated
-          objects3DToUpdateJSON[child.uuid] = child.toJSON();
-          // Avoid to add child of an outdated object twice because toJSON is recursive
-          child.traverse(function (childAlreadyInObjects3DToUpdateJSON) {
-            alreadyInObjects3DToUpdateJSON.push(
-              childAlreadyInObjects3DToUpdateJSON.uuid
-            );
-          });
-        }
+      if (!previousState.includes(child.uuid) || child.isOutdated()) {
+        // If not in the previous state or outdated
+        objects3DToUpdateJSON[child.uuid] = child.toJSON(true, false, false); // add it without its children
       }
     });
 
