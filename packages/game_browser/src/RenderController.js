@@ -49,6 +49,7 @@ export class RenderController extends Controller {
 
     // register in parent
     this.object3D.add(this.renderData.object3D);
+    this.renderData.object3D.name = 'RENDER_OBJECT_3D_' + this.object3D.name;
 
     // update color
     this.setColor(this.model.getColor());

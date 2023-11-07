@@ -43,7 +43,7 @@ const RenderModel = class extends Model {
   toJSON() {
     return {
       uuid: this.uuid,
-      type: RenderModel.TYPE,
+      type: RenderComponent.TYPE,
       idRenderData: this.idRenderData,
       color: this.color,
     };
