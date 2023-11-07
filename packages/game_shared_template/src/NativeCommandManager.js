@@ -65,9 +65,6 @@ const NativeCommandManager = class extends ScriptBase {
     let updatedObject3DWasOutOfMap = false;
 
     switch (type) {
-      case COMMAND.FREEZE:
-        updatedObject3D[NativeCommandManager.FREEZE_KEY] = data.value;
-        break;
       case COMMAND.MOVE_FORWARD:
         updatedObject3DWasOutOfMap = NativeCommandManager.moveForward(
           updatedObject3D,
