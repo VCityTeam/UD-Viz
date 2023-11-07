@@ -327,7 +327,9 @@ export class Context {
             ExternalScriptComponent.TYPE
           );
           if (scriptComponent) {
-            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
+            scriptComponent
+              .getController()
+              .execute(Context.EVENT.ON_REMOVE);
           }
 
           // Audio removal
@@ -595,7 +597,7 @@ Context.EVENT = {
   ON_RESIZE: 'onResize',
 };
 
-export class ScriptBase {
+export class ScriptBase extends THREE.EventDispatcher {
   /**
    * Skeleton of a game context script, different {@link Context.EVENT} are trigger by {@link Context}
    *
@@ -604,6 +606,7 @@ export class ScriptBase {
    * @param {object} variables - custom variables bind (attach) to this script
    */
   constructor(context, object3D, variables) {
+    super();
     /**
      * context of this script
      *
