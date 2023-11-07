@@ -724,6 +724,11 @@ export class SpaceTimeCube {
       }
     });
 
+    const dirTocentroid = new THREE.Vector3(
+      object3DCircle[0].position.x - planes[0].position.x,
+      object3DCircle[0].position.y - planes[0].position.y,
+      0
+    );
     rotateObjects();
 
     /**
@@ -731,7 +736,7 @@ export class SpaceTimeCube {
      */
     function rotateObjects() {
       let index = 0;
-      for (let i = 0; i < planes.length; i++) {
+      for (let i = 0; i < 1; i++) {
         const dirToCamera = new THREE.Vector2(
           planes[i].position.x - view.camera.camera3D.position.x,
           planes[i].position.y - view.camera.camera3D.position.y
@@ -753,12 +758,24 @@ export class SpaceTimeCube {
         planes[i].setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
         planes[i].updateMatrixWorld();
 
+        // const bufferPos = dirTocentroid.clone();
+        // const posObject = object3DCircle[index].position.clone();
+        // console.log(posObject);
+        // posObject.add(bufferPos);
+        // bufferPos.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        // console.log(bufferPos);
+        // // object3DCircle[index].position.applyAxisAngle(new);
         object3DCircle[index].setRotationFromQuaternion(planes[i].quaternion);
+        // posObject.sub(bufferPos);
+        // object3DCircle[index].position.set(
+        //   posObject.x,
+        //   posObject.y,
+        //   posObject.z
+        // );
         object3DCircle[index].updateMatrixWorld();
 
-        object3DCircle[index + 1].setRotationFromAxisAngle(
-          new THREE.Vector3(0, 0, 1),
-          angle
+        object3DCircle[index + 1].setRotationFromQuaternion(
+          planes[i].quaternion
         );
         object3DCircle[index + 1].updateMatrixWorld();
 
