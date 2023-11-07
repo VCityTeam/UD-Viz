@@ -113,19 +113,21 @@
             udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
         });
 
-        udviz.itowns.View.prototype.addLayer.call(
-            view,
-            new udviz.itowns.C3DTilesLayer(
-              configs['3DTiles'][1]['id'],
-              {
-                name: configs['3DTiles'][1]['id'],
-                source: new udviz.itowns.C3DTilesSource({
-                  url: configs['3DTiles'][1]['url'],
-                }),
-              },
-              view
-            )
-          );
+        configs['3DTiles'].forEach((layerConfig) => {
+            udviz.itowns.View.prototype.addLayer.call(
+              view,
+              new udviz.itowns.C3DTilesLayer(
+                layerConfig['id'],
+                {
+                  name: layerConfig['id'],
+                  source: new udviz.itowns.C3DTilesSource({
+                    url: layerConfig['url'],
+                  }),
+                },
+                view
+              )
+            );
+          });
 
         const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
           configs['3DTiles_temporal'][0].id,

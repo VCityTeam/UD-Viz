@@ -233,6 +233,7 @@ export class SpaceTimeCube {
     const points = [],
       RAYON = 1000;
 
+    let index = 1;
     for (let i = 0; i < 360; i += 72) {
       const angle = (i * Math.PI) / 180;
       points.push(
@@ -248,8 +249,9 @@ export class SpaceTimeCube {
         },
         this.view
       );
-      this.layersTemporal.push(C3DTiles);
-      itowns.View.prototype.addLayer.call(this.view, C3DTiles);
+      this.layersTemporal.push(this.layers()[index]);
+      index++;
+      // itowns.View.prototype.addLayer.call(this.view, C3DTiles);
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -711,7 +713,7 @@ export class SpaceTimeCube {
             this.circle.position.y,
           this.circle.geometry.attributes.position.array[i + 2] +
             this.circle.position.z -
-            10
+            20
         );
         planeMesh.updateMatrixWorld();
         planes.push(planeMesh);
@@ -728,18 +730,19 @@ export class SpaceTimeCube {
      *
      */
     function rotateObjects() {
-      object3DCircle.forEach((object3D) => {
+      let index = 0;
+      for (let i = 0; i < planes.length; i++) {
         const dirToCamera = new THREE.Vector2(
-          object3D.position.x - view.camera.camera3D.position.x,
-          object3D.position.y - view.camera.camera3D.position.y
+          planes[i].position.x - view.camera.camera3D.position.x,
+          planes[i].position.y - view.camera.camera3D.position.y
         ).normalize();
 
         const dirObject = new THREE.Vector2(0, 1);
         const buffer = dirObject
           .clone()
           .rotateAround(
-            new THREE.Vector2(object3D.position.x, object3D.position.y),
-            (object3D.rotation.z * 180) / Math.PI
+            new THREE.Vector2(planes[i].position.x, planes[i].position.y),
+            (planes[i].rotation.z * 180) / Math.PI
           );
 
         let angle = dirObject.angleTo(dirToCamera);
@@ -747,9 +750,44 @@ export class SpaceTimeCube {
           dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
         if (orientation > 0) angle = 2 * Math.PI - angle;
 
-        object3D.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-        object3D.updateMatrixWorld();
-      });
+        planes[i].setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        planes[i].updateMatrixWorld();
+
+        object3DCircle[index].setRotationFromQuaternion(planes[i].quaternion);
+        object3DCircle[index].updateMatrixWorld();
+
+        object3DCircle[index + 1].setRotationFromAxisAngle(
+          new THREE.Vector3(0, 0, 1),
+          angle
+        );
+        object3DCircle[index + 1].updateMatrixWorld();
+
+        index += 2;
+      }
+
+      // with object
+      // object3DCircle.forEach((object3D) => {
+      //   const dirToCamera = new THREE.Vector2(
+      //     object3D.position.x - view.camera.camera3D.position.x,
+      //     object3D.position.y - view.camera.camera3D.position.y
+      //   ).normalize();
+
+      //   const dirObject = new THREE.Vector2(0, 1);
+      //   const buffer = dirObject
+      //     .clone()
+      //     .rotateAround(
+      //       new THREE.Vector2(object3D.position.x, object3D.position.y),
+      //       (object3D.rotation.z * 180) / Math.PI
+      //     );
+
+      //   let angle = dirObject.angleTo(dirToCamera);
+      //   const orientation =
+      //     dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
+      //   if (orientation > 0) angle = 2 * Math.PI - angle;
+
+      //   object3D.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+      //   object3D.updateMatrixWorld();
+      // });
 
       requestAnimationFrame(rotateObjects);
     }
