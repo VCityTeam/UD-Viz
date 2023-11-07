@@ -172,7 +172,7 @@ export class C3DTiles extends itownsWidget.Widget {
     labelLayerDomElement.innerText = layer.name;
     this.c3DTFeatureInfoContainer.appendChild(labelLayerDomElement);
 
-    layer.computeWorldBox3(c3DTFeature, this.displayedBBFeature.box);
+    c3DTFeature.computeWorldBox3(this.displayedBBFeature.box);
     this.displayedBBFeature.updateMatrixWorld();
 
     // feature info
