@@ -16,7 +16,7 @@ const THREE = require('three');
 /**
  * @callback CommandCallback
  * @param {object} data - command data
- * @return {boolean} if true the command is removed from context.commands
+ * @returns {boolean} if true the command is removed from context.commands
  */
 
 /** @class */

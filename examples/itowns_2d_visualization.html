@@ -151,8 +151,7 @@
                   ] of tileContent.layer.tilesC3DTileFeatures.get(
                     tileContent.tileId
                   )) {
-                    const worldBox3 =
-                      tileContent.layer.computeWorldBox3(c3DTFeature);
+                    const worldBox3 = c3DTFeature.computeWorldBox3();
 
                     // compute feature elevation
                     let featureElevation = null;

@@ -327,9 +327,7 @@ export class Context {
             ExternalScriptComponent.TYPE
           );
           if (scriptComponent) {
-            scriptComponent
-              .getController()
-              .execute(Context.EVENT.ON_REMOVE);
+            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
           }
 
           // Audio removal

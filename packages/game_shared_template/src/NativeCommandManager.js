@@ -385,7 +385,7 @@ const NativeCommandManager = class extends ScriptBase {
  * @param {number} value - amount to move forward
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
- * @return {boolean} - the movement make the object3D leaves the map
+ * @returns {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveForward = function (
   object3D,
@@ -408,7 +408,7 @@ NativeCommandManager.moveForward = function (
  * @param {number} value - amount to move backward
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
- * @return {boolean} - the movement make the object3D leaves the map
+ * @returns {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveBackward = function (
   object3D,
@@ -431,7 +431,7 @@ NativeCommandManager.moveBackward = function (
  * @param {number} value - amount to move left
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
- * @return {boolean} - the movement make the object3D leaves the map
+ * @returns {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveLeft = function (
   object3D,
@@ -456,7 +456,7 @@ NativeCommandManager.moveLeft = function (
  * @param {number} value - amount to move right
  * @param {AbstractMap} map - map script
  * @param {boolean} [withMap=true] - map should be consider
- * @return {boolean} - the movement make the object3D leaves the map
+ * @returns {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveRight = function (
   object3D,
@@ -481,7 +481,7 @@ NativeCommandManager.moveRight = function (
  * @param {THREE.Vector3} vector - move vector
  * @param {AbstractMap} map - map script
  * @param {boolean} withMap - map should be consider
- * @return {boolean} isOutOfMap - the movement make the object3D leaves the map
+ * @returns {boolean} isOutOfMap - the movement make the object3D leaves the map
  */
 NativeCommandManager.move = function (object3D, vector, map, withMap) {
   if (object3D.userData[NativeCommandManager.FREEZE_KEY]) return false; // object freezed cant move

@@ -123,7 +123,7 @@ gameSocketService
       }),
       new Object3D({
         uuid: 'dom_element_3d_cube_game_uuid',
-        name: 'Avatar jitsi game',
+        name: 'DomElement 3D cube game',
         static: true,
         components: {
           GameScript: {
