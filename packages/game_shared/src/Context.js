@@ -13,6 +13,12 @@ const THREE = require('three');
  * @param {*} params - params pass when event is dispatched
  */
 
+/**
+ * @callback CommandCallback
+ * @param {object} data - command data
+ * @return {boolean} if true the command is removed from context.commands
+ */
+
 /** @class */
 const Context = class {
   /**
@@ -99,8 +105,8 @@ const Context = class {
     /** 
      * commands buffer
      *  
-     @type {Array<Command>} */
-    this.commands = [];
+     @type {Map<string,Array>} */
+    this.commands = new Map();
   }
 
   /**
@@ -180,15 +186,11 @@ const Context = class {
   step(dt) {
     this.dt = dt;
 
-    this.commands.forEach((cmd) => {
-      this.dispatchScriptEvent(this.object3D, Context.EVENT.ON_COMMAND, [
-        cmd.type,
-        cmd.data,
-      ]);
-    });
-    this.commands.length = 0; // clear command
-
     this.dispatchScriptEvent(this.object3D, Context.EVENT.TICK);
+    // clear command
+    for (const [, arrayData] of this.commands) {
+      arrayData.length = 0;
+    }
 
     this.updateCollision(this.object3D);
 
@@ -569,7 +571,10 @@ const Context = class {
    * @param {Command[]} cmds - new commands to apply at the next step
    */
   onCommands(cmds) {
-    this.commands.push(...cmds);
+    cmds.forEach((cmd) => {
+      if (!this.commands.has(cmd.type)) this.commands.set(cmd.type, []);
+      this.commands.get(cmd.type).push(cmd.data);
+    });
   }
 
   /**
@@ -632,7 +637,6 @@ Context.EVENT = {
   ON_ENTER_COLLISION: 'onEnterCollision',
   IS_COLLIDING: 'isColliding',
   ON_LEAVE_COLLISION: 'onLeaveCollision',
-  ON_COMMAND: 'onCommand',
 };
 
 /**
@@ -705,14 +709,26 @@ const ScriptBase = class extends THREE.EventDispatcher {
    */
   // eslint-disable-next-line no-unused-vars
   onLeaveCollision(object3D) {}
+
   /**
-   * call when {@link Context} receive new command
    *
-   * @param {string} type - type of the command
-   * @param {object} data - data of the command
+   * @param {string} type - type of command treated
+   * @param {CommandCallback} callback - callback to apply to command
    */
-  // eslint-disable-next-line no-unused-vars
-  onCommand(type, data) {}
+  applyCommandCallbackOf(type, callback) {
+    if (!this.context.commands.has(type)) return;
+
+    for (
+      let index = this.context.commands.get(type).length - 1;
+      index >= 0;
+      index--
+    ) {
+      if (callback(this.context.commands.get(type)[index])) {
+        // true mean command has been consumned
+        this.context.commands.get(type).splice(index, 1);
+      }
+    }
+  }
 
   static get ID_SCRIPT() {
     console.error(this.name);

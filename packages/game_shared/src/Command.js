@@ -22,10 +22,7 @@ class Command {
      *
      * @type {object|null}
      */
-    this.data = null;
-    if (json.data != undefined) {
-      this.data = json.data;
-    }
+    this.data = json.data != undefined ? json.data : null;
   }
 
   /**

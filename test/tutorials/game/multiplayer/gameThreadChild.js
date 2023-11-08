@@ -25,11 +25,11 @@ const GameContextScript = class extends ScriptBase {
     }, 3000);
   }
 
-  onCommand(type) {
-    if (type === 'toggle_pause') this.pause = !this.pause;
-  }
-
   tick() {
+    this.applyCommandCallbackOf('toggle_pause', (data) => {
+      this.pause != this.pause;
+    });
+
     if (this.pause) return;
 
     for (let index = this.goCubes.length - 1; index >= 0; index--) {
