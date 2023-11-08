@@ -181,7 +181,7 @@ export class MultiPlanarProcess {
         // init start
         this.frame3DPlanar.enableItownsViewRendering(false);
         this.interpolator.onFirstState(state);
-        this.inputManager.startListening(this.frame3DPlanar.domElementWebGL);
+        this.inputManager.startListening(this.frame3DPlanar.domElement);
       }
     );
 
