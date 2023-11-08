@@ -56,8 +56,8 @@ module.exports = class NoteManager extends ScriptBase {
     );
   }
 
-  onCommand(type, data) {
-    if (type === constant.COMMAND.ADD_NOTE) {
+  tick() {
+    this.applyCommandCallbackOf(constant.COMMAND.ADD_NOTE, (data) => {
       const socketObject3D = this.socketObjects3D[data.socketID];
 
       const note = new Object3D({
@@ -83,7 +83,8 @@ module.exports = class NoteManager extends ScriptBase {
       note.scale.copy(data.scale);
 
       socketObject3D.add(note);
-    }
+      return true;
+    });
   }
 
   static get ID_SCRIPT() {
