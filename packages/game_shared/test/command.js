@@ -8,15 +8,11 @@ const Script1 = class extends ScriptBase {
     super(context, object3D, variables);
   }
 
-  onCommand(type, data) {
-    switch (type) {
-      case COMMAND_TYPE:
-        console.log(data);
-        process.exit(0);
-        break;
-      default:
-        throw new Error('cmd type');
-    }
+  tick() {
+    this.applyCommandCallbackOf(COMMAND_TYPE, (data) => {
+      console.log(data);
+      process.exit(0);
+    });
   }
 
   static get ID_SCRIPT() {

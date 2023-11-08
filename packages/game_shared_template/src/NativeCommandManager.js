@@ -45,234 +45,214 @@ const NativeCommandManager = class extends ScriptBase {
     this.map = this.context.findGameScriptWithID(AbstractMap.ID_SCRIPT);
   }
 
-  onCommand(type, data) {
-    if (!data) return;
-
-    /** @type {Object3D} */
-    const updatedObject3D = this.context.object3D.getObjectByProperty(
-      'uuid',
-      data.object3DUUID
-    );
-
-    let externalScriptComponent = null;
-
-    if (updatedObject3D) {
-      externalScriptComponent = updatedObject3D.getComponent(
-        ExternalScriptComponent.TYPE
-      );
-    }
-
-    let updatedObject3DWasOutOfMap = false;
-
-    switch (type) {
-      case COMMAND.MOVE_FORWARD:
-        updatedObject3DWasOutOfMap = NativeCommandManager.moveForward(
-          updatedObject3D,
-          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
-          this.map,
-          data.withMap
-        );
-        break;
-      case COMMAND.MOVE_BACKWARD:
-        updatedObject3DWasOutOfMap = NativeCommandManager.moveBackward(
-          updatedObject3D,
-          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
-          this.map,
-          data.withMap
-        );
-        break;
-      case COMMAND.ROTATE_LEFT:
-        NativeCommandManager.rotate(
-          updatedObject3D,
-          new THREE.Vector3(
-            0,
-            0,
-            this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
-          )
-        );
-        break;
-      case COMMAND.ROTATE_RIGHT:
-        NativeCommandManager.rotate(
-          updatedObject3D,
-          new THREE.Vector3(
-            0,
-            0,
-            -this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
-          )
-        );
-        break;
-      case COMMAND.UPDATE_TRANSFORM:
-        if (!updatedObject3D) break; // updated object 3D is needed for this command
-
-        if (data.position) {
-          if (!isNaN(data.position.x)) {
-            updatedObject3D.position.x = data.position.x;
-            updatedObject3D.setOutdated(true);
-          }
-          if (!isNaN(data.position.y)) {
-            updatedObject3D.position.y = data.position.y;
-            updatedObject3D.setOutdated(true);
-          }
-          if (!isNaN(data.position.z)) {
-            updatedObject3D.position.z = data.position.z;
-            updatedObject3D.setOutdated(true);
-          }
-        }
-        if (data.scale) {
-          if (!isNaN(data.scale.x)) {
-            updatedObject3D.scale.x = data.scale.x;
-            updatedObject3D.setOutdated(true);
-          }
-          if (!isNaN(data.scale.y)) {
-            updatedObject3D.scale.y = data.scale.y;
-            updatedObject3D.setOutdated(true);
-          }
-          if (!isNaN(data.scale.z)) {
-            updatedObject3D.scale.z = data.scale.z;
-            updatedObject3D.setOutdated(true);
-          }
-        }
-        break;
-      case COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES:
-        if (externalScriptComponent) {
-          externalScriptComponent.getModel().variables[data.variableName] =
-            data.variableValue;
-          updatedObject3D.setOutdated(true);
-        }
-        break;
-      case COMMAND.MOVE_FORWARD_START:
-        arrayPushOnce(
-          this.objectsMoving[COMMAND.MOVE_FORWARD_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_FORWARD_END:
-        removeFromArray(
-          this.objectsMoving[COMMAND.MOVE_FORWARD_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_BACKWARD_START:
-        arrayPushOnce(
-          this.objectsMoving[COMMAND.MOVE_BACKWARD_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_BACKWARD_END:
-        removeFromArray(
-          this.objectsMoving[COMMAND.MOVE_BACKWARD_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_LEFT_START:
-        arrayPushOnce(
-          this.objectsMoving[COMMAND.MOVE_LEFT_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_LEFT_END:
-        removeFromArray(
-          this.objectsMoving[COMMAND.MOVE_LEFT_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_RIGHT_START:
-        arrayPushOnce(
-          this.objectsMoving[COMMAND.MOVE_RIGHT_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.MOVE_RIGHT_END:
-        removeFromArray(
-          this.objectsMoving[COMMAND.MOVE_RIGHT_START],
-          updatedObject3D
-        );
-        break;
-      case COMMAND.ROTATE:
-        if (data.vector) {
-          if (!isNaN(data.vector.x)) {
-            updatedObject3D.rotateX(
-              data.vector.x *
-                this.context.dt *
-                this.computeObjectSpeedRotate(updatedObject3D)
-            );
-          }
-          if (!isNaN(data.vector.y)) {
-            updatedObject3D.rotateY(
-              data.vector.y *
-                this.context.dt *
-                this.computeObjectSpeedRotate(updatedObject3D)
-            );
-          }
-          if (!isNaN(data.vector.z)) {
-            updatedObject3D.rotateZ(
-              data.vector.z *
-                this.context.dt *
-                this.computeObjectSpeedRotate(updatedObject3D)
-            );
-          }
-          this.clampRotation(updatedObject3D);
-          updatedObject3D.setOutdated(true);
-        }
-        break;
-      case COMMAND.ADD_OBJECT3D:
-        this.context.addObject3D(new Object3D(data.object3D), data.parentUUID);
-        break;
-      case COMMAND.REMOVE_OBJECT3D:
-        this.context.removeObject3D(updatedObject3D.uuid);
-        break;
-      default:
-        break;
-    }
-
-    if (updatedObject3DWasOutOfMap)
-      this.dispatchEvent({
-        type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
-        object3D: updatedObject3D,
-      });
-  }
-
-  /**
-   * If you want to have different translation speed for gameobject you should override this method
-   *
-   * @returns {number} speed of the translation
-   */
-  computeObjectSpeedTranslate() {
-    return this.variables.defaultSpeedTranslate;
-  }
-
-  /**
-   * If you want to have different rotation speed for gameobject you should override this method
-   *
-   * @returns {number} speed of the rotation
-   */
-  computeObjectSpeedRotate() {
-    return this.variables.defaultSpeedRotate;
-  }
-
-  /**
-   * End Movement of an object3D
-   *
-   * @param {Object3D} object3D - object3D to stop
-   */
-  stop(object3D) {
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_FORWARD_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_BACKWARD_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_LEFT_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_RIGHT_START], object3D);
-  }
-
-  /**
-   * An object3D freezed cant be move by manager
-   *
-   * @param {Object3D} object3D - object3D to freeze or not
-   * @param {boolean} value - freeze or not an object3D
-   */
-  freeze(object3D, value) {
-    object3D.userData[NativeCommandManager.FREEZE_KEY] = value;
-  }
-
   tick() {
+    // apply commands callback
+    this.applyCommandCallbackOf(COMMAND.MOVE_FORWARD, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      if (
+        NativeCommandManager.moveForward(
+          updatedObject3D,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
+          this.map,
+          data.withMap
+        )
+      )
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: updatedObject3D,
+        });
+
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.MOVE_BACKWARD, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      if (
+        NativeCommandManager.moveBackward(
+          updatedObject3D,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt,
+          this.map,
+          data.withMap
+        )
+      )
+        this.dispatchEvent({
+          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+          object3D: updatedObject3D,
+        });
+
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.ROTATE_LEFT, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      NativeCommandManager.rotate(
+        updatedObject3D,
+        new THREE.Vector3(
+          0,
+          0,
+          this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
+        )
+      );
+
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.ROTATE_RIGHT, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      NativeCommandManager.rotate(
+        updatedObject3D,
+        new THREE.Vector3(
+          0,
+          0,
+          -this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
+        )
+      );
+
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.UPDATE_TRANSFORM, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      if (!updatedObject3D) return true;
+      if (data.position) {
+        if (!isNaN(data.position.x)) {
+          updatedObject3D.position.x = data.position.x;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.position.y)) {
+          updatedObject3D.position.y = data.position.y;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.position.z)) {
+          updatedObject3D.position.z = data.position.z;
+          updatedObject3D.setOutdated(true);
+        }
+      }
+      if (data.rotation) {
+        if (!isNaN(data.rotation.x)) {
+          updatedObject3D.rotation.x = data.rotation.x;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.rotation.y)) {
+          updatedObject3D.rotation.y = data.rotation.y;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.rotation.z)) {
+          updatedObject3D.rotation.z = data.rotation.z;
+          updatedObject3D.setOutdated(true);
+        }
+      }
+      if (data.scale) {
+        if (!isNaN(data.scale.x)) {
+          updatedObject3D.scale.x = data.scale.x;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.scale.y)) {
+          updatedObject3D.scale.y = data.scale.y;
+          updatedObject3D.setOutdated(true);
+        }
+        if (!isNaN(data.scale.z)) {
+          updatedObject3D.scale.z = data.scale.z;
+          updatedObject3D.setOutdated(true);
+        }
+      }
+
+      return true;
+    });
+    this.applyCommandCallbackOf(
+      COMMAND.UPDATE_EXTERNALSCRIPT_VARIABLES,
+      (data) => {
+        const updatedObject3D = this.context.object3D.getObjectByProperty(
+          'uuid',
+          data.object3DUUID
+        );
+        const externalScriptComponent = updatedObject3D.getComponent(
+          ExternalScriptComponent.TYPE
+        );
+        externalScriptComponent.getModel().variables[data.variableName] =
+          data.variableValue;
+        updatedObject3D.setOutdated(true);
+        return true;
+      }
+    );
+    this.applyCommandCallbackOf(COMMAND.ROTATE, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      if (!isNaN(data.vector.x)) {
+        updatedObject3D.rotateX(
+          data.vector.x *
+            this.context.dt *
+            this.computeObjectSpeedRotate(updatedObject3D)
+        );
+      }
+      if (!isNaN(data.vector.y)) {
+        updatedObject3D.rotateY(
+          data.vector.y *
+            this.context.dt *
+            this.computeObjectSpeedRotate(updatedObject3D)
+        );
+      }
+      if (!isNaN(data.vector.z)) {
+        updatedObject3D.rotateZ(
+          data.vector.z *
+            this.context.dt *
+            this.computeObjectSpeedRotate(updatedObject3D)
+        );
+      }
+      this.clampRotation(updatedObject3D);
+      updatedObject3D.setOutdated(true);
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.ADD_OBJECT3D, (data) => {
+      this.context.addObject3D(new Object3D(data.object3D), data.parentUUID);
+      return true;
+    });
+    this.applyCommandCallbackOf(COMMAND.REMOVE_OBJECT3D, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      this.context.removeObject3D(updatedObject3D.uuid);
+      return true;
+    });
+
+    [
+      { start: COMMAND.MOVE_FORWARD_START, end: COMMAND.MOVE_FORWARD_END },
+      { start: COMMAND.MOVE_BACKWARD_START, end: COMMAND.MOVE_BACKWARD_END },
+      { start: COMMAND.MOVE_LEFT_START, end: COMMAND.MOVE_LEFT_END },
+      { start: COMMAND.MOVE_RIGHT_START, end: COMMAND.MOVE_RIGHT_END },
+    ].forEach(({ start, end }) => {
+      this.applyCommandCallbackOf(start, () => {
+        const updatedObject3D = this.context.object3D.getObjectByProperty(
+          'uuid',
+          data.object3DUUID
+        );
+        arrayPushOnce(this.objectsMoving[start], updatedObject3D);
+        return true;
+      });
+      this.applyCommandCallbackOf(end, () => {
+        const updatedObject3D = this.context.object3D.getObjectByProperty(
+          'uuid',
+          data.object3DUUID
+        );
+        removeFromArray(this.objectsMoving[start], updatedObject3D);
+        return true;
+      });
+    });
+
     // move objectsMoving
     this.objectsMoving[COMMAND.MOVE_FORWARD_START].forEach((o) => {
       if (
@@ -330,6 +310,46 @@ const NativeCommandManager = class extends ScriptBase {
         });
       }
     });
+  }
+
+  /**
+   * If you want to have different translation speed for gameobject you should override this method
+   *
+   * @returns {number} speed of the translation
+   */
+  computeObjectSpeedTranslate() {
+    return this.variables.defaultSpeedTranslate;
+  }
+
+  /**
+   * If you want to have different rotation speed for gameobject you should override this method
+   *
+   * @returns {number} speed of the rotation
+   */
+  computeObjectSpeedRotate() {
+    return this.variables.defaultSpeedRotate;
+  }
+
+  /**
+   * End Movement of an object3D
+   *
+   * @param {Object3D} object3D - object3D to stop
+   */
+  stop(object3D) {
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_FORWARD_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_BACKWARD_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_LEFT_START], object3D);
+    removeFromArray(this.objectsMoving[COMMAND.MOVE_RIGHT_START], object3D);
+  }
+
+  /**
+   * An object3D freezed cant be move by manager
+   *
+   * @param {Object3D} object3D - object3D to freeze or not
+   * @param {boolean} value - freeze or not an object3D
+   */
+  freeze(object3D, value) {
+    object3D.userData[NativeCommandManager.FREEZE_KEY] = value;
   }
 
   /**

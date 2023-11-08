@@ -21,26 +21,24 @@ module.exports = class DragAndDropAvatar extends ScriptBase {
     this.avatar = null;
   }
 
-  onCommand(type, data) {
-    switch (type) {
-      case COMMAND.ADD_AVATAR:
-        this.avatar = new Object3D({
-          name: NAME.AVATAR,
-          components: {
-            Render: {
-              idRenderData: this.variables.idRenderDataAvatar,
-            },
+  tick() {
+    this.applyCommandCallbackOf(COMMAND.ADD_AVATAR, (data) => {
+      this.avatar = new Object3D({
+        name: NAME.AVATAR,
+        components: {
+          Render: {
+            idRenderData: this.variables.idRenderDataAvatar,
           },
-        });
-        if (!data) throw new Error('data is needed to add avatar');
-        this.avatar.position.copy(data);
-        this.context.addObject3D(this.avatar);
-        break;
-      case COMMAND.REMOVE_AVATAR:
-        this.context.removeObject3D(this.avatar.uuid);
-        break;
-      default:
-    }
+        },
+      });
+      if (!data) throw new Error('data is needed to add avatar');
+      this.avatar.position.copy(data);
+      this.context.addObject3D(this.avatar);
+    });
+
+    this.applyCommandCallbackOf(COMMAND.REMOVE_AVATAR, () => {
+      this.context.removeObject3D(this.avatar.uuid);
+    });
   }
 
   static get ID_SCRIPT() {
