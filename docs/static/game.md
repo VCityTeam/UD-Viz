@@ -78,10 +78,10 @@ const gameObject3D = new Object3D({
   static: true,
   components: {
     GameScript: {
-      scriptParams: [{id:GameContextScript.ID_SCRIPT}],
+      scriptParams: [{ id: GameContextScript.ID_SCRIPT }],
     },
     ExternalScript: {
-      scriptParams: [{id:GameExternalContextScript.ID_SCRIPT}],
+      scriptParams: [{ id: GameExternalContextScript.ID_SCRIPT }],
     },
   },
 });
@@ -170,16 +170,11 @@ In the `tick` of `GameContextScript`
 
 ```js
 tick() {
+
+  this.applyCommandCallbackOf('toggle_pause', (data) => { this.pause != this.pause })
+
   if (this.pause) return;
   ...
-```
-
-And finally add `onCommand` method:
-
-```js
-onCommand(type) {
-  if (type === 'toggle_pause') this.pause = !this.pause;
-}
 ```
 
 Now you have learned how to build a singleplayer simple game, let's see how to modify it to make a multiplayer one.
