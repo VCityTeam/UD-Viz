@@ -235,7 +235,7 @@ const NativeCommandManager = class extends ScriptBase {
       { start: COMMAND.MOVE_LEFT_START, end: COMMAND.MOVE_LEFT_END },
       { start: COMMAND.MOVE_RIGHT_START, end: COMMAND.MOVE_RIGHT_END },
     ].forEach(({ start, end }) => {
-      this.applyCommandCallbackOf(start, () => {
+      this.applyCommandCallbackOf(start, (data) => {
         const updatedObject3D = this.context.object3D.getObjectByProperty(
           'uuid',
           data.object3DUUID
@@ -243,7 +243,7 @@ const NativeCommandManager = class extends ScriptBase {
         arrayPushOnce(this.objectsMoving[start], updatedObject3D);
         return true;
       });
-      this.applyCommandCallbackOf(end, () => {
+      this.applyCommandCallbackOf(end, (data) => {
         const updatedObject3D = this.context.object3D.getObjectByProperty(
           'uuid',
           data.object3DUUID
