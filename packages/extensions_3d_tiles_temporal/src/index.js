@@ -198,8 +198,6 @@ export class Temporal3DTilesLayerWrapper {
 
         if (this._styleDate == null)
           this.styleDate = this.knownDatesForAllTiles[0]; // init with a default value
-        // TODO: because onTileContentLoaded of C3DTilesLayer is doing initFeature/updateStyle/dispatchEvent so this is called after updateStyle
-        this.temporalC3DTilesLayer.updateStyle([tileContent.tileId]);
       }
     );
 
