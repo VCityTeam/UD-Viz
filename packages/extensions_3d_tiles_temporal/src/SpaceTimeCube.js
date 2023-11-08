@@ -724,11 +724,7 @@ export class SpaceTimeCube {
       }
     });
 
-    const dirTocentroid = new THREE.Vector3(
-      object3DCircle[0].position.x - planes[0].position.x,
-      object3DCircle[0].position.y - planes[0].position.y,
-      0
-    );
+    const distance = planes[0].position.distanceTo(object3DCircle[0].position);
     rotateObjects();
 
     /**
@@ -736,13 +732,13 @@ export class SpaceTimeCube {
      */
     function rotateObjects() {
       let index = 0;
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < planes.length; i++) {
         const dirToCamera = new THREE.Vector2(
           planes[i].position.x - view.camera.camera3D.position.x,
           planes[i].position.y - view.camera.camera3D.position.y
         ).normalize();
 
-        const dirObject = new THREE.Vector2(0, 1);
+        let dirObject = new THREE.Vector2(0, 1);
         const buffer = dirObject
           .clone()
           .rotateAround(
@@ -758,22 +754,17 @@ export class SpaceTimeCube {
         planes[i].setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
         planes[i].updateMatrixWorld();
 
-        // const bufferPos = dirTocentroid.clone();
-        // const posObject = object3DCircle[index].position.clone();
-        // console.log(posObject);
-        // posObject.add(bufferPos);
-        // bufferPos.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-        // console.log(bufferPos);
-        // // object3DCircle[index].position.applyAxisAngle(new);
+        // First tile
+        object3DCircle[index].position.copy(planes[i].position);
+        dirObject = dirObject.rotateAround(new THREE.Vector2(0, 0), angle);
+        object3DCircle[index].position.sub(
+          new THREE.Vector3(dirObject.x * distance, dirObject.y * distance, 0)
+        );
         object3DCircle[index].setRotationFromQuaternion(planes[i].quaternion);
-        // posObject.sub(bufferPos);
-        // object3DCircle[index].position.set(
-        //   posObject.x,
-        //   posObject.y,
-        //   posObject.z
-        // );
+        object3DCircle[index].position.z += 20;
         object3DCircle[index].updateMatrixWorld();
 
+        // Second Tile
         object3DCircle[index + 1].setRotationFromQuaternion(
           planes[i].quaternion
         );
