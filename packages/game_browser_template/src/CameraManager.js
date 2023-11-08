@@ -38,6 +38,7 @@ export class CameraManager extends ScriptBase {
      *  
      @type {THREE.Raycaster} */
     this.raycaster = new THREE.Raycaster();
+    this.raycaster.camera = this.context.frame3D.camera; // patch to intersect sprites
   }
 
   /**

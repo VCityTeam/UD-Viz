@@ -85,7 +85,6 @@ const ScriptController = class extends Controller {
    */
   executeScript(script, event, params) {
     if (!script[event]) {
-      console.warn('No Event ' + event + ' on script ' + script.name);
       return null;
     }
     return script[event].apply(script, params);
