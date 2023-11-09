@@ -5,4 +5,5 @@ export * from './InputManager';
 export * from './MultiPlanarProcess';
 export * from './RenderController';
 export * from './SinglePlanarProcess';
+export * from './SingleBaseProcess';
 export * from './SocketIOWrapper';
