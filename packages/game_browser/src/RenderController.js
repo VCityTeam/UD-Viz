@@ -29,9 +29,25 @@ export class RenderController extends Controller {
     /** @type {THREE.AnimationMixer} */
     this.animationMixer = null;
 
-    if (this.model.getIdRenderData()) {
+    this.setIdRenderData(this.model.idRenderData);
+
+    // update color
+    this.setColor(this.model.getColor());
+  }
+
+  setIdRenderData(idRenderData) {
+    // change model
+    this.model.idRenderData = idRenderData;
+
+    // remove old one
+    if (this.renderData) {
+      this.renderData.dispose();
+      this.renderData = null;
+    }
+
+    if (this.model.idRenderData) {
       this.renderData = this.assetManager.createRenderData(
-        this.model.getIdRenderData()
+        this.model.idRenderData
       );
       const animations = this.renderData.animations;
       if (animations && animations.length) {
@@ -51,8 +67,7 @@ export class RenderController extends Controller {
     this.object3D.add(this.renderData.object3D);
     this.renderData.object3D.name = 'RENDER_OBJECT_3D_' + this.object3D.name;
 
-    // update color
-    this.setColor(this.model.getColor());
+    this.setColor(this.model.color); // update color
   }
 
   /**

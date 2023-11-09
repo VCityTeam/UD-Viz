@@ -379,4 +379,9 @@ export class RenderData {
 
     return new RenderData(cloneObject, {}, this.animations);
   }
+
+  dispose() {
+    if (this.object3D && this.object3D.parent)
+      this.object3D.parent.remove(this.object3D);
+  }
 }
