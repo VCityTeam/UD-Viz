@@ -12,6 +12,10 @@ const THREE = require('three');
 const ColliderComponent = class extends Component {};
 
 ColliderComponent.TYPE = 'Collider';
+ColliderComponent.SHAPE_TYPE = {
+  CIRCLE: 'Circle',
+  POLYGON: 'Polygon',
+};
 
 /**
  * @see module:Collider
