@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer';
-import { checkParentChild } from '@ud-viz/utils_browser';
 import { DomElement3D } from './DomElement3D';
+import {
+  defaultConfigScene,
+  initScene,
+  checkParentChild,
+} from '@ud-viz/utils_browser';
 
 /** @class*/
 export class Base {
@@ -14,6 +18,7 @@ export class Base {
    * @param {string} [options.domElementClass] - dom element class name
    * @param {HTMLElement} [options.parentDomElement=document.body] - dom parent element of domElement frame3DBase
    * @param {boolean} [options.catchEventsCSS3D=false] - event are catch by css3D element (ie {@link DomElement3D})
+   * @param {import('@ud-viz/utils_browser').SceneConfig} [options.sceneConfig] - scene config
    * @param {boolean} [init3D=true] - {@link THREE.Scene} + {@link THREE.PerspectiveCamera} + {@link THREE.WebGLRenderer} should be init
    */
   constructor(options = {}, init3D = true) {
@@ -124,6 +129,12 @@ export class Base {
       this.listeners[Base.EVENT[key]] = [];
     }
 
+    /** @type {import('../THREEUtil').SceneConfig} */
+    this.sceneConfig = options.sceneConfig || defaultConfigScene;
+
+    /** @type {THREE.DirectionalLight|null} */
+    this.directionalLight = null;
+
     if (init3D) {
       // Initialize 3D
 
@@ -131,6 +142,8 @@ export class Base {
 
       this.scene = new THREE.Scene();
       const canvas = document.createElement('canvas');
+      if (options.domElementClass)
+        canvas.classList.add(options.domElementClass);
       this.domElementWebGL.appendChild(canvas);
       this.renderer = new THREE.WebGLRenderer({
         canvas: canvas,
@@ -140,6 +153,17 @@ export class Base {
       });
       this.camera = new THREE.PerspectiveCamera(60, 1, 1, 1000); // Default params
       this.scene.add(this.camera);
+
+      // init with sceneconfig
+
+      this.sceneConfig = options.sceneConfig || defaultConfigScene;
+
+      this.directionalLight = initScene(
+        this.camera,
+        this.renderer,
+        this.scene,
+        this.sceneConfig
+      );
     }
   }
 

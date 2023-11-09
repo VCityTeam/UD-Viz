@@ -119,6 +119,14 @@ export class MultiPlanarProcess {
       );
     };
 
+    this.socketIOWrapper.on(
+      constant.WEBSOCKET.MSG_TYPE.USER_DATA_UPDATE,
+      (userData) => {
+        objectOverWrite(this.externalGameContext.userData, userData);
+        objectParseNumeric(this.externalGameContext.userData);
+      }
+    );
+
     // start listening on socket events
     this.socketIOWrapper.on(
       constant.WEBSOCKET.MSG_TYPE.NEW_GAME,

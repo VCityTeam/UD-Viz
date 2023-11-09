@@ -244,14 +244,12 @@ export class Context {
               if (bGO) bufferedGO.push(bGO);
             });
 
-            // Update local component for bufferedGO
-            let componentHasBeenUpdated = false; // Flag to know if a change of state occured
-
             const childRenderComp = child.getComponent(RenderComponent.TYPE);
             const childExternalScriptComp = child.getComponent(
               ExternalScriptComponent.TYPE
             );
 
+            let renderCompHasChanged = false;
             for (let index = 0; index < bufferedGO.length; index++) {
               const gameContextGONotConsumned = bufferedGO[index];
 
@@ -263,29 +261,32 @@ export class Context {
                 // Check if color change
                 if (
                   !arrayEquals(
-                    childRenderComp.getModel().getColor(),
-                    bufferedRenderComp.getModel().getColor()
+                    childRenderComp.model.color,
+                    bufferedRenderComp.model.color
                   )
                 ) {
-                  console.error('DEPRECATED');
-                  childRenderComp.setColor(bufferedRenderComp.getColor());
-                  componentHasBeenUpdated = true; // Notify change
-                }
-
-                // Check if idModel change
-                if (
-                  childRenderComp.getModel().getIdRenderData() !=
-                  bufferedRenderComp.getModel().getIdRenderData()
-                ) {
-                  console.error('DEPRECATED');
                   childRenderComp
                     .getController()
-                    .setIdRenderData(
-                      bufferedRenderComp.getModel().getIdRenderData()
-                    );
-
-                  componentHasBeenUpdated = true;
+                    .setColor(bufferedRenderComp.model.color);
+                  renderCompHasChanged = true;
                 }
+
+                // Check if idRenderData change
+                if (
+                  childRenderComp.model.idRenderData !=
+                  bufferedRenderComp.model.idRenderData
+                ) {
+                  childRenderComp
+                    .getController()
+                    .setIdRenderData(bufferedRenderComp.model.idRenderData);
+                  renderCompHasChanged = true;
+                }
+              }
+
+              if (childExternalScriptComp && renderCompHasChanged) {
+                childExternalScriptComp
+                  .getController()
+                  .execute(Context.EVENT.ON_RENDER_COMPONENT_CHANGED);
               }
 
               if (
@@ -303,19 +304,10 @@ export class Context {
                   .setVariables(bufferedExternalScriptComp.model.variables);
 
                 // Launch event onOutdated
-                componentHasBeenUpdated =
-                  componentHasBeenUpdated ||
-                  childExternalScriptComp
-                    .getController()
-                    .execute(Context.EVENT.ON_OUTDATED);
+                childExternalScriptComp
+                  .getController()
+                  .execute(Context.EVENT.ON_OUTDATED);
               }
-            }
-
-            if (componentHasBeenUpdated && childExternalScriptComp) {
-              // Launch event onComponentUpdate
-              childExternalScriptComp
-                .getController()
-                .execute(Context.EVENT.ON_COMPONENT_UPDATE);
             }
           }
         } else {
@@ -421,7 +413,7 @@ export class Context {
     this.object3D.updateMatrixWorld();
 
     // Update shadow
-    if (newGO.length) {
+    if (newGO.length && this.frame3D.sceneConfig) {
       bindLightTransform(
         this.frame3D.sceneConfig.sky.sun_position.offset,
         this.frame3D.sceneConfig.sky.sun_position.phi,
@@ -591,7 +583,7 @@ Context.EVENT = {
   ON_OUTDATED: 'onOutdated',
   DISPOSE: 'dispose',
   ON_REMOVE: 'onRemove',
-  ON_COMPONENT_UPDATE: 'onComponentUpdate',
+  ON_RENDER_COMPONENT_CHANGED: 'onRenderComponentChanged',
   ON_RESIZE: 'onResize',
 };
 
@@ -652,10 +644,6 @@ export class ScriptBase extends THREE.EventDispatcher {
    */
   onRemove() {}
   /**
-   * call when an external script onOutdated return true
-   */
-  onComponentUpdate() {}
-  /**
    * call when frame3D is disposed
    */
   dispose() {}
@@ -663,6 +651,10 @@ export class ScriptBase extends THREE.EventDispatcher {
    * call when frame3D is resized
    */
   onResize() {}
+  /**
+   * call when the render component of the object has changed
+   */
+  onRenderComponentChanged() {}
 
   static get ID_SCRIPT() {
     console.error(this.name);
