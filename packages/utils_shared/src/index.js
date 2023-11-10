@@ -434,6 +434,17 @@ function computeFileFormat(filename) {
 }
 
 /**
+ * Compute filename from path
+ *
+ * @param {string} path - path
+ * @returns {string} filename
+ */
+function computeFilenameFromPath(path) {
+  const indexLastSlash = path.lastIndexOf('/');
+  return path.slice(indexLastSlash + 1);
+}
+
+/**
  * Check if the element is alreeady included in the array if not push it
  *
  * @param {Array} array - array where to push the element
@@ -526,6 +537,7 @@ module.exports = {
   objectParse: objectParse,
   objectParseNumeric: objectParseNumeric,
   computeFileFormat: computeFileFormat,
+  computeFilenameFromPath: computeFilenameFromPath,
   arrayPushOnce: arrayPushOnce,
   removeFromArray: removeFromArray,
   ProcessInterval: require('./ProcessInterval'),
