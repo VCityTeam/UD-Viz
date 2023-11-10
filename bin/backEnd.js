@@ -158,5 +158,5 @@ gameSocketService
     if (process.send) {
       process.send(MESSAGE.READY);
     }
-    reload(app, { port: RELOAD_PORT });
+    if (NODE_ENV == 'development') reload(app, { port: RELOAD_PORT }); // client should have script tag reload
   });
