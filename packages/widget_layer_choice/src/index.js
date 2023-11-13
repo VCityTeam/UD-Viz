@@ -1,209 +1,131 @@
-import * as itowns from 'itowns';
 import {
-  focusC3DTilesLayer,
-  createDisplayable,
-  createLabelInput,
+  createLocalStorageCheckbox,
+  createLocalStorageDetails,
+  createLocalStorageSlider,
 } from '@ud-viz/utils_browser';
+
+import { PointsMaterial } from 'three';
+
+import { PlanarView } from 'itowns';
+
+/**
+ * @typedef {object} LayerParam
+ * @property {import("itowns").Layer} layer - itowns.Layer
+ * @property {number} defaultPointCloudSize - default size of a pointcloud layer
+ * @property {boolean} [isPointCloud=false] - the layer is a point cloud allow to know if a C3DTilesLayer is a pointcloud or not without pulling tileset.json
+ */
 
 export class LayerChoice {
   /**
    *
-   * @param {itowns.PlanarView} itownView - itowns view
+   * @param {PlanarView} view - itowns view
+   * @param {Array<LayerParam>} layerParams - layer params to initialization
    */
-  constructor(itownView) {
+  constructor(view, layerParams = []) {
     /** @type {HTMLElement} */
-    this.domElement = null;
-
-    /** @type {HTMLElement} */
-    this.colorLayersSpoilerBoxElement = null;
-
-    /** @type {HTMLElement} */
-    this.elevationLayersSpoilerBoxElement = null;
-
-    /** @type {HTMLElement} */
-    this.geometryLayersSpoilerBoxElement = null;
-
-    /** @type {itowns.PlanarView} */
-    this.itownView = itownView;
-
-    this.initHtml();
-  }
-
-  initHtml() {
     this.domElement = document.createElement('div');
-    {
-      // color
-      const displayableColor = createDisplayable('Color Layers');
-      this.domElement.appendChild(displayableColor.parent);
-      this.colorLayersSpoilerBoxElement = displayableColor.container;
 
-      // elevation
-      const displayableElevation = createDisplayable('Elevation Layer');
-      this.domElement.appendChild(displayableElevation.parent);
-      this.elevationLayersSpoilerBoxElement = displayableElevation.container;
+    /** @type {PlanarView} */
+    this.view = view;
 
-      // geometry
-      const displayableGeometry = createDisplayable('Geometry Layers');
-      this.domElement.appendChild(displayableGeometry.parent);
-      this.geometryLayersSpoilerBoxElement = displayableGeometry.container;
-    }
-
-    this.innerContentColorLayers();
-    this.innerContentElevationLayers();
-    this.innerContentGeometryLayers();
+    layerParams.forEach((param) => {
+      this.createLayerDomEl(param);
+    });
   }
 
   /**
-   * Create the description part of ColorLayers
+   *
+   * @param {LayerParam} param - param of the layer created
    */
-  innerContentColorLayers() {
-    const list = this.colorLayersSpoilerBoxElement;
-    list.innerText = '';
-    const layers = this.itownView
-      .getLayers()
-      .filter((el) => el.isColorLayer == true);
-    for (let i = 0; i < layers.length; i++) {
-      const item = document.createElement('div');
-      item.innerText = layers[i].id;
+  createLayerDomEl(param) {
+    const layerContainerDomElement = createLocalStorageDetails(
+      'details' + param.layer.id,
+      param.layer.name || param.layer.id,
+      this.domElement
+    );
 
-      const visibilityLayer = createLabelInput('Visible', 'checkbox');
-      visibilityLayer.input.checked = layers[i].visible;
-      item.appendChild(visibilityLayer.parent);
+    if (!param.layer.isElevationLayer) {
+      // visibility checkbox
+      const visibleInput = createLocalStorageCheckbox(
+        param.layer.id + '_layer_visibility',
+        'Visible',
+        layerContainerDomElement,
+        param.layer.visible
+      );
 
-      visibilityLayer.input.oninput = () => {
-        layers[i].visible = visibilityLayer.input.checked;
-        this.itownView.notifyChange();
+      // sync visible input with param.layer
+      param.layer.visible = visibleInput.checked;
+      visibleInput.onchange = () => {
+        param.layer.visible = visibleInput.checked;
+        this.view.notifyChange(this.view.camera.camera3D);
       };
+      // opacity checkbox
+      const opacityInput = createLocalStorageSlider(
+        param.layer.id + '_layer_opacity',
+        'Opacité',
+        layerContainerDomElement,
+        param.layer.opacity
+      );
 
-      const opacityLayer = createLabelInput('Opacity', 'range');
-      opacityLayer.input.min = 0;
-      opacityLayer.input.max = 1;
-      opacityLayer.input.step = 0.1;
-      opacityLayer.input.value = layers[i].opacity;
-      item.appendChild(opacityLayer.parent);
-
-      opacityLayer.input.oninput = () => {
-        layers[i].opacity = opacityLayer.input.value;
-        this.itownView.notifyChange();
+      // sync opcity input with param.layer
+      param.layer.opacity = opacityInput.valueAsNumber;
+      opacityInput.onchange = () => {
+        param.layer.opacity = opacityInput.valueAsNumber;
+        this.view.notifyChange(this.view.camera.camera3D);
       };
-
-      list.appendChild(item);
     }
-  }
 
-  /**
-   * Create the description part of ElevationLayers
-   */
-  innerContentElevationLayers() {
-    const list = this.elevationLayersSpoilerBoxElement;
-    list.innerText = '';
-    const layers = this.itownView
-      .getLayers()
-      .filter((el) => el.isElevationLayer == true);
-    for (let i = 0; i < layers.length; i++) {
-      const scale = createLabelInput('Scale', 'range');
-      scale.input.min = 0;
-      scale.input.max = 2.5;
-      scale.input.step = 0.1;
+    if (param.isPointCloud) {
+      const pointCloudSize = createLocalStorageSlider(
+        param.layer.id + '_layer_pnts_size',
+        'Point size',
+        layerContainerDomElement,
+        {
+          step: 0.001,
+          max: 0.5,
+          min: 0.001,
+          defaultValue: param.defaultPointCloudSize || 0.03,
+        }
+      );
 
-      scale.input.value = layers[i].scale;
+      const updatePointsSize = () => {
+        // replace param.layer one for futur pnts requested
+        param.layer.material.size = pointCloudSize.valueAsNumber;
 
-      scale.input.oninput = () => {
-        layers[i].scale = scale.input.value;
-        this.itownView.notifyChange();
+        // replace in current pnts
+        param.layer.object3d.traverse((child) => {
+          if (child.material instanceof PointsMaterial) {
+            child.material.size = pointCloudSize.valueAsNumber;
+          }
+        });
+
+        this.view.notifyChange(this.view.camera.camera3D);
       };
 
-      list.appendChild(scale.parent);
+      updatePointsSize();
+
+      // change point cloud size
+      pointCloudSize.oninput = updatePointsSize;
     }
-  }
 
-  /**
-   * Create the description part of GeometryLayers
-   */
-  innerContentGeometryLayers() {
-    const list = this.geometryLayersSpoilerBoxElement;
-    list.innerText = '';
-    const layers = this.itownView
-      .getLayers()
-      .filter((el) => el.isGeometryLayer == true);
+    if (param.layer.isElevationLayer) {
+      // scale
+      // opacity checkbox
+      const scaleInput = createLocalStorageSlider(
+        param.layer.id + '_layer_scale',
+        'Scale',
+        layerContainerDomElement,
+        param.layer.scale
+      );
 
-    const div = document.createElement('div');
-
-    const isOneLayerVisible = () => {
-      const allLayers = this.itownView.getLayers();
-      for (let index = 0; index < allLayers.length; index++) {
-        const element = allLayers[index];
-        if (element.visible) return true;
-      }
-      return false;
-    };
-
-    div.innerHTML = `
-      All Visible <input type="checkbox" id="checkbox" ${
-        isOneLayerVisible() ? 'checked' : ''
-      }></input></br>
-  `;
-    div.onchange = (event) => {
-      layers.forEach((layer) => {
-        layer.visible = event.srcElement.checked;
-      });
-      this.itownView.notifyChange();
-    };
-    list.append(div);
-    for (let i = 0; i < layers.length; i++) {
-      const item = document.createElement('div');
-      item.id = 'div' + layers[i].id;
-      item.className = 'box-section';
-      item.innerText = layers[i].id + ' ';
-
-      const itemDivVisibility = document.createElement('span');
-      itemDivVisibility.id = 'visible_' + layers[i].id;
-
-      const itemCheckboxVisibility = document.createElement('input');
-      itemCheckboxVisibility.setAttribute('type', 'checkbox');
-      itemCheckboxVisibility.id = 'checkbox_' + layers[i].id;
-      itemCheckboxVisibility.checked = layers[i].visible;
-      itemCheckboxVisibility.onclick = (event) => {
-        layers[i].visible = event.srcElement.checked;
-        this.itownView.notifyChange();
+      // sync opcity input with param.layer
+      param.layer.scale = scaleInput.valueAsNumber;
+      scaleInput.onchange = () => {
+        param.layer.scale = scaleInput.valueAsNumber;
+        this.view.notifyChange(this.view.camera.camera3D);
       };
-
-      itemDivVisibility.appendChild(itemCheckboxVisibility);
-      item.appendChild(itemDivVisibility);
-
-      if (layers[i].isC3DTilesLayer) {
-        const itemButton = document.createElement('button');
-        itemButton.id = 'button_' + layers[i].id;
-        itemButton.innerText = 'Focus';
-
-        itemButton.onclick = () => {
-          focusC3DTilesLayer(this.itownView, layers[i]);
-        };
-        item.appendChild(itemButton);
-      }
-      const itemDivOpacity = document.createElement('div');
-      itemDivOpacity.id = 'opacity_' + layers[i].id;
-
-      const itemRangeOpacity = document.createElement('input');
-      itemRangeOpacity.setAttribute('type', 'range');
-      itemRangeOpacity.min = 0;
-      itemRangeOpacity.max = 1;
-      itemRangeOpacity.step = 0.1;
-      itemRangeOpacity.value = layers[i].opacity;
-
-      itemRangeOpacity.onchange = () => {
-        layers[i].opacity = itemRangeOpacity.valueAsNumber;
-        this.itownView.notifyChange();
-      };
-
-      itemDivOpacity.appendChild(itemRangeOpacity);
-
-      const itemSpanOpacity = document.createElement('span');
-      itemSpanOpacity.innerText = ' Opacity';
-      itemDivOpacity.appendChild(itemSpanOpacity);
-      item.appendChild(itemDivOpacity);
-
-      list.appendChild(item);
     }
+
+    this.view.notifyChange(this.view.camera.camera3D);
   }
 }
