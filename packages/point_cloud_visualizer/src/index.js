@@ -15,6 +15,7 @@ import {
   Color,
   Raycaster,
   Vector2,
+  Vector3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import {
@@ -331,6 +332,11 @@ export class PointCloudVisualizer {
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
   }
 
+  /**
+   *
+   * @param {Event} event - mouse event
+   * @returns {Vector2} - mouse in screen referential
+   */
   eventToMouseCoord(event) {
     const mouse = new Vector2();
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -338,6 +344,11 @@ export class PointCloudVisualizer {
     return mouse;
   }
 
+  /**
+   *
+   * @param {Event} event - mouse event
+   * @returns {object} - intersects object on pointcloud layers
+   */
   eventTo3DTilesIntersect(event) {
     this.raycaster.setFromCamera(
       this.eventToMouseCoord(event),
@@ -358,6 +369,13 @@ export class PointCloudVisualizer {
     return result;
   }
 
+  /**
+   *
+   * @param {Vector3} destPosition - destination position of the camera
+   * @param {Vector3} destTarget - destination target of the orbit controls
+   * @param {number} duration - duration in ms
+   * @returns {Promise} - promise resolving when the camera has moved
+   */
   moveCamera(destPosition, destTarget, duration = 1500) {
     if (!destPosition)
       destPosition = this.itownsView.camera.camera3D.position.clone();
