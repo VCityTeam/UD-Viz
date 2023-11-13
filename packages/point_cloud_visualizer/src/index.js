@@ -367,6 +367,7 @@ export class PointCloudVisualizer {
         });
 
         // closure with parent scope
+        /** @type {PointCloudVisualizer} */
         const _this = this;
 
         class Label3D {
@@ -520,7 +521,6 @@ export class PointCloudVisualizer {
           }
         }
 
-        /** @type {MeasurePath} */
         let currentMeasurePath = null;
         let modeMeasure = false;
 
