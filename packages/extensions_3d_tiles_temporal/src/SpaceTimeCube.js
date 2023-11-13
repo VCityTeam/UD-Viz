@@ -193,6 +193,115 @@ function getLevelWithDate(head, date) {
   return null;
 }
 
+export class Version {
+  constructor(object3DTiles, date) {
+    /** @type {Array<THREE.Object3D>}*/
+    this.object3DTiles = object3DTiles;
+
+    /** @type {number} */
+    this.date = date;
+
+    /** @type {THREE.Vector3} */
+    this.centroid;
+
+    /** @type {Array<THREE.Object3D>}*/
+    this.planes = [];
+  }
+
+  createPlane() {
+    this.updateCentroid();
+    const planes = [];
+    this.object3DTiles.forEach((object3D) => {
+      const planeGeometry = new THREE.PlaneGeometry(
+        object3D.boundingVolume.box.max.x - object3D.boundingVolume.box.min.x,
+        object3D.boundingVolume.box.max.y - object3D.boundingVolume.box.min.y
+      );
+
+      const planeMesh = new THREE.Mesh(
+        planeGeometry,
+        new THREE.MeshBasicMaterial({
+          color: 'white',
+          side: THREE.DoubleSide,
+        })
+      );
+
+      planeMesh.position.copy(this.centroid);
+      planeMesh.position.z -= 20;
+      planeMesh.updateMatrixWorld();
+      planes.push(planeMesh);
+    });
+    return (this.planes = planes);
+  }
+
+  /* DEBUG */
+  debugBB() {
+    const BBs = [];
+    this.object3DTiles.forEach((object3D) => {
+      const boundingBoxHelper = new THREE.Box3Helper(
+        new THREE.Box3().setFromObject(object3D),
+        new THREE.Color(1, 0, 1)
+      );
+      boundingBoxHelper.position.copy(object3D.position);
+      boundingBoxHelper.updateMatrixWorld();
+
+      BBs.push(boundingBoxHelper);
+    });
+    return BBs;
+  }
+
+  updatePosition(newPos) {
+    this.object3DTiles.forEach((object3D) => {
+      object3D.position.copy(newPos);
+      object3D.updateMatrixWorld();
+    });
+  }
+  updateRotation(posToRotate, angle) {
+    this.object3DTiles.forEach((object3D) => {
+      const dirPosToRotate = new THREE.Vector3(
+        posToRotate.x - object3D.position.x,
+        posToRotate.y - object3D.position.y,
+        posToRotate.z - object3D.position.z
+      ).normalize();
+
+      // object3D.position.copy(posToRotate);
+      // dirPosToRotate.rotateAround(new THREE.Vector2(0, 0), angle);
+      // dirPosToRotate = dirPosToRotate.rotateAround(
+      //   new THREE.Vector2(0, 0),
+      //   angle
+      // );
+      // object3D.position.sub(
+      //   new THREE.Vector3(dirPosToRotate.x * 1000, dirPosToRotate.y * 1000, 0)
+      // );
+      // object3D.updateMatrixWorld();
+
+      object3D.translateOnAxis(dirPosToRotate, 1000);
+      object3D.rotateZ(angle);
+      // object3D.rotateOnAxis(new THREE.Vector3(0, 0, 1), angle);
+      dirPosToRotate.multiplyScalar(-1);
+      object3D.translateOnAxis(dirPosToRotate, 1000);
+
+      // dirObject = dirObject.rotateAround(new THREE.Vector2(0, 0), angle);
+      // object3D.position.sub(
+      //   new THREE.Vector3(dirObject.x * 1000, dirObject.y * 1000, 0)
+      // );
+      // object3D.setRotationFromQuaternion(planes[i].quaternion);
+      object3D.updateMatrixWorld();
+    });
+  }
+  updateCentroid() {
+    this.centroid = new THREE.Vector3();
+    const sumPos = new THREE.Vector3(0, 0, 0);
+    this.object3DTiles.forEach((object3D) => {
+      sumPos.add(object3D.position);
+    });
+    this.centroid.set(
+      sumPos.x / this.object3DTiles.length,
+      sumPos.y / this.object3DTiles.length,
+      sumPos.z / this.object3DTiles.length
+    );
+  }
+}
+
 export class SpaceTimeCube {
   /**
    *
@@ -225,6 +334,9 @@ export class SpaceTimeCube {
 
     /** @type {Array} */
     this.possibleDates = [];
+
+    /** @type {Array<Version>} */
+    this.versions = [];
 
     this.delta = delta;
 
@@ -661,89 +773,64 @@ export class SpaceTimeCube {
         layertemporal.root.children != undefined &&
         layertemporal.root.children.length != 0
       ) {
-        layertemporal.root.children.forEach((child) => {
-          child.position.set(
-            this.circle.geometry.attributes.position.array[i] +
-              child.position.x,
-            this.circle.geometry.attributes.position.array[i + 1] +
-              child.position.y,
-            this.circle.position.z
-          );
-          child.updateMatrixWorld();
-          object3DCircle.push(child);
-          // Helper
-          const boundingBoxHelper = new THREE.Box3Helper(
-            new THREE.Box3().setFromObject(child),
-            new THREE.Color(1, 0, 1)
-          );
-          boundingBoxHelper.position.set(
-            object3DCircle[object3DCircle.length - 1].position.x,
-            object3DCircle[object3DCircle.length - 1].position.y,
-            object3DCircle[object3DCircle.length - 1].position.z
-          );
-          boundingBoxHelper.updateMatrixWorld();
+        const version = new Version(layertemporal.root.children, 2009);
+        this.versions.push(version);
 
-          view.scene.add(boundingBoxHelper);
+        version.updatePosition(
+          new THREE.Vector3(
+            this.circle.geometry.attributes.position.array[i] +
+              this.circle.position.x,
+            this.circle.geometry.attributes.position.array[i + 1] +
+              this.circle.position.y,
+            this.circle.position.z
+          )
+        );
+
+        version.object3DTiles.forEach((object3D) => {
+          object3DCircle.push(object3D);
+        });
+
+        // Helper
+        version.debugBB().forEach((BB) => {
+          view.scene.add(BB);
+        });
+        version.createPlane().forEach((planeMesh) => {
+          view.scene.add(planeMesh);
         });
 
         // Change scale
         // layertemporal.root.scale.set(0.9999, 0.9999, 0.9999);
         // layertemporal.root.updateMatrixWorld();
 
-        // Plane
-        const planeGeometry = new THREE.PlaneGeometry(
-          layertemporal.root.boundingVolume.box.max.x -
-            layertemporal.root.boundingVolume.box.min.x,
-          layertemporal.root.boundingVolume.box.max.y -
-            layertemporal.root.boundingVolume.box.min.y
-        );
-
-        const planeMesh = new THREE.Mesh(
-          planeGeometry,
-          new THREE.MeshBasicMaterial({
-            color: 'white',
-            side: THREE.DoubleSide,
-          })
-        );
-
-        planeMesh.position.set(
-          this.circle.geometry.attributes.position.array[i] +
-            this.circle.position.x,
-          this.circle.geometry.attributes.position.array[i + 1] +
-            this.circle.position.y,
-          this.circle.geometry.attributes.position.array[i + 2] +
-            this.circle.position.z -
-            20
-        );
-        planeMesh.updateMatrixWorld();
-        planes.push(planeMesh);
-        view.scene.add(planeMesh);
-
         i += 3;
         view.notifyChange();
       }
     });
 
-    const distance = planes[0].position.distanceTo(object3DCircle[0].position);
+    const distance = this.versions[0].planes[0].position.distanceTo(
+      object3DCircle[0].position
+    );
+    const circle = this.circle;
+    const versions = this.versions;
     rotateObjects();
 
     /**
      *
      */
     function rotateObjects() {
-      let index = 0;
-      for (let i = 0; i < planes.length; i++) {
+      const index = 0;
+      versions.forEach((version) => {
         const dirToCamera = new THREE.Vector2(
-          planes[i].position.x - view.camera.camera3D.position.x,
-          planes[i].position.y - view.camera.camera3D.position.y
+          version.centroid.x - view.camera.camera3D.position.x,
+          version.centroid.y - view.camera.camera3D.position.y
         ).normalize();
 
-        let dirObject = new THREE.Vector2(0, 1);
+        const dirObject = new THREE.Vector2(0, 1);
         const buffer = dirObject
           .clone()
           .rotateAround(
-            new THREE.Vector2(planes[i].position.x, planes[i].position.y),
-            (planes[i].rotation.z * 180) / Math.PI
+            new THREE.Vector2(version.centroid.x, version.centroid.y),
+            (circle.rotation.z * 180) / Math.PI
           );
 
         let angle = dirObject.angleTo(dirToCamera);
@@ -751,41 +838,24 @@ export class SpaceTimeCube {
           dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
         if (orientation > 0) angle = 2 * Math.PI - angle;
 
-        planes[i].setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-        planes[i].updateMatrixWorld();
+        version.updateRotation(circle.position, angle, dirObject);
 
-        // First tile
-        object3DCircle[index].position.copy(planes[i].position);
-        dirObject = dirObject.rotateAround(new THREE.Vector2(0, 0), angle);
-        object3DCircle[index].position.sub(
-          new THREE.Vector3(dirObject.x * distance, dirObject.y * distance, 0)
-        );
-        object3DCircle[index].setRotationFromQuaternion(planes[i].quaternion);
-        object3DCircle[index].position.z += 20;
-        object3DCircle[index].updateMatrixWorld();
+        circle.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        circle.updateMatrixWorld();
+      });
 
-        // Second Tile
-        object3DCircle[index + 1].setRotationFromQuaternion(
-          planes[i].quaternion
-        );
-        object3DCircle[index + 1].updateMatrixWorld();
-
-        index += 2;
-      }
-
-      // with object
-      // object3DCircle.forEach((object3D) => {
+      // for (let i = 0; i < planes.length; i++) {
       //   const dirToCamera = new THREE.Vector2(
-      //     object3D.position.x - view.camera.camera3D.position.x,
-      //     object3D.position.y - view.camera.camera3D.position.y
+      //     planes[i].position.x - view.camera.camera3D.position.x,
+      //     planes[i].position.y - view.camera.camera3D.position.y
       //   ).normalize();
 
       //   const dirObject = new THREE.Vector2(0, 1);
       //   const buffer = dirObject
       //     .clone()
       //     .rotateAround(
-      //       new THREE.Vector2(object3D.position.x, object3D.position.y),
-      //       (object3D.rotation.z * 180) / Math.PI
+      //       new THREE.Vector2(planes[i].position.x, planes[i].position.y),
+      //       (planes[i].rotation.z * 180) / Math.PI
       //     );
 
       //   let angle = dirObject.angleTo(dirToCamera);
@@ -793,10 +863,27 @@ export class SpaceTimeCube {
       //     dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
       //   if (orientation > 0) angle = 2 * Math.PI - angle;
 
-      //   object3D.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-      //   object3D.updateMatrixWorld();
-      // });
+      //   circle.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+      //   circle.updateMatrixWorld();
 
+      //   // First tile
+      //   // object3DCircle[index].position.copy(planes[i].position);
+      //   // dirObject = dirObject.rotateAround(new THREE.Vector2(0, 0), angle);
+      //   // object3DCircle[index].position.sub(
+      //   //   new THREE.Vector3(dirObject.x * distance, dirObject.y * distance, 0)
+      //   // );
+      //   // object3DCircle[index].setRotationFromQuaternion(planes[i].quaternion);
+      //   // object3DCircle[index].position.z += 20;
+      //   // object3DCircle[index].updateMatrixWorld();
+
+      //   // // Second Tile
+      //   // object3DCircle[index + 1].setRotationFromQuaternion(
+      //   //   planes[i].quaternion
+      //   // );
+      //   // object3DCircle[index + 1].updateMatrixWorld();
+
+      //   index += 2;
+      // }
       requestAnimationFrame(rotateObjects);
     }
   }
