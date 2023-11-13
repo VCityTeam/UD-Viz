@@ -32,14 +32,15 @@ export class PointCloudVisualizer {
    * @param {import("itowns").Extent} extent - itowns extent
    * @param {Array<C3DTilesLayer>} pointClouds - points cloud layer params
    * @param {object} options - options
-   * @param {object} options.parentDomElement - where to append planar view domelement
-   * @param {object} options.domElementClass - css class to apply to this.domElement
-   * @param {object} options.c3DTilesLoadingDomElementClasses - css classes to apply to c3DTilesLoadingDomElement
+   * @param {HTMLElement} options.parentDomElement - where to append planar view domelement
+   * @param {string} options.domElementClass - css class to apply to this.domElement
+   * @param {Array<string>} options.c3DTilesLoadingDomElementClasses - css classes to apply to c3DTilesLoadingDomElement
    * @param {object} options.camera - options camera
    * @param {object} options.default - options camera default
    * @param {object} options.default.position - options camera default position
-   * @param {object} options.defaultPointCloudSize - default points cloud size
-   * @param {object} [options.raycasterPointsThreshold=PointCloudVisualizer.RAYCASTER_POINTS_THRESHOLD] - raycaster points treshold
+   * @param {number} options.maxSubdivisionLevel - default points cloud size
+   * @param {number} options.defaultPointCloudSize - default points cloud size
+   * @param {number} [options.raycasterPointsThreshold=PointCloudVisualizer.RAYCASTER_POINTS_THRESHOLD] - raycaster points treshold
    */
   constructor(extent, pointClouds, options = {}) {
     /** @type {Raycaster} */
@@ -66,12 +67,15 @@ export class PointCloudVisualizer {
 
     /** @type {PlanarView} */
     this.itownsView = new PlanarView(this.domElement, extent, {
+      maxSubdivisionLevel: options.maxSubdivisionLevel || 2,
       noControls: true,
     });
 
     // modify scene + renderer to have mesh rendering on the top
+
+    /** @type {Scene} */
+    this.topScene = new Scene();
     this.itownsView.mainLoop.gfxEngine.renderer.autoClear = false;
-    const onTheTopScene = new Scene();
     this.itownsView.render = () => {
       this.itownsView.mainLoop.gfxEngine.renderer.clear(); // clear buffers
       this.itownsView.mainLoop.gfxEngine.renderer.render(
@@ -80,7 +84,7 @@ export class PointCloudVisualizer {
       ); // render scene 1
       this.itownsView.mainLoop.gfxEngine.renderer.clearDepth(); // clear depth buffer
       this.itownsView.mainLoop.gfxEngine.renderer.render(
-        onTheTopScene,
+        this.topScene,
         this.itownsView.camera.camera3D
       ); // render scene 2
     };
@@ -124,7 +128,7 @@ export class PointCloudVisualizer {
       new MeshBasicMaterial({ color: 'red' })
     );
     this.targetOrbitControlsMesh.name = 'target_oribit_controls';
-    onTheTopScene.add(this.targetOrbitControlsMesh);
+    this.topScene.add(this.targetOrbitControlsMesh);
     const updateTargetMesh = () => {
       this.targetOrbitControlsMesh.position.copy(this.orbitControls.target);
       const scale =
