@@ -4,6 +4,7 @@ import {
   C3DTilesSource,
   View,
   C3DTILES_LAYER_EVENTS,
+  MAIN_LOOP_EVENTS,
 } from 'itowns';
 import {
   PointsMaterial,
@@ -16,6 +17,12 @@ import {
   Raycaster,
   Vector2,
   Vector3,
+  Group,
+  LineBasicMaterial,
+  Object3D,
+  SphereGeometry,
+  Line,
+  BufferGeometry,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import {
@@ -24,8 +31,12 @@ import {
   computeNearFarCamera,
   RequestAnimationFrameProcess,
   createLocalStorageSlider,
+  createLocalStorageDetails,
 } from '@ud-viz/utils_browser';
 
+import { round, vector3ToLabel } from '@ud-viz/utils_shared';
+
+import './style.css';
 export class PointCloudVisualizer {
   /**
    *
@@ -41,6 +52,7 @@ export class PointCloudVisualizer {
    * @param {number} options.maxSubdivisionLevel - default points cloud size
    * @param {number} options.defaultPointCloudSize - default points cloud size
    * @param {number} [options.raycasterPointsThreshold=PointCloudVisualizer.RAYCASTER_POINTS_THRESHOLD] - raycaster points treshold
+   * @param {number} [options.measure] - add measure tool
    */
   constructor(extent, pointClouds, options = {}) {
     /** @type {Raycaster} */
@@ -121,7 +133,7 @@ export class PointCloudVisualizer {
       this.itownsView.camera.camera3D,
       this.itownsView.mainLoop.gfxEngine.label2dRenderer.domElement
     );
-
+    // target orbit controls is a mesh
     /** @type {Mesh} */
     this.targetOrbitControlsMesh = new Mesh(
       new BoxGeometry(1, 1, 1),
@@ -330,6 +342,247 @@ export class PointCloudVisualizer {
           }
         );
       });
+    }
+
+    /** @type {HTMLElement} */
+    this.measureDomElement = null;
+    if (options.measure) {
+      // point cloud measure
+      {
+        this.measureDomElement = createLocalStorageDetails(
+          'measure_details',
+          'Mesure'
+        );
+
+        const pathMeasureButton = document.createElement('button');
+        this.measureDomElement.appendChild(pathMeasureButton);
+
+        const parentMeasureObject = new Group();
+        this.topScene.add(parentMeasureObject);
+
+        const pointMaterial = new MeshBasicMaterial({ color: 'green' });
+        const lineMaterial = new LineBasicMaterial({
+          color: 0x0000ff,
+          linewidth: 3,
+        });
+
+        // closure with parent scope
+        const _this = this;
+
+        class Label3D {
+          constructor(position, value) {
+            this.position = position;
+
+            this.domElement = document.createElement('div');
+            this.domElement.classList.add('label_3D');
+            this.domElement.innerText = value;
+
+            _this.domElement.appendChild(this.domElement);
+          }
+
+          dispose() {
+            this.domElement.remove();
+          }
+
+          update() {
+            const onScreenPosition = this.position.clone();
+            onScreenPosition.project(_this.itownsView.camera.camera3D);
+
+            // compute position on screen
+            // note that this is working only when parent div of the html is 100% window size
+            const widthHalf =
+                _this.itownsView.mainLoop.gfxEngine.renderer.domElement
+                  .clientWidth * 0.5,
+              heightHalf =
+                _this.itownsView.mainLoop.gfxEngine.renderer.domElement
+                  .clientHeight * 0.5;
+            onScreenPosition.x = onScreenPosition.x * widthHalf + widthHalf;
+            onScreenPosition.y =
+              -(onScreenPosition.y * heightHalf) + heightHalf;
+
+            this.domElement.style.left = onScreenPosition.x + 'px';
+            this.domElement.style.top = onScreenPosition.y + 'px';
+          }
+        }
+
+        class MeasurePath {
+          constructor() {
+            this.object3D = new Object3D();
+
+            parentMeasureObject.add(this.object3D);
+
+            this.sphereMesh = [];
+
+            this.labelDomElements = [];
+
+            // record a frame requester
+            _this.itownsView.addFrameRequester(
+              MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+              () => {
+                this.updateTransform();
+              }
+            );
+
+            this.points = [];
+          }
+
+          update() {
+            // reset
+            while (this.object3D.children.length) {
+              this.object3D.remove(this.object3D.children[0]);
+            }
+
+            for (let index = 0; index < this.points.length; index++) {
+              const point = this.points[index];
+              const sphere = new Mesh(new SphereGeometry(), pointMaterial);
+              sphere.position.copy(point);
+
+              this.sphereMesh.push(sphere);
+              this.object3D.add(sphere);
+            }
+
+            this.labelDomElements.forEach((l) => l.dispose());
+            this.labelDomElements.length = 0;
+
+            if (this.points.length >= 2) {
+              const cloneArray = this.points.map((el) => el.clone());
+
+              const max = new Vector3(-Infinity, -Infinity, -Infinity);
+              const min = new Vector3(Infinity, Infinity, Infinity);
+
+              // compute bb to center line object to avoid blink (when geometry has values too high)
+              for (let index = 0; index < cloneArray.length; index++) {
+                const point = cloneArray[index];
+                max.x = Math.max(point.x, max.x);
+                max.y = Math.max(point.y, max.y);
+                max.z = Math.max(point.z, max.z);
+                min.x = Math.min(point.x, min.x);
+                min.y = Math.min(point.y, min.y);
+                min.z = Math.min(point.z, min.z);
+
+                if (cloneArray[index + 1]) {
+                  this.labelDomElements.push(
+                    new Label3D(
+                      new Vector3().lerpVectors(
+                        cloneArray[index],
+                        cloneArray[index + 1],
+                        0.5
+                      ),
+                      round(
+                        cloneArray[index].distanceTo(cloneArray[index + 1])
+                      ) + 'm'
+                    )
+                  );
+                }
+              }
+
+              const center = min.lerp(max, 0.5);
+
+              cloneArray.forEach((point) => {
+                point.sub(center);
+              });
+
+              const line = new Line(
+                new BufferGeometry().setFromPoints(cloneArray),
+                lineMaterial
+              );
+
+              line.position.copy(center);
+              this.object3D.add(line);
+            }
+
+            this.updateTransform();
+          }
+
+          updateTransform() {
+            this.sphereMesh.forEach((s) => {
+              const scale =
+                _this.itownsView.camera.camera3D.position.distanceTo(
+                  s.position
+                ) / 100;
+              s.scale.set(scale, scale, scale);
+            });
+
+            // update labels
+            this.labelDomElements.forEach((l) => l.update());
+
+            _this.itownsView.notifyChange(_this.itownsView.camera.camera3D);
+          }
+
+          addPoint(vector) {
+            this.points.push(vector);
+            this.update();
+          }
+
+          dispose() {
+            parentMeasureObject.remove(this.object3D);
+            this.labelDomElements.forEach((l) => l.dispose());
+          }
+        }
+
+        /** @type {MeasurePath} */
+        let currentMeasurePath = null;
+        let modeMeasure = false;
+
+        const updateMeasure = () => {
+          pathMeasureButton.innerText = modeMeasure
+            ? 'stop mesurer'
+            : 'Ajouter chemin de mesure';
+
+          if (modeMeasure) {
+            _this.domElement.classList.add('cursor_add');
+            if (currentMeasurePath) currentMeasurePath.dispose();
+            currentMeasurePath = new MeasurePath();
+          } else {
+            _this.domElement.classList.remove('cursor_add');
+          }
+        };
+
+        const clearMeasurePath = document.createElement('button');
+        clearMeasurePath.innerText = 'Supprimer mesure';
+        this.measureDomElement.appendChild(clearMeasurePath);
+
+        const leaveMeasureMode = () => {
+          if (modeMeasure) {
+            modeMeasure = false;
+            updateMeasure();
+          }
+        };
+
+        clearMeasurePath.onclick = () => {
+          if (currentMeasurePath) currentMeasurePath.dispose();
+          leaveMeasureMode();
+        };
+
+        window.addEventListener('keyup', (event) => {
+          if (event.key == 'Escape') {
+            leaveMeasureMode();
+          }
+        });
+
+        const infoPointCloudClickedDomElement = document.createElement('div');
+        this.measureDomElement.appendChild(infoPointCloudClickedDomElement);
+
+        _this.domElement.addEventListener('click', (event) => {
+          const i = _this.eventTo3DTilesIntersect(event);
+
+          if (i) {
+            infoPointCloudClickedDomElement.innerText =
+              'position point cliqué = ' + vector3ToLabel(i.point);
+
+            // if measure mode add point to path
+            if (modeMeasure) {
+              currentMeasurePath.addPoint(i.point);
+            }
+          }
+        });
+
+        updateMeasure();
+        pathMeasureButton.onclick = () => {
+          modeMeasure = !modeMeasure;
+          updateMeasure();
+        };
+      }
     }
 
     // redraw

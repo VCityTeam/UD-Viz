@@ -464,7 +464,48 @@ function removeFromArray(array, element) {
   return false;
 }
 
+/**
+ *
+ * @param {string} originalString - string to modify
+ * @param {number} index - where to insert
+ * @param {string} string to insert
+ * @returns {string} - string injected
+ */
+const insert = (originalString, index, string) => {
+  if (index > 0) {
+    return (
+      originalString.substring(0, index) +
+      string +
+      originalString.substring(index, originalString.length)
+    );
+  }
+
+  return string + originalString;
+};
+
+/**
+ *
+ * @param {number} number - number to round
+ * @returns {string} rounded number
+ */
+const round = (number) => {
+  const x = Math.round(number * 10) + '';
+  return insert(x, x.length - 1, ',');
+};
+
+/**
+ *
+ * @param {{x:number,y:number,z:number}} v - vector 3 to labelize
+ * @returns {string} vector labelified
+ */
+const vector3ToLabel = (v) => {
+  return round(v.x) + ' m; ' + round(v.y) + ' m; ' + round(v.z) + ' m;';
+};
+
 module.exports = {
+  vector3ToLabel: vector3ToLabel,
+  round: round,
+  insert: insert,
   isNumeric: isNumeric,
   arrayEquals: arrayEquals,
   checkIfSubStringIsEuler: checkIfSubStringIsEuler,

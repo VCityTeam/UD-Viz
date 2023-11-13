@@ -115,16 +115,17 @@ export function localStorageSetVector3(vector3, key) {
  *
  * @param {string} keyLocalStorage - the key of the item in localstorage
  * @param {string} summaryText - what text to display
- * @param {HTMLElement} parent - where to append
+ * @param {HTMLElement|null} [parent=null] - where to append result (optional)
  * @returns {HTMLElement} - the html element created
  */
 export const createLocalStorageDetails = (
   keyLocalStorage,
   summaryText,
-  parent
+  parent = null
 ) => {
   const details = document.createElement('details');
-  parent.appendChild(details);
+
+  if (parent) parent.appendChild(details);
 
   const summary = document.createElement('summary');
   summary.innerText = summaryText;

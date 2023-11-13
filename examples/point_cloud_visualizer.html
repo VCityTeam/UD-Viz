@@ -58,6 +58,7 @@
                   },
                 },
               },
+              measure: true,
             }
           );
 
@@ -120,6 +121,8 @@
           // drag element
           app.domElementTargetDragElement.classList.add('drag_element');
           ui.appendChild(app.domElementTargetDragElement);
+          // measure
+          ui.appendChild(app.measureDomElement);
 
           // widget layer choice
           const layerParams = [];
