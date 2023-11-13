@@ -12,6 +12,9 @@ export * as smdb from '@ud-viz/smdb';
 // showroom
 export * as showRoom from '@ud-viz/show_room';
 
+// point cloud visualizer
+export * as pointCloudVisualizer from '@ud-viz/point_cloud_visualizer';
+
 // game
 export * as gameShared from '@ud-viz/game_shared';
 export * as gameSharedTemplate from '@ud-viz/game_shared_template';

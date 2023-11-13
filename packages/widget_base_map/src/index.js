@@ -39,9 +39,9 @@ export class BaseMap {
       config.layer.id = 'baseMapLayer_' + i;
       const source = new itowns.WMSSource({
         extent: appExtent,
-        name: config.layer.name,
-        url: config.layer.url,
-        version: config.layer.version,
+        name: config.layer.source.name,
+        url: config.layer.source.url,
+        version: config.layer.source.version,
         crs: appExtent.crs,
         format: 'image/jpeg',
       });

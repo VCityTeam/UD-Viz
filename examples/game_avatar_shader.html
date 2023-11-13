@@ -482,24 +482,21 @@
             // /// ADD LAYERS
             {
               frame3DPlanar.itownsView.addLayer(
-                new udviz.itowns.ColorLayer(
-                  configs['base_maps'][0]['layer_name'],
-                  {
-                    updateStrategy: {
-                      type: udviz.itowns.STRATEGY_DICHOTOMY,
-                      options: {},
-                    },
-                    source: new udviz.itowns.WMSSource({
-                      extent: extent,
-                      name: configs['base_maps'][0]['name'],
-                      url: configs['base_maps'][0]['url'],
-                      version: configs['base_maps'][0]['version'],
-                      crs: extent.crs,
-                      format: configs['base_maps'][0]['format'],
-                    }),
-                    transparent: true,
-                  }
-                )
+                new udviz.itowns.ColorLayer(configs['base_maps'][0]['name'], {
+                  updateStrategy: {
+                    type: udviz.itowns.STRATEGY_DICHOTOMY,
+                    options: {},
+                  },
+                  source: new udviz.itowns.WMSSource({
+                    extent: extent,
+                    name: configs['base_maps'][0].source['name'],
+                    url: configs['base_maps'][0].source['url'],
+                    version: configs['base_maps'][0].source['version'],
+                    crs: extent.crs,
+                    format: configs['base_maps'][0].source['format'],
+                  }),
+                  transparent: true,
+                })
               );
 
               configs['geoJSONs'].forEach((layerConfig) => {

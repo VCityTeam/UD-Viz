@@ -274,18 +274,18 @@ export class ShowRoom {
     }
     if (configs.baseMap) {
       this.frame3DPlanar.itownsView.addLayer(
-        new itowns.ColorLayer(configs.baseMap['layer_name'], {
+        new itowns.ColorLayer(configs.baseMap['name'], {
           updateStrategy: {
             type: itowns.STRATEGY_DICHOTOMY,
             options: {},
           },
           source: new itowns.WMSSource({
             extent: this.extent,
-            name: configs.baseMap['name'],
-            url: configs.baseMap['url'],
-            version: configs.baseMap['version'],
+            name: configs.baseMap.source['name'],
+            url: configs.baseMap.source['url'],
+            version: configs.baseMap.source['version'],
             crs: this.extent.crs,
-            format: configs.baseMap['format'],
+            format: configs.baseMap.source['format'],
           }),
           transparent: true,
         })

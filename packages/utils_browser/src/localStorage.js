@@ -4,6 +4,8 @@ import {
   checkIfSubStringIsVector3,
 } from '@ud-viz/utils_shared';
 
+import { createLabelInput } from './html';
+
 /**
  * Some unique key to not collide with another item recorded in localStorage
  */
@@ -108,3 +110,116 @@ export function localStorageSetVector3(vector3, key) {
 
   return false;
 }
+
+/**
+ *
+ * @param {string} keyLocalStorage - the key of the item in localstorage
+ * @param {string} summaryText - what text to display
+ * @param {HTMLElement} parent - where to append
+ * @returns {HTMLElement} - the html element created
+ */
+export const createLocalStorageDetails = (
+  keyLocalStorage,
+  summaryText,
+  parent
+) => {
+  const details = document.createElement('details');
+  parent.appendChild(details);
+
+  const summary = document.createElement('summary');
+  summary.innerText = summaryText;
+  details.appendChild(summary);
+
+  const item = localStorage.getItem(keyLocalStorage)
+    ? JSON.parse(localStorage.getItem(keyLocalStorage))
+    : null;
+  if (item && item.opened) details.open = true;
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(
+      keyLocalStorage,
+      JSON.stringify({ opened: details.open })
+    );
+  });
+
+  return details;
+};
+
+/**
+ *
+ * @param {string} keyLocalStorage - the key of the item in localstorage
+ * @param {string} labelText - what text to display
+ * @param {HTMLElement} inputParent - where to append
+ * @param {boolean} defaultValue - value to initialize with
+ * @returns {HTMLElement} - the html element created
+ */
+export const createLocalStorageCheckbox = (
+  keyLocalStorage,
+  labelText,
+  inputParent,
+  defaultValue = false
+) => {
+  const { input, parent } = createLabelInput(labelText, 'checkbox');
+  inputParent.appendChild(parent);
+
+  const item = localStorage.getItem(keyLocalStorage)
+    ? JSON.parse(localStorage.getItem(keyLocalStorage))
+    : null;
+  if (item) {
+    input.checked = item.checked;
+  } else {
+    input.checked = defaultValue;
+  }
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(
+      keyLocalStorage,
+      JSON.stringify({ checked: input.checked })
+    );
+  });
+
+  return input;
+};
+
+/**
+ *
+ * @param {string} keyLocalStorage - the key of the item in localstorage
+ * @param {string} labelText - what text to display
+ * @param {HTMLElement} inputParent - where to append
+ * @param {object} options - options of the slider
+ * @param {number} options.min - min of the slider
+ * @param {number} options.max - max of the slider
+ * @param {number} options.step - step of the slider
+ * @returns {HTMLElement} - the html element created
+ */
+export const createLocalStorageSlider = (
+  keyLocalStorage,
+  labelText,
+  inputParent,
+  options = {}
+) => {
+  const { input, parent } = createLabelInput(labelText, 'range');
+  inputParent.appendChild(parent);
+
+  input.min = options.min || 0;
+  input.max = options.max || 1;
+  input.step = options.step || 0.1;
+
+  const item = localStorage.getItem(keyLocalStorage)
+    ? JSON.parse(localStorage.getItem(keyLocalStorage))
+    : null;
+  if (item) {
+    input.value = item.value;
+  } else {
+    input.value = options.defaultValue || input.max;
+  }
+
+  window.addEventListener('beforeunload', () => {
+    localStorage.setItem(
+      keyLocalStorage,
+      JSON.stringify({ value: input.value })
+    );
+  });
+
+  return input;
+};

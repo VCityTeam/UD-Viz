@@ -1,0 +1,46 @@
+.ui {
+  background-color: #313336bb;
+  color: white;
+  position: absolute;
+  z-index: 5;
+}
+
+.ui * {
+  position: relative !important;
+}
+
+.centered {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.loading {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  animation: rotate 3.5s linear infinite;
+  border: 10px solid;
+  border-style: dotted;
+  pointer-events: none;
+  border-color: rgb(255, 255, 255);
+}
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.drag_element {
+  width: 30px;
+  height: 30px;
+  background-color: red;
+  margin: 5px;
+  cursor: grab;
+}
