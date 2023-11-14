@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_bookmark",
   "peerDependencies": {
-    "itowns": "file:../../../Itowns",
+    "itowns": "^2.41.1-next.9",
     "three": "0.154.0"
   }
 }
