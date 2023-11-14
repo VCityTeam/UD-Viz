@@ -32,6 +32,8 @@ import {
   RequestAnimationFrameProcess,
   createLocalStorageSlider,
   createLocalStorageDetails,
+  createLocalStorageCheckbox,
+  createLocalStorageNumberInput,
 } from '@ud-viz/utils_browser';
 
 import { round, vector3ToLabel } from '@ud-viz/utils_shared';
@@ -585,6 +587,88 @@ export class PointCloudVisualizer {
       }
     }
 
+    // near far
+    this.cameraNearFarDomElement = createLocalStorageDetails(
+      PointCloudVisualizer.CAMERA_NEAR_FAR_LOCAL_STORAGE_KEY,
+      'Camera near far',
+      null
+    );
+    {
+      const checkboxAutoComputation = createLocalStorageCheckbox(
+        PointCloudVisualizer.CAMERA_NEAR_FAR_AUTO_COMPUTATION_LOCAL_STORAGE_KEY,
+        'Auto',
+        this.cameraNearFarDomElement,
+        true
+      );
+
+      const epsilon = 0.0001;
+
+      // slider near far
+      const sliderNear = createLocalStorageNumberInput(
+        PointCloudVisualizer.CAMERA_NEAR_NUMBER_LOCAL_STORAGE_KEY,
+        'Near',
+        this.cameraNearFarDomElement,
+        {
+          min: epsilon,
+          max: 1,
+          step: epsilon,
+          defaultValue: epsilon,
+        }
+      );
+
+      const sliderFar = createLocalStorageNumberInput(
+        PointCloudVisualizer.CAMERA_FAR_NUMBER_LOCAL_STORAGE_KEY,
+        'Far',
+        this.cameraNearFarDomElement,
+        {
+          min: epsilon,
+          max: 1,
+          step: epsilon,
+          defaultValue: 1,
+        }
+      );
+
+      const updateCameraNearFar = () => {
+        const bb = new Box3().setFromObject(this.itownsView.scene);
+        computeNearFarCamera(this.itownsView.camera.camera3D, bb.min, bb.max);
+        if (!checkboxAutoComputation.checked) {
+          const maxDistance = this.itownsView.camera.camera3D.far;
+
+          const ratioFar = Math.max(
+            parseFloat(sliderFar.value),
+            parseFloat(sliderNear.value) + epsilon
+          );
+
+          const ratioNear = Math.min(
+            Math.max(epsilon, parseFloat(sliderFar.value) - epsilon),
+            parseFloat(sliderNear.value)
+          );
+
+          if (!isNaN(ratioFar) && !isNaN(ratioNear)) {
+            this.itownsView.camera.camera3D.far = maxDistance * ratioFar;
+            this.itownsView.camera.camera3D.near = maxDistance * ratioNear;
+
+            this.itownsView.camera.camera3D.updateProjectionMatrix();
+          }
+        }
+      };
+
+      this.itownsView.addFrameRequester(
+        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+        updateCameraNearFar
+      );
+
+      const updateCameraNearFarAndRedraw = () => {
+        updateCameraNearFar();
+        this.itownsView.notifyChange(this.itownsView.camera.camera3D);
+      };
+
+      sliderNear.oninput = updateCameraNearFarAndRedraw;
+      sliderFar.oninput = updateCameraNearFarAndRedraw;
+      checkboxAutoComputation.oninput = updateCameraNearFarAndRedraw;
+      updateCameraNearFar();
+    }
+
     // redraw
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
   }
@@ -687,6 +771,22 @@ export class PointCloudVisualizer {
 
   static get CAMERA_LOCAL_STORAGE_KEY() {
     return 'camera_local_storage_key_point_cloud_visualizer';
+  }
+
+  static get CAMERA_NEAR_FAR_LOCAL_STORAGE_KEY() {
+    return 'camera_near_far_local_storage_key_point_cloud_visualizer';
+  }
+
+  static get CAMERA_NEAR_FAR_AUTO_COMPUTATION_LOCAL_STORAGE_KEY() {
+    return 'camera_near_far_auto_computation_local_storage_key_point_cloud_visualizer';
+  }
+
+  static get CAMERA_NEAR_NUMBER_LOCAL_STORAGE_KEY() {
+    return 'camera_near_slider_local_storage_key_point_cloud_visualizer';
+  }
+
+  static get CAMERA_FAR_NUMBER_LOCAL_STORAGE_KEY() {
+    return 'camera_far_slider_local_storage_key_point_cloud_visualizer';
   }
 
   static get RAYCASTER_POINTS_THRESHOLD() {
