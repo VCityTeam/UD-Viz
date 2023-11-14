@@ -153,9 +153,6 @@ export class PointCloudVisualizer {
     };
     this.orbitControls.addEventListener('change', () => {
       updateTargetMesh();
-      // compute near far dynamically
-      const bb = new Box3().setFromObject(this.itownsView.scene);
-      computeNearFarCamera(this.itownsView.camera.camera3D, bb.min, bb.max);
       this.itownsView.notifyChange(this.itownsView.camera.camera3D);
     });
 
