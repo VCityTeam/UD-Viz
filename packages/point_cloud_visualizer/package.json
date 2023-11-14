@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/point_cloud_visualizer",
   "peerDependencies": {
+    "@ud-viz/utils_browser": "4.0.0",
+    "@ud-viz/utils_shared": "4.0.0",
     "itowns": "2.40.0",
     "three": "0.154.0"
   }
