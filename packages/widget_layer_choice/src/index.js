@@ -6,7 +6,7 @@ import {
 
 import { PointsMaterial } from 'three';
 
-import { PlanarView } from 'itowns';
+import { PlanarView, ColorLayersOrdering, ImageryLayers } from 'itowns';
 
 /**
  * @typedef {object} LayerParam
@@ -21,12 +21,29 @@ export class LayerChoice {
    * @param {PlanarView} view - itowns view
    * @param {Array<LayerParam>} layerParams - layer params to initialization
    */
-  constructor(view, layerParams = []) {
+  constructor(view, layerParams) {
     /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
 
+    /** @type {HTMLDetailsElement} */
+    this.colorLayersDomElement = createLocalStorageDetails(
+      'color layers details',
+      'Color Layers',
+      this.domElement
+    );
+
+    /** @type {Array<{container:HTMLElement,idLayer:string}>} */
+    this.containerColorLayers = [];
+
     /** @type {PlanarView} */
     this.view = view;
+
+    layerParams =
+      layerParams == undefined
+        ? this.view.getLayers().map((el) => {
+            return { layer: el };
+          })
+        : layerParams;
 
     layerParams.forEach((param) => {
       this.createLayerDomEl(param);
@@ -38,13 +55,34 @@ export class LayerChoice {
    * @param {LayerParam} param - param of the layer created
    */
   createLayerDomEl(param) {
-    const layerContainerDomElement = createLocalStorageDetails(
-      'details' + param.layer.id,
-      param.layer.name || param.layer.id,
-      this.domElement
-    );
+    const layerContainerDomElement = param.layer.isColorLayer
+      ? createLocalStorageDetails(
+          'details' + param.layer.id,
+          param.layer.name || param.layer.id,
+          this.colorLayersDomElement
+        )
+      : createLocalStorageDetails(
+          'details' + param.layer.id,
+          param.layer.name || param.layer.id,
+          this.domElement
+        );
 
-    if (!param.layer.isElevationLayer) {
+    if (param.layer.isElevationLayer) {
+      // scale
+      const scaleInput = createLocalStorageSlider(
+        param.layer.id + '_layer_scale',
+        'Scale',
+        layerContainerDomElement,
+        param.layer.scale
+      );
+
+      // sync opcity input with param.layer
+      param.layer.scale = scaleInput.valueAsNumber;
+      scaleInput.onchange = () => {
+        param.layer.scale = scaleInput.valueAsNumber;
+        this.view.notifyChange(this.view.camera.camera3D);
+      };
+    } else {
       // visibility checkbox
       const visibleInput = createLocalStorageCheckbox(
         param.layer.id + '_layer_visibility',
@@ -59,6 +97,7 @@ export class LayerChoice {
         param.layer.visible = visibleInput.checked;
         this.view.notifyChange(this.view.camera.camera3D);
       };
+
       // opacity checkbox
       const opacityInput = createLocalStorageSlider(
         param.layer.id + '_layer_opacity',
@@ -73,6 +112,53 @@ export class LayerChoice {
         param.layer.opacity = opacityInput.valueAsNumber;
         this.view.notifyChange(this.view.camera.camera3D);
       };
+
+      // order
+      if (param.layer.isColorLayer) {
+        const buttonDown = document.createElement('button');
+        buttonDown.innerText = 'v';
+        layerContainerDomElement.appendChild(buttonDown);
+
+        const buttonUp = document.createElement('button');
+        buttonUp.innerText = '^';
+        layerContainerDomElement.appendChild(buttonUp);
+
+        this.containerColorLayers.push({
+          container: layerContainerDomElement,
+          idLayer: param.layer.id,
+        });
+
+        const updateColorLayerContainers = () => {
+          const sequence = ImageryLayers.getColorLayersIdOrderedBySequence(
+            this.view.getLayers().filter((el) => el.isColorLayer)
+          );
+
+          this.containerColorLayers.sort((a, b) => {
+            const aIndexSequence = sequence.indexOf(a.idLayer);
+            const bIndexSequence = sequence.indexOf(b.idLayer);
+            return bIndexSequence - aIndexSequence;
+          });
+
+          // update html
+          this.containerColorLayers.forEach((el) => {
+            el.container.remove();
+          });
+
+          this.containerColorLayers.forEach((el) => {
+            this.colorLayersDomElement.appendChild(el.container);
+          });
+        };
+        updateColorLayerContainers();
+
+        buttonDown.onclick = () => {
+          ColorLayersOrdering.moveLayerDown(this.view, param.layer.id);
+          updateColorLayerContainers();
+        };
+        buttonUp.onclick = () => {
+          ColorLayersOrdering.moveLayerUp(this.view, param.layer.id);
+          updateColorLayerContainers();
+        };
+      }
     }
 
     if (param.isPointCloud) {
@@ -106,24 +192,6 @@ export class LayerChoice {
 
       // change point cloud size
       pointCloudSize.oninput = updatePointsSize;
-    }
-
-    if (param.layer.isElevationLayer) {
-      // scale
-      // opacity checkbox
-      const scaleInput = createLocalStorageSlider(
-        param.layer.id + '_layer_scale',
-        'Scale',
-        layerContainerDomElement,
-        param.layer.scale
-      );
-
-      // sync opcity input with param.layer
-      param.layer.scale = scaleInput.valueAsNumber;
-      scaleInput.onchange = () => {
-        param.layer.scale = scaleInput.valueAsNumber;
-        this.view.notifyChange(this.view.camera.camera3D);
-      };
     }
 
     this.view.notifyChange(this.view.camera.camera3D);
