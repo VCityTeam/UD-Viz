@@ -168,7 +168,7 @@ export class LayerChoice {
         layerContainerDomElement,
         {
           step: 0.001,
-          max: 0.5,
+          max: 5,
           min: 0.001,
           defaultValue: param.defaultPointCloudSize || 0.03,
         }
