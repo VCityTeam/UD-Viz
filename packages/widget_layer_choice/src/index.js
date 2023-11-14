@@ -73,7 +73,9 @@ export class LayerChoice {
         param.layer.id + '_layer_scale',
         'Scale',
         layerContainerDomElement,
-        param.layer.scale
+        {
+          defaultValue: param.layer.scale,
+        }
       );
 
       // sync opcity input with param.layer
