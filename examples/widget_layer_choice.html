@@ -71,23 +71,25 @@
             );
           });
 
-          view.addLayer(
-            new udviz.itowns.ColorLayer(configs['base_maps'][0]['name'], {
-              updateStrategy: {
-                type: udviz.itowns.STRATEGY_DICHOTOMY,
-                options: {},
-              },
-              source: new udviz.itowns.WMSSource({
-                extent: extent,
-                name: configs['base_maps'][0].source['name'],
-                url: configs['base_maps'][0].source['url'],
-                version: configs['base_maps'][0].source['version'],
-                crs: extent.crs,
-                format: configs['base_maps'][0].source['format'],
-              }),
-              transparent: true,
-            })
-          );
+          configs['base_maps'].forEach((baseMapConfig) => {
+            view.addLayer(
+              new udviz.itowns.ColorLayer(baseMapConfig['name'], {
+                updateStrategy: {
+                  type: udviz.itowns.STRATEGY_DICHOTOMY,
+                  options: {},
+                },
+                source: new udviz.itowns.WMSSource({
+                  extent: extent,
+                  name: baseMapConfig.source['name'],
+                  url: baseMapConfig.source['url'],
+                  version: baseMapConfig.source['version'],
+                  crs: extent.crs,
+                  format: baseMapConfig.source['format'],
+                }),
+                transparent: true,
+              })
+            );
+          });
 
           const isTextureFormat =
             configs['elevation']['format'] == 'image/jpeg' ||
@@ -131,12 +133,7 @@
           });
 
           // //// LAYER CHOICE MODULE
-          const layerChoice = new udviz.widgetLayerChoice.LayerChoice(
-            view,
-            view.getLayers().map((el) => {
-              return { layer: el };
-            })
-          );
+          const layerChoice = new udviz.widgetLayerChoice.LayerChoice(view);
           layerChoice.domElement.classList.add('widget_layer_choice');
 
           const uiDomElement = document.createElement('div');
