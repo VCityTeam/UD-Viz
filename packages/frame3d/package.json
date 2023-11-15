@@ -21,7 +21,7 @@
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/frame3d",
   "peerDependencies": {
     "@ud-viz/utils_browser": "4.0.1",
-    "itowns": "2.40.0",
+    "itowns": "2.41.1-next.9",
     "three": "0.154.0"
   }
 }

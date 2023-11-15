@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/extensions_3d_tiles_temporal",
   "peerDependencies": {
-    "itowns": "2.40.0",
+    "itowns": "2.41.1-next.9",
     "@ud-viz/utils_shared": "4.0.1"
   }
 }
