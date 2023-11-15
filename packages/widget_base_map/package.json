@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_base_map",
   "peerDependencies": {
-    "itowns": "^2.41.1-next.9"
+    "itowns": "2.41.1-next.9"
   }
 }
