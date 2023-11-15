@@ -20,6 +20,7 @@ export * as gameShared from '@ud-viz/game_shared';
 export * as gameSharedTemplate from '@ud-viz/game_shared_template';
 export * as gameBrowser from '@ud-viz/game_browser';
 export * as gameBrowserTemplate from '@ud-viz/game_browser_template';
+export * as gameEditor from '@ud-viz/game_editor';
 
 // utils
 export * from '@ud-viz/utils_browser';
