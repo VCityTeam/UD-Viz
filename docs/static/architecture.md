@@ -13,6 +13,7 @@ game_node
 game_node_template
 game_shared
 game_shared_template
+point_cloud_visualizer
 show_room
 smdb
 utils_browser
@@ -24,6 +25,7 @@ widget_bookmark
 widget_camera_positioner
 widget_extensions_3d_tiles_temporal
 widget_geocoding
+widget_guided_tour
 widget_layer_choice
 widget_planar_controls
 widget_slide_show
@@ -49,6 +51,8 @@ game_node_template-->game_shared_template
 game_shared-->utils_shared
 game_shared_template-->game_shared
 game_shared_template-->utils_shared
+point_cloud_visualizer-->utils_browser
+point_cloud_visualizer-->utils_shared
 show_room-->frame3d
 show_room-->smdb
 show_room-->utils_browser
