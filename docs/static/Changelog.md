@@ -1,3 +1,47 @@
+# v4.0.1
+
+## @ud-viz
+    - Examples:
+      - point_cloud_visualizer.html
+      - game_dom_element_3d_cube.html
+      - widget_guided_tour.html
+      - assets/js/libs/maptastic.js
+      - maptastic.html
+      - use 2018 buildings
+    - Remove useless innerHTML
+    - Update ReleasePublish.md 
+
+## @ud-viz/point_cloud_visualizer
+    - Creation of the package
+
+## @ud-viz/widget_layer_choice
+    - Complete refacto
+    - Can order ColorLayer
+    - LocalStorage ui element
+
+## @ud-viz/utils_shared
+    - round
+    - vector3ToLabel
+    - insert
+
+## @ud-viz/utils_browser
+    - createLocalStorageNumberInput
+    - createLocalStorageSlider
+    - createLocalStorageCheckbox
+    - createLocalStorageDetails
+
+## @ud-viz/utils_node
+    - fix(test):splice first '/' of req.url, statusCode
+
+## @ud-viz/game_node_template
+    - DomElement3DCubeManager script
+
+## @ud-viz/game_browser_template
+    - DomElement3DCube script
+
+## @ud-viz/widget_guided_tour
+    - Creation of the package
+
 # v4.0.0
 
 ## @ud-viz

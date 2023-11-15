@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/frame3d",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "wrapper of a THREE scene + camera + renderer allowing to add dom element 3D",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/frame3d",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.0.0",
+    "@ud-viz/utils_browser": "4.0.1",
     "itowns": "2.40.0",
     "three": "0.154.0"
   }

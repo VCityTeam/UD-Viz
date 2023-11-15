@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_base_map",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "widget camera positioner of the itowns framework",
   "main": "src",
   "scripts": {

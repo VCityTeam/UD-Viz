@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_layer_choice",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "widget layer choice of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_layer_choice",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.0.0",
+    "@ud-viz/utils_browser": "4.0.1",
     "itowns": "2.40.0"
   }
 }
