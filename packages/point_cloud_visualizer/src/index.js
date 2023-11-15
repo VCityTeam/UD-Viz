@@ -39,11 +39,18 @@ import {
 import { round, vector3ToLabel } from '@ud-viz/utils_shared';
 
 import './style.css';
+
+/**
+ * @typedef {object} PointCloudOptions
+ * @property {string} name - name of C3DTilesLayer
+ * @property {object} source - C3DTilesLayer source
+ * @property {string} source.url - url to the tileset.json
+ */
 export class PointCloudVisualizer {
   /**
    *
    * @param {import("itowns").Extent} extent - itowns extent
-   * @param {Array<C3DTilesLayer>} pointClouds - points cloud layer params
+   * @param {Array<PointCloudOptions>} pointClouds - points cloud layer params
    * @param {object} options - options
    * @param {HTMLElement} options.parentDomElement - where to append planar view domelement
    * @param {string} options.domElementClass - css class to apply to this.domElement
