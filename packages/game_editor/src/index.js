@@ -144,8 +144,8 @@ export class Editor {
 
     this.transformControls.addEventListener('change', (event) => {
       this.gameObjectInput.updateTransform();
-      this.updateBox3();
     });
+    this.transformControls.addEventListener('mouseUp', () => this.updateBox3());
 
     // gizmo mode ui
     {
@@ -408,11 +408,38 @@ export class Editor {
   }
 
   updateBox3() {
-    const bb = Editor.computeBox3GameObject3D(
+    this.gameObjectInput.gameObject3D.updateMatrixWorld();
+    const worldQuaternion = new Quaternion();
+    this.gameObjectInput.gameObject3D.matrixWorld.decompose(
+      new Vector3(),
+      worldQuaternion,
+      new Vector3()
+    );
+
+    const inverseWorldQuaternion = worldQuaternion.clone().invert();
+
+    // cancel quaternion
+    this.gameObjectInput.gameObject3D.quaternion.multiply(
+      inverseWorldQuaternion
+    );
+
+    const bbScale = Editor.computeBox3GameObject3D(
       this.gameObjectInput.gameObject3D
     );
-    bb.getCenter(this.currentGameObjectMeshBox3.position);
-    this.currentGameObjectMeshBox3.scale.copy(bb.max.clone().sub(bb.min));
+    this.currentGameObjectMeshBox3.scale.copy(
+      bbScale.max.clone().sub(bbScale.min)
+    );
+
+    // restore quaternion
+    this.gameObjectInput.gameObject3D.quaternion.multiply(worldQuaternion);
+
+    const bbPosition = Editor.computeBox3GameObject3D(
+      this.gameObjectInput.gameObject3D
+    );
+    bbPosition.getCenter(this.currentGameObjectMeshBox3.position);
+
+    this.currentGameObjectMeshBox3.quaternion.copy(worldQuaternion);
+    this.currentGameObjectMeshBox3.updateMatrixWorld();
   }
 }
 
@@ -440,6 +467,10 @@ class GameObject3DInput extends HTMLElement {
     this.positionX = createLabelInput('X: ', 'number');
     this.positionY = createLabelInput('Y: ', 'number');
     this.positionZ = createLabelInput('Z: ', 'number');
+
+    this.positionX.input.step = 0.1;
+    this.positionY.input.step = 0.1;
+    this.positionZ.input.step = 0.1;
 
     this.appendChild(this.positionX.parent);
     this.appendChild(this.positionY.parent);
@@ -473,6 +504,10 @@ class GameObject3DInput extends HTMLElement {
     this.rotationY = createLabelInput('Y: ', 'number');
     this.rotationZ = createLabelInput('Z: ', 'number');
 
+    this.rotationX.input.step = 0.01;
+    this.rotationY.input.step = 0.01;
+    this.rotationZ.input.step = 0.01;
+
     this.appendChild(this.rotationX.parent);
     this.appendChild(this.rotationY.parent);
     this.appendChild(this.rotationZ.parent);
@@ -504,6 +539,10 @@ class GameObject3DInput extends HTMLElement {
     this.scaleX = createLabelInput('X: ', 'number');
     this.scaleY = createLabelInput('Y: ', 'number');
     this.scaleZ = createLabelInput('Z: ', 'number');
+
+    this.scaleX.input.step = 0.1;
+    this.scaleY.input.step = 0.1;
+    this.scaleZ.input.step = 0.1;
 
     this.appendChild(this.scaleX.parent);
     this.appendChild(this.scaleY.parent);
