@@ -2,22 +2,18 @@ import { AbstractMap } from '@ud-viz/game_shared_template';
 
 export class Map extends AbstractMap {
   load() {
-    const _this = this;
     return new Promise((resolve, reject) => {
-      // const gameObject = arguments[0];
-      const conf = this.conf;
-
       const img = document.createElement('img');
-      img.src = conf.heightmap_path;
+      img.src = this.variables.heightmap_path;
 
       // callback of the img
-      img.onload = function () {
-        _this.heightmapSize = img.width;
+      img.onload = () => {
+        this.heightmapSize = img.width;
         if (img.width != img.height)
           throw new Error('heightmap must be square image');
 
-        const hMin = conf.heightmap_geometry.min;
-        const hMax = conf.heightmap_geometry.max;
+        const hMin = this.variables.heightmap_geometry.min;
+        const hMax = this.variables.heightmap_geometry.max;
 
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
@@ -35,7 +31,7 @@ export class Map extends AbstractMap {
         for (let index = 0; index < imgDataHeight.length; index += 4) {
           let heightValue = imgDataHeight[index] / 255;
           heightValue = heightValue * (hMax - hMin) + hMin;
-          _this.heightValues.push(heightValue);
+          this.heightValues.push(heightValue);
         }
         resolve();
       };
