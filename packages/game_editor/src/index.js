@@ -22,6 +22,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 
 import './style.css';
 import {
+  cameraFitRectangle,
   createLabelInput,
   RequestAnimationFrameProcess,
 } from '@ud-viz/utils_browser/src';
@@ -186,6 +187,66 @@ export class Editor {
       GameObject3DInput.EVENT.TRANSFORM_CHANGED,
       () => this.updateBox3()
     );
+
+    // camera move
+    {
+      const selectCameraPOV = document.createElement('select');
+      this.toolsDomElement.appendChild(selectCameraPOV);
+
+      const buffer = new Map();
+      const addOption = (label, callback) => {
+        const option = document.createElement('option');
+        option.innerText = label;
+        option.value = label;
+        buffer.set(label, callback);
+        selectCameraPOV.appendChild(option);
+      };
+
+      selectCameraPOV.oninput = () => {
+        const radius = this.camera.position.distanceTo(
+          this.orbitControls.target
+        );
+        buffer.get(selectCameraPOV.selectedOptions[0].value)(radius);
+        this.camera.updateMatrixWorld();
+        this.orbitControls.update();
+      };
+
+      addOption('+X', (radius) => {
+        this.camera.position.y = this.orbitControls.target.y;
+        this.camera.position.z = this.orbitControls.target.z;
+        this.camera.position.x = radius;
+      });
+
+      addOption('-X', (radius) => {
+        this.camera.position.y = this.orbitControls.target.y;
+        this.camera.position.z = this.orbitControls.target.z;
+        this.camera.position.x = -radius;
+      });
+
+      addOption('+Y', (radius) => {
+        this.camera.position.x = this.orbitControls.target.x;
+        this.camera.position.z = this.orbitControls.target.z;
+        this.camera.position.y = radius;
+      });
+
+      addOption('-Y', (radius) => {
+        this.camera.position.x = this.orbitControls.target.x;
+        this.camera.position.z = this.orbitControls.target.z;
+        this.camera.position.y = -radius;
+      });
+
+      addOption('+Z', (radius) => {
+        this.camera.position.x = this.orbitControls.target.x;
+        this.camera.position.y = this.orbitControls.target.y;
+        this.camera.position.z = radius;
+      });
+
+      addOption('-Z', (radius) => {
+        this.camera.position.x = this.orbitControls.target.x;
+        this.camera.position.y = this.orbitControls.target.y;
+        this.camera.position.z = -radius;
+      });
+    }
   }
 
   dispose() {
@@ -286,31 +347,23 @@ export class Editor {
       createGameObject3DUI(this.currentGameObject3D)
     );
 
-    this.moveToObject3D(this.currentGameObject3D);
+    // move camera to fit the scene
+    const bb = Editor.computeBox3GameObject3D(this.currentGameObject3D);
+    const center = new Vector3();
+    bb.getCenter(center);
+    cameraFitRectangle(this.camera, bb.min, bb.max);
+
+    this.setOrbitControlsTargetTo(this.currentGameObject3D);
   }
 
   /**
    *
    * @param {Object3D} obj
    */
-  moveToObject3D(obj) {
+  setOrbitControlsTargetTo(obj) {
     const bb = Editor.computeBox3GameObject3D(obj);
-
     const center = new Vector3();
     bb.getCenter(center);
-    const radius = bb.min.distanceTo(bb.max) * 0.5;
-
-    // compute new distance between camera and center of object/sphere
-    const h = radius / Math.tan((this.camera.fov / 2) * MathUtils.DEG2RAD);
-
-    // get direction of camera
-    const dir = obj.getWorldDirection(new Vector3());
-
-    // compute new camera position
-    this.camera.position.copy(
-      new Vector3().addVectors(center, dir.setLength(h))
-    );
-
     this.orbitControls.target.copy(center);
     this.orbitControls.update();
   }
@@ -346,7 +399,10 @@ export class Editor {
   selectGameObject3D(go) {
     console.log('select ', go);
     this.gameObjectInput.setGameObject3D(go);
-    this.buttonFocusGameObject3D.onclick = this.moveToObject3D.bind(this, go);
+    this.buttonFocusGameObject3D.onclick = this.setOrbitControlsTargetTo.bind(
+      this,
+      go
+    );
     this.transformControls.attach(go);
     this.updateBox3();
   }
