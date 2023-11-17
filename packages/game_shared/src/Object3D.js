@@ -118,6 +118,44 @@ const Object3D = class extends THREE.Object3D {
   }
 
   /**
+   * @callback Object3DCondition
+   * @param {Object3D} - object3d to test
+   * @returns {boolean} - true object3d match condition
+   */
+
+  /**
+   *
+   * @param {Object3DCondition} condition
+   * @returns {Object3D} - return first object3D in hierarchy matching condition
+   */
+  getFirst(condition) {
+    let result = null;
+    this.traverse((child) => {
+      if (condition(child)) {
+        result = child;
+        return true;
+      }
+      return false;
+    });
+    return result;
+  }
+
+  /**
+   *
+   * @param {Object3DCondition} condition
+   * @returns {Object3D} - return an array of objects3D in hierarchy matching condition
+   */
+  filter(condition) {
+    const result = [];
+    this.traverse((child) => {
+      if (condition(child)) {
+        result.push(child);
+      }
+    });
+    return result;
+  }
+
+  /**
    *
    * @returns {boolean} - true if this has game context update
    */
