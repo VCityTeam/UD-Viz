@@ -235,6 +235,8 @@
                 },
               ],
             });
+            const center = extent.center();
+            gameObject3D.position.set(center.x, center.y, 0);
 
             const frame3DPlanar = new udviz.frame3d.Planar(
               extent,
@@ -258,11 +260,6 @@
                   AvatarExternalGameScript,
                   udviz.gameBrowserTemplate.CameraManager,
                 ],
-                gameOrigin: {
-                  x: extent.center().x,
-                  y: extent.center().y,
-                  z: 300,
-                },
               }
             );
 

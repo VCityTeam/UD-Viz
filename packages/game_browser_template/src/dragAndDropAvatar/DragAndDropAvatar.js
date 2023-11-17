@@ -113,7 +113,7 @@ export class DragAndDropAvatar extends ScriptBase {
       this.context.sendCommandsToGameContext([
         new Command({
           type: constant.COMMAND.ADD_AVATAR,
-          data: worldPosition.sub(this.context.object3D.position), // position in game context referential
+          data: worldPosition,
         }),
       ]);
     };

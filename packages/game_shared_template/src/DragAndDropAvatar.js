@@ -32,7 +32,9 @@ module.exports = class DragAndDropAvatar extends ScriptBase {
         },
       });
       if (!data) throw new Error('data is needed to add avatar');
-      this.avatar.position.copy(data);
+
+      // a world pos has been sent
+      this.avatar.position.copy(data).sub(this.context.object3D.position);
       this.context.addObject3D(this.avatar);
     });
 

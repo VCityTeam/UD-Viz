@@ -807,11 +807,6 @@ export class ShowRoom {
       {
         gameScriptClass: [DragAndDropAvatar, NativeCommandManager],
         externalGameScriptClass: [ExternalDragAndDropAvatar, CameraManager],
-        gameOrigin: {
-          x: this.extent.center().x,
-          y: this.extent.center().y,
-          z: 0,
-        },
       }
     );
 

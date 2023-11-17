@@ -26,7 +26,6 @@ export class SingleBaseProcess {
    * @param {InputManager} inputManager - input manager of the game {@link InputManager}
    * @param {object} options - single player game planar options
    * @param {Object<string,ScriptBase>=} options.gameScriptClass - custom game scripts class of your object3D
-   * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
    * @param {Object<string,ExternalScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
    * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
    */
@@ -78,15 +77,6 @@ export class SingleBaseProcess {
       options.externalGameScriptClass || {},
       { interpolator: this.interpolator }
     );
-
-    if (options.gameOrigin) {
-      this.externalGameContext.object3D.position.set(
-        options.gameOrigin.x,
-        options.gameOrigin.y,
-        options.gameOrigin.z
-      );
-      this.externalGameContext.object3D.updateMatrixWorld();
-    }
 
     /** @type {RequestAnimationFrameProcess} */
     this.process = new RequestAnimationFrameProcess(30);
