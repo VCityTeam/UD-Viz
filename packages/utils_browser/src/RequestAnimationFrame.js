@@ -11,6 +11,9 @@ export class RequestAnimationFrameProcess {
       @type {boolean} */
     this.stopped = false;
 
+    /** @type {boolean} */
+    this.pause = false;
+
     /**
      * frame rate per second 
      *
@@ -35,6 +38,8 @@ export class RequestAnimationFrameProcess {
       if (this.stopped) return; // Stop requesting frame
 
       requestAnimationFrame(tick);
+
+      if (this.pause) return;
 
       now = Date.now();
       delta = now - then;

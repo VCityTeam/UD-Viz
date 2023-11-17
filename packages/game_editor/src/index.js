@@ -22,18 +22,10 @@ import {
 export class Editor {
   /**
    *
-   * @param {Object<string,import("@ud-viz/game_shared").ScriptBase>} gameScripts
-   * @param {Object<string,import("@ud-viz/game_browser").ScriptBase} externalScripts
    * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D
    * @param {AssetManager} assetManager
    */
-  constructor(gameScripts, externalScripts, frame3D, assetManager) {
-    /** @type {Object<string,import("@ud-viz/game_shared").ScriptBase>} */
-    this.gameScripts = gameScripts;
-
-    /** @type {Object<string,import("@ud-viz/game_browser").ScriptBase>} */
-    this.externalScripts = externalScripts;
-
+  constructor(frame3D, assetManager) {
     /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
     this.frame3D = frame3D;
 
@@ -99,9 +91,9 @@ export class Editor {
     }
 
     /** @type {HTMLElement} */
-    this.buttonFocusGameObject3D = document.createElement('button');
-    this.buttonFocusGameObject3D.innerText = 'Focus GameObject3D';
-    this.toolsDomElement.appendChild(this.buttonFocusGameObject3D);
+    this.buttonTargetGameObject3D = document.createElement('button');
+    this.buttonTargetGameObject3D.innerText = 'Target';
+    this.toolsDomElement.appendChild(this.buttonTargetGameObject3D);
 
     /** @type {RequestAnimationFrameProcess} */
     this.process = new RequestAnimationFrameProcess(30);
@@ -308,37 +300,9 @@ export class Editor {
     this.orbitControls.update();
   }
 
-  static computeBox3GameObject3D(obj) {
-    const bb = new Box3().setFromObject(obj);
-
-    // avoid bug if no renderdata on this gameobject
-    const checkIfCoordInfinite = function (value) {
-      return value === Infinity || value === -Infinity;
-    };
-    const checkIfVectorHasCoordInfinite = function (vector) {
-      return (
-        checkIfCoordInfinite(vector.x) ||
-        checkIfCoordInfinite(vector.y) ||
-        checkIfCoordInfinite(vector.z)
-      );
-    };
-
-    if (
-      checkIfVectorHasCoordInfinite(bb.min) ||
-      checkIfVectorHasCoordInfinite(bb.max)
-    ) {
-      // cube 1,1,1
-      bb.min.set(-0.5, -0.5, -0.5);
-      bb.max.set(0.5, 0.5, 0.5);
-
-      bb.applyMatrix4(obj.matrixWorld);
-    }
-    return bb;
-  }
-
   selectGameObject3D(go) {
     this.gameObjectInput.setGameObject3D(go);
-    this.buttonFocusGameObject3D.onclick = this.setOrbitControlsTargetTo.bind(
+    this.buttonTargetGameObject3D.onclick = this.setOrbitControlsTargetTo.bind(
       this,
       go
     );
@@ -379,6 +343,34 @@ export class Editor {
 
     this.currentGameObjectMeshBox3.quaternion.copy(worldQuaternion);
     this.currentGameObjectMeshBox3.updateMatrixWorld();
+  }
+
+  static computeBox3GameObject3D(obj) {
+    const bb = new Box3().setFromObject(obj);
+
+    // avoid bug if no renderdata on this gameobject
+    const checkIfCoordInfinite = function (value) {
+      return value === Infinity || value === -Infinity;
+    };
+    const checkIfVectorHasCoordInfinite = function (vector) {
+      return (
+        checkIfCoordInfinite(vector.x) ||
+        checkIfCoordInfinite(vector.y) ||
+        checkIfCoordInfinite(vector.z)
+      );
+    };
+
+    if (
+      checkIfVectorHasCoordInfinite(bb.min) ||
+      checkIfVectorHasCoordInfinite(bb.max)
+    ) {
+      // cube 1,1,1
+      bb.min.set(-0.5, -0.5, -0.5);
+      bb.max.set(0.5, 0.5, 0.5);
+
+      bb.applyMatrix4(obj.matrixWorld);
+    }
+    return bb;
   }
 }
 
