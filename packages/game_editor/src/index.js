@@ -96,8 +96,9 @@ export class Editor {
     this.toolsDomElement.appendChild(this.buttonTargetGameObject3D);
 
     /** @type {RequestAnimationFrameProcess} */
-    this.process = new RequestAnimationFrameProcess(30);
+    this.process = new RequestAnimationFrameProcess(20);
     this.process.start(() => {
+      this.transformControls.updateMatrixWorld();
       this.frame3D.render();
     });
 
@@ -109,6 +110,7 @@ export class Editor {
       new BoxGeometry(),
       new MeshBasicMaterial({ color: 'black', wireframe: true })
     );
+    this.currentGameObjectMeshBox3.name = 'currentGameObjectMeshBox3';
     this.frame3D.scene.add(this.currentGameObjectMeshBox3);
     this.gameObjectInput.addEventListener(
       GameObject3DInput.EVENT.TRANSFORM_CHANGED,
@@ -207,7 +209,6 @@ export class Editor {
     });
 
     this.frame3D.scene.add(this.currentGameObject3D);
-    this.selectGameObject3D(this.currentGameObject3D);
 
     const createGameObject3DUI = (go, indent = 0) => {
       if (!go.isGameObject3D) return null;
@@ -274,8 +275,9 @@ export class Editor {
       createGameObject3DUI(this.currentGameObject3D)
     );
 
-    // move camera to fit the scene
+    this.selectGameObject3D(this.currentGameObject3D);
 
+    // move camera to fit the scene
     const bb = Editor.computeBox3GameObject3D(this.currentGameObject3D);
     const center = new Vector3();
     bb.getCenter(center);
