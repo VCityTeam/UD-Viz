@@ -147,11 +147,18 @@ export class SocketService extends ScriptBase {
             worldPosition
           );
 
+          const parentWorldPosition = new THREE.Vector3();
+          pointerObject.parent.matrixWorld.decompose(
+            parentWorldPosition,
+            new THREE.Quaternion(),
+            new THREE.Vector3()
+          );
+
           return new Command({
             type: constant.COMMAND.UPDATE_TRANSFORM,
             data: {
               object3DUUID: pointerObject.uuid,
-              position: worldPosition.sub(this.context.object3D.position), // position in game context referential
+              position: worldPosition.sub(parentWorldPosition),
             },
           });
         }

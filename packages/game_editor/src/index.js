@@ -2,17 +2,9 @@ import { Object3D as GameObject3D, RenderComponent } from '@ud-viz/game_shared';
 import { AssetManager, RenderController } from '@ud-viz/game_browser';
 import {
   Object3D,
-  Scene,
-  WebGLRenderer,
-  PerspectiveCamera,
-  AmbientLight,
   Box3,
   Vector3,
-  MathUtils,
   Quaternion,
-  Line,
-  LineBasicMaterial,
-  BufferGeometry,
   Mesh,
   BoxGeometry,
   MeshBasicMaterial,
@@ -27,28 +19,31 @@ import {
   RequestAnimationFrameProcess,
 } from '@ud-viz/utils_browser/src';
 
-Object3D.DEFAULT_UP.set(0, 0, 1);
-
 export class Editor {
-  constructor(gameScripts, externalScripts, assetManager) {
+  /**
+   *
+   * @param {Object<string,import("@ud-viz/game_shared").ScriptBase>} gameScripts
+   * @param {Object<string,import("@ud-viz/game_browser").ScriptBase} externalScripts
+   * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D
+   * @param {AssetManager} assetManager
+   */
+  constructor(gameScripts, externalScripts, frame3D, assetManager) {
+    /** @type {Object<string,import("@ud-viz/game_shared").ScriptBase>} */
     this.gameScripts = gameScripts;
+
+    /** @type {Object<string,import("@ud-viz/game_browser").ScriptBase>} */
     this.externalScripts = externalScripts;
+
+    /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
+    this.frame3D = frame3D;
 
     /** @type {AssetManager} */
     this.assetManager = assetManager;
 
     /** @type {HTMLElement} */
-    this.domElement = document.createElement('div');
-
-    /** @type {HTMLElement} */
-    this.domElementUI = document.createElement('div');
-    this.domElementUI.classList.add('editor_full_screen');
-    this.domElement.appendChild(this.domElementUI);
-
-    /** @type {HTMLElement} */
     this.leftPan = document.createElement('div');
     this.leftPan.setAttribute('id', 'left_pan');
-    this.domElementUI.appendChild(this.leftPan);
+    this.frame3D.domElementUI.appendChild(this.leftPan);
 
     /** @type {HTMLElement} */
     this.currentGODomelement = document.createElement('div');
@@ -65,84 +60,24 @@ export class Editor {
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
 
-    const canvasContainer = document.createElement('div');
-    const canvas = document.createElement('canvas');
-    canvasContainer.appendChild(canvas);
-    canvasContainer.classList.add('editor_full_screen');
-    canvas.classList.add('editor_full_screen');
-    this.domElement.appendChild(canvasContainer);
-
-    /** @type {WebGLRenderer} */
-    this.renderer = new WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      logarithmicDepthBuffer: true,
-      alpha: true,
-    });
-    this.resizeListener = () => {
-      this.camera.aspect =
-        canvasContainer.clientWidth / canvasContainer.clientHeight;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(
-        canvasContainer.clientWidth,
-        canvasContainer.clientHeight
-      );
-    };
-    window.addEventListener('resize', this.resizeListener);
-
-    /** @type {Scene} */
-    this.scene = new Scene();
-
-    // draw referential line
-    {
-      const maxSize = 100000;
-      const lineX = new Line(
-        new BufferGeometry().setFromPoints([
-          new Vector3(-maxSize, 0, 0),
-          new Vector3(maxSize, 0, 0),
-        ]),
-        new LineBasicMaterial({ color: 'red', linewidth: 1 })
-      );
-      this.scene.add(lineX);
-      const lineY = new Line(
-        new BufferGeometry().setFromPoints([
-          new Vector3(0, -maxSize, 0),
-          new Vector3(0, maxSize, 0),
-        ]),
-        new LineBasicMaterial({ color: 'green', linewidth: 1 })
-      );
-      this.scene.add(lineY);
-      const lineZ = new Line(
-        new BufferGeometry().setFromPoints([
-          new Vector3(0, 0, -maxSize),
-          new Vector3(0, 0, maxSize),
-        ]),
-        new LineBasicMaterial({ color: 'blue', linewidth: 1 })
-      );
-      this.scene.add(lineZ);
-    }
-
-    /** @type {PerspectiveCamera} */
-    this.camera = new PerspectiveCamera(60, 1, 1, 1000); // Default params
-
-    this.scene.add(new AmbientLight('white', 0.6));
-    this.scene.add(this.camera);
-
     /** @type {OrbitControls} */
-    this.orbitControls = new OrbitControls(this.camera, canvasContainer);
+    this.orbitControls = new OrbitControls(
+      this.frame3D.camera,
+      this.frame3D.domElementWebGL
+    );
 
     /** @type {TransformControls} */
     this.transformControls = new TransformControls(
-      this.camera,
-      canvasContainer
+      this.frame3D.camera,
+      this.frame3D.domElementWebGL
     );
-    this.scene.add(this.transformControls);
+    this.frame3D.scene.add(this.transformControls);
 
     this.transformControls.addEventListener('dragging-changed', (event) => {
       this.orbitControls.enabled = !event.value;
     });
 
-    this.transformControls.addEventListener('change', (event) => {
+    this.transformControls.addEventListener('change', () => {
       this.gameObjectInput.updateTransform();
     });
     this.transformControls.addEventListener('mouseUp', () => this.updateBox3());
@@ -171,7 +106,7 @@ export class Editor {
     /** @type {RequestAnimationFrameProcess} */
     this.process = new RequestAnimationFrameProcess(30);
     this.process.start(() => {
-      this.renderer.render(this.scene, this.camera);
+      this.frame3D.render();
     });
 
     /** @type {GameObject3D|null} */
@@ -182,7 +117,7 @@ export class Editor {
       new BoxGeometry(),
       new MeshBasicMaterial({ color: 'black', wireframe: true })
     );
-    this.scene.add(this.currentGameObjectMeshBox3);
+    this.frame3D.scene.add(this.currentGameObjectMeshBox3);
     this.gameObjectInput.addEventListener(
       GameObject3DInput.EVENT.TRANSFORM_CHANGED,
       () => this.updateBox3()
@@ -203,48 +138,48 @@ export class Editor {
       };
 
       selectCameraPOV.oninput = () => {
-        const radius = this.camera.position.distanceTo(
+        const radius = this.frame3D.camera.position.distanceTo(
           this.orbitControls.target
         );
         buffer.get(selectCameraPOV.selectedOptions[0].value)(radius);
-        this.camera.updateMatrixWorld();
+        this.frame3D.camera.updateMatrixWorld();
         this.orbitControls.update();
       };
 
       addOption('+X', (radius) => {
-        this.camera.position.y = this.orbitControls.target.y;
-        this.camera.position.z = this.orbitControls.target.z;
-        this.camera.position.x = radius;
+        this.frame3D.camera.position.y = this.orbitControls.target.y;
+        this.frame3D.camera.position.z = this.orbitControls.target.z;
+        this.frame3D.camera.position.x = radius;
       });
 
       addOption('-X', (radius) => {
-        this.camera.position.y = this.orbitControls.target.y;
-        this.camera.position.z = this.orbitControls.target.z;
-        this.camera.position.x = -radius;
+        this.frame3D.camera.position.y = this.orbitControls.target.y;
+        this.frame3D.camera.position.z = this.orbitControls.target.z;
+        this.frame3D.camera.position.x = -radius;
       });
 
       addOption('+Y', (radius) => {
-        this.camera.position.x = this.orbitControls.target.x;
-        this.camera.position.z = this.orbitControls.target.z;
-        this.camera.position.y = radius;
+        this.frame3D.camera.position.x = this.orbitControls.target.x;
+        this.frame3D.camera.position.z = this.orbitControls.target.z;
+        this.frame3D.camera.position.y = radius;
       });
 
       addOption('-Y', (radius) => {
-        this.camera.position.x = this.orbitControls.target.x;
-        this.camera.position.z = this.orbitControls.target.z;
-        this.camera.position.y = -radius;
+        this.frame3D.camera.position.x = this.orbitControls.target.x;
+        this.frame3D.camera.position.z = this.orbitControls.target.z;
+        this.frame3D.camera.position.y = -radius;
       });
 
       addOption('+Z', (radius) => {
-        this.camera.position.x = this.orbitControls.target.x;
-        this.camera.position.y = this.orbitControls.target.y;
-        this.camera.position.z = radius;
+        this.frame3D.camera.position.x = this.orbitControls.target.x;
+        this.frame3D.camera.position.y = this.orbitControls.target.y;
+        this.frame3D.camera.position.z = radius;
       });
 
       addOption('-Z', (radius) => {
-        this.camera.position.x = this.orbitControls.target.x;
-        this.camera.position.y = this.orbitControls.target.y;
-        this.camera.position.z = -radius;
+        this.frame3D.camera.position.x = this.orbitControls.target.x;
+        this.frame3D.camera.position.y = this.orbitControls.target.y;
+        this.frame3D.camera.position.z = -radius;
       });
     }
   }
@@ -279,7 +214,7 @@ export class Editor {
       }
     });
 
-    this.scene.add(this.currentGameObject3D);
+    this.frame3D.scene.add(this.currentGameObject3D);
     this.selectGameObject3D(this.currentGameObject3D);
 
     const createGameObject3DUI = (go, indent = 0) => {
@@ -348,11 +283,16 @@ export class Editor {
     );
 
     // move camera to fit the scene
+
     const bb = Editor.computeBox3GameObject3D(this.currentGameObject3D);
     const center = new Vector3();
     bb.getCenter(center);
-    cameraFitRectangle(this.camera, bb.min, bb.max);
-
+    cameraFitRectangle(
+      this.frame3D.camera,
+      bb.min,
+      bb.max,
+      this.currentGameObject3D.position.z
+    );
     this.setOrbitControlsTargetTo(this.currentGameObject3D);
   }
 
@@ -397,7 +337,6 @@ export class Editor {
   }
 
   selectGameObject3D(go) {
-    console.log('select ', go);
     this.gameObjectInput.setGameObject3D(go);
     this.buttonFocusGameObject3D.onclick = this.setOrbitControlsTargetTo.bind(
       this,
@@ -531,7 +470,7 @@ class GameObject3DInput extends HTMLElement {
       );
     };
 
-    //Scale
+    // Scale
     this.scaleLabel = document.createElement('label');
     this.scaleLabel.innerText = 'Scale';
     this.appendChild(this.scaleLabel);

@@ -127,6 +127,8 @@ export class Planar extends Base {
   render() {
     super.render();
 
+    this.itownsView.notifyChange(this.camera); // => to load 3DTiles
+
     // render also label layers
     if (this.isRendering && this.itownsView.tileLayer) {
       this.itownsView.mainLoop.gfxEngine.label2dRenderer.render(

@@ -103,6 +103,8 @@
           },
         },
       });
+      const center = extent.center();
+      gameObject3D.position.set(center.x, center.y, 0);
 
       const game = new udviz.gameBrowser.SinglePlanarProcess(
         gameObject3D,
@@ -112,7 +114,6 @@
         {
           gameScriptClass: [GameContextScript],
           externalGameScriptClass: [GameExternalContextScript],
-          gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 },
         }
       );
 

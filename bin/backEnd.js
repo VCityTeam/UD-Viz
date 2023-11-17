@@ -106,6 +106,7 @@ gameSocketService
       new Object3D({
         name: 'Note game',
         static: true,
+        matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1844753.5, 5174961, 0, 1],
         components: {
           GameScript: {
             scriptParams: [
@@ -125,6 +126,7 @@ gameSocketService
         uuid: 'dom_element_3d_cube_game_uuid',
         name: 'DomElement 3D cube game',
         static: true,
+        matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1844753.5, 5174961, 0, 1],
         components: {
           GameScript: {
             scriptParams: [

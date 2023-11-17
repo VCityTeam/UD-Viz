@@ -235,9 +235,10 @@ export function computeNearFarCamera(camera, min, max) {
  * @param {THREE.PerspectiveCamera} camera - camera to update
  * @param {THREE.Vector2} min - min coord of the rectangle
  * @param {THREE.Vector2} max - max coord of the rectangle
+ * @param {number} altitude - altitude of the rectangle
  * @todo rectangle is not force to be in xy plane
  */
-export function cameraFitRectangle(camera, min, max) {
+export function cameraFitRectangle(camera, min, max, altitude = 0) {
   const center = min.clone().lerp(max, 0.5);
   const width = max.x - min.x;
   const height = max.y - min.y;
@@ -248,7 +249,7 @@ export function cameraFitRectangle(camera, min, max) {
   const distance = Math.max(dx, dy);
 
   camera.position.copy(center);
-  camera.position.z = distance;
+  camera.position.z = distance + altitude;
   camera.rotation.set(0, 0, -Math.PI / 2);
   camera.updateProjectionMatrix();
 }

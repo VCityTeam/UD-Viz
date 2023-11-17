@@ -30,7 +30,6 @@ export class MultiPlanarProcess {
    * @param {InputManager} inputManager - input manager of the game {@link InputManager}
    * @param {object} options - multi player game planar options
    * @param {PlanarOption} options.frame3DPlanarOptions - options frame3Dplanar {@link PlanarOption}
-   * @param {{x:number,y:number,z:number}=} options.gameOrigin - position of the external game context object3D
    * @param {Object<string,ExternalScriptBase>=} options.externalGameScriptClass - custom external scripts class of your object3D
    * @param {number=} options.interpolatorDelay - delay between state computed in game process and the ones in external context
    * @param {boolean} options.computeBandWidth - compute bandwidth of the interpolator or not
@@ -92,15 +91,6 @@ export class MultiPlanarProcess {
         interpolator: this.interpolator,
       }
     );
-
-    if (options.gameOrigin) {
-      this.externalGameContext.object3D.position.set(
-        options.gameOrigin.x,
-        options.gameOrigin.y,
-        options.gameOrigin.z
-      );
-      this.externalGameContext.object3D.updateMatrixWorld();
-    }
   }
 
   /**
