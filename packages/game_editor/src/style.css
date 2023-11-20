@@ -4,15 +4,30 @@
   width: fit-content;
   height: 100%;
   max-width: 300px;
+  overflow-y: scroll;
 }
 
 #current_game_object_3d {
-  height: 30%;
+  max-height: 200px;
   overflow-y: scroll;
 }
 
 #select_game_object_3d {
-  height: 70%;
+  overflow-y: scroll;
+}
+
+.editor_list_collider{
+  max-height: 100px;
+  overflow-y: scroll;
+}
+
+.editor_list_collider li:hover{
+  cursor: pointer;
+}
+
+.editor_shape_input{
+  max-height: 100px;
+  overflow-y: scroll;
 }
 
 .editor_clickable:hover {

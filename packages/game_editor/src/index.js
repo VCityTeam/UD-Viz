@@ -1,4 +1,8 @@
-import { Object3D as GameObject3D, RenderComponent } from '@ud-viz/game_shared';
+import {
+  ColliderComponent,
+  Object3D as GameObject3D,
+  RenderComponent,
+} from '@ud-viz/game_shared';
 import { AssetManager, RenderController } from '@ud-viz/game_browser';
 import {
   Object3D,
@@ -8,16 +12,28 @@ import {
   Mesh,
   BoxGeometry,
   MeshBasicMaterial,
+  CircleGeometry,
+  Color,
+  Raycaster,
+  Vector2,
+  SphereGeometry,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry';
 
 import './style.css';
 import {
   cameraFitRectangle,
   createLabelInput,
   RequestAnimationFrameProcess,
-} from '@ud-viz/utils_browser/src';
+  Vector3Input,
+} from '@ud-viz/utils_browser';
+import * as quickhull3d from 'quickhull3d';
+
+const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
+const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
+const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
 export class Editor {
   /**
@@ -48,7 +64,9 @@ export class Editor {
     this.leftPan.appendChild(this.toolsDomElement);
 
     /** @type {GameObject3DInput} */
-    this.gameObjectInput = new GameObject3DInput();
+    const possibleIdRenderData = [];
+    for (const id in assetManager.renderData) possibleIdRenderData.push(id);
+    this.gameObjectInput = new GameObject3DInput(possibleIdRenderData);
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
 
@@ -63,16 +81,52 @@ export class Editor {
       this.frame3D.camera,
       this.frame3D.domElementWebGL
     );
-    this.frame3D.scene.add(this.transformControls);
+    {
+      this.frame3D.scene.add(this.transformControls);
 
-    this.transformControls.addEventListener('dragging-changed', (event) => {
-      this.orbitControls.enabled = !event.value;
-    });
+      this.transformControls.addEventListener('dragging-changed', (event) => {
+        this.orbitControls.enabled = !event.value;
+      });
 
-    this.transformControls.addEventListener('change', () => {
-      this.gameObjectInput.updateTransform();
-    });
-    this.transformControls.addEventListener('mouseUp', () => this.updateBox3());
+      this.transformControls.addEventListener('change', () => {
+        this.gameObjectInput.updateTransform();
+      });
+      this.transformControls.addEventListener('mouseUp', () => {
+        if (!this.shapeContext.pointMesh) {
+          //editing go transform
+          this.updateCollider();
+          this.updateBox3();
+        } else {
+          //editing point shape in model
+          this.shapeContext.pointMesh.userData.shapeJSON.points[
+            this.shapeContext.pointMesh.userData.index
+          ] = {
+            x: this.shapeContext.pointMesh.position.x,
+            y: this.shapeContext.pointMesh.position.y,
+            z: this.shapeContext.pointMesh.position.z,
+          };
+
+          // this.shapeContext.pointMesh.userData.shapeJSON.points = quickhull3d(
+          //   this.shapeContext.pointMesh.userData.shapeJSON.points.map((el) => [
+          //     el.x,
+          //     el.y,
+          //     el.z,
+          //   ])
+          // ).map((el) => {
+          //   return { x: el[0], y: el[1], z: el[2] };
+          // });
+          // this.shapeContext.pointMesh.userData.shapeJSON.points.pop(); //remove first point
+
+          // rebuild
+
+          this.shapeContext.mesh.geometry = new ConvexGeometry().setFromPoints(
+            this.shapeContext.pointMesh.userData.shapeJSON.points.map(
+              (el) => new Vector3(el.x, el.y, el.z)
+            )
+          );
+        }
+      });
+    }
 
     // gizmo mode ui
     {
@@ -110,12 +164,17 @@ export class Editor {
       new BoxGeometry(),
       new MeshBasicMaterial({ color: 'black', wireframe: true })
     );
-    this.currentGameObjectMeshBox3.name = 'currentGameObjectMeshBox3';
-    this.frame3D.scene.add(this.currentGameObjectMeshBox3);
-    this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.TRANSFORM_CHANGED,
-      () => this.updateBox3()
-    );
+    {
+      this.currentGameObjectMeshBox3.name = 'currentGameObjectMeshBox3';
+      this.frame3D.scene.add(this.currentGameObjectMeshBox3);
+      this.gameObjectInput.addEventListener(
+        GameObject3DInput.EVENT.TRANSFORM_CHANGED,
+        () => {
+          this.updateBox3();
+          this.updateCollider();
+        }
+      );
+    }
 
     // camera move
     {
@@ -159,6 +218,124 @@ export class Editor {
       addOption('-Z', (radius) => {
         this.frame3D.camera.position.z -= radius;
       });
+    }
+
+    // collider object3d
+    /** @type {Object3D} */
+    this.colliderParent = new Object3D();
+    this.colliderParent.name = 'colliderParent';
+    this.frame3D.scene.add(this.colliderParent);
+
+    /** @type {object} */
+    this.shapeContext = {
+      mesh: null,
+      deleteButton: null,
+      pointMesh: null,
+    };
+    this.pointsParent = new Object3D();
+    {
+      this.frame3D.scene.add(this.pointsParent);
+
+      const raycaster = new Raycaster();
+      window.addEventListener('keydown', (event) => {
+        if (event.key == 'Escape') this.selectShape(-1);
+      });
+      this.frame3D.domElementWebGL.addEventListener('click', (event) => {
+        const mouse = new Vector2(
+          (event.clientX / this.frame3D.domElementWebGL.clientWidth) * 2 - 1,
+          -(event.clientY / this.frame3D.domElementWebGL.clientHeight) * 2 + 1
+        );
+        raycaster.setFromCamera(mouse, this.frame3D.camera);
+
+        if (!this.shapeContext.mesh) {
+          // look for intersect with shape mesh
+          const intersects = raycaster.intersectObject(
+            this.colliderParent,
+            true
+          );
+          if (intersects.length) {
+            const index = this.colliderParent.children.indexOf(
+              intersects[0].object
+            );
+            this.selectShape(index);
+          }
+        } else {
+          // look for intersect with points shape
+          const intersects = raycaster.intersectObject(this.pointsParent, true);
+          if (intersects.length) {
+            this.shapeContext.pointMesh = intersects[0].object;
+            this.transformControls.attach(this.shapeContext.pointMesh);
+          }
+        }
+      });
+    }
+  }
+
+  selectShape(shapeIndex) {
+    console.log('shape select ', shapeIndex);
+    if (this.shapeContext.mesh) {
+      this.shapeContext.mesh.material = COLLIDER_MATERIAL;
+      this.shapeContext.mesh = null;
+    }
+    if (this.shapeContext.deleteButton) {
+      this.shapeContext.deleteButton.remove();
+      this.shapeContext.deleteButton = null;
+    }
+    this.shapeContext.pointMesh = null;
+
+    for (let i = this.pointsParent.children.length - 1; i >= 0; i--) {
+      this.pointsParent.children[i].removeFromParent();
+    }
+
+    this.shapeContext.mesh = this.colliderParent.children[shapeIndex];
+
+    if (this.shapeContext.mesh) {
+      this.setOrbitControlsTargetTo(this.shapeContext.mesh);
+      this.shapeContext.mesh.material = COLLIDER_MATERIAL_SELECTED;
+
+      const colliderComp = this.gameObjectInput.gameObject3D.getComponent(
+        ColliderComponent.TYPE
+      );
+
+      this.shapeContext.deleteButton = document.createElement('button');
+      this.shapeContext.deleteButton.innerText = 'delete shape';
+      this.shapeContext.deleteButton.onclick = () => {
+        colliderComp.model.shapesJSON.splice(shapeIndex, 1);
+        this.updateCollider();
+      };
+
+      this.gameObjectInput.detailsCollider.appendChild(
+        this.shapeContext.deleteButton
+      );
+
+      this.transformControls.detach();
+
+      const shapeJSON = colliderComp.model.shapesJSON[shapeIndex];
+
+      if (shapeJSON.type == ColliderComponent.SHAPE_TYPE.POLYGON) {
+        const worldPosition = new Vector3();
+
+        this.gameObjectInput.gameObject3D.matrixWorld.decompose(
+          worldPosition,
+          new Quaternion(),
+          new Vector3()
+        );
+
+        this.pointsParent.position.copy(worldPosition);
+
+        shapeJSON.points.forEach((point, index) => {
+          const pointMesh = new Mesh(
+            new SphereGeometry(),
+            COLLIDER_POINT_MATERIAL
+          );
+          pointMesh.position.set(point.x, point.y, point.z);
+          pointMesh.userData.index = index;
+          pointMesh.userData.shapeJSON = shapeJSON;
+          this.pointsParent.add(pointMesh);
+        });
+      }
+    } else {
+      this.transformControls.attach(this.gameObjectInput.gameObject3D);
     }
   }
 
@@ -287,13 +464,57 @@ export class Editor {
   }
 
   selectGameObject3D(go) {
+    if (go == this.gameObjectInput.gameObject3D) return;
+    // game input dom element
     this.gameObjectInput.setGameObject3D(go);
+    // bind
     this.buttonTargetGameObject3D.onclick = this.setOrbitControlsTargetTo.bind(
       this,
       go
     );
     this.transformControls.attach(go);
     this.updateBox3();
+    this.updateCollider();
+  }
+
+  updateCollider() {
+    for (let i = this.colliderParent.children.length - 1; i >= 0; i--) {
+      this.colliderParent.children[i].removeFromParent();
+    }
+    this.selectShape(-1);
+
+    /** @type {GameObject3D} */
+    const go = this.gameObjectInput.gameObject3D;
+
+    const colliderComp = go.getComponent(ColliderComponent.TYPE);
+    if (colliderComp) {
+      const worldPosition = new Vector3();
+
+      go.matrixWorld.decompose(worldPosition, new Quaternion(), new Vector3());
+
+      this.colliderParent.position.copy(worldPosition);
+
+      colliderComp.model.shapesJSON.forEach((shape) => {
+        let geometry = null;
+
+        switch (shape.type) {
+          case ColliderComponent.SHAPE_TYPE.CIRCLE:
+            geometry = new CircleGeometry(shape.radius, 32);
+            geometry.translate(shape.center.x, shape.center.y, shape.center.z);
+            break;
+          case ColliderComponent.SHAPE_TYPE.POLYGON:
+            geometry = new ConvexGeometry(
+              shape.points.map((el) => new Vector3(el.x, el.y, el.z))
+            );
+            break;
+          default:
+            throw new Error('unknown shape type');
+        }
+        this.colliderParent.add(new Mesh(geometry, COLLIDER_MATERIAL));
+      });
+    }
+
+    console.log('editor collider updated ');
   }
 
   updateBox3() {
@@ -361,8 +582,14 @@ export class Editor {
 }
 
 class GameObject3DInput extends HTMLElement {
-  constructor() {
+  constructor(idRenderData) {
     super();
+
+    /** @type {Array} */
+    this.idRenderData = idRenderData;
+
+    /** @type {GameObject3D|null} */
+    this.gameObject3D = null;
 
     // Name
     this.name = createLabelInput('Name: ', 'text');
@@ -373,119 +600,59 @@ class GameObject3DInput extends HTMLElement {
       this.dispatchEvent(new CustomEvent(GameObject3DInput.EVENT.NAME_CHANGED));
     };
 
+    // Static
     this.static = createLabelInput('Static: ', 'checkbox');
     this.appendChild(this.static.parent);
 
-    // Position
-    this.positionLabel = document.createElement('label');
-    this.positionLabel.innerText = 'Position';
-    this.appendChild(this.positionLabel);
-
-    this.positionX = createLabelInput('X: ', 'number');
-    this.positionY = createLabelInput('Y: ', 'number');
-    this.positionZ = createLabelInput('Z: ', 'number');
-
-    this.positionX.input.step = 0.1;
-    this.positionY.input.step = 0.1;
-    this.positionZ.input.step = 0.1;
-
-    this.appendChild(this.positionX.parent);
-    this.appendChild(this.positionY.parent);
-    this.appendChild(this.positionZ.parent);
-
-    this.positionX.input.onchange = () => {
-      this.gameObject3D.position.x = this.positionX.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
-    };
-    this.positionY.input.onchange = () => {
-      this.gameObject3D.position.y = this.positionY.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
-    };
-    this.positionZ.input.onchange = () => {
-      this.gameObject3D.position.z = this.positionZ.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
+    this.static.input.onchange = () => {
+      this.gameObject3D.static = this.static.input.checked;
     };
 
-    // Rotation
-    this.rotationLabel = document.createElement('label');
-    this.rotationLabel.innerText = 'Rotation';
-    this.appendChild(this.rotationLabel);
+    // transform
+    const detailsTransform = document.createElement('details');
+    this.appendChild(detailsTransform);
+    const summaryTransform = document.createElement('summary');
+    summaryTransform.innerText = 'Transform';
+    detailsTransform.appendChild(summaryTransform);
 
-    this.rotationX = createLabelInput('X: ', 'number');
-    this.rotationY = createLabelInput('Y: ', 'number');
-    this.rotationZ = createLabelInput('Z: ', 'number');
+    this.position = new Vector3Input('Position', 0.1);
+    detailsTransform.appendChild(this.position);
 
-    this.rotationX.input.step = 0.01;
-    this.rotationY.input.step = 0.01;
-    this.rotationZ.input.step = 0.01;
+    this.rotation = new Vector3Input('Rotation', 0.01);
+    detailsTransform.appendChild(this.rotation);
 
-    this.appendChild(this.rotationX.parent);
-    this.appendChild(this.rotationY.parent);
-    this.appendChild(this.rotationZ.parent);
+    this.scale = new Vector3Input('Scale', 0.1);
+    detailsTransform.appendChild(this.scale);
 
-    this.rotationX.input.onchange = () => {
-      this.gameObject3D.rotation.x = this.rotationX.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
+    this.position.addEventListener('change', () => {
+      this.gameObject3D.position.set(
+        this.position.x.input.valueAsNumber,
+        this.position.y.input.valueAsNumber,
+        this.position.z.input.valueAsNumber
       );
-    };
-    this.rotationY.input.onchange = () => {
-      this.gameObject3D.rotation.y = this.rotationY.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
+    });
+    this.rotation.addEventListener('change', () => {
+      this.gameObject3D.rotation.set(
+        this.rotation.x.input.valueAsNumber,
+        this.rotation.y.input.valueAsNumber,
+        this.rotation.z.input.valueAsNumber
       );
-    };
-    this.rotationZ.input.onchange = () => {
-      this.gameObject3D.rotation.z = this.rotationZ.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
+    });
+    this.scale.addEventListener('change', () => {
+      this.gameObject3D.scale.set(
+        this.scale.x.input.valueAsNumber,
+        this.scale.y.input.valueAsNumber,
+        this.scale.z.input.valueAsNumber
       );
-    };
+    });
 
-    // Scale
-    this.scaleLabel = document.createElement('label');
-    this.scaleLabel.innerText = 'Scale';
-    this.appendChild(this.scaleLabel);
+    // collider
+    this.detailsCollider = document.createElement('details');
+    this.appendChild(this.detailsCollider);
 
-    this.scaleX = createLabelInput('X: ', 'number');
-    this.scaleY = createLabelInput('Y: ', 'number');
-    this.scaleZ = createLabelInput('Z: ', 'number');
-
-    this.scaleX.input.step = 0.1;
-    this.scaleY.input.step = 0.1;
-    this.scaleZ.input.step = 0.1;
-
-    this.appendChild(this.scaleX.parent);
-    this.appendChild(this.scaleY.parent);
-    this.appendChild(this.scaleZ.parent);
-
-    this.scaleX.input.onchange = () => {
-      this.gameObject3D.scale.x = this.scaleX.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
-    };
-    this.scaleY.input.onchange = () => {
-      this.gameObject3D.scale.y = this.scaleY.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
-    };
-    this.scaleZ.input.onchange = () => {
-      this.gameObject3D.scale.z = this.scaleZ.input.valueAsNumber;
-      this.dispatchEvent(
-        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
-      );
-    };
-
-    /** @type {GameObject3D|null} */
-    this.gameObject3D = null;
+    // render
+    this.detailsRender = document.createElement('details');
+    this.appendChild(this.detailsRender);
   }
 
   /**
@@ -493,32 +660,109 @@ class GameObject3DInput extends HTMLElement {
    * @param {GameObject3D} go
    */
   setGameObject3D(go) {
+    this.gameObject3D = go;
+
     this.name.input.value = go.name;
 
     this.static.input.checked = go.static;
 
-    this.gameObject3D = go;
-
     this.updateTransform();
+
+    // collider
+    this.updateCollider();
+
+    //render
+    const renderComp = go.getComponent(RenderComponent.TYPE);
+    this.detailsRender.hidden = !renderComp;
+    if (renderComp) {
+      while (this.detailsRender.firstChild)
+        this.detailsRender.firstChild.remove();
+
+      // rebuild domelement
+      const summaryRender = document.createElement('summary');
+      summaryRender.innerText = 'Render';
+      this.detailsRender.appendChild(summaryRender);
+
+      // color
+      const color = createLabelInput('Couleur: ', 'color');
+      this.detailsRender.appendChild(color.parent);
+      color.input.value =
+        '#' + new Color().fromArray(renderComp.model.color).getHexString();
+
+      // opacity
+      const opacity = createLabelInput('Opacité ', 'range');
+      opacity.input.min = 0;
+      opacity.input.max = 1;
+      opacity.input.step = 'any';
+      this.detailsRender.appendChild(opacity.parent);
+      opacity.input.value = renderComp.model.color[3];
+
+      const updateColor = () => {
+        renderComp.controller.setColor([
+          ...new Color(color.input.value).toArray(),
+          opacity.input.valueAsNumber,
+        ]);
+      };
+
+      opacity.input.onchange = updateColor;
+
+      color.input.onchange = updateColor;
+
+      // id model
+      const selectIdRenderData = document.createElement('select');
+      this.detailsRender.appendChild(selectIdRenderData);
+      this.idRenderData.forEach((id) => {
+        const option = document.createElement('option');
+        option.innerText = id;
+        option.value = id;
+        selectIdRenderData.appendChild(option);
+        if (renderComp.model.idRenderData == id) {
+          selectIdRenderData.value = id;
+        }
+      });
+
+      selectIdRenderData.onchange = () => {
+        renderComp.controller.setIdRenderData(
+          selectIdRenderData.selectedOptions[0].value
+        );
+      };
+    }
+  }
+
+  updateCollider() {
+    const colliderComp = this.gameObject3D.getComponent(ColliderComponent.TYPE);
+    this.detailsCollider.hidden = !colliderComp;
+    if (colliderComp) {
+      while (this.detailsCollider.firstChild)
+        this.detailsCollider.firstChild.remove();
+
+      // rebuild domelement
+      const summaryCollider = document.createElement('summary');
+      summaryCollider.innerText = 'Collider';
+      this.detailsCollider.appendChild(summaryCollider);
+
+      const bodyCheckbox = createLabelInput('body', 'checkbox');
+      bodyCheckbox.input.checked = colliderComp.model.body;
+      bodyCheckbox.input.onchange = () =>
+        (colliderComp.model.body = bodyCheckbox.input.checked);
+      this.detailsCollider.appendChild(bodyCheckbox.parent);
+    }
   }
 
   updateTransform() {
-    this.positionX.input.value = this.gameObject3D.position.x;
-    this.positionY.input.value = this.gameObject3D.position.y;
-    this.positionZ.input.value = this.gameObject3D.position.z;
-
-    this.rotationX.input.value = this.gameObject3D.rotation.x;
-    this.rotationY.input.value = this.gameObject3D.rotation.y;
-    this.rotationZ.input.value = this.gameObject3D.rotation.z;
-
-    this.scaleX.input.value = this.gameObject3D.scale.x;
-    this.scaleY.input.value = this.gameObject3D.scale.y;
-    this.scaleZ.input.value = this.gameObject3D.scale.z;
+    this.position.x.input.value = this.gameObject3D.position.x;
+    this.position.y.input.value = this.gameObject3D.position.y;
+    this.position.z.input.value = this.gameObject3D.position.z;
+    this.rotation.x.input.value = this.gameObject3D.rotation.x;
+    this.rotation.y.input.value = this.gameObject3D.rotation.y;
+    this.rotation.z.input.value = this.gameObject3D.rotation.z;
+    this.scale.x.input.value = this.gameObject3D.scale.x;
+    this.scale.y.input.value = this.gameObject3D.scale.y;
+    this.scale.z.input.value = this.gameObject3D.scale.z;
   }
 
   static get EVENT() {
     return {
-      TRANSFORM_CHANGED: 'transform_changed',
       NAME_CHANGED: 'name_changed',
     };
   }

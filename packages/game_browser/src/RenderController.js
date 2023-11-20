@@ -97,7 +97,7 @@ export class RenderController extends Controller {
 
     const alpha = color[3];
 
-    // only change color TODO handle alpha
+    // only change color
     this.model.setColor(color);
     // update color in the controller attributes
     const threeColor = new THREE.Color().fromArray(color);
@@ -108,10 +108,11 @@ export class RenderController extends Controller {
           // handle opacity
           child.material.opacity = alpha;
           child.material.transparent = true;
-          child.renderOrder = 1; // patch for futurologue not working
+          child.renderOrder = 1;
         } else {
           child.material.transparent = false;
         }
+        child.material.needsUpdate = true;
       }
     });
   }
