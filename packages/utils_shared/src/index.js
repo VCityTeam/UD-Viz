@@ -1,3 +1,5 @@
+const EPSILON = 0.0001;
+
 /**
  * Check if a string is a valid number
  * inspired of https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
@@ -311,31 +313,30 @@ function getAttributeByPath(obj, path) {
  * @param {object} j2 - second json object
  * @returns {boolean} - true if both json are equals, false otherwise
  */
-function objectEquals(j1, j2) {
-  const traverse = function (json1, json2) {
-    for (const key in json1) {
-      if (json1[key] instanceof Object) {
-        if (json2[key] instanceof Object) {
-          if (traverse(json1[key], json2[key])) {
-            continue;
-          } else {
-            return false;
-          }
-        } else {
-          return false;
-        }
-      } else {
-        if (json2[key] == json1[key]) {
+function objectEquals(json1, json2) {
+  for (const key in json1) {
+    if (json1[key] instanceof Object) {
+      if (json2[key] instanceof Object) {
+        if (objectEquals(json1[key], json2[key])) {
           continue;
         } else {
           return false;
         }
+      } else {
+        return false;
+      }
+    } else {
+      const areEquals = isNumeric(json1[key])
+        ? Math.abs(json1[key] - json2[key]) < EPSILON
+        : json2[key] == json1[key];
+      if (areEquals) {
+        continue;
+      } else {
+        return false;
       }
     }
-    return true; // All check have passed meaning is equals
-  };
-
-  return traverse(j1, j2);
+  }
+  return true; // All check have passed meaning is equals
 }
 
 /**
@@ -515,6 +516,7 @@ const vector3ToLabel = (v) => {
 };
 
 module.exports = {
+  EPSILON: EPSILON,
   vector3ToLabel: vector3ToLabel,
   round: round,
   insert: insert,
