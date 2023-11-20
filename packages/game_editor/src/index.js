@@ -135,45 +135,29 @@ export class Editor {
         const radius = this.frame3D.camera.position.distanceTo(
           this.orbitControls.target
         );
+        this.frame3D.camera.position.copy(this.orbitControls.target);
         buffer.get(selectCameraPOV.selectedOptions[0].value)(radius);
         this.frame3D.camera.updateMatrixWorld();
         this.orbitControls.update();
       };
 
       addOption('+X', (radius) => {
-        this.frame3D.camera.position.y = this.orbitControls.target.y;
-        this.frame3D.camera.position.z = this.orbitControls.target.z;
-        this.frame3D.camera.position.x = radius;
+        this.frame3D.camera.position.x += radius;
       });
-
       addOption('-X', (radius) => {
-        this.frame3D.camera.position.y = this.orbitControls.target.y;
-        this.frame3D.camera.position.z = this.orbitControls.target.z;
-        this.frame3D.camera.position.x = -radius;
+        this.frame3D.camera.position.x -= radius;
       });
-
       addOption('+Y', (radius) => {
-        this.frame3D.camera.position.x = this.orbitControls.target.x;
-        this.frame3D.camera.position.z = this.orbitControls.target.z;
-        this.frame3D.camera.position.y = radius;
+        this.frame3D.camera.position.y += radius;
       });
-
       addOption('-Y', (radius) => {
-        this.frame3D.camera.position.x = this.orbitControls.target.x;
-        this.frame3D.camera.position.z = this.orbitControls.target.z;
-        this.frame3D.camera.position.y = -radius;
+        this.frame3D.camera.position.y -= radius;
       });
-
       addOption('+Z', (radius) => {
-        this.frame3D.camera.position.x = this.orbitControls.target.x;
-        this.frame3D.camera.position.y = this.orbitControls.target.y;
-        this.frame3D.camera.position.z = radius;
+        this.frame3D.camera.position.z += radius;
       });
-
       addOption('-Z', (radius) => {
-        this.frame3D.camera.position.x = this.orbitControls.target.x;
-        this.frame3D.camera.position.y = this.orbitControls.target.y;
-        this.frame3D.camera.position.z = -radius;
+        this.frame3D.camera.position.z -= radius;
       });
     }
   }

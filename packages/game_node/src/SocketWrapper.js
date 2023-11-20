@@ -1,4 +1,5 @@
 const { constant, State, Object3D } = require('@ud-viz/game_shared');
+const { objectEquals } = require('@ud-viz/utils_shared');
 const { Socket } = require('socket.io');
 
 /**
@@ -34,6 +35,14 @@ module.exports = class SocketWrapper {
    * @param {object} stateJSON - state serialized
    */
   sendState(stateJSON) {
+    if (
+      this.lastStateSend &&
+      objectEquals(this.lastStateSend.object3D.toJSON(), stateJSON.object3D)
+    ) {
+      // TODO: not sure if this optimization is worth it
+      return;
+    }
+
     const state = new State(
       new Object3D(stateJSON.object3D),
       stateJSON.timestamp
