@@ -101,3 +101,36 @@ export function createDateIntervalInput(labelText) {
     inputEndDate: createLabelInputDate('To'),
   };
 }
+
+export class Vector3Input extends HTMLElement {
+  constructor(label, step) {
+    super();
+
+    this.label = document.createElement('label');
+    this.label.innerText = label;
+    this.appendChild(this.label);
+
+    this.x = createLabelInput('X: ', 'number');
+    this.y = createLabelInput('Y: ', 'number');
+    this.z = createLabelInput('Z: ', 'number');
+
+    this.x.input.step = step;
+    this.y.input.step = step;
+    this.z.input.step = step;
+
+    this.appendChild(this.x.parent);
+    this.appendChild(this.y.parent);
+    this.appendChild(this.z.parent);
+
+    this.x.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.y.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.z.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+  }
+}
+window.customElements.define('vector3-input', Vector3Input); // mandatory to extends HTMLElement

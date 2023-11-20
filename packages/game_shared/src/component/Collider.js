@@ -217,7 +217,7 @@ class ShapeWrapper {
    */
   initShapeFromJSON(json) {
     switch (json.type) {
-      case 'Circle':
+      case ColliderComponent.SHAPE_TYPE.CIRCLE:
         {
           const circle = new Circle(
             parseFloat(json.center.x),
@@ -238,7 +238,7 @@ class ShapeWrapper {
           this.shape = circle;
         }
         break;
-      case 'Polygon':
+      case ColliderComponent.SHAPE_TYPE.POLYGON:
         {
           const points = [];
           json.points.forEach((p) => {
