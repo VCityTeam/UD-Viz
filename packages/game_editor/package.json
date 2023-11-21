@@ -19,7 +19,5 @@
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_editor",
-  "peerDependencies": {
-    "quickhull3d": "^2.1.0"
-  }
+  "peerDependencies": {}
 }
