@@ -56,7 +56,6 @@ const Parent = class {
      * 
      @type {workerThreads.Worker}*/
 
-    console.log('start thread @ ', threadProcessPath);
     this.worker = new workerThreads.Worker(threadProcessPath);
 
     /** @type {Object<string,Function>} */
@@ -239,7 +238,8 @@ class Child {
               console.log(
                 'child process',
                 this.gameContext.object3D.name,
-                'loaded'
+                'loaded',
+                this.gameContext.object3D.uuid
               );
 
               this.dispatch(
