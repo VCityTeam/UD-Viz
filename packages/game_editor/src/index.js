@@ -1,4 +1,5 @@
 import {
+  AudioComponent,
   ColliderComponent,
   Context,
   Object3D as GameObject3D,
@@ -35,7 +36,7 @@ import {
   RequestAnimationFrameProcess,
   Vector3Input,
 } from '@ud-viz/utils_browser';
-import { objectParse } from '@ud-viz/utils_shared';
+import { arrayPushOnce, removeFromArray } from '@ud-viz/utils_shared';
 
 const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
@@ -85,10 +86,15 @@ export class Editor {
     this.toolsDomElement.setAttribute('id', 'editor_tools');
     this.leftPan.appendChild(this.toolsDomElement);
 
-    /** @type {GameObject3DInput} */
     const possibleIdRenderData = [];
     for (const id in assetManager.renderData) possibleIdRenderData.push(id);
-    this.gameObjectInput = new GameObject3DInput(possibleIdRenderData);
+    const possibleIdSounds = [];
+    for (const id in assetManager.sounds) possibleIdSounds.push(id);
+    /** @type {GameObject3DInput} */
+    this.gameObjectInput = new GameObject3DInput(
+      possibleIdRenderData,
+      possibleIdSounds
+    );
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
 
@@ -748,11 +754,14 @@ export class Editor {
 }
 
 class GameObject3DInput extends HTMLElement {
-  constructor(idRenderData) {
+  constructor(idRenderDatas, idSounds) {
     super();
 
     /** @type {Array} */
-    this.idRenderData = idRenderData;
+    this.idRenderDatas = idRenderDatas;
+
+    /** @type {Array} */
+    this.idSounds = idSounds;
 
     /** @type {GameObject3D|null} */
     this.gameObject3D = null;
@@ -819,6 +828,10 @@ class GameObject3DInput extends HTMLElement {
     // render
     this.detailsRender = document.createElement('details');
     this.appendChild(this.detailsRender);
+
+    // audio
+    this.detailsAudio = document.createElement('details');
+    this.appendChild(this.detailsAudio);
   }
 
   /**
@@ -832,6 +845,7 @@ class GameObject3DInput extends HTMLElement {
 
     this.static.input.checked = go.static;
 
+    // transform
     this.updateTransform();
 
     // collider
@@ -839,6 +853,111 @@ class GameObject3DInput extends HTMLElement {
 
     // render
     this.updateRender();
+
+    // audio
+    this.updateAudio();
+  }
+
+  updateAudio() {
+    const audioComp = this.gameObject3D.getComponent(AudioComponent.TYPE);
+    this.detailsAudio.hidden = !audioComp;
+    if (audioComp) {
+      while (this.detailsAudio.firstChild)
+        this.detailsAudio.firstChild.remove();
+
+      // rebuild domelement
+      const summaryAudio = document.createElement('summary');
+      summaryAudio.innerText = 'Audio';
+      this.detailsAudio.appendChild(summaryAudio);
+
+      // sounds
+      const listIdSounds = document.createElement('ul');
+      this.detailsAudio.appendChild(listIdSounds);
+
+      const updateList = () => {
+        while (listIdSounds.firstChild) listIdSounds.firstChild.remove();
+
+        audioComp.model.soundsJSON.forEach((idSound) => {
+          const li = document.createElement('li');
+          li.innerText = idSound;
+          listIdSounds.appendChild(li);
+
+          const deleteButton = document.createElement('button');
+          deleteButton.innerText = 'delete';
+          li.appendChild(deleteButton);
+
+          deleteButton.onclick = () => {
+            removeFromArray(audioComp.model.soundsJSON, idSound);
+            updateList();
+          };
+        });
+      };
+      updateList();
+
+      // sounds
+      const selectIdSound = document.createElement('select');
+      this.detailsAudio.appendChild(selectIdSound);
+      this.idSounds.forEach((idSound) => {
+        const option = document.createElement('option');
+        option.value = idSound;
+        option.innerText = idSound;
+        selectIdSound.appendChild(option);
+      });
+
+      const addIdSound = document.createElement('button');
+      this.detailsAudio.appendChild(addIdSound);
+      addIdSound.innerText = 'Add sound';
+      addIdSound.onclick = () => {
+        if (
+          arrayPushOnce(
+            audioComp.model.soundsJSON,
+            selectIdSound.selectedOptions[0].value
+          )
+        ) {
+          // has been added
+          updateList();
+        }
+      };
+
+      // conf audio
+
+      // loop
+      const loop = createLabelInput('Loop: ', 'checkbox');
+      this.detailsAudio.appendChild(loop.parent);
+      loop.input.checked = audioComp.model.conf.loop;
+      loop.input.onchange = () => {
+        audioComp.model.conf.loop = loop.input.checked;
+      };
+
+      // autoplay
+      const autoplay = createLabelInput('Autoplay: ', 'checkbox');
+      this.detailsAudio.appendChild(autoplay.parent);
+      autoplay.input.checked = audioComp.model.conf.autoplay;
+      autoplay.input.onchange = () => {
+        audioComp.model.conf.autoplay = autoplay.input.checked;
+      };
+
+      // spatialized
+      const spatialized = createLabelInput('Spatialized: ', 'checkbox');
+      this.detailsAudio.appendChild(spatialized.parent);
+      spatialized.input.checked = audioComp.model.conf.spatialized;
+      spatialized.input.onchange = () => {
+        audioComp.model.conf.spatialized = spatialized.input.checked;
+      };
+
+      // volume
+      const volume = createLabelInput('Volume: ', 'range');
+      this.detailsAudio.appendChild(volume.parent);
+      volume.input.min = 0;
+      volume.input.max = 1;
+      volume.input.step = 'any';
+      volume.input.value = isNaN(audioComp.model.conf.volume)
+        ? 1
+        : audioComp.model.conf.volume;
+      volume.input.onchange = () => {
+        audioComp.model.conf.volume = volume.input.valueAsNumber;
+      };
+    }
   }
 
   updateRender() {
@@ -881,7 +1000,7 @@ class GameObject3DInput extends HTMLElement {
       // id model
       const selectIdRenderData = document.createElement('select');
       this.detailsRender.appendChild(selectIdRenderData);
-      this.idRenderData.forEach((id) => {
+      this.idRenderDatas.forEach((id) => {
         const option = document.createElement('option');
         option.innerText = id;
         option.value = id;
@@ -1016,7 +1135,6 @@ class GameObject3DInput extends HTMLElement {
         });
 
         const maxDim = Math.max(bb.max.x - bb.min.x, bb.max.y - bb.min.y);
-
         const halfSize = maxDim * 0.5;
         const camera = new OrthographicCamera(
           -halfSize,
@@ -1026,13 +1144,8 @@ class GameObject3DInput extends HTMLElement {
           0.001,
           10000
         );
-        const worldPosition = new Vector3();
-        this.gameObject3D.matrixWorld.decompose(
-          worldPosition,
-          new Quaternion(),
-          new Vector3()
-        );
-        camera.position.set(worldPosition.x, worldPosition.y, 1000);
+        bb.getCenter(camera.position);
+        camera.position.z = 1000;
         camera.updateProjectionMatrix();
         const renderer = new WebGLRenderer({
           canvas: document.createElement('canvas'),
@@ -1045,6 +1158,11 @@ class GameObject3DInput extends HTMLElement {
         renderer.setSize(size, size);
         renderer.setClearColor(0xffffff, 0);
         renderer.render(scene, camera);
+
+        // compute offset to translate collisions after
+        const offset = bb
+          .getCenter(new Vector3())
+          .sub(this.gameObject3D.position);
 
         this.gameObject3D.removeFromParent();
         oldParent.add(this.gameObject3D);
@@ -1070,8 +1188,8 @@ class GameObject3DInput extends HTMLElement {
 
           ctx.save();
           ctx.translate(
-            renderer.domElement.width * 0.5,
-            renderer.domElement.height * 0.5
+            (0.5 - offset.x / maxDim) * renderer.domElement.width,
+            (0.5 + offset.y / maxDim) * renderer.domElement.height
           );
           ctx.scale(
             renderer.domElement.width / maxDim,
