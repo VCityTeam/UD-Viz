@@ -76,7 +76,7 @@ export class AudioController extends Controller {
       if (sound.state() != 'loaded') continue;
 
       if (this.model.getConf().autoplay && !sound.playing()) sound.play();
-      if (this.model.getConf().volume)
+      if (!isNaN(this.model.getConf().volume))
         sound.volume(this.model.getConf().volume);
 
       // https://github.com/goldfire/howler.js#documentation
