@@ -209,6 +209,14 @@ export class Editor {
     this.colliderParent.name = 'colliderParent';
     this.frame3D.scene.add(this.colliderParent);
 
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.SHAPE_ADDED,
+      (event) => {
+        this.updateCollider();
+        this.selectShape(event.detail.shapeIndexCreated);
+      }
+    );
+
     /** @type {object} */
     this.shapeContext = {
       mesh: null,
@@ -804,11 +812,58 @@ class GameObject3DInput extends HTMLElement {
       summaryCollider.innerText = 'Collider';
       this.detailsCollider.appendChild(summaryCollider);
 
+      // edit body attr
       const bodyCheckbox = createLabelInput('body', 'checkbox');
       bodyCheckbox.input.checked = colliderComp.model.body;
       bodyCheckbox.input.onchange = () =>
         (colliderComp.model.body = bodyCheckbox.input.checked);
       this.detailsCollider.appendChild(bodyCheckbox.parent);
+
+      // add a polygon
+      const addPolygonButton = document.createElement('button');
+      addPolygonButton.innerText = 'Add Polygon';
+      this.detailsCollider.appendChild(addPolygonButton);
+
+      addPolygonButton.onclick = () => {
+        // add a square
+        colliderComp.model.shapesJSON.push({
+          type: ColliderComponent.SHAPE_TYPE.POLYGON,
+          points: [
+            { x: -5, y: -5, z: 0 },
+            { x: 5, y: -5, z: 0 },
+            { x: 5, y: 5, z: 0 },
+            { x: -5, y: 5, z: 0 },
+          ],
+        });
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.SHAPE_ADDED, {
+            detail: {
+              shapeIndexCreated: colliderComp.model.shapesJSON.length - 1,
+            },
+          })
+        );
+      };
+
+      // add a circle
+      const addCircleButton = document.createElement('button');
+      addCircleButton.innerText = 'Add Circle';
+      this.detailsCollider.appendChild(addCircleButton);
+
+      addCircleButton.onclick = () => {
+        // add a circle
+        colliderComp.model.shapesJSON.push({
+          type: ColliderComponent.SHAPE_TYPE.CIRCLE,
+          radius: 2.5,
+          center: { x: 0, y: 0, z: 0 },
+        });
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.SHAPE_ADDED, {
+            detail: {
+              shapeIndexCreated: colliderComp.model.shapesJSON.length - 1,
+            },
+          })
+        );
+      };
     }
   }
 
@@ -827,6 +882,7 @@ class GameObject3DInput extends HTMLElement {
   static get EVENT() {
     return {
       NAME_CHANGED: 'name_changed',
+      SHAPE_ADDED: 'polygon_added',
     };
   }
 }
