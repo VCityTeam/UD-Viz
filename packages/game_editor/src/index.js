@@ -96,17 +96,33 @@ export class Editor {
           this.updateCollider();
           this.updateBox3();
         } else {
-          // editing point shape in model
-          this.shapeContext.pointMesh.userData.shapeJSON.points[
-            this.shapeContext.pointMesh.userData.index
-          ] = {
-            x: this.shapeContext.pointMesh.position.x,
-            y: this.shapeContext.pointMesh.position.y,
-            z: this.shapeContext.pointMesh.position.z,
-          };
-          const indexPointSelected = this.shapeContext.pointMesh.userData.index;
-          this.updateShapeSelected();
-          this.selectPointMesh(this.pointsParent.children[indexPointSelected]);
+          if (
+            this.shapeContext.pointMesh.userData.shapeJSON.type ==
+            ColliderComponent.SHAPE_TYPE.POLYGON
+          ) {
+            // editing point shape in model
+            this.shapeContext.pointMesh.userData.shapeJSON.points[
+              this.shapeContext.pointMesh.userData.index
+            ] = {
+              x: this.shapeContext.pointMesh.position.x,
+              y: this.shapeContext.pointMesh.position.y,
+              z: this.shapeContext.pointMesh.position.z,
+            };
+            const indexPointSelected =
+              this.shapeContext.pointMesh.userData.index;
+            this.updateShapeSelected();
+            this.selectPointMesh(
+              this.pointsParent.children[indexPointSelected]
+            );
+          } else {
+            // circle center edited
+            this.shapeContext.pointMesh.userData.shapeJSON.center = {
+              x: this.shapeContext.pointMesh.position.x,
+              y: this.shapeContext.pointMesh.position.y,
+              z: this.shapeContext.pointMesh.position.z,
+            };
+            this.updateShapeSelected();
+          }
         }
       });
     }
@@ -221,6 +237,7 @@ export class Editor {
     this.shapeContext = {
       mesh: null,
       deleteButton: null,
+      radiusUI: null,
       pointMesh: null,
     };
     this.pointsParent = new Object3D();
@@ -315,6 +332,8 @@ export class Editor {
 
   selectShape(shapeIndex) {
     console.trace('shape select ', shapeIndex);
+
+    // reset state
     if (this.shapeContext.mesh) {
       this.shapeContext.mesh.material = COLLIDER_MATERIAL;
       this.shapeContext.mesh = null;
@@ -323,14 +342,20 @@ export class Editor {
       this.shapeContext.deleteButton.remove();
       this.shapeContext.deleteButton = null;
     }
+    if (this.shapeContext.radiusUI) {
+      this.shapeContext.radiusUI.parent.remove();
+      this.shapeContext.radiusUI = null;
+    }
     this.shapeContext.pointMesh = null;
 
     for (let i = this.pointsParent.children.length - 1; i >= 0; i--) {
       this.pointsParent.children[i].removeFromParent();
     }
 
+    // assign new index
     this.shapeContext.mesh = this.colliderParent.children[shapeIndex];
 
+    // set new stateContext state
     if (this.shapeContext.mesh) {
       this.setOrbitControlsTargetTo(this.shapeContext.mesh);
       this.shapeContext.mesh.material = COLLIDER_MATERIAL_SELECTED;
@@ -345,6 +370,31 @@ export class Editor {
         colliderComp.model.shapesJSON.splice(shapeIndex, 1);
         this.updateCollider();
       };
+
+      if (
+        colliderComp.model.shapesJSON[shapeIndex].type ==
+        ColliderComponent.SHAPE_TYPE.CIRCLE
+      ) {
+        // add ui to set radius
+        this.shapeContext.radiusUI = createLabelInput('Radius ', 'number');
+        this.gameObjectInput.detailsCollider.appendChild(
+          this.shapeContext.radiusUI.parent
+        );
+
+        // init
+        this.shapeContext.radiusUI.input.value =
+          colliderComp.model.shapesJSON[shapeIndex].radius;
+
+        this.shapeContext.radiusUI.input.onchange = () => {
+          const newRadius = this.shapeContext.radiusUI.input.valueAsNumber;
+          if (newRadius < 0.01) {
+            alert('radius must superior at 0.01');
+          } else {
+            colliderComp.model.shapesJSON[shapeIndex].radius = newRadius;
+            this.updateShapeSelected();
+          }
+        };
+      }
 
       this.gameObjectInput.detailsCollider.appendChild(
         this.shapeContext.deleteButton
@@ -395,7 +445,7 @@ export class Editor {
         this.shapeContext.mesh.geometry = new ConvexGeometry(
           shapeJSON.points.map((el) => new Vector3(el.x, el.y, el.z))
         );
-        console.trace('shape rebuilded with ', shapeJSON.points);
+        console.trace('shape rebuilded with ', shapeJSON);
       }
 
       shapeJSON.points.forEach((point, index) => {
@@ -405,9 +455,31 @@ export class Editor {
         );
         pointMesh.position.set(point.x, point.y, point.z);
         pointMesh.userData.index = index;
-        pointMesh.userData.shapeJSON = shapeJSON;
+        pointMesh.userData.shapeJSON = shapeJSON; // userdata used at the end of transform controls
         this.pointsParent.add(pointMesh);
       });
+    } else if (shapeJSON.type == ColliderComponent.SHAPE_TYPE.CIRCLE) {
+      if (rebuildShapeGeometry) {
+        this.shapeContext.mesh.geometry = new CircleGeometry(
+          shapeJSON.radius,
+          32
+        );
+        this.shapeContext.mesh.geometry.translate(
+          shapeJSON.center.x,
+          shapeJSON.center.y,
+          shapeJSON.center.z
+        );
+        console.trace('shape rebuilded with ', shapeJSON);
+      }
+      const pointMesh = new Mesh(new SphereGeometry(), COLLIDER_POINT_MATERIAL);
+      pointMesh.position.set(
+        shapeJSON.center.x,
+        shapeJSON.center.y,
+        shapeJSON.center.z
+      );
+      pointMesh.userData.shapeJSON = shapeJSON; // userdata used at the end of transform controls
+      this.pointsParent.add(pointMesh);
+      this.selectPointMesh(pointMesh);
     }
   }
 
