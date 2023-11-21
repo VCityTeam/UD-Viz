@@ -212,6 +212,34 @@ export class Version {
 
     /** @type {Array<THREE.Vector3>}*/
     this.initialPos = [];
+
+    /** @type {THREE.Mesh} */
+    this.dateSprite;
+
+    this.updateCentroid();
+  }
+
+  createSpriteDate() {
+    const canvas = document.createElement('canvas');
+    canvas.height = 512;
+    canvas.width = 512;
+
+    const ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.fillStyle = 'black';
+    ctx.font = '70px Arial';
+    const stringDate = this.date.toString();
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText(stringDate, 256, 256);
+
+    const canvasTexture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.MeshBasicMaterial({
+      map: canvasTexture,
+    });
+    this.dateSprite = new THREE.Sprite(material);
+
+    return this.dateSprite;
   }
 
   createPlane() {
@@ -239,22 +267,6 @@ export class Version {
     return (this.planes = planes);
   }
 
-  /* DEBUG */
-  debugBB() {
-    const BBs = [];
-    this.object3DTiles.forEach((object3D) => {
-      const boundingBoxHelper = new THREE.Box3Helper(
-        new THREE.Box3().setFromObject(object3D),
-        new THREE.Color(1, 0, 1)
-      );
-      boundingBoxHelper.position.copy(object3D.position);
-      boundingBoxHelper.updateMatrixWorld();
-
-      BBs.push(boundingBoxHelper);
-    });
-    return BBs;
-  }
-
   /**
    *
    * @param {THREE.Vector3} posDir
@@ -272,6 +284,10 @@ export class Version {
     this.directions = dirsToPoint;
   }
 
+  /**
+   *
+   * @param {THREE.Vector3} newPos
+   */
   translateVersion(newPos) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       this.object3DTiles[i].position.copy(
@@ -283,7 +299,13 @@ export class Version {
       );
       this.object3DTiles[i].updateMatrixWorld();
     }
+    this.updateCentroid();
   }
+
+  /**
+   *
+   * @param {number} angle
+   */
   updateRotation(angle) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       const dir = this.directions[i].clone();
@@ -294,6 +316,10 @@ export class Version {
     }
     this.updateCentroid();
   }
+
+  /**
+   *
+   */
   updateCentroid() {
     this.centroid = new THREE.Vector3();
     const sumPos = new THREE.Vector3(0, 0, 0);
@@ -350,10 +376,10 @@ export class SpaceTimeCube {
     this.layersTemporal = [];
 
     // Circle paramaters
-    const points = [];
     this.RAYON = 1000;
-    this.circle2;
+    this.circleDisplayed;
 
+    const points = [];
     let index = 1;
     for (let i = 0; i < 360; i += 72) {
       const angle = (i * Math.PI) / 180;
@@ -773,10 +799,10 @@ export class SpaceTimeCube {
 
     const geometry2 = new THREE.BufferGeometry().setFromPoints(points2);
     const material2 = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    this.circle2 = new THREE.Line(geometry2, material2);
-    this.circle2.position.set(centroid.x, centroid.y, 500);
-    this.circle2.updateMatrixWorld();
-    view.scene.add(this.circle2);
+    this.circleDisplayed = new THREE.Line(geometry2, material2);
+    this.circleDisplayed.position.set(centroid.x, centroid.y, 500);
+    this.circleDisplayed.updateMatrixWorld();
+    view.scene.add(this.circleDisplayed);
 
     this.circle.position.set(centroid.x, centroid.y, 500);
 
@@ -790,6 +816,8 @@ export class SpaceTimeCube {
         layertemporal.root.children.length != 0
       ) {
         const version = new Version(layertemporal.root.children, 2009);
+
+        // Initial position for better rotation
         layertemporal.root.children.forEach((obj) => {
           version.initialPos.push(obj.position.clone());
         });
@@ -804,6 +832,13 @@ export class SpaceTimeCube {
           )
         );
 
+        // Date sprite creation
+        const dateSprite = version.createSpriteDate();
+        dateSprite.position.copy(version.centroid);
+        dateSprite.scale.set(100, 100, 100);
+        dateSprite.updateMatrixWorld();
+        view.scene.add(dateSprite);
+
         version.object3DTiles.forEach((object3D) => {
           object3DCircle.push(object3D);
         });
@@ -817,8 +852,7 @@ export class SpaceTimeCube {
       v.directionToInitialPos();
     });
 
-    const circle = this.circle;
-    const circle2 = this.circle2;
+    const circleDisplayed = this.circleDisplayed;
     const versions = this.versions;
 
     rotateVersionsAroundObject();
@@ -828,8 +862,8 @@ export class SpaceTimeCube {
      */
     function rotateVersionsAroundObject() {
       const dirToCamera = new THREE.Vector2(
-        circle2.position.x - view.camera.camera3D.position.x,
-        circle2.position.y - view.camera.camera3D.position.y
+        circleDisplayed.position.x - view.camera.camera3D.position.x,
+        circleDisplayed.position.y - view.camera.camera3D.position.y
       ).normalize();
 
       const dirObject = new THREE.Vector2(0, 1);
@@ -840,8 +874,11 @@ export class SpaceTimeCube {
       if (orientation > 0) angle = 2 * Math.PI - angle;
 
       // Circle
-      circle2.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-      circle2.updateMatrixWorld();
+      circleDisplayed.setRotationFromAxisAngle(
+        new THREE.Vector3(0, 0, 1),
+        angle
+      );
+      circleDisplayed.updateMatrixWorld();
 
       // Versions
       versions.forEach((version) => {
@@ -863,8 +900,10 @@ export class SpaceTimeCube {
         )
       );
     }
-    this.circle2.geometry = new THREE.BufferGeometry().setFromPoints(points);
-    this.circle2.updateMatrixWorld();
+    this.circleDisplayed.geometry = new THREE.BufferGeometry().setFromPoints(
+      points
+    );
+    this.circleDisplayed.updateMatrixWorld();
 
     points = [];
     let index = 0;
@@ -884,6 +923,10 @@ export class SpaceTimeCube {
           500 - this.centerLayer.root.children[0].position.z
         )
       );
+      this.versions[index].dateSprite.position.copy(
+        this.versions[index].centroid
+      );
+      this.versions[index].dateSprite.updateMatrixWorld();
       index++;
     }
 

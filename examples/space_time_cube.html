@@ -152,18 +152,30 @@
         const elementVectorRepresentation = document.createElement('button');
         elementVectorRepresentation.textContent = 'Vector';
         elementVectorRepresentation.style = 'position: absolute; left: 0%; top: 0%; z-index:10';
-        viewDomElement.appendChild(elementVectorRepresentation);
+        document.body.appendChild(elementVectorRepresentation);
 
         const elementCircleRepresentation = document.createElement('button');
         elementCircleRepresentation.textContent = 'Circle';
         elementCircleRepresentation.style = 'position: absolute; left: 0%; top: 5%; z-index:10';
-        viewDomElement.appendChild(elementCircleRepresentation);
+        document.body.appendChild(elementCircleRepresentation);
 
+        const elementRayonParameter = document.createElement('input');
+        elementRayonParameter.type = 'number';
+        elementRayonParameter.name = 'rayon';
+        elementRayonParameter.value = '1000'; 
+        elementRayonParameter.style = 'position: absolute; left: 0%; top: 10%; z-index:10';
+        document.body.appendChild(elementRayonParameter);
+
+        // Events
         elementCircleRepresentation.onclick = () => {stc.displayVersionsCircle();};
         elementVectorRepresentation.onclick = () => {
           stc.RAYON = 2000;
           stc.update();
         };
+        elementRayonParameter.addEventListener('change', (event) => {
+          stc.RAYON = event.target.value;
+          stc.update();
+        });
 
 
         // DEBUG
