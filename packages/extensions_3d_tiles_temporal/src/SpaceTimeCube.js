@@ -209,6 +209,9 @@ export class Version {
 
     /** @type {Array<THREE.Vector3>}*/
     this.directions = [];
+
+    /** @type {Array<THREE.Vector3>}*/
+    this.initialPos = [];
   }
 
   createPlane() {
@@ -256,29 +259,35 @@ export class Version {
    *
    * @param {THREE.Vector3} posDir
    */
-  directionToPoint(posDir) {
+  directionToInitialPos() {
     const dirsToPoint = [];
-    this.object3DTiles.forEach((object3D) => {
+    for (let i = 0; i < this.object3DTiles.length; i++) {
       const dirToPos = new THREE.Vector3(
-        posDir.x - object3D.position.x,
-        posDir.y - object3D.position.y,
-        posDir.z - object3D.position.z
+        this.initialPos[i].x - this.object3DTiles[i].position.x,
+        this.initialPos[i].y - this.object3DTiles[i].position.y,
+        this.initialPos[i].z - this.object3DTiles[i].position.z
       );
       dirsToPoint.push(dirToPos);
-    });
+    }
     this.directions = dirsToPoint;
   }
 
   translateVersion(newPos) {
-    this.object3DTiles.forEach((object3D) => {
-      object3D.position.add(newPos);
-      object3D.updateMatrixWorld();
-    });
+    for (let i = 0; i < this.object3DTiles.length; i++) {
+      this.object3DTiles[i].position.copy(
+        new THREE.Vector3(
+          newPos.x + this.initialPos[i].x,
+          newPos.y + this.initialPos[i].y,
+          newPos.z + this.initialPos[i].z
+        )
+      );
+      this.object3DTiles[i].updateMatrixWorld();
+    }
   }
-  updateRotation(posRotateAround, angle) {
+  updateRotation(angle) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       const dir = this.directions[i].clone();
-      this.object3DTiles[i].position.copy(posRotateAround);
+      this.object3DTiles[i].position.copy(this.initialPos[i]);
       dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
       this.object3DTiles[i].position.sub(dir);
       this.object3DTiles[i].updateMatrixWorld();
@@ -339,14 +348,21 @@ export class SpaceTimeCube {
 
     this.centerLayer = this.layers()[0];
     this.layersTemporal = [];
-    const points = [],
-      RAYON = 1000;
+
+    // Circle paramaters
+    const points = [];
+    this.RAYON = 1000;
+    this.circle2;
 
     let index = 1;
     for (let i = 0; i < 360; i += 72) {
       const angle = (i * Math.PI) / 180;
       points.push(
-        new THREE.Vector3(RAYON * Math.cos(angle), RAYON * Math.sin(angle), 0)
+        new THREE.Vector3(
+          this.RAYON * Math.cos(angle),
+          this.RAYON * Math.sin(angle),
+          0
+        )
       );
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
         this.centerLayer.id + '_' + i,
@@ -365,7 +381,6 @@ export class SpaceTimeCube {
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
     this.circle = new THREE.Line(geometry, material);
-    // this.view.scene.add(this.circle);
   }
 
   vectorRepresentation() {
@@ -735,7 +750,7 @@ export class SpaceTimeCube {
     });
   }
 
-  circleRepresentation() {
+  displayVersionsCircle() {
     const view = this.view;
 
     const initVersion = new Version(this.centerLayer.root.children, 0);
@@ -748,29 +763,23 @@ export class SpaceTimeCube {
     for (let i = 0; i < 300; i += 10) {
       const angle = (i * Math.PI) / 180;
       points2.push(
-        new THREE.Vector3(1000 * Math.cos(angle), 1000 * Math.sin(angle), 0)
+        new THREE.Vector3(
+          this.RAYON * Math.cos(angle),
+          this.RAYON * Math.sin(angle),
+          0
+        )
       );
     }
 
     const geometry2 = new THREE.BufferGeometry().setFromPoints(points2);
     const material2 = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    const circle2 = new THREE.Line(geometry2, material2);
-    circle2.position.set(centroid.x, centroid.y, 500);
-    circle2.updateMatrixWorld();
-    view.scene.add(circle2);
-
-    // DEBUG
-    const boundingBoxHelperDebug = new THREE.Box3Helper(
-      new THREE.Box3().setFromObject(this.layers()[0].object3d),
-      new THREE.Color(1, 0, 1)
-    );
-    boundingBoxHelperDebug.position.copy(centroid);
-    boundingBoxHelperDebug.updateMatrixWorld();
-
-    view.scene.add(boundingBoxHelperDebug);
+    this.circle2 = new THREE.Line(geometry2, material2);
+    this.circle2.position.set(centroid.x, centroid.y, 500);
+    this.circle2.updateMatrixWorld();
+    view.scene.add(this.circle2);
 
     this.circle.position.set(centroid.x, centroid.y, 500);
-    // this.circle.updateMatrixWorld();
+
     const object3DCircle = [];
 
     // Update with circle coordinates
@@ -781,6 +790,10 @@ export class SpaceTimeCube {
         layertemporal.root.children.length != 0
       ) {
         const version = new Version(layertemporal.root.children, 2009);
+        layertemporal.root.children.forEach((obj) => {
+          version.initialPos.push(obj.position.clone());
+        });
+
         this.versions.push(version);
 
         version.translateVersion(
@@ -795,32 +808,25 @@ export class SpaceTimeCube {
           object3DCircle.push(object3D);
         });
 
-        // Helper
-        // version.debugBB().forEach((BB) => {
-        //   view.scene.add(BB);
-        // });
-        // version.createPlane().forEach((planeMesh) => {
-        //   view.scene.add(planeMesh);
-        // });
-
         i += 3;
         view.notifyChange();
       }
     });
 
-    const circle = this.circle;
-    const versions = this.versions;
-
     this.versions.forEach((v) => {
-      v.directionToPoint(this.circle.position);
+      v.directionToInitialPos();
     });
 
-    rotateObjects();
+    const circle = this.circle;
+    const circle2 = this.circle2;
+    const versions = this.versions;
+
+    rotateVersionsAroundObject();
 
     /**
      *
      */
-    function rotateObjects() {
+    function rotateVersionsAroundObject() {
       const dirToCamera = new THREE.Vector2(
         circle2.position.x - view.camera.camera3D.position.x,
         circle2.position.y - view.camera.camera3D.position.y
@@ -839,9 +845,53 @@ export class SpaceTimeCube {
 
       // Versions
       versions.forEach((version) => {
-        version.updateRotation(circle.position, angle);
+        version.updateRotation(angle);
       });
-      requestAnimationFrame(rotateObjects);
+      requestAnimationFrame(rotateVersionsAroundObject);
     }
+  }
+
+  update() {
+    let points = [];
+    for (let i = 0; i < 300; i += 10) {
+      const angle = (i * Math.PI) / 180;
+      points.push(
+        new THREE.Vector3(
+          this.RAYON * Math.cos(angle),
+          this.RAYON * Math.sin(angle),
+          0
+        )
+      );
+    }
+    this.circle2.geometry = new THREE.BufferGeometry().setFromPoints(points);
+    this.circle2.updateMatrixWorld();
+
+    points = [];
+    let index = 0;
+    for (let i = 0; i < 360; i += 72) {
+      const angle = (i * Math.PI) / 180;
+      const pos = new THREE.Vector3(
+        this.RAYON * Math.cos(angle),
+        this.RAYON * Math.sin(angle),
+        0
+      );
+      points.push(pos);
+
+      this.versions[index].translateVersion(
+        new THREE.Vector3(
+          pos.x,
+          pos.y,
+          500 - this.centerLayer.root.children[0].position.z
+        )
+      );
+      index++;
+    }
+
+    this.circle.geometry = new THREE.BufferGeometry().setFromPoints(points);
+    this.circle.updateMatrixWorld();
+    this.versions.forEach((v) => {
+      v.directionToInitialPos();
+    });
+    this.view.notifyChange();
   }
 }

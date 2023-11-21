@@ -148,6 +148,7 @@
           view, 100
         );
 
+        // Html
         const elementVectorRepresentation = document.createElement('button');
         elementVectorRepresentation.textContent = 'Vector';
         elementVectorRepresentation.style = 'position: absolute; left: 0%; top: 0%; z-index:10';
@@ -158,14 +159,17 @@
         elementCircleRepresentation.style = 'position: absolute; left: 0%; top: 5%; z-index:10';
         viewDomElement.appendChild(elementCircleRepresentation);
 
-        elementVectorRepresentation.onclick = () => {stc.vectorRepresentation();};
-        elementCircleRepresentation.onclick = () => {stc.circleRepresentation();};
+        elementCircleRepresentation.onclick = () => {stc.displayVersionsCircle();};
+        elementVectorRepresentation.onclick = () => {
+          stc.RAYON = 2000;
+          stc.update();
+        };
 
 
         // DEBUG
         udviz.localStorageSetCameraMatrix(
           view.camera.camera3D,
-          'debug_temporal'
+          'debug_spatio'
         );
       });
   </script>
