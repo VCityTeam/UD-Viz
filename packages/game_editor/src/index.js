@@ -29,7 +29,6 @@ import {
   RequestAnimationFrameProcess,
   Vector3Input,
 } from '@ud-viz/utils_browser';
-import * as quickhull3d from 'quickhull3d';
 
 const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
@@ -93,11 +92,11 @@ export class Editor {
       });
       this.transformControls.addEventListener('mouseUp', () => {
         if (!this.shapeContext.pointMesh) {
-          //editing go transform
+          // editing go transform
           this.updateCollider();
           this.updateBox3();
         } else {
-          //editing point shape in model
+          // editing point shape in model
           this.shapeContext.pointMesh.userData.shapeJSON.points[
             this.shapeContext.pointMesh.userData.index
           ] = {
@@ -105,25 +104,9 @@ export class Editor {
             y: this.shapeContext.pointMesh.position.y,
             z: this.shapeContext.pointMesh.position.z,
           };
-
-          // this.shapeContext.pointMesh.userData.shapeJSON.points = quickhull3d(
-          //   this.shapeContext.pointMesh.userData.shapeJSON.points.map((el) => [
-          //     el.x,
-          //     el.y,
-          //     el.z,
-          //   ])
-          // ).map((el) => {
-          //   return { x: el[0], y: el[1], z: el[2] };
-          // });
-          // this.shapeContext.pointMesh.userData.shapeJSON.points.pop(); //remove first point
-
-          // rebuild
-
-          this.shapeContext.mesh.geometry = new ConvexGeometry().setFromPoints(
-            this.shapeContext.pointMesh.userData.shapeJSON.points.map(
-              (el) => new Vector3(el.x, el.y, el.z)
-            )
-          );
+          const indexPointSelected = this.shapeContext.pointMesh.userData.index;
+          this.updateShapeSelected();
+          this.selectPointMesh(this.pointsParent.children[indexPointSelected]);
         }
       });
     }
@@ -239,6 +222,20 @@ export class Editor {
       const raycaster = new Raycaster();
       window.addEventListener('keydown', (event) => {
         if (event.key == 'Escape') this.selectShape(-1);
+        else if (event.key == 'Delete' && this.shapeContext.pointMesh) {
+          if (
+            this.shapeContext.pointMesh.userData.shapeJSON.points.length < 5
+          ) {
+            alert('a polygon must have at least 4 points');
+          } else {
+            // delete this point
+            this.shapeContext.pointMesh.userData.shapeJSON.points.splice(
+              this.shapeContext.pointMesh.userData.index,
+              1
+            );
+            this.updateShapeSelected();
+          }
+        }
       });
       this.frame3D.domElementWebGL.addEventListener('click', (event) => {
         const mouse = new Vector2(
@@ -260,19 +257,56 @@ export class Editor {
             this.selectShape(index);
           }
         } else {
-          // look for intersect with points shape
-          const intersects = raycaster.intersectObject(this.pointsParent, true);
-          if (intersects.length) {
-            this.shapeContext.pointMesh = intersects[0].object;
-            this.transformControls.attach(this.shapeContext.pointMesh);
+          if (event.ctrlKey) {
+            // add a point
+            const intersects = raycaster.intersectObject(
+              this.gameObjectInput.gameObject3D,
+              true
+            );
+            if (intersects.length) {
+              const point = intersects[0].point;
+              const index = this.colliderParent.children.indexOf(
+                this.shapeContext.mesh
+              );
+              const colliderComp =
+                this.gameObjectInput.gameObject3D.getComponent(
+                  ColliderComponent.TYPE
+                );
+              // in gameobject referential
+              const invMatrixWorld = this.pointsParent.matrixWorld
+                .clone()
+                .invert();
+              point.applyMatrix4(invMatrixWorld);
+
+              colliderComp.model.shapesJSON[index].points.push({
+                x: point.x,
+                y: point.y,
+                z: point.z,
+              });
+              this.updateShapeSelected();
+            }
+          } else {
+            // look for intersect with points shape
+            const intersects = raycaster.intersectObject(
+              this.pointsParent,
+              true
+            );
+            if (intersects.length) {
+              this.selectPointMesh(intersects[0].object);
+            }
           }
         }
       });
     }
   }
 
+  selectPointMesh(mesh) {
+    this.shapeContext.pointMesh = mesh;
+    this.transformControls.attach(this.shapeContext.pointMesh);
+  }
+
   selectShape(shapeIndex) {
-    console.log('shape select ', shapeIndex);
+    console.trace('shape select ', shapeIndex);
     if (this.shapeContext.mesh) {
       this.shapeContext.mesh.material = COLLIDER_MATERIAL;
       this.shapeContext.mesh = null;
@@ -308,40 +342,65 @@ export class Editor {
         this.shapeContext.deleteButton
       );
 
-      this.transformControls.detach();
-
-      const shapeJSON = colliderComp.model.shapesJSON[shapeIndex];
-
-      if (shapeJSON.type == ColliderComponent.SHAPE_TYPE.POLYGON) {
-        const worldPosition = new Vector3();
-
-        this.gameObjectInput.gameObject3D.matrixWorld.decompose(
-          worldPosition,
-          new Quaternion(),
-          new Vector3()
-        );
-
-        this.pointsParent.position.copy(worldPosition);
-
-        shapeJSON.points.forEach((point, index) => {
-          const pointMesh = new Mesh(
-            new SphereGeometry(),
-            COLLIDER_POINT_MATERIAL
-          );
-          pointMesh.position.set(point.x, point.y, point.z);
-          pointMesh.userData.index = index;
-          pointMesh.userData.shapeJSON = shapeJSON;
-          this.pointsParent.add(pointMesh);
-        });
-      }
+      this.updateShapeSelected(false); // no need to rebuild shape geometry
     } else {
       this.transformControls.attach(this.gameObjectInput.gameObject3D);
     }
   }
 
-  dispose() {
-    this.process.stop();
-    window.removeEventListener('resize', this.resizeListener);
+  updateShapeSelected(rebuildShapeGeometry = true) {
+    // remove all old point meshes
+    for (let i = this.pointsParent.children.length - 1; i >= 0; i--) {
+      this.pointsParent.children[i].removeFromParent();
+    }
+
+    // reset transform controls
+    this.transformControls.detach();
+
+    // unreference this.shapeContext.pointMesh
+    this.shapeContext.pointMesh = null;
+
+    // transform pointParent in referential of the current gameobject3D
+    const worldPosition = new Vector3();
+    const worldQuaternion = new Quaternion();
+    const worldScale = new Vector3();
+    this.gameObjectInput.gameObject3D.matrixWorld.decompose(
+      worldPosition,
+      worldQuaternion,
+      worldScale
+    );
+
+    this.pointsParent.position.copy(worldPosition);
+    this.pointsParent.quaternion.copy(worldQuaternion);
+    this.pointsParent.scale.copy(worldScale);
+
+    // retrieve shapeJSON
+    const colliderComp = this.gameObjectInput.gameObject3D.getComponent(
+      ColliderComponent.TYPE
+    );
+    const index = this.colliderParent.children.indexOf(this.shapeContext.mesh);
+    const shapeJSON = colliderComp.model.shapesJSON[index];
+
+    // rebuild shape + point mesh
+    if (shapeJSON.type == ColliderComponent.SHAPE_TYPE.POLYGON) {
+      if (rebuildShapeGeometry) {
+        this.shapeContext.mesh.geometry = new ConvexGeometry(
+          shapeJSON.points.map((el) => new Vector3(el.x, el.y, el.z))
+        );
+        console.trace('shape rebuilded with ', shapeJSON.points);
+      }
+
+      shapeJSON.points.forEach((point, index) => {
+        const pointMesh = new Mesh(
+          new SphereGeometry(),
+          COLLIDER_POINT_MATERIAL
+        );
+        pointMesh.position.set(point.x, point.y, point.z);
+        pointMesh.userData.index = index;
+        pointMesh.userData.shapeJSON = shapeJSON;
+        this.pointsParent.add(pointMesh);
+      });
+    }
   }
 
   /**
@@ -489,10 +548,14 @@ export class Editor {
     const colliderComp = go.getComponent(ColliderComponent.TYPE);
     if (colliderComp) {
       const worldPosition = new Vector3();
+      const worldQuaternion = new Quaternion();
+      const worldScale = new Vector3();
 
-      go.matrixWorld.decompose(worldPosition, new Quaternion(), new Vector3());
+      go.matrixWorld.decompose(worldPosition, worldQuaternion, worldScale);
 
       this.colliderParent.position.copy(worldPosition);
+      this.colliderParent.quaternion.copy(worldQuaternion);
+      this.colliderParent.scale.copy(worldScale);
 
       colliderComp.model.shapesJSON.forEach((shape) => {
         let geometry = null;
@@ -671,7 +734,7 @@ class GameObject3DInput extends HTMLElement {
     // collider
     this.updateCollider();
 
-    //render
+    // render
     const renderComp = go.getComponent(RenderComponent.TYPE);
     this.detailsRender.hidden = !renderComp;
     if (renderComp) {
