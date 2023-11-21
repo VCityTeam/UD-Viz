@@ -782,7 +782,11 @@ export class SpaceTimeCube {
     const initVersion = new Version(this.centerLayer.root.children, 0);
     initVersion.updateCentroid();
 
-    const centroid = initVersion.centroid;
+    const centroid = new THREE.Vector3(
+      initVersion.centroid.x,
+      initVersion.centroid.y + 500,
+      initVersion.centroid.z
+    );
 
     // Init circle line
     const points2 = [];
@@ -819,7 +823,13 @@ export class SpaceTimeCube {
 
         // Initial position for better rotation
         layertemporal.root.children.forEach((obj) => {
-          version.initialPos.push(obj.position.clone());
+          version.initialPos.push(
+            new THREE.Vector3(
+              obj.position.x,
+              obj.position.y + this.RAYON / 2,
+              obj.position.z
+            )
+          );
         });
 
         this.versions.push(version);
@@ -883,7 +893,10 @@ export class SpaceTimeCube {
       // Versions
       versions.forEach((version) => {
         version.updateRotation(angle);
+        version.dateSprite.position.copy(version.centroid);
+        version.dateSprite.updateMatrixWorld();
       });
+
       requestAnimationFrame(rotateVersionsAroundObject);
     }
   }
