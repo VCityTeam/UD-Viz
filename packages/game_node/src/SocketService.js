@@ -87,13 +87,15 @@ const SocketService = class {
   /**
    * Launch thread running game context simulation
    *
-   * @param {Array<Object3D>} gameObjects3D - array of gameobject3D to simulate
+   * @param {Array<object>} gameObjects3D - array of gameobject3D json to simulate
    * @param {string} threadProcessPath - path to the thread process
    * @param {string=} entryGameObject3DUUID - uuid of default gameobject to connect socket connected
    * @returns {Promise} - a promises resolving when all thread have been initialized
    */
   loadGameThreads(gameObjects3D, threadProcessPath, entryGameObject3DUUID) {
     const promises = [];
+
+    gameObjects3D = gameObjects3D.map((json) => Object3D.parseJSON(json));
 
     // default gameobject3D when socket connect
     this.defaultEntryGameObject3DUUID =
