@@ -101,7 +101,7 @@
             feature: null,
             layer: null,
           };
-          view.mainLoop.gfxEngine.renderer.domElement.onclick = (event) => {
+          view.domElement.onclick = (event) => {
             if (contextSelection.feature) {
               // reset feature userData
               contextSelection.feature.userData.selectedColor = null;
