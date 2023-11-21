@@ -4,6 +4,7 @@ import {
   initScene,
   computeNearFarCamera,
 } from '@ud-viz/utils_browser';
+import { throttle } from '@ud-viz/utils_shared';
 import * as itowns from 'itowns';
 import * as THREE from 'three';
 
@@ -83,6 +84,11 @@ export class Planar extends Base {
       this.sceneConfig
     );
 
+    /** @type {Function} */
+    this.triggerItownsMainLoopEvent = throttle(() => {
+      this.itownsView.notifyChange(this.camera);
+    }, 2000); // => to load 3DTiles and trigger mainLoop event every 2 sec
+
     let useItownsMainLoop = true;
     if (options.useItownsMainLoop != undefined)
       useItownsMainLoop = options.useItownsMainLoop;
@@ -127,7 +133,7 @@ export class Planar extends Base {
   render() {
     super.render();
 
-    this.itownsView.notifyChange(this.camera); // => to load 3DTiles
+    this.triggerItownsMainLoopEvent();
 
     // render also label layers
     if (this.isRendering && this.itownsView.tileLayer) {
