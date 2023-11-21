@@ -1,6 +1,25 @@
 const EPSILON = 0.0001;
 
 /**
+ * Limit the execution of a function every delay ms
+ *
+ * @param {Function} fn - function to be throttled
+ * @param {number} delay - delay in ms
+ * @returns {*} - return what the function should return every delay ms
+ */
+const throttle = (fn, delay) => {
+  let lastCalled = 0;
+  return (...args) => {
+    const now = new Date().getTime();
+    if (now - lastCalled < delay) {
+      return;
+    }
+    lastCalled = now;
+    return fn(...args);
+  };
+};
+
+/**
  * Check if a string is a valid number
  * inspired of https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
  *
@@ -309,8 +328,8 @@ function getAttributeByPath(obj, path) {
 /**
  * Check if two json object are equals
  *
- * @param {object} j1 - first json object
- * @param {object} j2 - second json object
+ * @param {object}  json1 - first json object
+ * @param {object} json2 - second json object
  * @returns {boolean} - true if both json are equals, false otherwise
  */
 function objectEquals(json1, json2) {
@@ -517,6 +536,7 @@ const vector3ToLabel = (v) => {
 
 module.exports = {
   EPSILON: EPSILON,
+  throttle: throttle,
   vector3ToLabel: vector3ToLabel,
   round: round,
   insert: insert,
