@@ -3,8 +3,11 @@
   z-index: 10;
   width: fit-content;
   height: 100%;
-  max-width: 300px;
   overflow-y: scroll;
+}
+
+#left_pan img {
+  width: 100%;
 }
 
 #current_game_object_3d {
