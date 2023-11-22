@@ -48,10 +48,39 @@ const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
 export class ScriptInput {
-  constructor(editor) {
+  /**
+   * private constructor user should not extends it !!
+   *
+   * @param {Editor} editor - editor running this script
+   * @param gameObject3D
+   * @param variables
+   * @param domElement
+   */
+  constructor(editor, variables, domElement) {
     /** @type {Editor} */
     this.editor = editor;
+
+    /** @type {object} */
+    this.variables = variables;
+
+    /** @type {HTMLElement} */
+    this.domElement = domElement;
+
+    /** @type {HTMLElement} */
+    const closeButton = document.createElement('button');
+    this.domElement.appendChild(closeButton);
+    closeButton.innerText = 'Fermer';
+
+    closeButton.onclick = this.dispose.bind(this);
   }
+
+  dispose() {
+    while (this.domElement.firstChild) this.domElement.firstChild.remove();
+  }
+
+  init() {}
+
+  tick() {}
 
   static get ID_SCRIPT() {
     throw new Error(
@@ -68,8 +97,15 @@ export class Editor {
    * @param scriptInputs
    * @param externalScriptInputs
    * @param gameScriptInputs
+   * @param userData
    */
-  constructor(frame3D, assetManager, externalScriptInputs, gameScriptInputs) {
+  constructor(
+    frame3D,
+    assetManager,
+    externalScriptInputs,
+    gameScriptInputs,
+    userData
+  ) {
     /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
     this.frame3D = frame3D;
 
@@ -81,6 +117,12 @@ export class Editor {
 
     /** @type {Array<ScriptInput>} */
     this.gameScriptInputs = gameScriptInputs;
+
+    /** @type {ScriptInput|null} */
+    this.scriptInput = null;
+
+    /** @type {object} */
+    this.userData = userData;
 
     /** @type {HTMLElement} */
     this.leftPan = document.createElement('div');
@@ -117,10 +159,14 @@ export class Editor {
     for (const id in assetManager.renderData) possibleIdRenderData.push(id);
     const possibleIdSounds = [];
     for (const id in assetManager.sounds) possibleIdSounds.push(id);
+    const possibleIdGameScripts = [];
+    for (const id in this.gameScriptInputs)
+      possibleIdGameScripts.push(this.gameScriptInputs[id].ID_EDIT_SCRIPT);
     /** @type {GameObject3DInput} */
     this.gameObjectInput = new GameObject3DInput(
       possibleIdRenderData,
-      possibleIdSounds
+      possibleIdSounds,
+      possibleIdGameScripts
     );
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
@@ -206,9 +252,10 @@ export class Editor {
 
     /** @type {RequestAnimationFrameProcess} */
     this.process = new RequestAnimationFrameProcess(20);
-    this.process.start(() => {
+    this.process.start((dt) => {
       this.transformControls.updateMatrixWorld();
       this.frame3D.render();
+      if (this.scriptInput) this.scriptInput.tick(dt);
     });
 
     /** @type {GameObject3D|null} */
@@ -379,6 +426,42 @@ export class Editor {
         }
       });
     }
+
+    const createScriptInputOf = (idEditScript) => {
+      const variables = this.gameObjectInput.gameObject3D.getComponent(
+        GameScriptComponent.TYPE
+      ).model.variables;
+      for (const id in this.gameScriptInputs) {
+        if (this.gameScriptInputs[id].ID_EDIT_SCRIPT == idEditScript) {
+          return new this.gameScriptInputs[id](
+            this,
+            variables,
+            this.gameObjectInput.gameScriptInputDomElement
+          );
+        }
+      }
+    };
+
+    // game script edition
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.GAME_SCRIPT_EDIT,
+      (event) => {
+        if (this.scriptInput) this.scriptInput.dispose();
+        this.scriptInput = createScriptInputOf(event.detail.id);
+        this.scriptInput.init();
+      }
+    );
+
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.GAME_SCRIPT_DELETED,
+      (event) => {
+        if (
+          this.scriptInput &&
+          this.scriptInput.ID_EDIT_SCRIPT == event.detail.id
+        )
+          this.scriptInput.dispose();
+      }
+    );
   }
 
   /**
@@ -505,6 +588,9 @@ export class Editor {
 
   selectGameObject3D(go) {
     if (go == this.gameObjectInput.gameObject3D) return;
+
+    if (this.scriptInput) this.scriptInput.dispose();
+
     // game input dom element
     this.gameObjectInput.setGameObject3D(go);
     // bind
@@ -682,7 +768,7 @@ export class Editor {
 
       shapeJSON.points.forEach((point, index) => {
         const pointMesh = new Mesh(
-          new SphereGeometry(),
+          new SphereGeometry(0.6),
           COLLIDER_POINT_MATERIAL
         );
         pointMesh.position.set(point.x, point.y, point.z);
@@ -703,7 +789,10 @@ export class Editor {
         );
         console.trace('shape rebuilded with ', shapeJSON);
       }
-      const pointMesh = new Mesh(new SphereGeometry(), COLLIDER_POINT_MATERIAL);
+      const pointMesh = new Mesh(
+        new SphereGeometry(0.6),
+        COLLIDER_POINT_MATERIAL
+      );
       pointMesh.position.set(
         shapeJSON.center.x,
         shapeJSON.center.y,
@@ -780,7 +869,7 @@ export class Editor {
 }
 
 class GameObject3DInput extends HTMLElement {
-  constructor(idRenderDatas, idSounds) {
+  constructor(idRenderDatas, idSounds, idGameScripts) {
     super();
 
     /** @type {Array} */
@@ -788,6 +877,9 @@ class GameObject3DInput extends HTMLElement {
 
     /** @type {Array} */
     this.idSounds = idSounds;
+
+    /** @type {Array} */
+    this.idGameScripts = idGameScripts;
 
     /** @type {GameObject3D|null} */
     this.gameObject3D = null;
@@ -904,6 +996,87 @@ class GameObject3DInput extends HTMLElement {
       const summaryAudio = document.createElement('summary');
       summaryAudio.innerText = 'GameScript';
       this.detailsGameScript.appendChild(summaryAudio);
+
+      const listScript = document.createElement('ul');
+      this.detailsGameScript.appendChild(listScript);
+
+      const updateList = () => {
+        while (listScript.firstChild) listScript.firstChild.remove();
+
+        gameScriptComp.model.scriptParams.forEach((param, index) => {
+          const li = document.createElement('li');
+          li.innerText = param.id;
+          listScript.appendChild(li);
+
+          if (this.idGameScripts.includes(param.id)) {
+            // call editor script input
+            const editButton = document.createElement('button');
+            editButton.innerText = 'Edit';
+            li.appendChild(editButton);
+            editButton.onclick = () => {
+              this.dispatchEvent(
+                new CustomEvent(GameObject3DInput.EVENT.GAME_SCRIPT_EDIT, {
+                  detail: { id: param.id },
+                })
+              );
+            };
+          }
+
+          const deleteButton = document.createElement('button');
+          deleteButton.innerText = 'delete';
+          li.appendChild(deleteButton);
+
+          deleteButton.onclick = () => {
+            gameScriptComp.model.scriptParams.splice(index, 1);
+            this.dispatchEvent(
+              new CustomEvent(GameObject3DInput.EVENT.GAME_SCRIPT_DELETED, {
+                detail: { id: param.id },
+              })
+            );
+            updateList();
+          };
+
+          const priority = createLabelInput('Priorité: ', 'number');
+          li.appendChild(priority.parent);
+          priority.input.value = !isNaN(param.priority) ? param.priority : 0;
+          priority.input.onchange = () => {
+            const newPriority = Math.round(priority.input.value);
+            if (isNaN(newPriority)) return;
+            priority.input.value = newPriority; // the rounded one
+            param.priority = newPriority;
+          };
+        });
+      };
+      updateList();
+
+      const selectIdScript = document.createElement('select');
+      this.detailsGameScript.appendChild(selectIdScript);
+
+      this.idGameScripts.forEach((id) => {
+        const option = document.createElement('option');
+        option.innerText = id;
+        option.value = id;
+        selectIdScript.appendChild(option);
+      });
+
+      const addScriptButton = document.createElement('button');
+      addScriptButton.innerText = 'Add game script';
+      this.detailsGameScript.appendChild(addScriptButton);
+
+      addScriptButton.onclick = () => {
+        const idToAdd = selectIdScript.selectedOptions[0].value;
+        const alreadyThere =
+          gameScriptComp.model.scriptParams.filter(
+            (param) => param.id == idToAdd
+          ).length != 0;
+        if (!alreadyThere) {
+          gameScriptComp.model.scriptParams.push({ id: idToAdd, priority: 0 });
+          updateList();
+        }
+      };
+
+      this.gameScriptInputDomElement = document.createElement('div');
+      this.detailsGameScript.appendChild(this.gameScriptInputDomElement);
     }
   }
 
@@ -1277,6 +1450,8 @@ class GameObject3DInput extends HTMLElement {
     return {
       NAME_CHANGED: 'name_changed',
       SHAPE_ADDED: 'polygon_added',
+      GAME_SCRIPT_EDIT: 'game_script_edit',
+      GAME_SCRIPT_DELETED: 'game_script_deleted',
     };
   }
 }
