@@ -885,11 +885,11 @@ class GameObject3DInput extends HTMLElement {
     this.gameObject3D = null;
 
     // Name
-    this.name = createLabelInput('Name: ', 'text');
-    this.appendChild(this.name.parent);
+    this.nameLabelInput = createLabelInput('Name: ', 'text');
+    this.appendChild(this.nameLabelInput.parent);
 
-    this.name.input.onchange = () => {
-      this.gameObject3D.name = this.name.input.value;
+    this.nameLabelInput.input.onchange = () => {
+      this.gameObject3D.name = this.nameLabelInput.input.value;
       this.dispatchEvent(new CustomEvent(GameObject3DInput.EVENT.NAME_CHANGED));
     };
 
@@ -963,7 +963,7 @@ class GameObject3DInput extends HTMLElement {
   setGameObject3D(go) {
     this.gameObject3D = go;
 
-    this.name.input.value = go.name;
+    this.nameLabelInput.input.value = go.name;
 
     this.static.input.checked = go.static;
 
