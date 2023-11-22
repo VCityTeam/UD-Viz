@@ -19,16 +19,16 @@
   overflow-y: scroll;
 }
 
-.editor_list_collider{
+.editor_list_collider {
   max-height: 100px;
   overflow-y: scroll;
 }
 
-.editor_list_collider li:hover{
+.editor_list_collider li:hover {
   cursor: pointer;
 }
 
-.editor_shape_input{
+.editor_shape_input {
   max-height: 100px;
   overflow-y: scroll;
 }
@@ -39,4 +39,8 @@
 
 #editor_tools {
   height: fit-content;
+}
+
+vector3-input {
+  display: block;
 }
