@@ -3,6 +3,7 @@ import {
   ColliderComponent,
   Context,
   Object3D as GameObject3D,
+  GameScriptComponent,
   RenderComponent,
 } from '@ud-viz/game_shared';
 import { AssetManager, RenderController } from '@ud-viz/game_browser';
@@ -36,24 +37,50 @@ import {
   RequestAnimationFrameProcess,
   Vector3Input,
 } from '@ud-viz/utils_browser';
-import { arrayPushOnce, removeFromArray } from '@ud-viz/utils_shared';
+import {
+  arrayPushOnce,
+  objectParseNumeric,
+  removeFromArray,
+} from '@ud-viz/utils_shared';
 
 const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
+
+export class ScriptInput {
+  constructor(editor) {
+    /** @type {Editor} */
+    this.editor = editor;
+  }
+
+  static get ID_SCRIPT() {
+    throw new Error(
+      'abstract method, you have to specify which script is controlled'
+    );
+  }
+}
 
 export class Editor {
   /**
    *
    * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D
    * @param {AssetManager} assetManager
+   * @param scriptInputs
+   * @param externalScriptInputs
+   * @param gameScriptInputs
    */
-  constructor(frame3D, assetManager) {
+  constructor(frame3D, assetManager, externalScriptInputs, gameScriptInputs) {
     /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
     this.frame3D = frame3D;
 
     /** @type {AssetManager} */
     this.assetManager = assetManager;
+
+    /** @type {Array<ScriptInput>} */
+    this.externalScriptInputs = externalScriptInputs;
+
+    /** @type {Array<ScriptInput>} */
+    this.gameScriptInputs = gameScriptInputs;
 
     /** @type {HTMLElement} */
     this.leftPan = document.createElement('div');
@@ -357,8 +384,11 @@ export class Editor {
   /**
    *
    * @param {object} gameObject3D - a game object
+   * @param gameObject3DJSON
    */
-  setCurrentGameObject3D(gameObject3D) {
+  setCurrentGameObject3DJSON(gameObject3DJSON) {
+    const gameObject3D = new GameObject3D(objectParseNumeric(gameObject3DJSON));
+
     console.log('editor open ', gameObject3D);
     if (this.currentGameObject3D) {
       this.currentGameObject3D.removeFromParent();
@@ -527,13 +557,9 @@ export class Editor {
         this.colliderParent.add(new Mesh(geometry, COLLIDER_MATERIAL));
       });
     }
-
-    console.log('editor collider updated ');
   }
 
   selectShape(shapeIndex) {
-    console.trace('shape select ', shapeIndex);
-
     // reset state
     if (this.shapeContext.mesh) {
       this.shapeContext.mesh.material = COLLIDER_MATERIAL;
@@ -832,6 +858,10 @@ class GameObject3DInput extends HTMLElement {
     // audio
     this.detailsAudio = document.createElement('details');
     this.appendChild(this.detailsAudio);
+
+    // game script
+    this.detailsGameScript = document.createElement('details');
+    this.appendChild(this.detailsGameScript);
   }
 
   /**
@@ -856,6 +886,25 @@ class GameObject3DInput extends HTMLElement {
 
     // audio
     this.updateAudio();
+
+    // game script
+    this.updateGameScript();
+  }
+
+  updateGameScript() {
+    const gameScriptComp = this.gameObject3D.getComponent(
+      GameScriptComponent.TYPE
+    );
+    this.detailsGameScript.hidden = !gameScriptComp;
+    if (gameScriptComp) {
+      while (this.detailsGameScript.firstChild)
+        this.detailsGameScript.firstChild.remove();
+
+      // rebuild domelement
+      const summaryAudio = document.createElement('summary');
+      summaryAudio.innerText = 'GameScript';
+      this.detailsGameScript.appendChild(summaryAudio);
+    }
   }
 
   updateAudio() {
@@ -1119,17 +1168,21 @@ class GameObject3DInput extends HTMLElement {
           } else {
             bb.expandByPoint(
               new Vector3(
-                shape.center.x + shape.center.x,
-                shape.center.y + shape.center.y,
-                shape.center.z + shape.center.z
-              ).applyMatrix4(this.gameObject3D.matrixWorld)
+                shape.center.x + shape.radius,
+                shape.center.y + shape.radius,
+                shape.center.z
+              )
+                .multiply(this.gameObject3D.scale)
+                .add(this.gameObject3D.position)
             );
             bb.expandByPoint(
               new Vector3(
-                shape.center.x - shape.center.x,
-                shape.center.y - shape.center.y,
-                shape.center.z - shape.center.z
-              ).applyMatrix4(this.gameObject3D.matrixWorld)
+                shape.center.x - shape.radius,
+                shape.center.y - shape.radius,
+                shape.center.z
+              )
+                .multiply(this.gameObject3D.scale)
+                .add(this.gameObject3D.position)
             );
           }
         });
@@ -1192,8 +1245,8 @@ class GameObject3DInput extends HTMLElement {
             (0.5 + offset.y / maxDim) * renderer.domElement.height
           );
           ctx.scale(
-            renderer.domElement.width / maxDim,
-            -renderer.domElement.height / maxDim
+            (this.gameObject3D.scale.x * renderer.domElement.width) / maxDim,
+            (this.gameObject3D.scale.y * -renderer.domElement.height) / maxDim
           );
           context.collisions.draw(ctx);
           ctx.fillStyle = 'green';
