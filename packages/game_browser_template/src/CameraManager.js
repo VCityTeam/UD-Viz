@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { ScriptBase, Context } from '@ud-viz/game_browser';
 import { Object3D } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
+import { throttle } from '@ud-viz/utils_shared';
 
 /**
  * @callback Movement
@@ -32,6 +33,21 @@ export class CameraManager extends ScriptBase {
      *  
      @type {THREE.Object3D} */
     this.obstacle = null;
+
+    /** @type {number} */
+    this.cameraDistance = 0;
+
+    /** @type {Function} */
+    this.computeCameraDistance = throttle((position, dir, distance) => {
+      // compute intersection
+      this.raycaster.set(position, dir.clone().negate());
+      const intersects = this.raycaster.intersectObject(this.obstacle, true);
+      if (intersects.length) {
+        this.cameraDistance = Math.min(distance, intersects[0].distance);
+      } else {
+        this.cameraDistance = distance;
+      }
+    }, 1000);
 
     /** 
      * Raycaster to avoid obstacle
@@ -97,15 +113,12 @@ export class CameraManager extends ScriptBase {
 
     // if there is an obstacle compute distance so camera postion is not inside obstacle
     if (this.obstacle) {
-      // compute intersection
-      this.raycaster.set(position, dir.clone().negate());
-      const intersects = this.raycaster.intersectObject(this.obstacle, true);
-      if (intersects.length) {
-        distance = Math.min(distance, intersects[0].distance);
-      }
+      this.computeCameraDistance(position, dir, distance);
+    } else {
+      this.cameraDistance = distance;
     }
 
-    position.sub(dir.setLength(distance));
+    position.sub(dir.setLength(this.cameraDistance));
     quaternion.multiply(
       new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI * 0.5, 0, 0))
     );
