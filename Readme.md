@@ -31,52 +31,6 @@ _3D tiles related_
   <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
 </p>
 
-**UD-Viz Packages:**
-
-Split-code by interpretation environment:
-
-package is interpretable by **Node.js**
-
-- [@ud-viz/game_node](./packages/game_node/Readme.md)
-- [@ud-viz/game_node_template](./packages/game_node_template/Readme.md)
-- [@ud-viz/utils_node](./packages/utils_node/Readme.md)
-
-package is interpretable by the **browser**
-
-- [@ud-viz/extensions_3d_tiles_temporal](./packages/extensions_3d_tiles_temporal/Readme.md)
-- [@ud-viz/frame3d](./packages/frame3d/Readme.md)
-- [@ud-viz/game_browser](./packages/game_browser/Readme.md)
-- [@ud-viz/game_browser_template](./packages/game_browser_template/Readme.md)
-- [@ud-viz/show_room](./packages/show_room/Readme.md)
-- [@ud-viz/smdb](./packages/smdb/Readme.md)
-- [@ud-viz/utils_browser](./packages/utils_browser/Readme.md)
-- [@ud-viz/widget_3d_tiles](./packages/widget_3d_tiles/Readme.md)
-- [@ud-viz/widget_base_map](./packages/widget_base_map/Readme.md)
-- [@ud-viz/widget_bookmark](./packages/widget_bookmark/Readme.md)
-- [@ud-viz/widget_camera_positioner](./packages/widget_camera_positioner/Readme.md)
-- [@ud-viz/widget_extensions_3d_tiles_temporal](./packages/widget_extensions_3d_tiles_temporal/Readme.md)
-- [@ud-viz/widget_geocoding](./packages/widget_geocoding/Readme.md)
-- [@ud-viz/widget_layer_choice](./packages/widget_layer_choice/Readme.md)
-- [@ud-viz/widget_planar_controls](./packages/widget_planar_controls/Readme.md)
-- [@ud-viz/widget_slide_show](./packages/widget_slide_show/Readme.md)
-- [@ud-viz/widget_sparql](./packages/widget_sparql/Readme.md)
-- [@ud-viz/widget_workspace](./packages/widget_workspace/Readme.md)
-
-interpretable by **both** environments
-
-- [@ud-viz/game_shared](./packages/game_shared/Readme.md)
-- [@ud-viz/game_shared_template](./packages/game_shared_template/Readme.md)
-- [@ud-viz/utils_shared](./packages/utils_shared/Readme.md)
-
-```mermaid
-flowchart TD
-  subgraph UD-Viz repo
-    subgraph packages
-    shared-->|import|browser
-    shared-->|import|node
-    end
-  end
-```
 
 ### Directory Hierarchy
 
@@ -128,6 +82,22 @@ git clone https://github.com/VCityTeam/UD-Viz.git
 cd UD-Viz
 npm install # resolve dependencies based on the package.json (and package-lock.json if it exists)
 ```
+
+#### Install ImageMagick and GraphicsMagick
+
+For the install [imagemagick](https://imagemagick.org/index.php) and [graphicsmagick](http://www.graphicsmagick.org/) binary sub dependencies since the server needs [gm](https://www.npmjs.com/package/gm?activeTab=readme).
+
+- **Linux**
+
+```bash
+ sudo apt-get install -y imagemagick graphicsmagick
+```
+
+- **Windows**
+  - It seems not necessary to install imagemagick on windows.
+  - Download and install graphicsmagick from [graphicmagick-binaries](https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/) (IMUV has been reported to work with version 1.3.34-Q8)
+
+> ⚠️ TIP : allias `gm` doesn't work in powershell because it conflicts with the command Get-Member !!!!
 
 ### How to run it locally?
 
