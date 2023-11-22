@@ -17,6 +17,7 @@ import * as THREE from 'three';
  * @property {number} [range=3000] -  Camera range placement
  * @property {number} [tilt=10] - Camera tilt placement
  * @property {number} [maxSubdivisionLevel=5] - Maximum subdivision level for PlanarLayer
+ * @property {number} [delayNotifyChange=2000] - delay in ms to notify itowns view change
  * @property {import('@ud-viz/utils_browser').SceneConfig} sceneConfig - scene config
  */
 
@@ -85,9 +86,9 @@ export class Planar extends Base {
     );
 
     /** @type {Function} */
-    this.triggerItownsMainLoopEvent = throttle(() => {
+    this.notifyChangeToItownsView = throttle(() => {
       this.itownsView.notifyChange(this.camera);
-    }, 2000); // => to load 3DTiles and trigger mainLoop event every 2 sec
+    }, options.delayNotifyChange || 2000); // => to load 3DTiles and trigger mainLoop event
 
     let useItownsMainLoop = true;
     if (options.useItownsMainLoop != undefined)
@@ -133,7 +134,7 @@ export class Planar extends Base {
   render() {
     super.render();
 
-    this.triggerItownsMainLoopEvent();
+    this.notifyChangeToItownsView();
 
     // render also label layers
     if (this.isRendering && this.itownsView.tileLayer) {
