@@ -220,24 +220,58 @@ export class Version {
   }
 
   createSpriteDate() {
-    const canvas = document.createElement('canvas');
-    canvas.height = 512;
-    canvas.width = 512;
+    // const canvas = document.createElement('canvas');
+    // canvas.height = 200;
+    // canvas.width = 512;
 
-    const ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.fillStyle = 'black';
-    ctx.font = '70px Arial';
-    const stringDate = this.date.toString();
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-    ctx.fillText(stringDate, 256, 256);
+    // const ctx = canvas.getContext('2d');
 
-    const canvasTexture = new THREE.CanvasTexture(canvas);
+    // ctx.beginPath();
+    // ctx.fillStyle = 'white';
+    // ctx.fillRect(canvas.width, 0, canvas.width, canvas.height);
+    // ctx.beginPath();
+    // ctx.fillStyle = 'purple';
+    // ctx.font = '50px Arial';
+    // const stringDate = this.date.toString();
+    // ctx.textBaseline = 'middle';
+    // ctx.textAlign = 'center';
+    // ctx.fillText(stringDate, canvas.width / 2, canvas.height / 3);
+
+    // const canvasTexture = new THREE.CanvasTexture(canvas);
+    // const material = new THREE.MeshBasicMaterial({
+    //   map: canvasTexture,
+    // });
+    // this.dateSprite = new THREE.Sprite(material);
+    // this.dateSprite.scale.set(0.5, 1, 0.5);
+    // this.dateSprite.updateMatrixWorld();
+    const size = 64;
+    const name = this.date.toString();
+    const borderSize = 2;
+    const ctx = document.createElement('canvas').getContext('2d');
+    const font = `${size}px bold sans-serif`;
+    ctx.font = font;
+    // measure how long the name will be
+    const doubleBorderSize = borderSize * 2;
+    const width = ctx.measureText(name).width + doubleBorderSize;
+    const height = size + doubleBorderSize;
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
+
+    // need to set font again after resizing canvas
+    ctx.font = font;
+    ctx.textBaseline = 'top';
+
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'white';
+    ctx.fillText(name, borderSize, borderSize);
+
+    const canvasTexture = new THREE.CanvasTexture(ctx.canvas);
     const material = new THREE.MeshBasicMaterial({
       map: canvasTexture,
     });
     this.dateSprite = new THREE.Sprite(material);
+    this.dateSprite.updateMatrixWorld();
 
     return this.dateSprite;
   }
