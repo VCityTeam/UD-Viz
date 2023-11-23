@@ -19,5 +19,11 @@
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_editor",
-  "peerDependencies": {}
+  "peerDependencies": {
+    "@ud-viz/game_shared": "4.0.1",
+    "@ud-viz/game_browser": "4.0.1",
+    "@ud-viz/utils_browser": "4.0.1",
+    "@ud-viz/utils_shared": "4.0.1",
+    "three": "0.154.0"
+  }
 }

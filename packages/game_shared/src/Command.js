@@ -1,4 +1,6 @@
-/** @class */
+/**
+ * @todo this class should be removed and be replace by a \@typedef\ describing this data structure
+ */
 class Command {
   /**
    * Create a Command (this class can be used to make different process communicate together)

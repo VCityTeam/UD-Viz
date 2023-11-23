@@ -26,8 +26,8 @@ const GameContextScript = class extends ScriptBase {
   }
 
   tick() {
-    this.applyCommandCallbackOf('toggle_pause', (data) => {
-      this.pause != this.pause;
+    this.applyCommandCallbackOf('toggle_pause', () => {
+      this.pause = !this.pause;
     });
 
     if (this.pause) return;

@@ -155,9 +155,6 @@ export class Base {
       this.scene.add(this.camera);
 
       // init with sceneconfig
-
-      this.sceneConfig = options.sceneConfig || defaultConfigScene;
-
       this.directionalLight = initScene(
         this.camera,
         this.renderer,
