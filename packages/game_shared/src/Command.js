@@ -1,5 +1,5 @@
 /**
- * @todo this class should be removed and be replace by a \@typedef\ describing this data structure
+ * @todo this class should be removed and be replace by a tag typedef describing this data structure
  */
 class Command {
   /**
