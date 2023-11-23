@@ -1,4 +1,6 @@
 const path = require('path');
+const BundleAnalyzerPlugin =
+  require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const result = {
   entry: './bin/indexExamples.js',
@@ -17,7 +19,12 @@ const result = {
       'src',
     ],
   },
+  plugins: [],
 };
+
+if (process.env.ANALYZE) {
+  result.plugins.push(new BundleAnalyzerPlugin());
+}
 
 // inject css in bundle (show_room and game_browser_template are using css)
 result.module.rules.push({
