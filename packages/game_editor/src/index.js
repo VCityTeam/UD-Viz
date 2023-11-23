@@ -52,9 +52,8 @@ export class ScriptInput {
    * private constructor user should not extends it !!
    *
    * @param {Editor} editor - editor running this script
-   * @param gameObject3D
-   * @param variables
-   * @param domElement
+   * @param {object} variables - variables to edit
+   * @param {HTMLElement} domElement - where ui element should be appended
    */
   constructor(editor, variables, domElement) {
     /** @type {Editor} */
@@ -74,15 +73,28 @@ export class ScriptInput {
     closeButton.onclick = this.dispose.bind(this);
   }
 
+  /**
+   * Call when this is disposed
+   */
   dispose() {
     while (this.domElement.firstChild) this.domElement.firstChild.remove();
   }
 
+  /**
+   * Call when this is instanciated
+   */
   init() {}
 
+  /**
+   * Call every frame computed
+   */
   tick() {}
 
-  static get ID_SCRIPT() {
+  get ID_EDIT_SCRIPT() {
+    return ScriptInput.ID_EDIT_SCRIPT;
+  }
+
+  static get ID_EDIT_SCRIPT() {
     throw new Error(
       'abstract method, you have to specify which script is controlled'
     );
@@ -92,12 +104,11 @@ export class ScriptInput {
 export class Editor {
   /**
    *
-   * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D
-   * @param {AssetManager} assetManager
-   * @param scriptInputs
-   * @param externalScriptInputs
-   * @param gameScriptInputs
-   * @param userData
+   * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D - frame 3d
+   * @param {AssetManager} assetManager - asset manager
+   * @param {object} externalScriptInputs - external script input to edit GameScript
+   * @param {object} gameScriptInputs - game script input to edit GameScript
+   * @param {object} userData - user data
    */
   constructor(
     frame3D,
@@ -466,8 +477,7 @@ export class Editor {
 
   /**
    *
-   * @param {object} gameObject3D - a game object
-   * @param gameObject3DJSON
+   * @param {object} gameObject3DJSON - json of the gameobject to set
    */
   setCurrentGameObject3DJSON(gameObject3DJSON) {
     const gameObject3D = new GameObject3D(objectParseNumeric(gameObject3DJSON));
@@ -576,7 +586,7 @@ export class Editor {
 
   /**
    *
-   * @param {Object3D} obj
+   * @param {Object3D} obj - object 3d to target
    */
   setOrbitControlsTargetTo(obj) {
     const bb = Editor.computeBox3GameObject3D(obj);
@@ -586,6 +596,10 @@ export class Editor {
     this.orbitControls.update();
   }
 
+  /**
+   *
+   * @param {GameObject3D} go - game object 3d to select for edition
+   */
   selectGameObject3D(go) {
     if (go == this.gameObjectInput.gameObject3D) return;
 
@@ -603,6 +617,9 @@ export class Editor {
     this.updateCollider();
   }
 
+  /**
+   * Update collider shapes in the 3D scene
+   */
   updateCollider() {
     for (let i = this.colliderParent.children.length - 1; i >= 0; i--) {
       this.colliderParent.children[i].removeFromParent();
@@ -645,6 +662,10 @@ export class Editor {
     }
   }
 
+  /**
+   *
+   * @param {number} shapeIndex - index of the shape to select
+   */
   selectShape(shapeIndex) {
     // reset state
     if (this.shapeContext.mesh) {
@@ -719,11 +740,20 @@ export class Editor {
     }
   }
 
+  /**
+   *
+   * @param {Mesh} mesh - point mesh to select with transform controls
+   */
   selectPointMesh(mesh) {
     this.shapeContext.pointMesh = mesh;
     this.transformControls.attach(this.shapeContext.pointMesh);
   }
 
+  /**
+   * Update shape selected (when a property of the shape has changed)
+   *
+   * @param {boolean} rebuildShapeGeometry - shape selected needs to rebuild its geometry
+   */
   updateShapeSelected(rebuildShapeGeometry = true) {
     // remove all old point meshes
     for (let i = this.pointsParent.children.length - 1; i >= 0; i--) {
@@ -804,6 +834,9 @@ export class Editor {
     }
   }
 
+  /**
+   * Update box3 wrapping selected game object 3d
+   */
   updateBox3() {
     this.gameObjectInput.gameObject3D.updateMatrixWorld();
     const worldQuaternion = new Quaternion();
@@ -839,6 +872,11 @@ export class Editor {
     this.currentGameObjectMeshBox3.updateMatrixWorld();
   }
 
+  /**
+   *
+   * @param {Object3D} obj - object 3d to compute box3
+   * @returns {Box3} - box 3 of the object 3d
+   */
   static computeBox3GameObject3D(obj) {
     const bb = new Box3().setFromObject(obj);
 
@@ -869,6 +907,12 @@ export class Editor {
 }
 
 class GameObject3DInput extends HTMLElement {
+  /**
+   *
+   * @param {Array<string>} idRenderDatas - possible id render datas to set in RenderComponent of the current game object 3d
+   * @param {Array<string>} idSounds - possible id sound to set in AudioComponent of the current game object 3d
+   * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent of the current game object 3d
+   */
   constructor(idRenderDatas, idSounds, idGameScripts) {
     super();
 
@@ -958,7 +1002,7 @@ class GameObject3DInput extends HTMLElement {
 
   /**
    *
-   * @param {GameObject3D} go
+   * @param {GameObject3D} go - go to select in the game object 3d input
    */
   setGameObject3D(go) {
     this.gameObject3D = go;
@@ -983,6 +1027,9 @@ class GameObject3DInput extends HTMLElement {
     this.updateGameScript();
   }
 
+  /**
+   * Update GameScript component edition of the current game object 3d
+   */
   updateGameScript() {
     const gameScriptComp = this.gameObject3D.getComponent(
       GameScriptComponent.TYPE
@@ -1080,6 +1127,9 @@ class GameObject3DInput extends HTMLElement {
     }
   }
 
+  /**
+   * Update Audio component edition of the current game object 3d
+   */
   updateAudio() {
     const audioComp = this.gameObject3D.getComponent(AudioComponent.TYPE);
     this.detailsAudio.hidden = !audioComp;
@@ -1182,6 +1232,9 @@ class GameObject3DInput extends HTMLElement {
     }
   }
 
+  /**
+   * Update Render component edition of the current game object 3d
+   */
   updateRender() {
     const renderComp = this.gameObject3D.getComponent(RenderComponent.TYPE);
     this.detailsRender.hidden = !renderComp;
@@ -1240,6 +1293,9 @@ class GameObject3DInput extends HTMLElement {
     }
   }
 
+  /**
+   * Update Collider component edition of the current game object 3d
+   */
   updateCollider() {
     const colliderComp = this.gameObject3D.getComponent(ColliderComponent.TYPE);
     this.detailsCollider.hidden = !colliderComp;
@@ -1434,6 +1490,9 @@ class GameObject3DInput extends HTMLElement {
     }
   }
 
+  /**
+   * Update Transform component edition of the current game object 3d
+   */
   updateTransform() {
     this.position.x.input.value = this.gameObject3D.position.x;
     this.position.y.input.value = this.gameObject3D.position.y;
@@ -1446,6 +1505,10 @@ class GameObject3DInput extends HTMLElement {
     this.scale.z.input.value = this.gameObject3D.scale.z;
   }
 
+  /**
+   *
+   * @returns {object} - EVENT enum of the game object 3d input
+   */
   static get EVENT() {
     return {
       NAME_CHANGED: 'name_changed',
