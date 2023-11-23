@@ -287,6 +287,7 @@ export function appendWireframeToObject3D(object3D, threshOldAngle = 30) {
       const wireframe = new THREE.LineSegments(geomEdges, mat);
       wireframe.userData.isWireframe = true;
       child.add(wireframe);
+      wireframe.updateWorldMatrix(true, false);
     }
   });
 }
@@ -382,6 +383,7 @@ export function appendWireframeByGeometryAttributeToObject3D(
       );
       wireframe.userData.isWireframe = true;
       child.add(wireframe);
+      wireframe.updateWorldMatrix(true, false);
     }
   });
 }
