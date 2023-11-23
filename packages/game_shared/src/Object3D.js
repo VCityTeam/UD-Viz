@@ -119,13 +119,13 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    * @callback Object3DCondition
-   * @param {Object3D} - object3d to test
+   * @param {Object3D} object - object3d to test
    * @returns {boolean} - true object3d match condition
    */
 
   /**
    *
-   * @param {Object3DCondition} condition
+   * @param {Object3DCondition} condition - condition to test
    * @returns {Object3D} - return first object3D in hierarchy matching condition
    */
   getFirst(condition) {
@@ -142,7 +142,7 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    *
-   * @param {Object3DCondition} condition
+   * @param {Object3DCondition} condition - condition to test
    * @returns {Object3D} - return an array of objects3D in hierarchy matching condition
    */
   filter(condition) {
