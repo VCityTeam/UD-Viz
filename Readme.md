@@ -95,7 +95,7 @@ For the install [imagemagick](https://imagemagick.org/index.php) and [graphicsma
 
 - **Windows**
   - It seems not necessary to install imagemagick on windows.
-  - Download and install graphicsmagick from [graphicmagick-binaries](https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/) (IMUV has been reported to work with version 1.3.34-Q8)
+  - Download and install graphicsmagick from [graphicmagick-binaries](https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/) (@ud-viz/game_node_template has been reported to work with version 1.3.34-Q8)
 
 > ⚠️ TIP : allias `gm` doesn't work in powershell because it conflicts with the command Get-Member !!!!
 
