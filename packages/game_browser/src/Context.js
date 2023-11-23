@@ -426,7 +426,7 @@ export class Context {
     this.currentGameObject3D.traverse((child) => {
       if (!child.isGameObject3D) return;
 
-      // Tick local script
+      // Tick external script
       const scriptComponent = child.getComponent(ExternalScriptComponent.TYPE);
       if (scriptComponent) {
         scriptComponent.getController().execute(Context.EVENT.TICK);

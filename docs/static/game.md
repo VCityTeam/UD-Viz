@@ -94,7 +94,6 @@ const game = new SinglePlanarProcess(
   {
     gameScriptClass: [GameContextScript],
     externalGameScriptClass: [GameExternalContextScript],
-    gameOrigin: { x: extent.center().x, y: extent.center().y, z: 100 },
   }
 );
 ```
@@ -171,7 +170,7 @@ In the `tick` of `GameContextScript`
 ```js
 tick() {
 
-  this.applyCommandCallbackOf('toggle_pause', (data) => { this.pause != this.pause })
+  this.applyCommandCallbackOf('toggle_pause', () => { this.pause = !this.pause })
 
   if (this.pause) return;
   ...
