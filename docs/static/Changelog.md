@@ -1,3 +1,33 @@
+# v4.0.2
+
+## @ud-viz
+
+    - npm cmd webpack-bundle-analyzer 
+    - script setPackageVersion.js
+    - update to itowns 2.41.1-next.9
+
+
+## @ud-viz/game_shared
+
+    - compute bandwidth
+    - idScritp:string => scriptParam:{id:string, priority:number}
+    - applyCommandCallback API
+    - update(ColliderComp): add SHAPE_TYPE
+
+## @ud-viz/game_browser_template
+
+    - optimization of the camera manager obstacle computation
+
+## @ud-viz/utils_shared
+
+    - computeFilename
+    - throttle
+
+## @ud-viz/game_editor
+
+    - creation of the package
+
+
 # v4.0.1
 
 ## @ud-viz

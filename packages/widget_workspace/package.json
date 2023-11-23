@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_workspace",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "widget workspace of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_workspace",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.0.1",
-    "@ud-viz/widget_sparql": "4.0.1"
+    "@ud-viz/utils_browser": "4.0.2",
+    "@ud-viz/widget_sparql": "4.0.2"
   }
 }

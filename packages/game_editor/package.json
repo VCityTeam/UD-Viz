@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_editor",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "game editor",
   "main": "src",
   "scripts": {
@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_editor",
   "peerDependencies": {
-    "@ud-viz/game_shared": "4.0.1",
-    "@ud-viz/game_browser": "4.0.1",
-    "@ud-viz/utils_browser": "4.0.1",
-    "@ud-viz/utils_shared": "4.0.1",
+    "@ud-viz/game_shared": "4.0.2",
+    "@ud-viz/game_browser": "4.0.2",
+    "@ud-viz/utils_browser": "4.0.2",
+    "@ud-viz/utils_shared": "4.0.2",
     "three": "0.154.0"
   }
 }
