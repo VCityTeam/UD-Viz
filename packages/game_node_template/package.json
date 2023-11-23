@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_node_template",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "game script template nodejs",
   "main": "src",
   "scripts": {
@@ -20,9 +20,9 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_node_template",
   "peerDependencies": {
-    "@ud-viz/game_node": "4.0.1",
-    "@ud-viz/game_shared": "4.0.1",
-    "@ud-viz/game_shared_template": "4.0.1",
+    "@ud-viz/game_node": "4.0.2",
+    "@ud-viz/game_shared": "4.0.2",
+    "@ud-viz/game_shared_template": "4.0.2",
     "gm": "1.23.1",
     "pngjs": "6.0.0",
     "three": "0.154.0"

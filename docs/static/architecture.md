@@ -9,6 +9,7 @@ extensions_3d_tiles_temporal
 frame3d
 game_browser
 game_browser_template
+game_editor
 game_node
 game_node_template
 game_shared
@@ -43,6 +44,10 @@ game_browser_template-->game_shared
 game_browser_template-->game_shared_template
 game_browser_template-->utils_browser
 game_browser_template-->utils_shared
+game_editor-->game_shared
+game_editor-->game_browser
+game_editor-->utils_browser
+game_editor-->utils_shared
 game_node-->game_shared
 game_node-->utils_shared
 game_node_template-->game_node

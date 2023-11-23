@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/utils_node",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "utils methods interpretable in a nodejs",
   "main": "src",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/utils_node",
   "peerDependencies": {
-    "@ud-viz/utils_shared": "4.0.1",
+    "@ud-viz/utils_shared": "4.0.2",
     "child-process-promise": "2.2.1",
     "puppeteer": "19.4.1"
   }
