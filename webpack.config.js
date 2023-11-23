@@ -14,11 +14,7 @@ const result = {
     rules: [],
   },
   resolve: {
-    modules: [
-      '../Itowns/node_modules',
-      'node_modules', // The default
-      'src',
-    ],
+    modules: ['node_modules'],
   },
   plugins: [],
 };

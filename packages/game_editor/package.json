@@ -4,7 +4,7 @@
   "description": "game editor",
   "main": "src",
   "scripts": {
-    "test": "node ../../bin/browserTest.js ./test",
+    "test": "node ../../bin/browserTest.js ./test disable-third-party",
     "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
   },
   "files": [
