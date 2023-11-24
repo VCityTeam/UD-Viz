@@ -213,65 +213,51 @@ export class Version {
     /** @type {Array<THREE.Vector3>}*/
     this.initialPos = [];
 
-    /** @type {THREE.Mesh} */
+    /** @type {THREE.Sprite} */
     this.dateSprite;
 
     this.updateCentroid();
   }
 
   createSpriteDate() {
-    // const canvas = document.createElement('canvas');
-    // canvas.height = 200;
-    // canvas.width = 512;
-
-    // const ctx = canvas.getContext('2d');
-
-    // ctx.beginPath();
-    // ctx.fillStyle = 'white';
-    // ctx.fillRect(canvas.width, 0, canvas.width, canvas.height);
-    // ctx.beginPath();
-    // ctx.fillStyle = 'purple';
-    // ctx.font = '50px Arial';
-    // const stringDate = this.date.toString();
-    // ctx.textBaseline = 'middle';
-    // ctx.textAlign = 'center';
-    // ctx.fillText(stringDate, canvas.width / 2, canvas.height / 3);
-
-    // const canvasTexture = new THREE.CanvasTexture(canvas);
-    // const material = new THREE.MeshBasicMaterial({
-    //   map: canvasTexture,
-    // });
-    // this.dateSprite = new THREE.Sprite(material);
-    // this.dateSprite.scale.set(0.5, 1, 0.5);
-    // this.dateSprite.updateMatrixWorld();
     const size = 64;
+    const baseWidth = 150;
     const name = this.date.toString();
     const borderSize = 2;
     const ctx = document.createElement('canvas').getContext('2d');
     const font = `${size}px bold sans-serif`;
     ctx.font = font;
     // measure how long the name will be
+    const textWidth = ctx.measureText(name).width;
+
     const doubleBorderSize = borderSize * 2;
-    const width = ctx.measureText(name).width + doubleBorderSize;
+    const width = baseWidth + doubleBorderSize;
     const height = size + doubleBorderSize;
     ctx.canvas.width = width;
     ctx.canvas.height = height;
 
     // need to set font again after resizing canvas
     ctx.font = font;
-    ctx.textBaseline = 'top';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
 
-    ctx.fillStyle = 'blue';
+    ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
+
+    // scale to fit but don't stretch
+    const scaleFactor = Math.min(1, baseWidth / textWidth);
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(scaleFactor, 1);
     ctx.fillStyle = 'white';
-    ctx.fillText(name, borderSize, borderSize);
+    ctx.fillText(name, 0, 0);
 
     const canvasTexture = new THREE.CanvasTexture(ctx.canvas);
-    const material = new THREE.MeshBasicMaterial({
-      map: canvasTexture,
-    });
-    this.dateSprite = new THREE.Sprite(material);
-    this.dateSprite.updateMatrixWorld();
+    // canvasTexture.magFilter = THREE.NearestFilter;
+    const label = new THREE.Sprite(
+      new THREE.SpriteMaterial({ map: canvasTexture })
+    );
+    label.material.sizeAttenuation = false;
+    this.dateSprite = label;
 
     return this.dateSprite;
   }
@@ -853,7 +839,7 @@ export class SpaceTimeCube {
         layertemporal.root.children != undefined &&
         layertemporal.root.children.length != 0
       ) {
-        const version = new Version(layertemporal.root.children, 2009);
+        const version = new Version(layertemporal.root.children, 2009 + i);
 
         // Initial position for better rotation
         layertemporal.root.children.forEach((obj) => {
@@ -879,7 +865,8 @@ export class SpaceTimeCube {
         // Date sprite creation
         const dateSprite = version.createSpriteDate();
         dateSprite.position.copy(version.centroid);
-        dateSprite.scale.set(100, 100, 100);
+        dateSprite.scale.multiplyScalar(0.02);
+        dateSprite.renderOrder = 1;
         dateSprite.updateMatrixWorld();
         view.scene.add(dateSprite);
 
@@ -927,7 +914,11 @@ export class SpaceTimeCube {
       // Versions
       versions.forEach((version) => {
         version.updateRotation(angle);
-        version.dateSprite.position.copy(version.centroid);
+        version.dateSprite.position.set(
+          version.centroid.x + 150,
+          version.centroid.y + 200,
+          version.centroid.z
+        );
         version.dateSprite.updateMatrixWorld();
       });
 
