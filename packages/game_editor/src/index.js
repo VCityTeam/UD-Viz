@@ -961,7 +961,7 @@ class GameObject3DInput extends HTMLElement {
    * @param {Array<string>} idRenderDatas - possible id render datas to set in RenderComponent of the current game object 3d
    * @param {Array<string>} idSounds - possible id sound to set in AudioComponent of the current game object 3d
    * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent of the current game object 3d
-   * @param idExternalScripts
+   * @param {Array<string>} idExternalScripts - possible id external script to set in ExternalScriptComponent of the current game object 3d
    */
   constructor(idRenderDatas, idSounds, idGameScripts, idExternalScripts) {
     super();

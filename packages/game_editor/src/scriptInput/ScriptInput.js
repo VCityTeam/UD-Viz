@@ -7,7 +7,7 @@ export class ScriptInput {
    * @param {HTMLElement} domElement - where ui element should be appended
    */
   constructor(editor, variables, domElement) {
-    /** @type {Editor} */
+    /** @type {import("../index").Editor} */
     this.editor = editor;
 
     /** @type {object} */
