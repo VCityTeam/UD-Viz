@@ -19,6 +19,7 @@ const Object3D = class extends THREE.Object3D {
    * @param {string} [json.name=""] - name
    * @param {boolean} [json.static=false] - static
    * @param {boolean} [json.outdated=false] - outdated
+   * @param {boolean} [json.visble=true] - visible
    * @param {boolean} [json.gameContextUpdate=true] - should be update from the game context
    * @param {Array<string>} [json.forceToJSONComponent=[]] - force certain component to be export in json
    * @param {Object<string,object>} [json.components={}] - components {@link Component}
@@ -67,6 +68,9 @@ const Object3D = class extends THREE.Object3D {
      *  
       @type {string}*/
     this.name = json.name || '';
+
+    /** @type {boolean} */
+    this.visible = json.visible != undefined ? json.visible : true;
 
     /**
      * true if the object3D is not going to move in space
@@ -195,6 +199,7 @@ const Object3D = class extends THREE.Object3D {
     this.updateMatrixFromJSON(json.matrix);
     this.name = json.name;
     this.static = json.static;
+    this.visible = json.visible;
     this.outdated = json.outdated;
 
     this.children.forEach((child) => {
@@ -335,7 +340,8 @@ const Object3D = class extends THREE.Object3D {
 
   /**
    * Apply a callback to object3D and its children recursively like {@link THREE.Object3D}
-   * This is not exactly the same one since there is the possibility to stop the traverse and the possibility to remove an object3D while parent is traversed
+   * This is not exactly the same one since there is the possibility to stop the traverse
+   * and the possibility to remove an object3D while parent is traversed TODO: object should not be remove though since its cause of bug !!!
    *
    * @param {TraverseCallback} cb - callback to apply to object3D and its children recursively
    * @returns {boolean} - true when traverse should be stop
@@ -378,6 +384,7 @@ const Object3D = class extends THREE.Object3D {
     result.name = this.name;
     result.static = this.static;
     result.outdated = this.outdated;
+    result.visible = this.visible;
     result.gameContextUpdate = this.gameContextUpdate;
     if (this.parent) {
       result.parentUUID = this.parent.uuid;
