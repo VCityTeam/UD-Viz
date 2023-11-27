@@ -77,6 +77,14 @@ export class SinglePlanarProcess {
       options.externalGameScriptClass || {},
       { interpolator: this.interpolator }
     );
+
+    /** @type {RequestAnimationFrameProcess} */
+    this.process = new RequestAnimationFrameProcess(30);
+  }
+
+  dispose() {
+    this.frame3DPlanar.dispose();
+    this.process.stop();
   }
 
   /**
@@ -131,8 +139,7 @@ export class SinglePlanarProcess {
 
         // METHOD 2 REQUESTANIMATIONFRAME
         this.frame3DPlanar.enableItownsViewRendering(false);
-        const process = new RequestAnimationFrameProcess(30);
-        process.start((dt) => {
+        this.process.start((dt) => {
           // external game loop
           this.externalGameContext.step(
             dt,

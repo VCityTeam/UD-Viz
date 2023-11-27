@@ -2,7 +2,7 @@
   position: absolute;
   z-index: 10;
   width: fit-content;
-  height: 100%;
+  height: fit-content;
   overflow-y: scroll;
 }
 

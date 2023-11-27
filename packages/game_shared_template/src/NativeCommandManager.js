@@ -13,6 +13,15 @@ const {
   ExternalScriptComponent,
 } = require('@ud-viz/game_shared');
 
+/**
+ * @typedef NativeCommandManagerVariables
+ * @property {number} angleMin - angle min in the clamp rotation in radian
+ * @property {number} angleMax - angle max in the clamp rotation in radian
+ * @property {number} defaultSpeedRotate - speed rotate
+ * @property {number} defaultSpeedTranslate - speed translate
+ */
+
+/** @type {NativeCommandManagerVariables} */
 const defaultVariables = {
   angleMin: Math.PI / 5,
   angleMax: 2 * Math.PI - Math.PI / 10,

@@ -235,6 +235,9 @@ export class Context {
               child.rotation.copy(gameContextChild.rotation);
             }
 
+            // visible
+            child.visible = gameContextChild.visible;
+
             // Stack the same go of all states not consumed yet
             const bufferedGO = [];
             states.forEach((s) => {
@@ -289,6 +292,7 @@ export class Context {
                   .execute(Context.EVENT.ON_RENDER_COMPONENT_CHANGED);
               }
 
+              // external script
               if (
                 childExternalScriptComp &&
                 gameContextGONotConsumned.isOutdated()
