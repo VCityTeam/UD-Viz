@@ -66,10 +66,12 @@ const State = class {
 
     const cloneObject3D = this.object3D.clone();
 
+    const objectToRemove = [];
+
     cloneObject3D.traverse((child) => {
       if (!nextStateObjectsUUID.includes(child.uuid)) {
         // not present in the next state => has been removed
-        child.removeFromParent();
+        objectToRemove.push(child); // record for further removal
       } else {
         // Check if an update is needed
         const object3DJSON = objects3DToUpdateJSON[child.uuid];
@@ -81,6 +83,9 @@ const State = class {
         }
       }
     });
+
+    // remove object here so the traverse is not disturbed
+    objectToRemove.forEach((object) => object.removeFromParent());
 
     for (const uuid in objects3DToUpdateJSON) {
       if (object3DUpdated.includes(uuid)) continue; // already update
