@@ -341,7 +341,7 @@ const Object3D = class extends THREE.Object3D {
   /**
    * Apply a callback to object3D and its children recursively like {@link THREE.Object3D}
    * This is not exactly the same one since there is the possibility to stop the traverse
-   * and the possibility to remove an object3D while parent is traversed TODO: object should not be remove though since its cause of bug !!!
+   * and the possibility to remove an object3D while parent is traversed TODO: object should not be remove though since its cause of bug !!! (maybe test with a descendant for loop (i--))
    *
    * @param {TraverseCallback} cb - callback to apply to object3D and its children recursively
    * @returns {boolean} - true when traverse should be stop
