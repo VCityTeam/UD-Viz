@@ -24,6 +24,7 @@ export * as gameEditor from '@ud-viz/game_editor';
 
 // utils
 export * from '@ud-viz/utils_browser';
+export * from '@ud-viz/utils_shared';
 
 // widget
 export * as widgetC3DTiles from '@ud-viz/widget_3d_tiles';

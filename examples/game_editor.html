@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>game editor</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <style>
+      .hint {
+        position: absolute;
+        right: 0%;
+        top: 0%;
+        z-index: 10;
+        color: white;
+        background-color: black;
+        padding: 20px;
+        font-size: x-large;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      const main = async () => {
+        const configs = await udviz.loadMultipleJSON([
+          './assets/config/extents.json',
+          './assets/config/crs.json',
+          './assets/config/layer/base_maps.json',
+          './assets/config/layer/elevation.json',
+          './assets/config/layer/3DTiles.json',
+          './assets/config/frame3D_planars.json',
+          './assets/config/assetManager.json',
+        ]);
+
+        udviz.proj4.default.defs(
+          configs['crs'][0].name,
+          configs['crs'][0].transform
+        );
+
+        const extent = new udviz.itowns.Extent(
+          configs['extents'][0].name,
+          parseInt(configs['extents'][0].west),
+          parseInt(configs['extents'][0].east),
+          parseInt(configs['extents'][0].south),
+          parseInt(configs['extents'][0].north)
+        );
+
+        // create a itowns planar frame3DPlanar.itownsView
+        const frame3DPlanar = new udviz.frame3d.Planar(
+          extent,
+          configs['frame3D_planars'][0]
+        );
+
+        const addLayers = (view) => {
+          view.addLayer(
+            new udviz.itowns.ColorLayer(configs['base_maps'][0]['name'], {
+              updateStrategy: {
+                type: udviz.itowns.STRATEGY_DICHOTOMY,
+                options: {},
+              },
+              source: new udviz.itowns.WMSSource({
+                extent: extent,
+                name: configs['base_maps'][0].source['name'],
+                url: configs['base_maps'][0].source['url'],
+                version: configs['base_maps'][0].source['version'],
+                crs: extent.crs,
+                format: configs['base_maps'][0].source['format'],
+              }),
+              transparent: true,
+            })
+          );
+
+          configs['3DTiles'].forEach((layerConfig) => {
+            udviz.itowns.View.prototype.addLayer.call(
+              view,
+              new udviz.itowns.C3DTilesLayer(
+                layerConfig['id'],
+                {
+                  name: layerConfig['id'],
+                  source: new udviz.itowns.C3DTilesSource({
+                    url: layerConfig['url'],
+                  }),
+                },
+                view
+              )
+            );
+          });
+
+          const isTextureFormat =
+            configs['elevation']['format'] == 'image/jpeg' ||
+            configs['elevation']['format'] == 'image/png';
+          view.addLayer(
+            new udviz.itowns.ElevationLayer(
+              configs['elevation']['layer_name'],
+              {
+                useColorTextureElevation: isTextureFormat,
+                colorTextureElevationMinZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMinZ']
+                  : null,
+                colorTextureElevationMaxZ: isTextureFormat
+                  ? configs['elevation']['colorTextureElevationMaxZ']
+                  : null,
+                source: new udviz.itowns.WMSSource({
+                  extent: extent,
+                  url: configs['elevation']['url'],
+                  name: configs['elevation']['name'],
+                  crs: extent.crs,
+                  heightMapWidth: 256,
+                  format: configs['elevation']['format'],
+                }),
+              }
+            )
+          );
+        };
+
+        // ADD LAYERS
+        addLayers(frame3DPlanar.itownsView);
+
+        const assetManager = new udviz.gameBrowser.AssetManager();
+        await assetManager.loadFromConfig(configs['assetManager']);
+
+        // implementation of the game
+        class TreasureHuntHintExternalScript extends udviz.gameBrowser
+          .ScriptBase {
+          init() {
+            this.currentDt = 0;
+          }
+          tick() {
+            // Bounce
+            const min = 0.5;
+            const max = 2;
+            this.currentDt += this.context.dt;
+            const bounce =
+              (max - min) * Math.abs(Math.sin(this.currentDt * 0.001)) + min;
+            this.object3D.scale.set(bounce, bounce, bounce);
+            this.object3D.updateMatrix(true, true);
+          }
+
+          onRemove() {
+            const externalScriptManager = this.context.findExternalScriptWithID(
+              ExternalScriptManager.ID_SCRIPT
+            );
+            externalScriptManager.displayCurrentMessage();
+          }
+
+          static get ID_SCRIPT() {
+            return 'external_script_treasure_hunt_step_id';
+          }
+        }
+
+        const TREASURE_HINT_COLLIDED = 'treasure_hint_collided';
+
+        class TreasureHuntHintGameScript extends udviz.gameShared.ScriptBase {
+          onEnterCollision() {
+            // dispatch event
+            this.context.dispatch(TREASURE_HINT_COLLIDED, this.object3D);
+          }
+
+          static get ID_SCRIPT() {
+            return 'game_script_treasure_hunt_step_id';
+          }
+        }
+
+        const treasureHuntHint = {
+          name: 'Treasure hunt step',
+          static: true,
+          components: {
+            Render: {
+              idRenderData: 'cube',
+              color: [1, 0, 0, 1],
+            },
+            GameScript: {
+              scriptParams: [{ id: TreasureHuntHintGameScript.ID_SCRIPT }],
+            },
+            ExternalScript: {
+              scriptParams: [{ id: TreasureHuntHintExternalScript.ID_SCRIPT }],
+              variables: {
+                hintMessage: 'default_message',
+              },
+            },
+            Collider: {
+              body: false,
+              shapes: [
+                {
+                  type: udviz.gameShared.ColliderComponent.SHAPE_TYPE.POLYGON,
+                  points: [
+                    { x: -0.5, y: -0.5, z: 0 },
+                    { x: -0.5, y: 0.5, z: 0 },
+                    { x: 0.5, y: 0.5, z: 0 },
+                    { x: 0.5, y: -0.5, z: 0 },
+                  ],
+                },
+              ],
+            },
+          },
+          userData: {
+            isTreasureHuntHint: true,
+          },
+        };
+
+        class GameScriptManager extends udviz.gameShared.ScriptBase {
+          load() {
+            // hints order
+            if (!this.variables.hintsOrder) {
+              this.variables.hintsOrder = [];
+            }
+
+            // removes ones not existing anymore
+            for (let i = this.variables.hintsOrder.length - 1; i >= 0; i--) {
+              const hint = this.context.object3D.getFirst(
+                (o) => o.uuid == this.variables.hintsOrder[i]
+              );
+              if (!hint) {
+                this.variables.hintsOrder.splice(i, 1);
+              }
+            }
+
+            // fill the missing ones
+            this.context.object3D
+              .filter((o) => o.userData.isTreasureHuntHint)
+              .forEach((h) =>
+                udviz.arrayPushOnce(this.variables.hintsOrder, h.uuid)
+              );
+
+            const externalScriptComp = this.object3D.getComponent(
+              udviz.gameShared.ExternalScriptComponent.TYPE
+            );
+            let currentHintIndex = -1;
+
+            const updateVisibility = () => {
+              if (currentHintIndex != this.variables.hintsOrder.length - 1) {
+                currentHintIndex++;
+
+                externalScriptComp.model.variables.currentHintUUID =
+                  this.variables.hintsOrder[currentHintIndex];
+                this.object3D.outdated = true;
+              } else {
+                return;
+              }
+              this.variables.hintsOrder.forEach((hUUID, index) => {
+                const hint = this.context.object3D.getFirst(
+                  (o) => o.uuid == hUUID
+                );
+                if (!hint) return; // has been removed
+                if (index != currentHintIndex) {
+                  if (hint.visible) {
+                    hint.visible = false;
+                    hint.outdated = true; // notify change to external context
+                  }
+                } else {
+                  hint.visible = true;
+                  hint.outdated = true;
+                }
+              });
+            };
+            updateVisibility();
+
+            this.context.on(TREASURE_HINT_COLLIDED, (step) => {
+              if (!step.visible) return;
+              this.context.removeObject3D(step.uuid);
+              updateVisibility();
+            });
+          }
+          static get ID_SCRIPT() {
+            return 'game_script_manager';
+          }
+        }
+
+        class ExternalScriptManager extends udviz.gameBrowser.ScriptBase {
+          init() {
+            // add layers
+            addLayers(this.context.frame3D.itownsView);
+
+            // add controls to avatar
+            this.avatar = this.object3D.getFirst((o) => o.userData.isAvatar);
+            udviz.gameBrowserTemplate.addNativeCommands(
+              this.context.inputManager,
+              this.avatar.uuid
+            );
+
+            // camera manager follow avatar
+            const cameraManager = this.context.findExternalScriptWithID(
+              udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT
+            );
+
+            cameraManager.followObject3D(
+              this.avatar,
+              this.variables.cameraDistance,
+              new udviz.THREE.Vector3(0, 0, 2),
+              this.variables.cameraAngle
+            );
+
+            // display first hint message
+            this.hintDomElement = document.createElement('div');
+            this.hintDomElement.classList.add('hint');
+            this.context.frame3D.domElementUI.appendChild(this.hintDomElement);
+            this.displayCurrentMessage();
+          }
+
+          displayCurrentMessage() {
+            const hint = this.context.currentGameObject3D.getFirst(
+              (o) => o.uuid == this.variables.currentHintUUID
+            );
+            if (hint) {
+              const externalScriptHint = hint.getComponent(
+                udviz.gameShared.ExternalScriptComponent.TYPE
+              );
+              this.hintDomElement.innerText =
+                externalScriptHint.model.variables.hintMessage;
+            } else {
+              this.hintDomElement.innerText = this.variables.endingMessage;
+            }
+          }
+
+          onOutdated() {
+            this.displayCurrentMessage();
+          }
+
+          tick() {
+            // avatar
+            this.context.sendCommandsToGameContext([
+              new udviz.gameShared.Command({
+                type: udviz.gameSharedTemplate.constant.COMMAND
+                  .UPDATE_TRANSFORM,
+                data: {
+                  object3DUUID: this.avatar.uuid,
+                  position: {
+                    z: udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
+                      this.context.frame3D.itownsView.tileLayer,
+                      extent.crs
+                    ),
+                  },
+                },
+              }),
+            ]);
+          }
+
+          static get ID_SCRIPT() {
+            return 'external_script_manager';
+          }
+        }
+
+        // create an editor
+        const gameEditor = new udviz.gameEditor.Editor(
+          frame3DPlanar,
+          assetManager,
+
+          [
+            class ExternalScriptManagerInput extends udviz.gameEditor
+              .ScriptInput {
+              init() {
+                // default message
+                const endingMessage = udviz.createLabelInput(
+                  'Ending message: ',
+                  'text'
+                );
+                this.domElement.appendChild(endingMessage.parent);
+                endingMessage.input.value = this.variables.endingMessage;
+                endingMessage.input.onchange = () =>
+                  (this.variables.endingMessage = endingMessage.input.value);
+
+                // camera angle
+                const cameraAngle = udviz.createLabelInput(
+                  'Camera angle: ',
+                  'range'
+                );
+                this.domElement.appendChild(cameraAngle.parent);
+                cameraAngle.input.min = -Math.PI;
+                cameraAngle.input.max = Math.PI;
+                cameraAngle.input.step = 'any';
+                cameraAngle.input.value = this.variables.cameraAngle;
+                cameraAngle.input.oninput = () => {
+                  this.variables.cameraAngle = cameraAngle.input.valueAsNumber;
+                };
+
+                // camera distance
+                const cameraDistance = udviz.createLabelInput(
+                  'Camera distance: ',
+                  'number'
+                );
+                this.domElement.appendChild(cameraDistance.parent);
+                cameraDistance.input.step = 0.1;
+                cameraDistance.input.value = this.variables.cameraDistance;
+                cameraDistance.input.oninput = () => {
+                  this.variables.cameraDistance =
+                    cameraDistance.input.valueAsNumber;
+                };
+              }
+              static get ID_EDIT_SCRIPT() {
+                return ExternalScriptManager.ID_SCRIPT;
+              }
+            },
+            class TreasureHuntHintExternalScriptInput extends udviz.gameEditor
+              .ScriptInput {
+              init() {
+                const hintMessage = udviz.createLabelInput(
+                  'Hint message: ',
+                  'text'
+                );
+                this.domElement.appendChild(hintMessage.parent);
+                hintMessage.input.value = this.variables.hintMessage;
+                hintMessage.input.onchange = () => {
+                  this.variables.hintMessage = hintMessage.input.value;
+                };
+              }
+
+              static get ID_EDIT_SCRIPT() {
+                return TreasureHuntHintExternalScript.ID_SCRIPT;
+              }
+            },
+          ],
+          [
+            class GameScriptManagerInput extends udviz.gameEditor.ScriptInput {
+              init() {
+                // hints order
+                if (!this.variables.hintsOrder) {
+                  this.variables.hintsOrder = [];
+                }
+
+                // removes ones not existing anymore
+                for (
+                  let i = this.variables.hintsOrder.length - 1;
+                  i >= 0;
+                  i--
+                ) {
+                  const hint =
+                    this.editor.gameObjectInput.gameObject3D.getFirst(
+                      (o) => o.uuid == this.variables.hintsOrder[i]
+                    );
+                  if (!hint) {
+                    this.variables.hintsOrder.splice(i, 1);
+                  }
+                }
+
+                // fill the missing ones
+                this.editor.gameObjectInput.gameObject3D
+                  .filter((o) => o.userData.isTreasureHuntHint)
+                  .forEach((h) =>
+                    udviz.arrayPushOnce(this.variables.hintsOrder, h.uuid)
+                  );
+
+                const listContainer = document.createElement('ul');
+
+                const updateList = () => {
+                  while (listContainer.firstChild)
+                    listContainer.firstChild.remove();
+
+                  this.variables.hintsOrder.forEach((uuid, index) => {
+                    const stepDomElement = document.createElement('li');
+                    stepDomElement.innerText =
+                      this.editor.gameObjectInput.gameObject3D.getFirst(
+                        (o) => o.uuid == uuid
+                      ).name;
+
+                    if (index != 0) {
+                      const upButton = document.createElement('button');
+                      upButton.innerText = '^';
+                      stepDomElement.appendChild(upButton);
+                      upButton.onclick = () => {
+                        this.variables.hintsOrder.splice(index, 1);
+                        this.variables.hintsOrder.splice(index - 1, 0, uuid);
+                        updateList();
+                      };
+                      stepDomElement.appendChild(upButton);
+                    }
+
+                    if (index != this.variables.hintsOrder.length - 1) {
+                      const downButton = document.createElement('button');
+                      downButton.innerText = 'v';
+                      stepDomElement.appendChild(downButton);
+                      downButton.onclick = () => {
+                        this.variables.hintsOrder.splice(index, 1);
+                        this.variables.hintsOrder.splice(index + 1, 0, uuid);
+                        updateList();
+                      };
+                      stepDomElement.appendChild(downButton);
+                    }
+
+                    listContainer.appendChild(stepDomElement);
+                  });
+                };
+
+                updateList();
+                this.domElement.appendChild(listContainer);
+              }
+
+              static get ID_EDIT_SCRIPT() {
+                return GameScriptManager.ID_SCRIPT;
+              }
+            },
+          ],
+          [treasureHuntHint],
+          {}
+        );
+
+        gameEditor.leftPan.style.backgroundColor = 'white';
+
+        // local storage
+        const KEY_LOCAL_STORAGE =
+          'game_editor_previous_gameobject_urban_treasure_hunt';
+
+        window.addEventListener('beforeunload', () => {
+          localStorage.setItem(
+            KEY_LOCAL_STORAGE,
+            JSON.stringify(gameEditor.currentGameObject3D.toJSON(true, true))
+          );
+        });
+        const oldGameobject3DString = localStorage.getItem(KEY_LOCAL_STORAGE);
+        if (
+          oldGameobject3DString &&
+          oldGameobject3DString != '' &&
+          confirm('Voulez-vous recharger le precedent jeu ?')
+        ) {
+          gameEditor.setCurrentGameObject3DJSON(
+            JSON.parse(oldGameobject3DString)
+          );
+        } else {
+          // default gameobject3D
+          const gameObject3D = new udviz.gameShared.Object3D({
+            name: 'urban treasure hunt',
+            static: true,
+            components: {
+              GameScript: {
+                scriptParams: [
+                  { id: GameScriptManager.ID_SCRIPT },
+                  {
+                    id: udviz.gameSharedTemplate.NativeCommandManager.ID_SCRIPT,
+                  },
+                ],
+                variables: {
+                  defaultSpeedRotate: 0.001,
+                  defaultSpeedTranslate: 0.01,
+                },
+              },
+              ExternalScript: {
+                scriptParams: [
+                  { id: ExternalScriptManager.ID_SCRIPT },
+                  { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
+                ],
+                variables: {
+                  cameraDistance: 5,
+                  cameraAngle: Math.PI / 6,
+                  endingMessage: 'Bravo',
+                },
+              },
+            },
+            children: [
+              {
+                name: 'avatar',
+                userData: { isAvatar: true },
+                components: {
+                  Render: {
+                    idRenderData: 'avatar',
+                  },
+                  Collider: {
+                    body: true,
+                    shapes: [
+                      {
+                        type: udviz.gameShared.ColliderComponent.SHAPE_TYPE
+                          .CIRCLE,
+                        radius: 0.7,
+                        center: { x: 0, y: 0, z: 0 },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          });
+          gameObject3D.position.set(extent.center().x, extent.center().y, 175);
+          gameEditor.setCurrentGameObject3DJSON(gameObject3D.toJSON());
+        }
+
+        // running button
+        const runButton = document.createElement('button');
+        runButton.innerText = 'Play the game';
+        let singleGame = null;
+        runButton.onclick = () => {
+          gameEditor.process.pause = true;
+          gameEditor.frame3D.domElement.remove();
+
+          // run in single mode
+          const frame3DPlanarGame = new udviz.frame3d.Planar(
+            extent,
+            configs['frame3D_planars'][0]
+          );
+
+          singleGame = new udviz.gameBrowser.SinglePlanarProcess(
+            gameEditor.currentGameObject3D.clone(),
+            frame3DPlanarGame,
+            assetManager,
+            new udviz.gameBrowser.InputManager(),
+            {
+              gameScriptClass: [
+                GameScriptManager,
+                udviz.gameSharedTemplate.NativeCommandManager,
+                TreasureHuntHintGameScript,
+              ],
+              externalGameScriptClass: [
+                ExternalScriptManager,
+                TreasureHuntHintExternalScript,
+                udviz.gameBrowserTemplate.CameraManager,
+              ],
+            }
+          );
+
+          singleGame.start();
+        };
+        gameEditor.toolsDomElement.appendChild(runButton);
+
+        // pressing escape return to editor view
+        window.addEventListener('keydown', (event) => {
+          if (singleGame && event.key == 'Escape') {
+            singleGame.dispose();
+            singleGame = null;
+            gameEditor.process.pause = false;
+            document.body.appendChild(gameEditor.frame3D.domElement);
+          }
+        });
+
+        // eslint-disable-next-line no-constant-condition
+        if ('RUN_MODE' == 'production')
+          loadingScreen(frame3DPlanar.itownsView, ['UD-VIZ', 'UDVIZ_VERSION']);
+      };
+
+      main();
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

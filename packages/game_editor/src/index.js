@@ -2,6 +2,7 @@ import {
   AudioComponent,
   ColliderComponent,
   Context,
+  ExternalScriptComponent,
   Object3D as GameObject3D,
   GameScriptComponent,
   RenderComponent,
@@ -24,6 +25,7 @@ import {
   OrthographicCamera,
   WebGLRenderer,
   AmbientLight,
+  MathUtils,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
@@ -47,67 +49,21 @@ const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
-export class ScriptInput {
-  /**
-   * private constructor user should not extends it !!
-   *
-   * @param {Editor} editor - editor running this script
-   * @param {object} variables - variables to edit
-   * @param {HTMLElement} domElement - where ui element should be appended
-   */
-  constructor(editor, variables, domElement) {
-    /** @type {Editor} */
-    this.editor = editor;
+export * from './scriptInput/ScriptInput';
 
-    /** @type {object} */
-    this.variables = variables;
-
-    /** @type {HTMLElement} */
-    this.domElement = domElement;
-
-    /** @type {HTMLElement} */
-    const closeButton = document.createElement('button');
-    this.domElement.appendChild(closeButton);
-    closeButton.innerText = 'Fermer';
-
-    closeButton.onclick = this.dispose.bind(this);
-  }
-
-  /**
-   * Call when this is disposed
-   */
-  dispose() {
-    while (this.domElement.firstChild) this.domElement.firstChild.remove();
-  }
-
-  /**
-   * Call when this is instanciated
-   */
-  init() {}
-
-  /**
-   * Call every frame computed
-   */
-  tick() {}
-
-  get ID_EDIT_SCRIPT() {
-    return ScriptInput.ID_EDIT_SCRIPT;
-  }
-
-  static get ID_EDIT_SCRIPT() {
-    throw new Error(
-      'abstract method, you have to specify which script is controlled'
-    );
-  }
-}
+import * as nativeGameScriptInput from './scriptInput/game/game';
+import * as nativeExternalScriptInput from './scriptInput/external/external';
+export { nativeExternalScriptInput };
+export { nativeGameScriptInput };
 
 export class Editor {
   /**
    *
    * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D - frame 3d
    * @param {AssetManager} assetManager - asset manager
-   * @param {object} externalScriptInputs - external script input to edit GameScript
-   * @param {object} gameScriptInputs - game script input to edit GameScript
+   * @param {Array} externalScriptInputs - external script input to edit GameScript
+   * @param {Array} gameScriptInputs - game script input to edit GameScript
+   * @param {Array} object3DModels - template of object3D
    * @param {object} userData - user data
    */
   constructor(
@@ -115,7 +71,8 @@ export class Editor {
     assetManager,
     externalScriptInputs,
     gameScriptInputs,
-    userData
+    object3DModels = [],
+    userData = {}
   ) {
     /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
     this.frame3D = frame3D;
@@ -123,13 +80,17 @@ export class Editor {
     /** @type {AssetManager} */
     this.assetManager = assetManager;
 
-    /** @type {Array<ScriptInput>} */
+    /** @type {Array<import("./scriptInput/ScriptInput")>} */
     this.externalScriptInputs = externalScriptInputs;
+    for (const className in nativeExternalScriptInput)
+      this.externalScriptInputs.push(nativeExternalScriptInput[className]);
 
-    /** @type {Array<ScriptInput>} */
+    /** @type {Array<import("./scriptInput/ScriptInput")>} */
     this.gameScriptInputs = gameScriptInputs;
+    for (const className in nativeGameScriptInput)
+      this.gameScriptInputs.push(nativeGameScriptInput[className]);
 
-    /** @type {ScriptInput|null} */
+    /** @type {import("./scriptInput/ScriptInput")|null} */
     this.scriptInput = null;
 
     /** @type {object} */
@@ -166,6 +127,61 @@ export class Editor {
     this.toolsDomElement.setAttribute('id', 'editor_tools');
     this.leftPan.appendChild(this.toolsDomElement);
 
+    // add object model
+    {
+      const selectObject3DModel = document.createElement('select');
+      this.toolsDomElement.appendChild(selectObject3DModel);
+
+      const buffer = new Map();
+      object3DModels.forEach((model) => {
+        const option = document.createElement('option');
+        option.innerText = model.name;
+        const uuid = MathUtils.generateUUID();
+        option.value = uuid;
+        buffer.set(uuid, model);
+        selectObject3DModel.appendChild(option);
+      });
+
+      const addObject3DModelToSelectedGameObject3D =
+        document.createElement('button');
+      addObject3DModelToSelectedGameObject3D.innerText = 'Add gameobject3D';
+      this.toolsDomElement.appendChild(addObject3DModelToSelectedGameObject3D);
+
+      addObject3DModelToSelectedGameObject3D.onclick = () => {
+        const objectToAdd = new GameObject3D(
+          JSON.parse(
+            JSON.stringify(
+              buffer.get(selectObject3DModel.selectedOptions[0].value)
+            )
+          )
+        );
+
+        // reset everything TODO: optimize
+        this.currentGameObject3D.add(objectToAdd);
+        this.setCurrentGameObject3DJSON(this.currentGameObject3D.toJSON());
+        this.selectGameObject3D(
+          this.currentGameObject3D.getFirst((o) => o.uuid == objectToAdd.uuid)
+        );
+      };
+    }
+
+    // remove gameobject
+    {
+      const deleteCurrentGameObject3D = document.createElement('button');
+      deleteCurrentGameObject3D.innerText = 'Remove gameobject3D selected';
+      this.toolsDomElement.appendChild(deleteCurrentGameObject3D);
+
+      deleteCurrentGameObject3D.onclick = () => {
+        if (!this.gameObjectInput.gameObject3D.parent.isGameObject3D) {
+          alert('you cant delete root of your game');
+          return;
+        }
+        // reset everything TODO: optimize
+        this.gameObjectInput.gameObject3D.removeFromParent();
+        this.setCurrentGameObject3DJSON(this.currentGameObject3D.toJSON());
+      };
+    }
+
     const possibleIdRenderData = [];
     for (const id in assetManager.renderData) possibleIdRenderData.push(id);
     const possibleIdSounds = [];
@@ -173,11 +189,18 @@ export class Editor {
     const possibleIdGameScripts = [];
     for (const id in this.gameScriptInputs)
       possibleIdGameScripts.push(this.gameScriptInputs[id].ID_EDIT_SCRIPT);
+    const possibleIdExternalScripts = [];
+    for (const id in this.externalScriptInputs)
+      possibleIdExternalScripts.push(
+        this.externalScriptInputs[id].ID_EDIT_SCRIPT
+      );
+
     /** @type {GameObject3DInput} */
     this.gameObjectInput = new GameObject3DInput(
       possibleIdRenderData,
       possibleIdSounds,
-      possibleIdGameScripts
+      possibleIdGameScripts,
+      possibleIdExternalScripts
     );
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
@@ -193,6 +216,7 @@ export class Editor {
       this.frame3D.camera,
       this.frame3D.domElementWebGL
     );
+    // transform controls
     {
       this.frame3D.scene.add(this.transformControls);
 
@@ -239,6 +263,15 @@ export class Editor {
         }
       });
     }
+
+    // update when input transform changed
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.TRANSFORM_CHANGED,
+      () => {
+        this.updateCollider();
+        this.updateBox3();
+      }
+    );
 
     // gizmo mode ui
     {
@@ -438,33 +471,50 @@ export class Editor {
       });
     }
 
-    const createScriptInputOf = (idEditScript) => {
-      const variables = this.gameObjectInput.gameObject3D.getComponent(
-        GameScriptComponent.TYPE
-      ).model.variables;
-      for (const id in this.gameScriptInputs) {
-        if (this.gameScriptInputs[id].ID_EDIT_SCRIPT == idEditScript) {
-          return new this.gameScriptInputs[id](
-            this,
-            variables,
-            this.gameObjectInput.gameScriptInputDomElement
-          );
-        }
-      }
-    };
-
     // game script edition
     this.gameObjectInput.addEventListener(
       GameObject3DInput.EVENT.GAME_SCRIPT_EDIT,
       (event) => {
-        if (this.scriptInput) this.scriptInput.dispose();
-        this.scriptInput = createScriptInputOf(event.detail.id);
+        if (this.scriptInput) this.scriptInput.dispose(); // only one script input at once
+        for (const id in this.gameScriptInputs) {
+          if (this.gameScriptInputs[id].ID_EDIT_SCRIPT == event.detail.id) {
+            this.scriptInput = new this.gameScriptInputs[id](
+              this,
+              this.gameObjectInput.gameObject3D.getComponent(
+                GameScriptComponent.TYPE
+              ).model.variables,
+              this.gameObjectInput.gameScriptInputDomElement
+            );
+            break;
+          }
+        }
+        this.scriptInput.init();
+      }
+    );
+
+    // external script edition
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.EXTERNAL_SCRIPT_EDIT,
+      (event) => {
+        if (this.scriptInput) this.scriptInput.dispose(); // only one script input at once
+        for (const id in this.externalScriptInputs) {
+          if (this.externalScriptInputs[id].ID_EDIT_SCRIPT == event.detail.id) {
+            this.scriptInput = new this.externalScriptInputs[id](
+              this,
+              this.gameObjectInput.gameObject3D.getComponent(
+                ExternalScriptComponent.TYPE
+              ).model.variables,
+              this.gameObjectInput.externalScriptInputDomElement
+            );
+            break;
+          }
+        }
         this.scriptInput.init();
       }
     );
 
     this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.GAME_SCRIPT_DELETED,
+      GameObject3DInput.EVENT.SCRIPT_DELETED,
       (event) => {
         if (
           this.scriptInput &&
@@ -473,6 +523,20 @@ export class Editor {
           this.scriptInput.dispose();
       }
     );
+  }
+
+  initGameObject3D(gameObject3D) {
+    gameObject3D.traverse((child) => {
+      if (!child.isGameObject3D) return;
+      child.matrixAutoUpdate = true; // disable .static optimization
+
+      const renderComp = child.getComponent(RenderComponent.TYPE);
+      if (renderComp) {
+        renderComp.initController(
+          new RenderController(renderComp.getModel(), child, this.assetManager)
+        );
+      }
+    });
   }
 
   /**
@@ -489,18 +553,8 @@ export class Editor {
 
     this.currentGameObject3D = gameObject3D;
 
-    // init render gameobject3d
-    this.currentGameObject3D.traverse((child) => {
-      if (!child.isGameObject3D) return;
-      child.matrixAutoUpdate = true; // disable .static optimization
-
-      const renderComp = child.getComponent(RenderComponent.TYPE);
-      if (renderComp) {
-        renderComp.initController(
-          new RenderController(renderComp.getModel(), child, this.assetManager)
-        );
-      }
-    });
+    // init render gameobject3d7
+    this.initGameObject3D(this.currentGameObject3D);
 
     this.frame3D.scene.add(this.currentGameObject3D);
 
@@ -575,12 +629,7 @@ export class Editor {
     const bb = Editor.computeBox3GameObject3D(this.currentGameObject3D);
     const center = new Vector3();
     bb.getCenter(center);
-    cameraFitRectangle(
-      this.frame3D.camera,
-      bb.min,
-      bb.max,
-      this.currentGameObject3D.position.z
-    );
+    cameraFitRectangle(this.frame3D.camera, bb.min, bb.max, bb.max.z);
     this.setOrbitControlsTargetTo(this.currentGameObject3D);
   }
 
@@ -912,8 +961,9 @@ class GameObject3DInput extends HTMLElement {
    * @param {Array<string>} idRenderDatas - possible id render datas to set in RenderComponent of the current game object 3d
    * @param {Array<string>} idSounds - possible id sound to set in AudioComponent of the current game object 3d
    * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent of the current game object 3d
+   * @param idExternalScripts
    */
-  constructor(idRenderDatas, idSounds, idGameScripts) {
+  constructor(idRenderDatas, idSounds, idGameScripts, idExternalScripts) {
     super();
 
     /** @type {Array} */
@@ -924,6 +974,9 @@ class GameObject3DInput extends HTMLElement {
 
     /** @type {Array} */
     this.idGameScripts = idGameScripts;
+
+    /** @type {Array} */
+    this.idExternalScripts = idExternalScripts;
 
     /** @type {GameObject3D|null} */
     this.gameObject3D = null;
@@ -943,6 +996,14 @@ class GameObject3DInput extends HTMLElement {
 
     this.static.input.onchange = () => {
       this.gameObject3D.static = this.static.input.checked;
+    };
+
+    // Visible
+    this.visible = createLabelInput('Visible: ', 'checkbox');
+    this.appendChild(this.visible.parent);
+
+    this.visible.input.onchange = () => {
+      this.gameObject3D.visible = this.visible.input.checked;
     };
 
     // transform
@@ -967,6 +1028,9 @@ class GameObject3DInput extends HTMLElement {
         this.position.y.input.valueAsNumber,
         this.position.z.input.valueAsNumber
       );
+      this.dispatchEvent(
+        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
+      );
     });
     this.rotation.addEventListener('change', () => {
       this.gameObject3D.rotation.set(
@@ -974,12 +1038,18 @@ class GameObject3DInput extends HTMLElement {
         this.rotation.y.input.valueAsNumber,
         this.rotation.z.input.valueAsNumber
       );
+      this.dispatchEvent(
+        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
+      );
     });
     this.scale.addEventListener('change', () => {
       this.gameObject3D.scale.set(
         this.scale.x.input.valueAsNumber,
         this.scale.y.input.valueAsNumber,
         this.scale.z.input.valueAsNumber
+      );
+      this.dispatchEvent(
+        new CustomEvent(GameObject3DInput.EVENT.TRANSFORM_CHANGED)
       );
     });
 
@@ -998,6 +1068,15 @@ class GameObject3DInput extends HTMLElement {
     // game script
     this.detailsGameScript = document.createElement('details');
     this.appendChild(this.detailsGameScript);
+    /** @type {HTMLElement} */
+    this.gameScriptInputDomElement = null;
+
+    // external script
+    this.detailsExternalScript = document.createElement('details');
+    this.appendChild(this.detailsExternalScript);
+
+    // no gameobject3d set at the construction
+    this.hidden = true;
   }
 
   /**
@@ -1005,11 +1084,19 @@ class GameObject3DInput extends HTMLElement {
    * @param {GameObject3D} go - go to select in the game object 3d input
    */
   setGameObject3D(go) {
+    if (!go) {
+      this.hidden = true;
+      return;
+    }
+    this.hidden = false;
+
     this.gameObject3D = go;
 
     this.nameLabelInput.input.value = go.name;
 
     this.static.input.checked = go.static;
+
+    this.visible.input.checked = go.visible;
 
     // transform
     this.updateTransform();
@@ -1025,44 +1112,70 @@ class GameObject3DInput extends HTMLElement {
 
     // game script
     this.updateGameScript();
+
+    // external script
+    this.updateExternalScript();
   }
 
   /**
    * Update GameScript component edition of the current game object 3d
    */
   updateGameScript() {
-    const gameScriptComp = this.gameObject3D.getComponent(
-      GameScriptComponent.TYPE
+    this.updateScriptComponent(
+      GameScriptComponent.TYPE,
+      this.detailsGameScript,
+      'GameScript',
+      this.idGameScripts,
+      GameObject3DInput.EVENT.GAME_SCRIPT_EDIT
     );
-    this.detailsGameScript.hidden = !gameScriptComp;
-    if (gameScriptComp) {
-      while (this.detailsGameScript.firstChild)
-        this.detailsGameScript.firstChild.remove();
+  }
+
+  updateExternalScript() {
+    this.updateScriptComponent(
+      ExternalScriptComponent.TYPE,
+      this.detailsExternalScript,
+      'ExternalScript',
+      this.idExternalScripts,
+      GameObject3DInput.EVENT.EXTERNAL_SCRIPT_EDIT
+    );
+  }
+
+  updateScriptComponent(
+    scriptComponentType,
+    detailsParent,
+    summaryText,
+    idScripts,
+    editEvent
+  ) {
+    const scriptComponent = this.gameObject3D.getComponent(scriptComponentType);
+    detailsParent.hidden = !scriptComponent;
+    if (scriptComponent) {
+      while (detailsParent.firstChild) detailsParent.firstChild.remove();
 
       // rebuild domelement
       const summaryAudio = document.createElement('summary');
-      summaryAudio.innerText = 'GameScript';
-      this.detailsGameScript.appendChild(summaryAudio);
+      summaryAudio.innerText = summaryText;
+      detailsParent.appendChild(summaryAudio);
 
       const listScript = document.createElement('ul');
-      this.detailsGameScript.appendChild(listScript);
+      detailsParent.appendChild(listScript);
 
       const updateList = () => {
         while (listScript.firstChild) listScript.firstChild.remove();
 
-        gameScriptComp.model.scriptParams.forEach((param, index) => {
+        scriptComponent.model.scriptParams.forEach((param, index) => {
           const li = document.createElement('li');
           li.innerText = param.id;
           listScript.appendChild(li);
 
-          if (this.idGameScripts.includes(param.id)) {
+          if (idScripts.includes(param.id)) {
             // call editor script input
             const editButton = document.createElement('button');
             editButton.innerText = 'Edit';
             li.appendChild(editButton);
             editButton.onclick = () => {
               this.dispatchEvent(
-                new CustomEvent(GameObject3DInput.EVENT.GAME_SCRIPT_EDIT, {
+                new CustomEvent(editEvent, {
                   detail: { id: param.id },
                 })
               );
@@ -1074,9 +1187,9 @@ class GameObject3DInput extends HTMLElement {
           li.appendChild(deleteButton);
 
           deleteButton.onclick = () => {
-            gameScriptComp.model.scriptParams.splice(index, 1);
+            scriptComponent.model.scriptParams.splice(index, 1);
             this.dispatchEvent(
-              new CustomEvent(GameObject3DInput.EVENT.GAME_SCRIPT_DELETED, {
+              new CustomEvent(GameObject3DInput.EVENT.SCRIPT_DELETED, {
                 detail: { id: param.id },
               })
             );
@@ -1097,9 +1210,9 @@ class GameObject3DInput extends HTMLElement {
       updateList();
 
       const selectIdScript = document.createElement('select');
-      this.detailsGameScript.appendChild(selectIdScript);
+      detailsParent.appendChild(selectIdScript);
 
-      this.idGameScripts.forEach((id) => {
+      idScripts.forEach((id) => {
         const option = document.createElement('option');
         option.innerText = id;
         option.value = id;
@@ -1107,23 +1220,29 @@ class GameObject3DInput extends HTMLElement {
       });
 
       const addScriptButton = document.createElement('button');
-      addScriptButton.innerText = 'Add game script';
-      this.detailsGameScript.appendChild(addScriptButton);
+      addScriptButton.innerText = 'Add ' + summaryText;
+      detailsParent.appendChild(addScriptButton);
 
       addScriptButton.onclick = () => {
         const idToAdd = selectIdScript.selectedOptions[0].value;
         const alreadyThere =
-          gameScriptComp.model.scriptParams.filter(
+          scriptComponent.model.scriptParams.filter(
             (param) => param.id == idToAdd
           ).length != 0;
         if (!alreadyThere) {
-          gameScriptComp.model.scriptParams.push({ id: idToAdd, priority: 0 });
+          scriptComponent.model.scriptParams.push({ id: idToAdd, priority: 0 });
           updateList();
         }
       };
 
-      this.gameScriptInputDomElement = document.createElement('div');
-      this.detailsGameScript.appendChild(this.gameScriptInputDomElement);
+      const divScriptInput = document.createElement('div');
+      detailsParent.appendChild(divScriptInput);
+
+      if (scriptComponentType == GameScriptComponent.TYPE) {
+        this.gameScriptInputDomElement = divScriptInput;
+      } else if (scriptComponentType == ExternalScriptComponent.TYPE) {
+        this.externalScriptInputDomElement = divScriptInput;
+      }
     }
   }
 
@@ -1512,9 +1631,11 @@ class GameObject3DInput extends HTMLElement {
   static get EVENT() {
     return {
       NAME_CHANGED: 'name_changed',
+      TRANSFORM_CHANGED: 'transform_changed',
       SHAPE_ADDED: 'polygon_added',
       GAME_SCRIPT_EDIT: 'game_script_edit',
-      GAME_SCRIPT_DELETED: 'game_script_deleted',
+      EXTERNAL_SCRIPT_EDIT: 'external_script_edit',
+      SCRIPT_DELETED: 'script_deleted',
     };
   }
 }
