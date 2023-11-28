@@ -9,6 +9,7 @@ module.exports = {
     loadingScreen: true,
     showdown: true,
     Maptastic: true,
+    addMarkdown: true,
   }, // bundle umd name + scripts imported in examples
   extends: ['eslint:recommended', 'prettier', 'plugin:jsdoc/recommended'],
   plugins: ['prettier', 'jsdoc', 'html'],

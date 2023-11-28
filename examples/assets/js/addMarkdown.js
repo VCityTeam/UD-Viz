@@ -3,6 +3,7 @@
  *
  * @param {Array<string>} paths - markdown paths
  */
+// eslint-disable-next-line no-unused-vars
 const addMarkdown = (paths) => {
   const loadMarkdown = () => {
     const mdContainer = document.createElement('div');
