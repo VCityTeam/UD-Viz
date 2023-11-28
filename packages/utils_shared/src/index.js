@@ -1,6 +1,19 @@
 const EPSILON = 0.0001;
 
 /**
+ *
+ * @param {number} x - x coor
+ * @param {number} y - y coord
+ * @param {number} angle - rotation angle in radian
+ */
+const rotate2DCoord = (x, y, angle) => {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  return { x: x * cos - y * sin, y: y * cos + x * sin };
+};
+
+/**
  * Limit the execution of a function every delay ms
  *
  * @param {Function} fn - function to be throttled
@@ -562,5 +575,6 @@ module.exports = {
   computeFilenameFromPath: computeFilenameFromPath,
   arrayPushOnce: arrayPushOnce,
   removeFromArray: removeFromArray,
+  rotate2DCoord: rotate2DCoord,
   ProcessInterval: require('./ProcessInterval'),
 };
