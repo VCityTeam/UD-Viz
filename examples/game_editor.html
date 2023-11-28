@@ -19,6 +19,14 @@
         padding: 20px;
         font-size: x-large;
       }
+      .debug {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 10;
+        width: 300px;
+        height: 300px;
+      }
     </style>
   </head>
   <body>
@@ -140,8 +148,8 @@
 
           tick() {
             // Bounce
-            const min = 1.5;
-            const max = 2.5;
+            const min = 0.5;
+            const max = 1;
             this.currentDt += this.context.dt;
             const bounce =
               (max - min) * Math.abs(Math.sin(this.currentDt * 0.001)) + min;
@@ -170,6 +178,7 @@
         const treasureHuntHint = {
           name: 'Treasure hunt hint',
           static: true,
+          matrix: [2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1],
           components: {
             Render: {
               idRenderData: 'cube',
@@ -585,7 +594,7 @@
         const runButton = document.createElement('button');
         runButton.innerText = 'Play the game';
         let singleGame = null;
-        runButton.onclick = () => {
+        runButton.onclick = async () => {
           gameEditor.process.pause = true;
           gameEditor.frame3D.domElement.remove();
 
@@ -614,7 +623,14 @@
             }
           );
 
-          singleGame.start();
+          await singleGame.start();
+
+          if ('RUN_MODE' != 'production') {
+            const debugCollision = new udviz.gameEditor.DebugCollision(
+              singleGame
+            );
+            debugCollision.domElement.classList.add('debug');
+          }
         };
         gameEditor.toolsDomElement.appendChild(runButton);
 
