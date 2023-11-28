@@ -72,6 +72,7 @@ const Context = class {
      * @type {import("./Object3D").Object3D}
      */
     this.object3D = object3D;
+    this.object3D.updateMatrixWorld(true);
 
     /**
      * Collisions system {@link https://www.npmjs.com/package/detect-collisions}
@@ -416,7 +417,8 @@ const Context = class {
   updateCollision(object3D) {
     object3D.traverse((child) => {
       const colliderComponent = child.getComponent(Collider.Component.TYPE);
-      if (colliderComponent) colliderComponent.getController().update();
+      if (colliderComponent)
+        colliderComponent.getController().update(this.object3D.position);
     });
     this.collisions.update();
   }

@@ -1,7 +1,7 @@
 const { Component, Model, Controller } = require('./Component');
 
 const { Circle, Polygon } = require('detect-collisions');
-const THREE = require('three');
+const { Euler, Vector3, Quaternion } = require('three');
 
 /**
  * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
@@ -114,15 +114,18 @@ class ColliderController extends Controller {
   /**
    * Update worldtransform of the shapeWrappers
    */
-  update() {
-    const position = new THREE.Vector3();
-    const quaternion = new THREE.Quaternion();
-    const scale = new THREE.Vector3();
+  update(offset) {
+    const position = new Vector3();
+    const quaternion = new Quaternion();
+    const scale = new Vector3();
     this.object3D.updateMatrixWorld();
     this.object3D.matrixWorld.decompose(position, quaternion, scale);
 
+    // collision referential is offseted so detect-collision deals with small number
+    position.sub(offset);
+
     this.shapeWrappers.forEach((b) => {
-      b.update(position);
+      b.update(position, new Euler().setFromQuaternion(quaternion), scale);
     });
   }
 
@@ -228,11 +231,14 @@ class ShapeWrapper {
           /**
            * update world transform of shape
            *
-           * @param {{x:number,y:number}} origin - origin in world
+           * @param {{x:number,y:number}} worldPosition - world position
+           * @param {*} worldRotation - world rotation useless here since this is not an ellipse but a circle
+           * @param {{x:number,y:number}} worldScale - world scale
            */
-          this.update = (origin) => {
-            circle.x = json.center.x + origin.x;
-            circle.y = json.center.y + origin.y;
+          this.update = (worldPosition, worldRotation, worldScale) => {
+            circle.x = json.center.x + worldPosition.x;
+            circle.y = json.center.y + worldPosition.y;
+            circle.scale = Math.max(worldScale.x, worldScale.y); //take the bigger scale
           };
 
           this.shape = circle;
@@ -245,21 +251,31 @@ class ShapeWrapper {
             points.push([parseFloat(p.x), parseFloat(p.y)]);
           });
 
+          let area = 0;
+          for (let i = 0; i < points.length; i += 2)
+            area +=
+              points[i + 1][0] *
+                (points[(i + 2) % points.length][1] - points[i][1]) +
+              points[i + 1][1] *
+                (points[i][0] - points[(i + 2) % points.length][0]);
+          area /= 2;
+          if (area < 0) points.reverse(); // if area is negative it means polygon points are in the wrong order
+
           const polygon = new Polygon(0, 0, points);
 
           /**
            * update world transform of shape
            *
-           * @param {{x:number,y:number}} origin - origin in world
-           * @todo rotation is not handle
+           * @param {{x:number,y:number}} worldPosition - world position
+           * @param {{z:number}} worldRotation - world rotation
+           * @param {{x:number,y:number}} worldScale - world scale
            */
-          this.update = function (origin) {
-            const points = [];
-            json.points.forEach(function (p) {
-              const point = [p.x + origin.x, p.y + origin.y];
-              points.push(point);
-            });
-            polygon.setPoints(points);
+          this.update = (worldPosition, worldRotation, worldScale) => {
+            polygon.x = worldPosition.x;
+            polygon.y = worldPosition.y;
+            polygon.angle = worldRotation.z;
+            polygon.scale_x = worldScale.x;
+            polygon.scale_y = worldScale.y;
           };
 
           this.shape = polygon;
