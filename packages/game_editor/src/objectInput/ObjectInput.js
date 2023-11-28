@@ -41,13 +41,23 @@ export class ObjectInput {
    */
   tick() {}
 
+  /**
+   *
+   * @param  {...any} args - arguments (id for scriptVariables input & gameobject3d for userData)
+   * @returns {boolean} - if true this object input can edit the concern object
+   */
   condition(...args) {
     return this.constructor.condition(...args);
   }
 
+  /**
+   *
+   * @returns {boolean} - if true this object input can edit the concern object
+   */
   static condition() {
-    throw new Error(
+    console.error(
       'abstract method, you have to specify which condition must be fullfilled to edit an object'
     );
+    return false;
   }
 }

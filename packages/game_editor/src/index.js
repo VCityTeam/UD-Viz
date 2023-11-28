@@ -49,7 +49,7 @@ const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
-export * from './objectInput/ObjectInput';
+export { ObjectInput } from './objectInput/ObjectInput';
 
 import * as nativeGameScriptVariablesInput from './objectInput/scriptVariables/game/game';
 import * as nativeExternalScriptVariablesInputs from './objectInput/scriptVariables/external/external';
@@ -950,10 +950,13 @@ export class Editor {
 class GameObject3DInput extends HTMLElement {
   /**
    *
-   * @param {Array<string>} idRenderDatas - possible id render datas to set in RenderComponent of the current game object 3d
-   * @param {Array<string>} idSounds - possible id sound to set in AudioComponent of the current game object 3d
-   * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent of the current game object 3d
-   * @param {Array<string>} idExternalScripts - possible id external script to set in ExternalScriptComponent of the current game object 3d
+   * @param {Array<string>} idRenderDatas - possible id render datas to set in RenderComponent
+   * @param {Array<string>} idSounds - possible id sound to set in AudioComponent
+   * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent
+   * @param {Array<string>} idExternalScripts - possible id external script to set in ExternalScriptComponent
+   * @param {Array<string>} gameScriptVariablesInputs - object inputs to edit .variables of GameScriptComponent
+   * @param {Array<string>} externalScriptVariablesInputs - object inputs to edit .variables of ExternalScriptComponent
+   * @param {Array<string>} userDataInputs - object inputs to edit .userData
    */
   constructor(
     idRenderDatas,
@@ -1134,6 +1137,9 @@ class GameObject3DInput extends HTMLElement {
     this.updateExternalScript();
   }
 
+  /**
+   * Update userData edition of the current game object 3d
+   */
   updateUserData() {
     let CurrentClassObjectInput = null;
     for (let index = 0; index < this.userDataInputs.length; index++) {
@@ -1185,10 +1191,18 @@ class GameObject3DInput extends HTMLElement {
     this.updateScriptComponent(GameScriptComponent.TYPE);
   }
 
+  /**
+   * Update ExternalScript component edition of the current game object 3d
+   */
   updateExternalScript() {
     this.updateScriptComponent(ExternalScriptComponent.TYPE);
   }
 
+  /**
+   * Update Script component edition of the current game object 3d
+   *
+   * @param {string} scriptComponentType - can ExternalScriptComponent.TYPE or GameScriptComponent.TYPE
+   */
   updateScriptComponent(scriptComponentType) {
     const scriptComponent = this.gameObject3D.getComponent(scriptComponentType);
     const detailsParent =
