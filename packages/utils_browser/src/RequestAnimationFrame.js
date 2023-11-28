@@ -19,6 +19,17 @@ export class RequestAnimationFrameProcess {
      *
       @type {number} */
     this.fps = fps || 30;
+
+    /** @type {Array<Function>} */
+    this.requesters = [];
+  }
+
+  /**
+   *
+   * @param {Function} r - requester
+   */
+  addFrameRequester(r) {
+    this.requesters.push(r);
   }
 
   /**
@@ -31,6 +42,8 @@ export class RequestAnimationFrameProcess {
    * @param {cbTickAnimationFrame} requester - callback to call at each tick
    */
   start(requester) {
+    if (requester) this.addFrameRequester(requester);
+
     let now;
     let then = Date.now();
     let delta;
@@ -47,7 +60,7 @@ export class RequestAnimationFrameProcess {
       if (delta > 1000 / this.fps) {
         // Update time stuffs
         then = now - (delta % 1000) / this.fps;
-        requester(delta);
+        this.requesters.forEach((r) => r(delta));
       }
     };
     tick();
