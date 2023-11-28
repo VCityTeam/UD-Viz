@@ -257,7 +257,6 @@ export class Context {
           });
 
           delete this.currentUUID[child.uuid];
-        } else {
         }
       });
 
