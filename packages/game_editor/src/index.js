@@ -53,6 +53,8 @@ export * from './objectInput/ObjectInput';
 
 import * as nativeGameScriptVariablesInput from './objectInput/scriptVariables/game/game';
 import * as nativeExternalScriptVariablesInputs from './objectInput/scriptVariables/external/external';
+import * as nativeUserDataInputs from './objectInput/userData/userData';
+export { nativeUserDataInputs };
 export { nativeExternalScriptVariablesInputs };
 export { nativeGameScriptVariablesInput };
 
@@ -126,7 +128,7 @@ export class Editor {
       defaultOption.innerText = 'Empty';
       const uuid = MathUtils.generateUUID();
       defaultOption.value = uuid;
-      buffer.set(uuid, {});
+      buffer.set(uuid, { name: 'GameObject3D' });
       selectObject3DModel.appendChild(defaultOption);
 
       // fill with ones pass at construction
@@ -199,6 +201,11 @@ export class Editor {
     for (const className in nativeGameScriptVariablesInput)
       gameScriptVariablesInputs.push(nativeGameScriptVariablesInput[className]);
 
+    /** @type {Array<import("./objectInput/ObjectInput")>} */
+    const userDataInputs = options.userDataInputs || [];
+    for (const className in nativeUserDataInputs)
+      userDataInputs.push(nativeUserDataInputs[className]);
+
     /** @type {GameObject3DInput} */
     this.gameObjectInput = new GameObject3DInput(
       possibleIdRenderData,
@@ -206,7 +213,8 @@ export class Editor {
       options.possibleGameScriptIds,
       options.possibleExternalScriptIds,
       gameScriptVariablesInputs,
-      externalScriptVariablesInputs
+      externalScriptVariablesInputs,
+      userDataInputs
     );
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
@@ -953,7 +961,8 @@ class GameObject3DInput extends HTMLElement {
     idGameScripts,
     idExternalScripts,
     gameScriptVariablesInputs,
-    externalScriptVariablesInputs
+    externalScriptVariablesInputs,
+    userDataInputs
   ) {
     super();
 
@@ -974,6 +983,9 @@ class GameObject3DInput extends HTMLElement {
 
     /** @type {Array} */
     this.externalScriptVariablesInputs = externalScriptVariablesInputs || [];
+
+    /** @type {Array} */
+    this.userDataInputs = userDataInputs || [];
 
     /** @type {GameObject3D|null} */
     this.gameObject3D = null;
@@ -1050,6 +1062,10 @@ class GameObject3DInput extends HTMLElement {
       );
     });
 
+    // userdata
+    this.detailsUserData = document.createElement('details');
+    this.appendChild(this.detailsUserData);
+
     // collider
     this.detailsCollider = document.createElement('details');
     this.appendChild(this.detailsCollider);
@@ -1099,6 +1115,9 @@ class GameObject3DInput extends HTMLElement {
     // transform
     this.updateTransform();
 
+    // userdata
+    this.updateUserData();
+
     // collider
     this.updateCollider();
 
@@ -1113,6 +1132,50 @@ class GameObject3DInput extends HTMLElement {
 
     // external script
     this.updateExternalScript();
+  }
+
+  updateUserData() {
+    let CurrentClassObjectInput = null;
+    for (let index = 0; index < this.userDataInputs.length; index++) {
+      const ClassObjectInput = this.userDataInputs[index];
+      // userdata inputs take an gameobject3D as condition
+      if (ClassObjectInput.condition(this.gameObject3D)) {
+        CurrentClassObjectInput = ClassObjectInput;
+        break;
+      }
+    }
+
+    if (CurrentClassObjectInput) {
+      this.detailsUserData.hidden = false;
+
+      while (this.detailsUserData.firstChild)
+        this.detailsUserData.firstChild.remove();
+
+      const summary = document.createElement('summary');
+      summary.innerText = 'userData';
+      this.detailsUserData.appendChild(summary);
+
+      const editButton = document.createElement('button');
+      editButton.innerText = 'Edit';
+      this.detailsUserData.appendChild(editButton);
+
+      const domElementObjectInput = document.createElement('div');
+      this.detailsUserData.appendChild(domElementObjectInput);
+
+      editButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.OBJECT_INPUT_CREATION, {
+            detail: {
+              ClassObjectInput: CurrentClassObjectInput,
+              object: this.gameObject3D.userData,
+              domElement: domElementObjectInput,
+            },
+          })
+        );
+      };
+    } else {
+      this.detailsUserData.hidden = true;
+    }
   }
 
   /**
@@ -1648,4 +1711,4 @@ class GameObject3DInput extends HTMLElement {
     };
   }
 }
-window.customElements.define('transform-input', GameObject3DInput); // mandatory to extends HTMLElement
+window.customElements.define('game-object-3d-input', GameObject3DInput); // mandatory to extends HTMLElement

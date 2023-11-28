@@ -219,9 +219,51 @@ export class Context {
 
     // Update currentGameObject3D with the new states
     if (this.currentGameObject3D) {
+      // remove gameobject 3D that has been removed in game context
       this.currentGameObject3D.traverse((child) => {
         if (!child.isGameObject3D) return;
+        const gameContextChild = state
+          .getObject3D()
+          .getObjectByProperty('uuid', child.uuid);
+        if (!gameContextChild) {
+          // Do not exist remove it
+          child.removeFromParent();
 
+          // external script event remove
+          const scriptComponent = child.getComponent(
+            ExternalScriptComponent.TYPE
+          );
+          if (scriptComponent) {
+            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
+          }
+
+          // Audio removal
+          const audioComponent = child.getComponent(AudioComponent.TYPE);
+          if (audioComponent) {
+            audioComponent.getController().dispose();
+          }
+
+          // notify other that child is removed
+          this.currentGameObject3D.traverse((otherGameObject) => {
+            if (!otherGameObject.isGameObject3D) return;
+            const externalComp = otherGameObject.getComponent(
+              ExternalScriptComponent.TYPE
+            );
+            if (externalComp) {
+              externalComp
+                .getController()
+                .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
+            }
+          });
+
+          delete this.currentUUID[child.uuid];
+        } else {
+        }
+      });
+
+      // update the others
+      this.currentGameObject3D.traverse((child) => {
+        if (!child.isGameObject3D) return;
         const gameContextChild = state
           .getObject3D()
           .getObjectByProperty('uuid', child.uuid);
@@ -314,38 +356,6 @@ export class Context {
               }
             }
           }
-        } else {
-          // Do not exist remove it
-          child.removeFromParent();
-
-          // external script event remove
-          const scriptComponent = child.getComponent(
-            ExternalScriptComponent.TYPE
-          );
-          if (scriptComponent) {
-            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
-          }
-
-          // Audio removal
-          const audioComponent = child.getComponent(AudioComponent.TYPE);
-          if (audioComponent) {
-            audioComponent.getController().dispose();
-          }
-
-          // notify other that child is removed
-          this.currentGameObject3D.traverse((otherGameObject) => {
-            if (!otherGameObject.isGameObject3D) return;
-            const externalComp = otherGameObject.getComponent(
-              ExternalScriptComponent.TYPE
-            );
-            if (externalComp) {
-              externalComp
-                .getController()
-                .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
-            }
-          });
-
-          delete this.currentUUID[child.uuid];
         }
       });
 

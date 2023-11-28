@@ -130,10 +130,11 @@
           init() {
             this.currentDt = 0;
           }
+
           tick() {
             // Bounce
-            const min = 0.5;
-            const max = 2;
+            const min = 1.5;
+            const max = 2.5;
             this.currentDt += this.context.dt;
             const bounce =
               (max - min) * Math.abs(Math.sin(this.currentDt * 0.001)) + min;
@@ -141,15 +142,8 @@
             this.object3D.updateMatrix(true, true);
           }
 
-          onRemove() {
-            const externalScriptManager = this.context.findExternalScriptWithID(
-              ExternalScriptManager.ID_SCRIPT
-            );
-            externalScriptManager.displayCurrentMessage();
-          }
-
           static get ID_SCRIPT() {
-            return 'external_script_treasure_hunt_step_id';
+            return 'external_script_bounce_id';
           }
         }
 
@@ -162,12 +156,12 @@
           }
 
           static get ID_SCRIPT() {
-            return 'game_script_treasure_hunt_step_id';
+            return 'game_script_treasure_hunt_hint_id';
           }
         }
 
         const treasureHuntHint = {
-          name: 'Treasure hunt step',
+          name: 'Treasure hunt hint',
           static: true,
           components: {
             Render: {
@@ -179,9 +173,6 @@
             },
             ExternalScript: {
               scriptParams: [{ id: Bounce.ID_SCRIPT }],
-              variables: {
-                hintMessage: 'default_message',
-              },
             },
             Collider: {
               body: false,
@@ -200,6 +191,7 @@
           },
           userData: {
             isTreasureHuntHint: true,
+            hintMessage: 'hint message',
           },
         };
 
@@ -230,18 +222,9 @@
             const externalScriptComp = this.object3D.getComponent(
               udviz.gameShared.ExternalScriptComponent.TYPE
             );
-            let currentHintIndex = -1;
+            let currentHintIndex = 0;
 
             const updateVisibility = () => {
-              if (currentHintIndex != this.variables.hintsOrder.length - 1) {
-                currentHintIndex++;
-
-                externalScriptComp.model.variables.currentHintUUID =
-                  this.variables.hintsOrder[currentHintIndex];
-                this.object3D.outdated = true;
-              } else {
-                return;
-              }
               this.variables.hintsOrder.forEach((hUUID, index) => {
                 const hint = this.context.object3D.getFirst(
                   (o) => o.uuid == hUUID
@@ -260,10 +243,23 @@
             };
             updateVisibility();
 
-            this.context.on(TREASURE_HINT_COLLIDED, (step) => {
-              if (!step.visible) return;
-              this.context.removeObject3D(step.uuid);
-              updateVisibility();
+            // init external comp
+            externalScriptComp.model.variables.currentHintUUID =
+              this.variables.hintsOrder[currentHintIndex];
+            this.object3D.outdated = true;
+
+            this.context.on(TREASURE_HINT_COLLIDED, (hint) => {
+              if (!hint.visible) return;
+              this.context.removeObject3D(hint.uuid);
+              if (currentHintIndex != this.variables.hintsOrder.length - 1) {
+                currentHintIndex++;
+                updateVisibility();
+              }
+
+              //notify external script
+              externalScriptComp.model.variables.currentHintUUID =
+                this.variables.hintsOrder[currentHintIndex];
+              this.object3D.outdated = true;
             });
           }
           static get ID_SCRIPT() {
@@ -307,11 +303,7 @@
               (o) => o.uuid == this.variables.currentHintUUID
             );
             if (hint) {
-              const externalScriptHint = hint.getComponent(
-                udviz.gameShared.ExternalScriptComponent.TYPE
-              );
-              this.hintDomElement.innerText =
-                externalScriptHint.model.variables.hintMessage;
+              this.hintDomElement.innerText = hint.userData.hintMessage;
             } else {
               this.hintDomElement.innerText = this.variables.endingMessage;
             }
@@ -351,6 +343,27 @@
           frame3DPlanar,
           assetManager,
           {
+            userDataInputs: [
+              class TreasureHuntHintUserDataInput extends udviz.gameEditor
+                .ObjectInput {
+                init() {
+                  const hintMessage = udviz.createLabelInput(
+                    'Hint message: ',
+                    'text'
+                  );
+                  hintMessage.input.value = this.object.hintMessage;
+                  this.domElement.appendChild(hintMessage.parent);
+
+                  hintMessage.input.onchange = () => {
+                    this.object.hintMessage = hintMessage.input.value;
+                  };
+                }
+
+                static condition(gameobject3D) {
+                  return gameobject3D.userData.isTreasureHuntHint;
+                }
+              },
+            ],
             externalScriptVariablesInputs: [
               class ExternalScriptManagerInput extends udviz.gameEditor
                 .ObjectInput {
@@ -396,24 +409,6 @@
                   return id == ExternalScriptManager.ID_SCRIPT;
                 }
               },
-              class TreasureHuntHintExternalObjectInput extends udviz.gameEditor
-                .ObjectInput {
-                init() {
-                  const hintMessage = udviz.createLabelInput(
-                    'Hint message: ',
-                    'text'
-                  );
-                  this.domElement.appendChild(hintMessage.parent);
-                  hintMessage.input.value = this.object.hintMessage;
-                  hintMessage.input.onchange = () => {
-                    this.object.hintMessage = hintMessage.input.value;
-                  };
-                }
-
-                static condition(id) {
-                  return Bounce.ID_SCRIPT == id;
-                }
-              },
             ],
             gameScriptVariablesInputs: [
               class GameScriptManagerInput extends udviz.gameEditor
@@ -449,8 +444,8 @@
                       listContainer.firstChild.remove();
 
                     this.object.hintsOrder.forEach((uuid, index) => {
-                      const stepDomElement = document.createElement('li');
-                      stepDomElement.innerText =
+                      const hintDomElement = document.createElement('li');
+                      hintDomElement.innerText =
                         this.editor.gameObjectInput.gameObject3D.getFirst(
                           (o) => o.uuid == uuid
                         ).name;
@@ -458,28 +453,28 @@
                       if (index != 0) {
                         const upButton = document.createElement('button');
                         upButton.innerText = '^';
-                        stepDomElement.appendChild(upButton);
+                        hintDomElement.appendChild(upButton);
                         upButton.onclick = () => {
                           this.object.hintsOrder.splice(index, 1);
                           this.object.hintsOrder.splice(index - 1, 0, uuid);
                           updateList();
                         };
-                        stepDomElement.appendChild(upButton);
+                        hintDomElement.appendChild(upButton);
                       }
 
                       if (index != this.object.hintsOrder.length - 1) {
                         const downButton = document.createElement('button');
                         downButton.innerText = 'v';
-                        stepDomElement.appendChild(downButton);
+                        hintDomElement.appendChild(downButton);
                         downButton.onclick = () => {
                           this.object.hintsOrder.splice(index, 1);
                           this.object.hintsOrder.splice(index + 1, 0, uuid);
                           updateList();
                         };
-                        stepDomElement.appendChild(downButton);
+                        hintDomElement.appendChild(downButton);
                       }
 
-                      listContainer.appendChild(stepDomElement);
+                      listContainer.appendChild(hintDomElement);
                     });
                   };
 
