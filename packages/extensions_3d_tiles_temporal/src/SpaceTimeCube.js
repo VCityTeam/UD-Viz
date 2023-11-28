@@ -1,6 +1,7 @@
 import * as itowns from 'itowns';
 import * as THREE from 'three';
 import { arrayPushOnce } from '@ud-viz/utils_shared';
+import { Temporal3DTilesLayerWrapper } from '@ud-viz/extensions_3d_tiles_temporal';
 
 const TEMPORAL_COLOR_OPACITY = {
   noTransaction: {
@@ -393,6 +394,8 @@ export class SpaceTimeCube {
     this.delta = delta;
 
     this.centerLayer = this.layers()[0];
+    this.temporalLayerVJA = this.temporalLayers()[0];
+    this.centerLayer = this.temporalLayerVJA;
     this.layersTemporal = [];
 
     // Circle paramaters
@@ -411,17 +414,22 @@ export class SpaceTimeCube {
         )
       );
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
-        this.centerLayer.id + '_' + i,
+        this.temporalLayerVJA.id + '_' + i,
         {
-          name: this.centerLayer.id + i,
+          name: this.temporalLayerVJA.id + i,
           source: new udviz.itowns.C3DTilesSource({
-            url: this.centerLayer.source.url,
+            url: this.temporalLayerVJA.source.url,
           }),
+          registeredExtensions: this.temporalLayerVJA.registeredExtensions,
         },
         this.view
       );
-      this.layersTemporal.push(this.layers()[index]);
-      index++;
+
+      itowns.View.prototype.addLayer.call(view, C3DTiles);
+      this.layersTemporal.push(C3DTiles);
+      const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
+      temporalWrapper.styleDate = 2009 + index;
+      index += 3;
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
