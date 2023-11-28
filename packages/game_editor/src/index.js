@@ -57,6 +57,7 @@ import * as nativeUserDataInputs from './objectInput/userData/userData';
 export { nativeUserDataInputs };
 export { nativeExternalScriptVariablesInputs };
 export { nativeGameScriptVariablesInput };
+export * from './DebugCollision';
 
 export class Editor {
   /**
@@ -401,6 +402,13 @@ export class Editor {
       window.addEventListener('keydown', (event) => {
         if (event.key == 'Escape') this.selectShape(-1);
         else if (event.key == 'Delete' && this.shapeContext.pointMesh) {
+          // can only remove point of polygon
+          if (
+            this.shapeContext.pointMesh.userData.shapeJSON.type !=
+            ColliderComponent.SHAPE_TYPE.POLYGON
+          )
+            return;
+
           if (
             this.shapeContext.pointMesh.userData.shapeJSON.points.length < 5
           ) {
