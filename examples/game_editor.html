@@ -126,8 +126,7 @@
         await assetManager.loadFromConfig(configs['assetManager']);
 
         // implementation of the game
-        class TreasureHuntHintExternalScript extends udviz.gameBrowser
-          .ScriptBase {
+        class Bounce extends udviz.gameBrowser.ScriptBase {
           init() {
             this.currentDt = 0;
           }
@@ -179,7 +178,7 @@
               scriptParams: [{ id: TreasureHuntHintGameScript.ID_SCRIPT }],
             },
             ExternalScript: {
-              scriptParams: [{ id: TreasureHuntHintExternalScript.ID_SCRIPT }],
+              scriptParams: [{ id: Bounce.ID_SCRIPT }],
               variables: {
                 hintMessage: 'default_message',
               },
@@ -351,153 +350,155 @@
         const gameEditor = new udviz.gameEditor.Editor(
           frame3DPlanar,
           assetManager,
-
-          [
-            class ExternalScriptManagerInput extends udviz.gameEditor
-              .ScriptInput {
-              init() {
-                // default message
-                const endingMessage = udviz.createLabelInput(
-                  'Ending message: ',
-                  'text'
-                );
-                this.domElement.appendChild(endingMessage.parent);
-                endingMessage.input.value = this.variables.endingMessage;
-                endingMessage.input.onchange = () =>
-                  (this.variables.endingMessage = endingMessage.input.value);
-
-                // camera angle
-                const cameraAngle = udviz.createLabelInput(
-                  'Camera angle: ',
-                  'range'
-                );
-                this.domElement.appendChild(cameraAngle.parent);
-                cameraAngle.input.min = -Math.PI;
-                cameraAngle.input.max = Math.PI;
-                cameraAngle.input.step = 'any';
-                cameraAngle.input.value = this.variables.cameraAngle;
-                cameraAngle.input.oninput = () => {
-                  this.variables.cameraAngle = cameraAngle.input.valueAsNumber;
-                };
-
-                // camera distance
-                const cameraDistance = udviz.createLabelInput(
-                  'Camera distance: ',
-                  'number'
-                );
-                this.domElement.appendChild(cameraDistance.parent);
-                cameraDistance.input.step = 0.1;
-                cameraDistance.input.value = this.variables.cameraDistance;
-                cameraDistance.input.oninput = () => {
-                  this.variables.cameraDistance =
-                    cameraDistance.input.valueAsNumber;
-                };
-              }
-              static get ID_EDIT_SCRIPT() {
-                return ExternalScriptManager.ID_SCRIPT;
-              }
-            },
-            class TreasureHuntHintExternalScriptInput extends udviz.gameEditor
-              .ScriptInput {
-              init() {
-                const hintMessage = udviz.createLabelInput(
-                  'Hint message: ',
-                  'text'
-                );
-                this.domElement.appendChild(hintMessage.parent);
-                hintMessage.input.value = this.variables.hintMessage;
-                hintMessage.input.onchange = () => {
-                  this.variables.hintMessage = hintMessage.input.value;
-                };
-              }
-
-              static get ID_EDIT_SCRIPT() {
-                return TreasureHuntHintExternalScript.ID_SCRIPT;
-              }
-            },
-          ],
-          [
-            class GameScriptManagerInput extends udviz.gameEditor.ScriptInput {
-              init() {
-                // hints order
-                if (!this.variables.hintsOrder) {
-                  this.variables.hintsOrder = [];
-                }
-
-                // removes ones not existing anymore
-                for (
-                  let i = this.variables.hintsOrder.length - 1;
-                  i >= 0;
-                  i--
-                ) {
-                  const hint =
-                    this.editor.gameObjectInput.gameObject3D.getFirst(
-                      (o) => o.uuid == this.variables.hintsOrder[i]
-                    );
-                  if (!hint) {
-                    this.variables.hintsOrder.splice(i, 1);
-                  }
-                }
-
-                // fill the missing ones
-                this.editor.gameObjectInput.gameObject3D
-                  .filter((o) => o.userData.isTreasureHuntHint)
-                  .forEach((h) =>
-                    udviz.arrayPushOnce(this.variables.hintsOrder, h.uuid)
+          {
+            externalScriptVariablesInputs: [
+              class ExternalScriptManagerInput extends udviz.gameEditor
+                .ObjectInput {
+                init() {
+                  // default message
+                  const endingMessage = udviz.createLabelInput(
+                    'Ending message: ',
+                    'text'
                   );
+                  this.domElement.appendChild(endingMessage.parent);
+                  endingMessage.input.value = this.object.endingMessage;
+                  endingMessage.input.onchange = () =>
+                    (this.object.endingMessage = endingMessage.input.value);
 
-                const listContainer = document.createElement('ul');
+                  // camera angle
+                  const cameraAngle = udviz.createLabelInput(
+                    'Camera angle: ',
+                    'range'
+                  );
+                  this.domElement.appendChild(cameraAngle.parent);
+                  cameraAngle.input.min = -Math.PI;
+                  cameraAngle.input.max = Math.PI;
+                  cameraAngle.input.step = 'any';
+                  cameraAngle.input.value = this.object.cameraAngle;
+                  cameraAngle.input.oninput = () => {
+                    this.object.cameraAngle = cameraAngle.input.valueAsNumber;
+                  };
 
-                const updateList = () => {
-                  while (listContainer.firstChild)
-                    listContainer.firstChild.remove();
+                  // camera distance
+                  const cameraDistance = udviz.createLabelInput(
+                    'Camera distance: ',
+                    'number'
+                  );
+                  this.domElement.appendChild(cameraDistance.parent);
+                  cameraDistance.input.step = 0.1;
+                  cameraDistance.input.value = this.object.cameraDistance;
+                  cameraDistance.input.oninput = () => {
+                    this.object.cameraDistance =
+                      cameraDistance.input.valueAsNumber;
+                  };
+                }
+                static condition(id) {
+                  return id == ExternalScriptManager.ID_SCRIPT;
+                }
+              },
+              class TreasureHuntHintExternalObjectInput extends udviz.gameEditor
+                .ObjectInput {
+                init() {
+                  const hintMessage = udviz.createLabelInput(
+                    'Hint message: ',
+                    'text'
+                  );
+                  this.domElement.appendChild(hintMessage.parent);
+                  hintMessage.input.value = this.object.hintMessage;
+                  hintMessage.input.onchange = () => {
+                    this.object.hintMessage = hintMessage.input.value;
+                  };
+                }
 
-                  this.variables.hintsOrder.forEach((uuid, index) => {
-                    const stepDomElement = document.createElement('li');
-                    stepDomElement.innerText =
+                static condition(id) {
+                  return Bounce.ID_SCRIPT == id;
+                }
+              },
+            ],
+            gameScriptVariablesInputs: [
+              class GameScriptManagerInput extends udviz.gameEditor
+                .ObjectInput {
+                init() {
+                  // hints order
+                  if (!this.object.hintsOrder) {
+                    this.object.hintsOrder = [];
+                  }
+
+                  // removes ones not existing anymore
+                  for (let i = this.object.hintsOrder.length - 1; i >= 0; i--) {
+                    const hint =
                       this.editor.gameObjectInput.gameObject3D.getFirst(
-                        (o) => o.uuid == uuid
-                      ).name;
-
-                    if (index != 0) {
-                      const upButton = document.createElement('button');
-                      upButton.innerText = '^';
-                      stepDomElement.appendChild(upButton);
-                      upButton.onclick = () => {
-                        this.variables.hintsOrder.splice(index, 1);
-                        this.variables.hintsOrder.splice(index - 1, 0, uuid);
-                        updateList();
-                      };
-                      stepDomElement.appendChild(upButton);
+                        (o) => o.uuid == this.object.hintsOrder[i]
+                      );
+                    if (!hint) {
+                      this.object.hintsOrder.splice(i, 1);
                     }
+                  }
 
-                    if (index != this.variables.hintsOrder.length - 1) {
-                      const downButton = document.createElement('button');
-                      downButton.innerText = 'v';
-                      stepDomElement.appendChild(downButton);
-                      downButton.onclick = () => {
-                        this.variables.hintsOrder.splice(index, 1);
-                        this.variables.hintsOrder.splice(index + 1, 0, uuid);
-                        updateList();
-                      };
-                      stepDomElement.appendChild(downButton);
-                    }
+                  // fill the missing ones
+                  this.editor.gameObjectInput.gameObject3D
+                    .filter((o) => o.userData.isTreasureHuntHint)
+                    .forEach((h) =>
+                      udviz.arrayPushOnce(this.object.hintsOrder, h.uuid)
+                    );
 
-                    listContainer.appendChild(stepDomElement);
-                  });
-                };
+                  const listContainer = document.createElement('ul');
 
-                updateList();
-                this.domElement.appendChild(listContainer);
-              }
+                  const updateList = () => {
+                    while (listContainer.firstChild)
+                      listContainer.firstChild.remove();
 
-              static get ID_EDIT_SCRIPT() {
-                return GameScriptManager.ID_SCRIPT;
-              }
-            },
-          ],
-          [treasureHuntHint],
-          {}
+                    this.object.hintsOrder.forEach((uuid, index) => {
+                      const stepDomElement = document.createElement('li');
+                      stepDomElement.innerText =
+                        this.editor.gameObjectInput.gameObject3D.getFirst(
+                          (o) => o.uuid == uuid
+                        ).name;
+
+                      if (index != 0) {
+                        const upButton = document.createElement('button');
+                        upButton.innerText = '^';
+                        stepDomElement.appendChild(upButton);
+                        upButton.onclick = () => {
+                          this.object.hintsOrder.splice(index, 1);
+                          this.object.hintsOrder.splice(index - 1, 0, uuid);
+                          updateList();
+                        };
+                        stepDomElement.appendChild(upButton);
+                      }
+
+                      if (index != this.object.hintsOrder.length - 1) {
+                        const downButton = document.createElement('button');
+                        downButton.innerText = 'v';
+                        stepDomElement.appendChild(downButton);
+                        downButton.onclick = () => {
+                          this.object.hintsOrder.splice(index, 1);
+                          this.object.hintsOrder.splice(index + 1, 0, uuid);
+                          updateList();
+                        };
+                        stepDomElement.appendChild(downButton);
+                      }
+
+                      listContainer.appendChild(stepDomElement);
+                    });
+                  };
+
+                  updateList();
+                  this.domElement.appendChild(listContainer);
+                }
+
+                static condition(id) {
+                  return id == GameScriptManager.ID_SCRIPT;
+                }
+              },
+            ],
+            object3DModels: [treasureHuntHint],
+            possibleExternalScriptIds: [
+              ExternalScriptManager.ID_SCRIPT,
+              Bounce.ID_SCRIPT,
+            ],
+            possibleGameScriptIds: [GameScriptManager.ID_SCRIPT],
+          }
         );
 
         gameEditor.leftPan.style.backgroundColor = 'white';
@@ -605,7 +606,7 @@
               ],
               externalGameScriptClass: [
                 ExternalScriptManager,
-                TreasureHuntHintExternalScript,
+                Bounce,
                 udviz.gameBrowserTemplate.CameraManager,
               ],
             }

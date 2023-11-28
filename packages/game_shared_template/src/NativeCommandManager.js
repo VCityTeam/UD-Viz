@@ -14,27 +14,13 @@ const {
 } = require('@ud-viz/game_shared');
 
 /**
- * @typedef NativeCommandManagerVariables
- * @property {number} angleMin - angle min in the clamp rotation in radian
- * @property {number} angleMax - angle max in the clamp rotation in radian
- * @property {number} defaultSpeedRotate - speed rotate
- * @property {number} defaultSpeedTranslate - speed translate
- */
-
-/** @type {NativeCommandManagerVariables} */
-const defaultVariables = {
-  angleMin: Math.PI / 5,
-  angleMax: 2 * Math.PI - Math.PI / 10,
-  defaultSpeedTranslate: 0.04,
-  defaultSpeedRotate: 0.00001,
-};
-
-/**
  * @classdesc - Manage native command
  */
 const NativeCommandManager = class extends ScriptBase {
   constructor(context, object3D, variables) {
-    const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
+    const overWriteVariables = JSON.parse(
+      JSON.stringify(NativeCommandManager.DEFAULT_VARIABLES)
+    );
     objectOverWrite(overWriteVariables, variables);
     super(context, object3D, overWriteVariables);
 
@@ -385,6 +371,22 @@ const NativeCommandManager = class extends ScriptBase {
   static get FREEZE_KEY() {
     return 'freeze_key';
   }
+};
+
+/**
+ * @typedef NativeCommandManagerVariables
+ * @property {number} angleMin - angle min in the clamp rotation in radian
+ * @property {number} angleMax - angle max in the clamp rotation in radian
+ * @property {number} defaultSpeedRotate - speed rotate
+ * @property {number} defaultSpeedTranslate - speed translate
+ */
+
+/** @type {NativeCommandManagerVariables} */
+NativeCommandManager.DEFAULT_VARIABLES = {
+  angleMin: Math.PI / 5,
+  angleMax: 2 * Math.PI - Math.PI / 10,
+  defaultSpeedTranslate: 0.04,
+  defaultSpeedRotate: 0.00001,
 };
 
 /**
