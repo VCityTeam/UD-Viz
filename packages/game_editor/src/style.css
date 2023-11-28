@@ -4,6 +4,7 @@
   width: fit-content;
   height: fit-content;
   overflow-y: scroll;
+  max-height: 100%;
 }
 
 #left_pan img {

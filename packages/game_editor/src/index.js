@@ -49,83 +49,70 @@ const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
-export * from './scriptInput/ScriptInput';
+export * from './objectInput/ObjectInput';
 
-import * as nativeGameScriptInput from './scriptInput/game/game';
-import * as nativeExternalScriptInput from './scriptInput/external/external';
-export { nativeExternalScriptInput };
-export { nativeGameScriptInput };
+import * as nativeGameScriptVariablesInput from './objectInput/scriptVariables/game/game';
+import * as nativeExternalScriptVariablesInputs from './objectInput/scriptVariables/external/external';
+export { nativeExternalScriptVariablesInputs };
+export { nativeGameScriptVariablesInput };
 
 export class Editor {
   /**
    *
    * @param {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} frame3D - frame 3d
    * @param {AssetManager} assetManager - asset manager
-   * @param {Array} externalScriptInputs - external script input to edit GameScript
-   * @param {Array} gameScriptInputs - game script input to edit GameScript
-   * @param {Array} object3DModels - template of object3D
-   * @param {object} userData - user data
+   * @param {object} options - options
+   * @param {Array} options.externalScriptVariablesInputs - input to edit ExternalScriptComponent variables
+   * @param {Array} options.gameScriptVariablesInputs - input to edit GameScriptComponent variables
+   * @param {Array} options.userDataInputs - input to edit .userData
+   * @param {Array} options.object3DModels - models of object3D
+   * @param {Array} options.possibleExternalScriptIds - ids that can be added to a gameobject3d ExternalScriptComponent
+   * @param {Array} options.possibleGameScriptIds - ids that can be added to a gameobject3d GameScriptComponent
+   * @param {object} options.userData - user data
    */
-  constructor(
-    frame3D,
-    assetManager,
-    externalScriptInputs,
-    gameScriptInputs,
-    object3DModels = [],
-    userData = {}
-  ) {
+  constructor(frame3D, assetManager, options = {}) {
     /** @type {import("@ud-viz/frame3d").Planar|import("@ud-viz/frame3d").Base} */
     this.frame3D = frame3D;
 
     /** @type {AssetManager} */
     this.assetManager = assetManager;
 
-    /** @type {Array<import("./scriptInput/ScriptInput")>} */
-    this.externalScriptInputs = externalScriptInputs;
-    for (const className in nativeExternalScriptInput)
-      this.externalScriptInputs.push(nativeExternalScriptInput[className]);
-
-    /** @type {Array<import("./scriptInput/ScriptInput")>} */
-    this.gameScriptInputs = gameScriptInputs;
-    for (const className in nativeGameScriptInput)
-      this.gameScriptInputs.push(nativeGameScriptInput[className]);
-
-    /** @type {import("./scriptInput/ScriptInput")|null} */
-    this.scriptInput = null;
-
     /** @type {object} */
-    this.userData = userData;
+    this.userData = options.userData || {};
 
-    /** @type {HTMLElement} */
-    this.leftPan = document.createElement('div');
-    this.leftPan.setAttribute('id', 'left_pan');
-    this.frame3D.domElementUI.appendChild(this.leftPan);
+    // ui init
+    {
+      /** @type {HTMLElement} */
+      this.leftPan = document.createElement('div');
+      this.leftPan.setAttribute('id', 'left_pan');
+      this.frame3D.domElementUI.appendChild(this.leftPan);
 
-    const leftPanWidthInput = createLocalStorageSlider(
-      'editor_left_width_range_key',
-      'Taille UI ',
-      this.leftPan,
-      {
-        min: 100,
-        max: 700,
-        defaultValue: 300,
-      }
-    );
-    const updateLeftWidth = () => {
-      this.leftPan.style.width = leftPanWidthInput.value + 'px';
-    };
-    leftPanWidthInput.onchange = updateLeftWidth;
-    updateLeftWidth();
+      const leftPanWidthInput = createLocalStorageSlider(
+        'editor_left_width_range_key',
+        'Taille UI ',
+        this.leftPan,
+        {
+          min: 100,
+          max: 700,
+          defaultValue: 300,
+        }
+      );
+      const updateLeftWidth = () => {
+        this.leftPan.style.width = leftPanWidthInput.value + 'px';
+      };
+      leftPanWidthInput.onchange = updateLeftWidth;
+      updateLeftWidth();
 
-    /** @type {HTMLElement} */
-    this.currentGODomelement = document.createElement('div');
-    this.currentGODomelement.setAttribute('id', 'current_game_object_3d');
-    this.leftPan.appendChild(this.currentGODomelement);
+      /** @type {HTMLElement} */
+      this.currentGODomelement = document.createElement('div');
+      this.currentGODomelement.setAttribute('id', 'current_game_object_3d');
+      this.leftPan.appendChild(this.currentGODomelement);
 
-    /** @type {HTMLElement} */
-    this.toolsDomElement = document.createElement('div');
-    this.toolsDomElement.setAttribute('id', 'editor_tools');
-    this.leftPan.appendChild(this.toolsDomElement);
+      /** @type {HTMLElement} */
+      this.toolsDomElement = document.createElement('div');
+      this.toolsDomElement.setAttribute('id', 'editor_tools');
+      this.leftPan.appendChild(this.toolsDomElement);
+    }
 
     // add object model
     {
@@ -133,14 +120,26 @@ export class Editor {
       this.toolsDomElement.appendChild(selectObject3DModel);
 
       const buffer = new Map();
-      object3DModels.forEach((model) => {
-        const option = document.createElement('option');
-        option.innerText = model.name;
-        const uuid = MathUtils.generateUUID();
-        option.value = uuid;
-        buffer.set(uuid, model);
-        selectObject3DModel.appendChild(option);
-      });
+
+      // add a default one
+      const defaultOption = document.createElement('option');
+      defaultOption.innerText = 'Empty';
+      const uuid = MathUtils.generateUUID();
+      defaultOption.value = uuid;
+      buffer.set(uuid, {});
+      selectObject3DModel.appendChild(defaultOption);
+
+      // fill with ones pass at construction
+      if (options.object3DModels) {
+        options.object3DModels.forEach((model) => {
+          const option = document.createElement('option');
+          option.innerText = model.name;
+          const uuid = MathUtils.generateUUID();
+          option.value = uuid;
+          buffer.set(uuid, model);
+          selectObject3DModel.appendChild(option);
+        });
+      }
 
       const addObject3DModelToSelectedGameObject3D =
         document.createElement('button');
@@ -186,24 +185,40 @@ export class Editor {
     for (const id in assetManager.renderData) possibleIdRenderData.push(id);
     const possibleIdSounds = [];
     for (const id in assetManager.sounds) possibleIdSounds.push(id);
-    const possibleIdGameScripts = [];
-    for (const id in this.gameScriptInputs)
-      possibleIdGameScripts.push(this.gameScriptInputs[id].ID_EDIT_SCRIPT);
-    const possibleIdExternalScripts = [];
-    for (const id in this.externalScriptInputs)
-      possibleIdExternalScripts.push(
-        this.externalScriptInputs[id].ID_EDIT_SCRIPT
+
+    /** @type {Array<import("./objectInput/ObjectInput")>} */
+    const externalScriptVariablesInputs =
+      options.externalScriptVariablesInputs || [];
+    for (const className in nativeExternalScriptVariablesInputs)
+      externalScriptVariablesInputs.push(
+        nativeExternalScriptVariablesInputs[className]
       );
+
+    /** @type {Array<import("./objectInput/ObjectInput")>} */
+    const gameScriptVariablesInputs = options.gameScriptVariablesInputs || [];
+    for (const className in nativeGameScriptVariablesInput)
+      gameScriptVariablesInputs.push(nativeGameScriptVariablesInput[className]);
 
     /** @type {GameObject3DInput} */
     this.gameObjectInput = new GameObject3DInput(
       possibleIdRenderData,
       possibleIdSounds,
-      possibleIdGameScripts,
-      possibleIdExternalScripts
+      options.possibleGameScriptIds,
+      options.possibleExternalScriptIds,
+      gameScriptVariablesInputs,
+      externalScriptVariablesInputs
     );
     this.gameObjectInput.setAttribute('id', 'select_game_object_3d');
     this.leftPan.appendChild(this.gameObjectInput);
+
+    // update when input transform changed
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.TRANSFORM_CHANGED,
+      () => {
+        this.updateCollider();
+        this.updateBox3();
+      }
+    );
 
     /** @type {OrbitControls} */
     this.orbitControls = new OrbitControls(
@@ -264,15 +279,6 @@ export class Editor {
       });
     }
 
-    // update when input transform changed
-    this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.TRANSFORM_CHANGED,
-      () => {
-        this.updateCollider();
-        this.updateBox3();
-      }
-    );
-
     // gizmo mode ui
     {
       const addButtonMode = (mode) => {
@@ -293,14 +299,6 @@ export class Editor {
     this.buttonTargetGameObject3D = document.createElement('button');
     this.buttonTargetGameObject3D.innerText = 'Target';
     this.toolsDomElement.appendChild(this.buttonTargetGameObject3D);
-
-    /** @type {RequestAnimationFrameProcess} */
-    this.process = new RequestAnimationFrameProcess(20);
-    this.process.start((dt) => {
-      this.transformControls.updateMatrixWorld();
-      this.frame3D.render();
-      if (this.scriptInput) this.scriptInput.tick(dt);
-    });
 
     /** @type {GameObject3D|null} */
     this.currentGameObject3D = null;
@@ -471,58 +469,44 @@ export class Editor {
       });
     }
 
-    // game script edition
-    this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.GAME_SCRIPT_EDIT,
-      (event) => {
-        if (this.scriptInput) this.scriptInput.dispose(); // only one script input at once
-        for (const id in this.gameScriptInputs) {
-          if (this.gameScriptInputs[id].ID_EDIT_SCRIPT == event.detail.id) {
-            this.scriptInput = new this.gameScriptInputs[id](
-              this,
-              this.gameObjectInput.gameObject3D.getComponent(
-                GameScriptComponent.TYPE
-              ).model.variables,
-              this.gameObjectInput.gameScriptInputDomElement
-            );
-            break;
-          }
-        }
-        this.scriptInput.init();
-      }
-    );
+    // object input
+    {
+      /** @type {import("./objectInput/ObjectInput")|null} */
+      this.currentObjectInput = null;
 
-    // external script edition
-    this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.EXTERNAL_SCRIPT_EDIT,
-      (event) => {
-        if (this.scriptInput) this.scriptInput.dispose(); // only one script input at once
-        for (const id in this.externalScriptInputs) {
-          if (this.externalScriptInputs[id].ID_EDIT_SCRIPT == event.detail.id) {
-            this.scriptInput = new this.externalScriptInputs[id](
-              this,
-              this.gameObjectInput.gameObject3D.getComponent(
-                ExternalScriptComponent.TYPE
-              ).model.variables,
-              this.gameObjectInput.externalScriptInputDomElement
-            );
-            break;
-          }
+      // object input creation
+      this.gameObjectInput.addEventListener(
+        GameObject3DInput.EVENT.OBJECT_INPUT_CREATION,
+        (event) => {
+          if (this.currentObjectInput) this.currentObjectInput.dispose(); // only one script input at once
+          this.currentObjectInput = new event.detail.ClassObjectInput(
+            this,
+            event.detail.object,
+            event.detail.domElement
+          );
+          this.currentObjectInput.init();
         }
-        this.scriptInput.init();
-      }
-    );
+      );
 
-    this.gameObjectInput.addEventListener(
-      GameObject3DInput.EVENT.SCRIPT_DELETED,
-      (event) => {
-        if (
-          this.scriptInput &&
-          this.scriptInput.ID_EDIT_SCRIPT == event.detail.id
-        )
-          this.scriptInput.dispose();
-      }
-    );
+      this.gameObjectInput.addEventListener(
+        GameObject3DInput.EVENT.SCRIPT_DELETED,
+        (event) => {
+          if (
+            this.currentObjectInput && // one current object input
+            this.currentObjectInput.condition(event.detail.id) // its a script variables object input + one that's the one editing the deleted script
+          )
+            this.currentObjectInput.dispose(); // dispose it
+        }
+      );
+    }
+
+    /** @type {RequestAnimationFrameProcess} */
+    this.process = new RequestAnimationFrameProcess(20);
+    this.process.start((dt) => {
+      this.transformControls.updateMatrixWorld();
+      this.frame3D.render();
+      if (this.currentObjectInput) this.currentObjectInput.tick(dt);
+    });
   }
 
   initGameObject3D(gameObject3D) {
@@ -652,7 +636,7 @@ export class Editor {
   selectGameObject3D(go) {
     if (go == this.gameObjectInput.gameObject3D) return;
 
-    if (this.scriptInput) this.scriptInput.dispose();
+    if (this.currentObjectInput) this.currentObjectInput.dispose();
 
     // game input dom element
     this.gameObjectInput.setGameObject3D(go);
@@ -963,7 +947,14 @@ class GameObject3DInput extends HTMLElement {
    * @param {Array<string>} idGameScripts - possible id game script to set in GameScriptComponent of the current game object 3d
    * @param {Array<string>} idExternalScripts - possible id external script to set in ExternalScriptComponent of the current game object 3d
    */
-  constructor(idRenderDatas, idSounds, idGameScripts, idExternalScripts) {
+  constructor(
+    idRenderDatas,
+    idSounds,
+    idGameScripts,
+    idExternalScripts,
+    gameScriptVariablesInputs,
+    externalScriptVariablesInputs
+  ) {
     super();
 
     /** @type {Array} */
@@ -973,10 +964,16 @@ class GameObject3DInput extends HTMLElement {
     this.idSounds = idSounds;
 
     /** @type {Array} */
-    this.idGameScripts = idGameScripts;
+    this.idGameScripts = idGameScripts || [];
 
     /** @type {Array} */
-    this.idExternalScripts = idExternalScripts;
+    this.idExternalScripts = idExternalScripts || [];
+
+    /** @type {Array} */
+    this.gameScriptVariablesInputs = gameScriptVariablesInputs || [];
+
+    /** @type {Array} */
+    this.externalScriptVariablesInputs = externalScriptVariablesInputs || [];
 
     /** @type {GameObject3D|null} */
     this.gameObject3D = null;
@@ -1074,6 +1071,7 @@ class GameObject3DInput extends HTMLElement {
     // external script
     this.detailsExternalScript = document.createElement('details');
     this.appendChild(this.detailsExternalScript);
+    this.externalScriptInputDomElement = null;
 
     // no gameobject3d set at the construction
     this.hidden = true;
@@ -1121,33 +1119,32 @@ class GameObject3DInput extends HTMLElement {
    * Update GameScript component edition of the current game object 3d
    */
   updateGameScript() {
-    this.updateScriptComponent(
-      GameScriptComponent.TYPE,
-      this.detailsGameScript,
-      'GameScript',
-      this.idGameScripts,
-      GameObject3DInput.EVENT.GAME_SCRIPT_EDIT
-    );
+    this.updateScriptComponent(GameScriptComponent.TYPE);
   }
 
   updateExternalScript() {
-    this.updateScriptComponent(
-      ExternalScriptComponent.TYPE,
-      this.detailsExternalScript,
-      'ExternalScript',
-      this.idExternalScripts,
-      GameObject3DInput.EVENT.EXTERNAL_SCRIPT_EDIT
-    );
+    this.updateScriptComponent(ExternalScriptComponent.TYPE);
   }
 
-  updateScriptComponent(
-    scriptComponentType,
-    detailsParent,
-    summaryText,
-    idScripts,
-    editEvent
-  ) {
+  updateScriptComponent(scriptComponentType) {
     const scriptComponent = this.gameObject3D.getComponent(scriptComponentType);
+    const detailsParent =
+      scriptComponentType == GameScriptComponent.TYPE
+        ? this.detailsGameScript
+        : this.detailsExternalScript;
+    const summaryText =
+      scriptComponentType == GameScriptComponent.TYPE
+        ? 'GameScript'
+        : 'ExternalScript';
+    const idScripts =
+      scriptComponentType == GameScriptComponent.TYPE
+        ? this.idGameScripts
+        : this.idExternalScripts;
+    const objectInputs =
+      scriptComponentType == GameScriptComponent.TYPE
+        ? this.gameScriptVariablesInputs
+        : this.externalScriptVariablesInputs;
+
     detailsParent.hidden = !scriptComponent;
     if (scriptComponent) {
       while (detailsParent.firstChild) detailsParent.firstChild.remove();
@@ -1160,6 +1157,15 @@ class GameObject3DInput extends HTMLElement {
       const listScript = document.createElement('ul');
       detailsParent.appendChild(listScript);
 
+      const divObjectInput = document.createElement('div');
+      detailsParent.appendChild(divObjectInput);
+
+      if (scriptComponentType == GameScriptComponent.TYPE) {
+        this.gameScriptInputDomElement = divObjectInput;
+      } else if (scriptComponentType == ExternalScriptComponent.TYPE) {
+        this.externalScriptInputDomElement = divObjectInput;
+      }
+
       const updateList = () => {
         while (listScript.firstChild) listScript.firstChild.remove();
 
@@ -1168,18 +1174,30 @@ class GameObject3DInput extends HTMLElement {
           li.innerText = param.id;
           listScript.appendChild(li);
 
-          if (idScripts.includes(param.id)) {
-            // call editor script input
-            const editButton = document.createElement('button');
-            editButton.innerText = 'Edit';
-            li.appendChild(editButton);
-            editButton.onclick = () => {
-              this.dispatchEvent(
-                new CustomEvent(editEvent, {
-                  detail: { id: param.id },
-                })
-              );
-            };
+          for (let index = 0; index < objectInputs.length; index++) {
+            const ClassObjectInput = objectInputs[index];
+            // scriptvariablesinput take an id in their condition
+            if (ClassObjectInput.condition(param.id)) {
+              const editButton = document.createElement('button');
+              editButton.innerText = 'Edit';
+              li.appendChild(editButton);
+              editButton.onclick = () => {
+                this.dispatchEvent(
+                  new CustomEvent(
+                    GameObject3DInput.EVENT.OBJECT_INPUT_CREATION,
+                    {
+                      detail: {
+                        ClassObjectInput: ClassObjectInput,
+                        domElement: divObjectInput,
+                        object: scriptComponent.model.variables,
+                      },
+                    }
+                  )
+                );
+              };
+
+              break;
+            }
           }
 
           const deleteButton = document.createElement('button');
@@ -1209,6 +1227,7 @@ class GameObject3DInput extends HTMLElement {
       };
       updateList();
 
+      // scripts that can be added
       const selectIdScript = document.createElement('select');
       detailsParent.appendChild(selectIdScript);
 
@@ -1234,15 +1253,6 @@ class GameObject3DInput extends HTMLElement {
           updateList();
         }
       };
-
-      const divScriptInput = document.createElement('div');
-      detailsParent.appendChild(divScriptInput);
-
-      if (scriptComponentType == GameScriptComponent.TYPE) {
-        this.gameScriptInputDomElement = divScriptInput;
-      } else if (scriptComponentType == ExternalScriptComponent.TYPE) {
-        this.externalScriptInputDomElement = divScriptInput;
-      }
     }
   }
 
@@ -1633,8 +1643,7 @@ class GameObject3DInput extends HTMLElement {
       NAME_CHANGED: 'name_changed',
       TRANSFORM_CHANGED: 'transform_changed',
       SHAPE_ADDED: 'polygon_added',
-      GAME_SCRIPT_EDIT: 'game_script_edit',
-      EXTERNAL_SCRIPT_EDIT: 'external_script_edit',
+      OBJECT_INPUT_CREATION: 'object_input_creation',
       SCRIPT_DELETED: 'script_deleted',
     };
   }

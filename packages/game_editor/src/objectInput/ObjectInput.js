@@ -1,17 +1,17 @@
-export class ScriptInput {
+export class ObjectInput {
   /**
-   * private constructor user should not extends it !!
+   * private constructor user should not override it !!
    *
    * @param {import("../index").Editor} editor - editor running this script
-   * @param {object} variables - variables to edit
+   * @param {object} object - object to edit
    * @param {HTMLElement} domElement - where ui element should be appended
    */
-  constructor(editor, variables, domElement) {
+  constructor(editor, object, domElement) {
     /** @type {import("../index").Editor} */
     this.editor = editor;
 
     /** @type {object} */
-    this.variables = variables;
+    this.object = object;
 
     /** @type {HTMLElement} */
     this.domElement = domElement;
@@ -19,7 +19,7 @@ export class ScriptInput {
     /** @type {HTMLElement} */
     const closeButton = document.createElement('button');
     this.domElement.appendChild(closeButton);
-    closeButton.innerText = 'Fermer';
+    closeButton.innerText = 'X';
 
     closeButton.onclick = this.dispose.bind(this);
   }
@@ -41,13 +41,13 @@ export class ScriptInput {
    */
   tick() {}
 
-  get ID_EDIT_SCRIPT() {
-    return this.constructor.ID_EDIT_SCRIPT;
+  condition(...args) {
+    return this.constructor.condition(...args);
   }
 
-  static get ID_EDIT_SCRIPT() {
+  static condition() {
     throw new Error(
-      'abstract method, you have to specify which script is controlled'
+      'abstract method, you have to specify which condition must be fullfilled to edit an object'
     );
   }
 }
