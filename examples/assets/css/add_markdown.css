@@ -1,0 +1,24 @@
+.md_container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  z-index: 100;
+  background-color: white;
+}
+
+.md_container * {
+  max-width: 99%;
+}
+
+.show_md_container_button {
+  position: absolute;
+  z-index: 101;
+  bottom: 0;
+  right: 0;
+  font-size: xx-large;
+  margin: 10px;
+  cursor: pointer;
+}

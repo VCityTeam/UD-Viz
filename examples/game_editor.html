@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
     <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/add_markdown.css" />
     <style>
       .hint {
         position: absolute;
@@ -23,8 +24,11 @@
   <body>
     <script src="../dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/loadingScreen.js"></script>
+    <script src="./assets/js/addMarkdown.js"></script>
 
     <script type="text/javascript">
+      addMarkdown(['./assets/md/game_editor.md', './assets/md/about.md']);
+
       const udviz = window.udviz;
 
       const main = async () => {
@@ -121,6 +125,9 @@
 
         // ADD LAYERS
         addLayers(frame3DPlanar.itownsView);
+        // eslint-disable-next-line no-constant-condition
+        if ('RUN_MODE' == 'production')
+          loadingScreen(frame3DPlanar.itownsView, ['UD-VIZ', 'UDVIZ_VERSION']);
 
         const assetManager = new udviz.gameBrowser.AssetManager();
         await assetManager.loadFromConfig(configs['assetManager']);
@@ -620,10 +627,6 @@
             document.body.appendChild(gameEditor.frame3D.domElement);
           }
         });
-
-        // eslint-disable-next-line no-constant-condition
-        if ('RUN_MODE' == 'production')
-          loadingScreen(frame3DPlanar.itownsView, ['UD-VIZ', 'UDVIZ_VERSION']);
       };
 
       main();
