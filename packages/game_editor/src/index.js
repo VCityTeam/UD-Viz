@@ -43,18 +43,19 @@ import {
   arrayPushOnce,
   objectParseNumeric,
   removeFromArray,
+  throttle,
 } from '@ud-viz/utils_shared';
 
 const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
 const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
-export { ObjectInput } from './objectInput/ObjectInput';
+import { ObjectInput } from './objectInput/ObjectInput';
+export { ObjectInput };
 
 import * as nativeGameScriptVariablesInput from './objectInput/scriptVariables/game/game';
 import * as nativeExternalScriptVariablesInputs from './objectInput/scriptVariables/external/external';
 import * as nativeUserDataInputs from './objectInput/userData/userData';
-import { ObjectInput } from './objectInput/ObjectInput';
 export { nativeUserDataInputs };
 export { nativeExternalScriptVariablesInputs };
 export { nativeGameScriptVariablesInput };
@@ -618,8 +619,28 @@ export class Editor {
     }
 
     /** @type {RequestAnimationFrameProcess} */
-    this.process = new RequestAnimationFrameProcess(20);
+    this.process = new RequestAnimationFrameProcess(30);
+
+    // scale point mesh to have constant size on screen
+    this.scaleShapePoints = () => {
+      this.pointsParent.traverse((point) => {
+        if (point.geometry) {
+          const scale =
+            this.frame3D.camera.position.distanceTo(
+              point.position.clone().add(this.pointsParent.position)
+            ) / 60;
+          point.scale.set(scale, scale, scale);
+        }
+      });
+    };
+
+    const scaleShapePointsThrottle = throttle(
+      this.scaleShapePoints.bind(this),
+      100
+    );
+
     this.process.start((dt) => {
+      scaleShapePointsThrottle();
       this.transformControls.updateMatrixWorld();
       this.frame3D.render();
       if (this.currentObjectInput) this.currentObjectInput.tick(dt);
@@ -1038,6 +1059,8 @@ export class Editor {
       this.pointsParent.add(pointMesh);
       this.selectPointMesh(pointMesh);
     }
+
+    if (rebuildShapeGeometry) this.scaleShapePoints();
   }
 
   /**
