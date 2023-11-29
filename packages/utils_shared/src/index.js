@@ -5,12 +5,28 @@ const EPSILON = 0.0001;
  * @param {number} x - x coor
  * @param {number} y - y coord
  * @param {number} angle - rotation angle in radian
+ * @returns {{x:number, y:number}} - x y rotated by angle
  */
 const rotate2DCoord = (x, y, angle) => {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
 
   return { x: x * cos - y * sin, y: y * cos + x * sin };
+};
+
+/**
+ *
+ * @param {Array<{x:number, y:number}>} points - points of your polygon not closed
+ * @returns {number} the area of your polygon
+ */
+const polygon2DArea = (points) => {
+  let area = 0;
+  for (let i = 0; i < points.length; i += 2)
+    area +=
+      points[i + 1].x * (points[(i + 2) % points.length].y - points[i].y) +
+      points[i + 1].y * (points[i].x - points[(i + 2) % points.length].x);
+  area /= 2;
+  return area;
 };
 
 /**
@@ -576,5 +592,6 @@ module.exports = {
   arrayPushOnce: arrayPushOnce,
   removeFromArray: removeFromArray,
   rotate2DCoord: rotate2DCoord,
+  polygon2DArea: polygon2DArea,
   ProcessInterval: require('./ProcessInterval'),
 };
