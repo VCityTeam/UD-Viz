@@ -625,11 +625,16 @@
 
           await singleGame.start();
 
+          // eslint-disable-next-line no-constant-condition
           if ('RUN_MODE' != 'production') {
             const debugCollision = new udviz.gameEditor.DebugCollision(
-              singleGame
+              singleGame.gameContext
+            );
+            singleGame.frame3DPlanar.domElementUI.appendChild(
+              debugCollision.domElement
             );
             debugCollision.domElement.classList.add('debug');
+            singleGame.process.addFrameRequester(debugCollision.draw);
           }
         };
         gameEditor.toolsDomElement.appendChild(runButton);

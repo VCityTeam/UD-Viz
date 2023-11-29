@@ -1,3 +1,4 @@
+const { polygon2DArea } = require('@ud-viz/utils_shared');
 const { Component, Model, Controller } = require('./Component');
 
 const { Circle, Polygon } = require('detect-collisions');
@@ -113,6 +114,8 @@ class ColliderController extends Controller {
 
   /**
    * Update worldtransform of the shapeWrappers
+   *
+   * @param {Vector3} offset - offset of the collider system
    */
   update(offset) {
     const position = new Vector3();
@@ -238,7 +241,7 @@ class ShapeWrapper {
           this.update = (worldPosition, worldRotation, worldScale) => {
             circle.x = json.center.x + worldPosition.x;
             circle.y = json.center.y + worldPosition.y;
-            circle.scale = Math.max(worldScale.x, worldScale.y); //take the bigger scale
+            circle.scale = Math.max(worldScale.x, worldScale.y); // take the bigger scale
           };
 
           this.shape = circle;
@@ -251,15 +254,14 @@ class ShapeWrapper {
             points.push([parseFloat(p.x), parseFloat(p.y)]);
           });
 
-          let area = 0;
-          for (let i = 0; i < points.length; i += 2)
-            area +=
-              points[i + 1][0] *
-                (points[(i + 2) % points.length][1] - points[i][1]) +
-              points[i + 1][1] *
-                (points[i][0] - points[(i + 2) % points.length][0]);
-          area /= 2;
-          if (area < 0) points.reverse(); // if area is negative it means polygon points are in the wrong order
+          if (
+            polygon2DArea(
+              points.map((el) => {
+                return { x: el[0], y: el[1] };
+              })
+            ) < 0
+          )
+            points.reverse(); // if area is negative it means polygon points are in the wrong order
 
           const polygon = new Polygon(0, 0, points);
 
