@@ -590,6 +590,8 @@
           gameEditor.setCurrentGameObject3DJSON(gameObject3D.toJSON());
         }
 
+        gameEditor.focusCurrentGameObject3D();
+
         // running button
         const runButton = document.createElement('button');
         runButton.innerText = 'Play the game';
