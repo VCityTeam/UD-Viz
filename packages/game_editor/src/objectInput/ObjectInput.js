@@ -2,11 +2,15 @@ export class ObjectInput {
   /**
    * private constructor user should not override it !!
    *
+   * @param {string} type - type of object input
    * @param {import("../index").Editor} editor - editor running this script
    * @param {object} object - object to edit
    * @param {HTMLElement} domElement - where ui element should be appended
    */
-  constructor(editor, object, domElement) {
+  constructor(type, editor, object, domElement) {
+    /** @type {string} */
+    this.type = type;
+
     /** @type {import("../index").Editor} */
     this.editor = editor;
 
@@ -59,5 +63,18 @@ export class ObjectInput {
       'abstract method, you have to specify which condition must be fullfilled to edit an object'
     );
     return false;
+  }
+
+  /**
+   * to know which king of object is edited
+   *
+   * @returns {string} - all type available
+   */
+  static get TYPE() {
+    return {
+      USER_DATA: 'user_data',
+      GAME_SCRIPT: 'game_script',
+      EXTERNAL_SCRIPT: 'external_script',
+    };
   }
 }

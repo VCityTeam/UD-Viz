@@ -6,7 +6,11 @@ const { Component, Model } = require('./Component');
  * @see module:Audio
  * @class
  */
-const AudioComponent = class extends Component {};
+const AudioComponent = class extends Component {
+  constructor(model) {
+    super(model || new AudioModel());
+  }
+};
 
 AudioComponent.TYPE = 'Audio';
 
@@ -25,7 +29,7 @@ const AudioModel = class extends Model {
    * @param {string[]} [json.sounds] - array of sound id needed for this component
    * @param {object} json.conf - configuration of sounds
    */
-  constructor(json) {
+  constructor(json = {}) {
     super(json);
 
     /**

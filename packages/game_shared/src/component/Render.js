@@ -5,7 +5,11 @@ const { Component, Model } = require('./Component');
  *
  * @see module:Render
  */
-const RenderComponent = class extends Component {};
+const RenderComponent = class extends Component {
+  constructor(model) {
+    super(model || new RenderModel());
+  }
+};
 
 RenderComponent.TYPE = 'Render';
 
@@ -19,7 +23,7 @@ const RenderModel = class extends Model {
    * @param {string=} json.idRenderData - id of render data (could be an id link to gltf, obj file)
    * @param {Array<number>} [json.color=[1,1,1,1]] - [r,g,b,a] format color
    */
-  constructor(json) {
+  constructor(json = {}) {
     super(json);
 
     /**
