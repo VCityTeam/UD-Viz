@@ -19,8 +19,6 @@ Then edit the treasure hunt hint, message and its name
 
 Then repeat for the number of hint you want to add
 
-> /!\ before adding a treasure hunt hint take to care to select the root game object 3d called "urban treasure hunt" [see](#game-object-3d-hierarchy)
-
 You can then play your treasure hunt by clicking Play game button [see](#tools)
 
 ## UI settings

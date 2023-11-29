@@ -523,6 +523,33 @@ export class Editor {
       this.frame3D.render();
       if (this.currentObjectInput) this.currentObjectInput.tick(dt);
     });
+
+    {
+      // select game object 3d move
+      this.selectParentGameObject3DMove = document.createElement('select');
+
+      // move button
+      const moveButton = document.createElement('button');
+      moveButton.innerText = 'Move selected gameobject3D to';
+      this.toolsDomElement.appendChild(moveButton);
+      this.toolsDomElement.appendChild(this.selectParentGameObject3DMove);
+
+      moveButton.onclick = () => {
+        const selectedGameObject3DUUID = this.gameObjectInput.gameObject3D.uuid;
+        this.gameObjectInput.gameObject3D.removeFromParent();
+        const parent = this.currentGameObject3D.getFirst(
+          (o) =>
+            o.uuid == this.selectParentGameObject3DMove.selectedOptions[0].value
+        );
+        parent.add(this.gameObjectInput.gameObject3D);
+        this.setCurrentGameObject3DJSON(this.currentGameObject3D.toJSON());
+        this.selectGameObject3D(
+          this.currentGameObject3D.getFirst(
+            (o) => o.uuid == selectedGameObject3DUUID
+          )
+        );
+      };
+    }
   }
 
   initGameObject3D(gameObject3D) {
@@ -624,7 +651,12 @@ export class Editor {
     );
 
     this.selectGameObject3D(this.currentGameObject3D);
+  }
 
+  /**
+   * Move camera to focus current game object 3d
+   */
+  focusCurrentGameObject3D() {
     // move camera to fit the scene
     const bb = Editor.computeBox3GameObject3D(this.currentGameObject3D);
     const center = new Vector3();
@@ -664,6 +696,29 @@ export class Editor {
     this.transformControls.attach(go);
     this.updateBox3();
     this.updateCollider();
+    this.updateSelectGameObjectMoveParent();
+  }
+
+  updateSelectGameObjectMoveParent() {
+    while (this.selectParentGameObject3DMove.firstChild)
+      this.selectParentGameObject3DMove.firstChild.remove();
+
+    // root gameobject3D cant me move
+    if (!this.gameObjectInput.gameObject3D.parent.isGameObject3D) return;
+
+    this.currentGameObject3D.traverse((child) => {
+      if (
+        !child.isGameObject3D ||
+        child == this.gameObjectInput.gameObject3D ||
+        child == this.gameObjectInput.gameObject3D.parent
+      )
+        return; // cant move to itself or to the current one
+
+      const option = document.createElement('option');
+      option.innerText = child.name;
+      option.value = child.uuid;
+      this.selectParentGameObject3DMove.appendChild(option);
+    });
   }
 
   /**
