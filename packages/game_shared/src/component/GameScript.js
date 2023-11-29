@@ -6,7 +6,11 @@ const Script = require('./Script');
  *
  * @see module:GameScript
  */
-const GameScriptComponent = class extends Component {};
+const GameScriptComponent = class extends Component {
+  constructor(model) {
+    super(model || new GameScriptModel());
+  }
+};
 
 GameScriptComponent.TYPE = 'GameScript';
 

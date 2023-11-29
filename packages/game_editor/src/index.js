@@ -54,6 +54,7 @@ export { ObjectInput } from './objectInput/ObjectInput';
 import * as nativeGameScriptVariablesInput from './objectInput/scriptVariables/game/game';
 import * as nativeExternalScriptVariablesInputs from './objectInput/scriptVariables/external/external';
 import * as nativeUserDataInputs from './objectInput/userData/userData';
+import { ObjectInput } from './objectInput/ObjectInput';
 export { nativeUserDataInputs };
 export { nativeExternalScriptVariablesInputs };
 export { nativeGameScriptVariablesInput };
@@ -228,6 +229,82 @@ export class Editor {
         this.updateBox3();
       }
     );
+
+    // update when component is add/remove
+    {
+      this.gameObjectInput.addEventListener(
+        GameObject3DInput.EVENT.COMPONENT_ADD,
+        (event) => {
+          let newComponent = null;
+          switch (event.detail.type) {
+            case RenderComponent.TYPE:
+              newComponent = new RenderComponent();
+              this.gameObjectInput.gameObject3D.components[
+                RenderComponent.TYPE
+              ] = newComponent;
+              newComponent.initController(
+                new RenderController(
+                  newComponent.model,
+                  this.gameObjectInput.gameObject3D,
+                  this.assetManager
+                )
+              );
+              break;
+            case AudioComponent.TYPE:
+              this.gameObjectInput.gameObject3D.components[
+                AudioComponent.TYPE
+              ] = new AudioComponent();
+              break;
+            case GameScriptComponent.TYPE:
+              this.gameObjectInput.gameObject3D.components[
+                GameScriptComponent.TYPE
+              ] = new GameScriptComponent();
+              break;
+            case ExternalScriptComponent.TYPE:
+              this.gameObjectInput.gameObject3D.components[
+                ExternalScriptComponent.TYPE
+              ] = new ExternalScriptComponent();
+              break;
+            case ColliderComponent.TYPE:
+              this.gameObjectInput.gameObject3D.components[
+                ColliderComponent.TYPE
+              ] = new ColliderComponent();
+              break;
+            default:
+              throw new Error('Unknown component type');
+          }
+
+          this.selectGameObject3D(this.gameObjectInput.gameObject3D, true); // refresh
+        }
+      );
+      this.gameObjectInput.addEventListener(
+        GameObject3DInput.EVENT.COMPONENT_REMOVE,
+        (event) => {
+          if (event.detail.type == RenderComponent.TYPE) {
+            const renderComponent =
+              this.gameObjectInput.gameObject3D.getComponent(
+                RenderComponent.TYPE
+              );
+            renderComponent.controller.dispose(); // the only one with a controller
+          } else if (
+            (this.currentObjectInput &&
+              event.detail.type == GameScriptComponent.TYPE &&
+              this.currentObjectInput.type == ObjectInput.TYPE.GAME_SCRIPT) ||
+            (this.currentObjectInput &&
+              event.detail.type == ExternalScriptComponent.TYPE &&
+              this.currentObjectInput.type == ObjectInput.TYPE.EXTERNAL_SCRIPT)
+          ) {
+            // was editing the concerned component
+            this.currentObjectInput.dispose();
+          }
+
+          delete this.gameObjectInput.gameObject3D.components[
+            event.detail.type
+          ];
+          this.selectGameObject3D(this.gameObjectInput.gameObject3D, true); // refresh
+        }
+      );
+    }
 
     /** @type {OrbitControls} */
     this.orbitControls = new OrbitControls(
@@ -495,10 +572,34 @@ export class Editor {
         GameObject3DInput.EVENT.OBJECT_INPUT_CREATION,
         (event) => {
           if (this.currentObjectInput) this.currentObjectInput.dispose(); // only one script input at once
+
+          let domElement, object;
+          switch (event.detail.typeObjectInput) {
+            case ObjectInput.TYPE.USER_DATA:
+              domElement = this.gameObjectInput.userDataInputDomElement;
+              object = this.gameObjectInput.gameObject3D.userData;
+              break;
+            case ObjectInput.TYPE.GAME_SCRIPT:
+              domElement = this.gameObjectInput.gameScriptInputDomElement;
+              object = this.gameObjectInput.gameObject3D.getComponent(
+                GameScriptComponent.TYPE
+              ).model.variables;
+              break;
+            case ObjectInput.TYPE.EXTERNAL_SCRIPT:
+              domElement = this.gameObjectInput.externalScriptInputDomElement;
+              object = this.gameObjectInput.gameObject3D.getComponent(
+                ExternalScriptComponent.TYPE
+              ).model.variables;
+              break;
+            default:
+              throw new Error('Unknown object input type');
+          }
+
           this.currentObjectInput = new event.detail.ClassObjectInput(
+            event.detail.typeObjectInput,
             this,
-            event.detail.object,
-            event.detail.domElement
+            object,
+            domElement
           );
           this.currentObjectInput.init();
         }
@@ -680,9 +781,10 @@ export class Editor {
   /**
    *
    * @param {GameObject3D} go - game object 3d to select for edition
+   * @param {boolean} force - force even if the selected gameobject3d is the same
    */
-  selectGameObject3D(go) {
-    if (go == this.gameObjectInput.gameObject3D) return;
+  selectGameObject3D(go, force = false) {
+    if (go == this.gameObjectInput.gameObject3D && !force) return;
 
     if (this.currentObjectInput) this.currentObjectInput.dispose();
 
@@ -1131,6 +1233,7 @@ class GameObject3DInput extends HTMLElement {
     // userdata
     this.detailsUserData = document.createElement('details');
     this.appendChild(this.detailsUserData);
+    this.userDataInputDomElement = null;
 
     // collider
     this.detailsCollider = document.createElement('details');
@@ -1228,16 +1331,15 @@ class GameObject3DInput extends HTMLElement {
       editButton.innerText = 'Edit';
       this.detailsUserData.appendChild(editButton);
 
-      const domElementObjectInput = document.createElement('div');
-      this.detailsUserData.appendChild(domElementObjectInput);
+      this.userDataInputDomElement = document.createElement('div');
+      this.detailsUserData.appendChild(this.userDataInputDomElement);
 
       editButton.onclick = () => {
         this.dispatchEvent(
           new CustomEvent(GameObject3DInput.EVENT.OBJECT_INPUT_CREATION, {
             detail: {
               ClassObjectInput: CurrentClassObjectInput,
-              object: this.gameObject3D.userData,
-              domElement: domElementObjectInput,
+              typeObjectInput: ObjectInput.TYPE.USER_DATA,
             },
           })
         );
@@ -1285,14 +1387,25 @@ class GameObject3DInput extends HTMLElement {
         ? this.gameScriptVariablesInputs
         : this.externalScriptVariablesInputs;
 
-    detailsParent.hidden = !scriptComponent;
-    if (scriptComponent) {
-      while (detailsParent.firstChild) detailsParent.firstChild.remove();
+    while (detailsParent.firstChild) detailsParent.firstChild.remove();
+    // rebuild domelement
+    const summaryAudio = document.createElement('summary');
+    summaryAudio.innerText = summaryText;
+    detailsParent.appendChild(summaryAudio);
 
-      // rebuild domelement
-      const summaryAudio = document.createElement('summary');
-      summaryAudio.innerText = summaryText;
-      detailsParent.appendChild(summaryAudio);
+    if (scriptComponent) {
+      // delete component button
+      const deleteComponentButton = document.createElement('button');
+      deleteComponentButton.innerText = 'Delete component';
+      detailsParent.appendChild(deleteComponentButton);
+
+      deleteComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_REMOVE, {
+            detail: { type: scriptComponentType },
+          })
+        );
+      };
 
       const listScript = document.createElement('ul');
       detailsParent.appendChild(listScript);
@@ -1328,8 +1441,10 @@ class GameObject3DInput extends HTMLElement {
                     {
                       detail: {
                         ClassObjectInput: ClassObjectInput,
-                        domElement: divObjectInput,
-                        object: scriptComponent.model.variables,
+                        typeObjectInput:
+                          scriptComponentType == GameScriptComponent.TYPE
+                            ? ObjectInput.TYPE.GAME_SCRIPT
+                            : ObjectInput.TYPE.EXTERNAL_SCRIPT,
                       },
                     }
                   )
@@ -1393,6 +1508,17 @@ class GameObject3DInput extends HTMLElement {
           updateList();
         }
       };
+    } else {
+      const addComponentButton = document.createElement('button');
+      addComponentButton.innerText = 'Add component';
+      detailsParent.appendChild(addComponentButton);
+      addComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_ADD, {
+            detail: { type: scriptComponentType },
+          })
+        );
+      };
     }
   }
 
@@ -1401,15 +1527,25 @@ class GameObject3DInput extends HTMLElement {
    */
   updateAudio() {
     const audioComp = this.gameObject3D.getComponent(AudioComponent.TYPE);
-    this.detailsAudio.hidden = !audioComp;
-    if (audioComp) {
-      while (this.detailsAudio.firstChild)
-        this.detailsAudio.firstChild.remove();
+    while (this.detailsAudio.firstChild) this.detailsAudio.firstChild.remove();
 
-      // rebuild domelement
-      const summaryAudio = document.createElement('summary');
-      summaryAudio.innerText = 'Audio';
-      this.detailsAudio.appendChild(summaryAudio);
+    // rebuild domelement
+    const summaryAudio = document.createElement('summary');
+    summaryAudio.innerText = 'Audio';
+    this.detailsAudio.appendChild(summaryAudio);
+    if (audioComp) {
+      // delete component button
+      const deleteComponentButton = document.createElement('button');
+      deleteComponentButton.innerText = 'Delete component';
+      this.detailsAudio.appendChild(deleteComponentButton);
+
+      deleteComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_REMOVE, {
+            detail: { type: AudioComponent.TYPE },
+          })
+        );
+      };
 
       // sounds
       const listIdSounds = document.createElement('ul');
@@ -1498,6 +1634,17 @@ class GameObject3DInput extends HTMLElement {
       volume.input.onchange = () => {
         audioComp.model.conf.volume = volume.input.valueAsNumber;
       };
+    } else {
+      const addComponentButton = document.createElement('button');
+      addComponentButton.innerText = 'Add component';
+      this.detailsAudio.appendChild(addComponentButton);
+      addComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_ADD, {
+            detail: { type: AudioComponent.TYPE },
+          })
+        );
+      };
     }
   }
 
@@ -1506,15 +1653,26 @@ class GameObject3DInput extends HTMLElement {
    */
   updateRender() {
     const renderComp = this.gameObject3D.getComponent(RenderComponent.TYPE);
-    this.detailsRender.hidden = !renderComp;
-    if (renderComp) {
-      while (this.detailsRender.firstChild)
-        this.detailsRender.firstChild.remove();
+    while (this.detailsRender.firstChild)
+      this.detailsRender.firstChild.remove();
 
-      // rebuild domelement
-      const summaryRender = document.createElement('summary');
-      summaryRender.innerText = 'Render';
-      this.detailsRender.appendChild(summaryRender);
+    // rebuild domelement
+    const summaryRender = document.createElement('summary');
+    summaryRender.innerText = 'Render';
+    this.detailsRender.appendChild(summaryRender);
+    if (renderComp) {
+      // delete component button
+      const deleteComponentButton = document.createElement('button');
+      deleteComponentButton.innerText = 'Delete component';
+      this.detailsRender.appendChild(deleteComponentButton);
+
+      deleteComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_REMOVE, {
+            detail: { type: RenderComponent.TYPE },
+          })
+        );
+      };
 
       // color
       const color = createLabelInput('Couleur: ', 'color');
@@ -1559,6 +1717,17 @@ class GameObject3DInput extends HTMLElement {
           selectIdRenderData.selectedOptions[0].value
         );
       };
+    } else {
+      const addComponentButton = document.createElement('button');
+      addComponentButton.innerText = 'Add component';
+      this.detailsRender.appendChild(addComponentButton);
+      addComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_ADD, {
+            detail: { type: RenderComponent.TYPE },
+          })
+        );
+      };
     }
   }
 
@@ -1567,15 +1736,26 @@ class GameObject3DInput extends HTMLElement {
    */
   updateCollider() {
     const colliderComp = this.gameObject3D.getComponent(ColliderComponent.TYPE);
-    this.detailsCollider.hidden = !colliderComp;
-    if (colliderComp) {
-      while (this.detailsCollider.firstChild)
-        this.detailsCollider.firstChild.remove();
+    while (this.detailsCollider.firstChild)
+      this.detailsCollider.firstChild.remove();
 
-      // rebuild domelement
-      const summaryCollider = document.createElement('summary');
-      summaryCollider.innerText = 'Collider';
-      this.detailsCollider.appendChild(summaryCollider);
+    // rebuild domelement
+    const summaryCollider = document.createElement('summary');
+    summaryCollider.innerText = 'Collider';
+    this.detailsCollider.appendChild(summaryCollider);
+    if (colliderComp) {
+      // delete component button
+      const deleteComponentButton = document.createElement('button');
+      deleteComponentButton.innerText = 'Delete component';
+      this.detailsCollider.appendChild(deleteComponentButton);
+
+      deleteComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_REMOVE, {
+            detail: { type: ColliderComponent.TYPE },
+          })
+        );
+      };
 
       // edit body attr
       const bodyCheckbox = createLabelInput('body', 'checkbox');
@@ -1756,6 +1936,17 @@ class GameObject3DInput extends HTMLElement {
       };
       visualizeCollision2DButton.onclick = drawVisualization2D;
       drawVisualization2D();
+    } else {
+      const addComponentButton = document.createElement('button');
+      addComponentButton.innerText = 'Add component';
+      this.detailsCollider.appendChild(addComponentButton);
+      addComponentButton.onclick = () => {
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.COMPONENT_ADD, {
+            detail: { type: ColliderComponent.TYPE },
+          })
+        );
+      };
     }
   }
 
@@ -1785,6 +1976,8 @@ class GameObject3DInput extends HTMLElement {
       SHAPE_ADDED: 'polygon_added',
       OBJECT_INPUT_CREATION: 'object_input_creation',
       SCRIPT_DELETED: 'script_deleted',
+      COMPONENT_ADD: 'component_add',
+      COMPONENT_REMOVE: 'component_remove',
     };
   }
 }

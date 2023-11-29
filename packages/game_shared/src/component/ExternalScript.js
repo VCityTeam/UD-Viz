@@ -7,6 +7,9 @@ const Script = require('./Script');
  * @see module:ExternalScript
  */
 const ExternalScriptComponent = class extends Component {
+  constructor(model) {
+    super(model || new ExternalScriptModel());
+  }
   /**
    * This function checks if an external script ID is included in the model's list of script IDs.
    *

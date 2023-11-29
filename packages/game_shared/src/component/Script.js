@@ -21,7 +21,7 @@ const ScriptModel = class extends Model {
    * @param {Array<ScriptParams>=} json.scriptParams - scripts params
    * @param {object=} json.variables - custom global variables for scripts
    */
-  constructor(json) {
+  constructor(json = {}) {
     super(json);
 
     /**

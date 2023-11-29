@@ -35,6 +35,10 @@ export class RenderController extends Controller {
     this.setColor(this.model.getColor());
   }
 
+  dispose() {
+    this.renderData.dispose();
+  }
+
   setIdRenderData(idRenderData) {
     // change model
     this.model.idRenderData = idRenderData;

@@ -10,7 +10,11 @@ const { Euler, Vector3, Quaternion } = require('three');
  * @see module:Collider
  * @class
  */
-const ColliderComponent = class extends Component {};
+const ColliderComponent = class extends Component {
+  constructor(model) {
+    super(model || new ColliderModel());
+  }
+};
 
 ColliderComponent.TYPE = 'Collider';
 ColliderComponent.SHAPE_TYPE = {
@@ -32,7 +36,7 @@ const ColliderModel = class extends Model {
    * @param {boolean} json.body - if true this is a physics collisions
    * @todo body should be handle by context (meaning context move according the physic of the collision)
    */
-  constructor(json) {
+  constructor(json = {}) {
     super(json);
 
     /**
