@@ -124,7 +124,7 @@
           // measure
           ui.appendChild(app.measureDomElement);
           // camera near far
-          ui.appendChild(app.cameraNearFarDomElement);
+          ui.appendChild(app.clippingPlaneDetails);
 
           // widget layer choice
           const layerParams = [];
@@ -161,6 +161,10 @@
           // eslint-disable-next-line no-constant-condition
           if ('RUN_MODE' == 'production')
             loadingScreen(app.itownsView, ['UD-VIZ', 'UDVIZ_VERSION']);
+
+          window.addEventListener('keydown', (event) => {
+            if (event.key == 'p') console.log(app);
+          });
         });
     </script>
     SCRIPT_TAG_RELOAD

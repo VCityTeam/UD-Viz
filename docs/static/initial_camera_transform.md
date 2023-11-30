@@ -38,16 +38,6 @@ const frame3DPlanar = new Planar(extent, {
 
 > Note: these values can be defined in code or in a [config file](../../examples/assets/config/frame3D_planars.json) as the ud-viz examples.
 
-## Use [localStorage](https://developer.mozilla.org/fr/docs/Web/API/Window/localStorage)
-
-You can also use the localStorage util function, which will replace the camera point of view according the last one recorded (reloading your webpage does not change camera point of view). The code to write will looks like this:
-
-```js
-const frame3DPlanar = new Planar(extent);
-localStorageSetCameraMatrix(frame3DPlanar.camera);// <-- will set camera point of view with the last point of view recorded
-```
->Note: the first time you will run your webpage the camera point of view will be the one pass to the `Planar`
-
 ## Use [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
 
 You can also use url util function to initialize default camera point of view. In that case you should first produce an url with camera matrix encoded in it.
