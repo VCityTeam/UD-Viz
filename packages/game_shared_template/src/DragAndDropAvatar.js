@@ -1,6 +1,6 @@
 const { COMMAND, NAME } = require('./constant');
 
-const { ScriptBase, Object3D, Context } = require('@ud-viz/game_shared');
+const { ScriptBase, Object3D } = require('@ud-viz/game_shared');
 
 /**
  * @typedef DragAndDropAvatarVariables - what variables this script need to work
@@ -8,16 +8,8 @@ const { ScriptBase, Object3D, Context } = require('@ud-viz/game_shared');
  */
 
 module.exports = class DragAndDropAvatar extends ScriptBase {
-  /**
-   * Handle game context operation of a drag and drop avatar feature
-   *
-   * @param {Context} context - game context
-   * @param {Object3D} object3D - object3D attach to this script
-   * @param {DragAndDropAvatarVariables} variables - variables
-   */
-  constructor(context, object3D, variables) {
-    super(context, object3D, variables);
-
+  init() {
+    /** @type {Object3D} */
     this.avatar = null;
   }
 

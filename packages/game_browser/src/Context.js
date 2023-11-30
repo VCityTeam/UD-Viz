@@ -14,7 +14,7 @@ import {
   RenderComponent,
   ScriptController,
 } from '@ud-viz/game_shared';
-import { arrayEquals } from '@ud-viz/utils_shared';
+import { arrayEquals, objectOverWrite } from '@ud-viz/utils_shared';
 import * as frame3d from '@ud-viz/frame3d';
 
 /** @class */
@@ -623,8 +623,12 @@ export class ScriptBase extends THREE.EventDispatcher {
     /**
      * custom variables attach to this script
      *
-      @type {object}  */
-    this.variables = variables;
+     * @type {object}
+     */
+    this.variables = objectOverWrite(
+      JSON.parse(JSON.stringify(this.constructor.DEFAULT_VARIABLES)),
+      variables
+    );
   }
   /**
    * call after an object3D has been added to context
@@ -672,5 +676,13 @@ export class ScriptBase extends THREE.EventDispatcher {
   static get ID_SCRIPT() {
     console.error(this.name);
     throw new Error('this is abstract class you should override ID_SCRIPT');
+  }
+
+  /**
+   *
+   * @returns {object} - default variables of this script
+   */
+  static get DEFAULT_VARIABLES() {
+    return {};
   }
 }

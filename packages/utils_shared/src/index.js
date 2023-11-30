@@ -393,35 +393,35 @@ function objectEquals(json1, json2) {
  *
  * @param {object} jsonOverWrited - json object overwrited
  * @param {object} jsonModel - json object used as model to overwrite
+ * @returns {object} - json object overwrited
  */
 function objectOverWrite(jsonOverWrited, jsonModel) {
-  if (!jsonModel) return;
+  if (!jsonModel) return jsonOverWrited;
 
-  const traverse = function (json1, json2) {
-    // write the ones not in jsonOverWrited
-    for (const key in json2) {
-      if (json1[key] == undefined) {
-        json1[key] = json2[key];
+  // write the ones not in jsonOverWrited
+  for (const key in jsonModel) {
+    if (jsonOverWrited[key] == undefined) {
+      jsonOverWrited[key] = jsonModel[key];
+    }
+  }
+
+  // check in jsonOverWrited the ones existing in jsonModel
+  for (const key in jsonOverWrited) {
+    if (jsonOverWrited[key] instanceof Array) {
+      if (jsonModel[key] instanceof Array) {
+        jsonOverWrited[key] = jsonModel[key]; // array are replaced
+      }
+    } else if (jsonOverWrited[key] instanceof Object) {
+      if (jsonModel[key] instanceof Object)
+        objectOverWrite(jsonOverWrited[key], jsonModel[key]);
+    } else {
+      if (jsonModel[key] != undefined) {
+        jsonOverWrited[key] = jsonModel[key];
       }
     }
+  }
 
-    // check in jsonOverWrited the ones existing in jsonModel
-    for (const key in json1) {
-      if (json1[key] instanceof Array) {
-        if (json2[key] instanceof Array) {
-          json1[key] = json2[key]; // array are replaced
-        }
-      } else if (json1[key] instanceof Object) {
-        if (json2[key] instanceof Object) traverse(json1[key], json2[key]);
-      } else {
-        if (json2[key] != undefined) {
-          json1[key] = json2[key];
-        }
-      }
-    }
-  };
-
-  traverse(jsonOverWrited, jsonModel);
+  return jsonOverWrited;
 }
 
 /**
