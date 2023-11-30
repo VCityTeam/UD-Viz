@@ -161,7 +161,7 @@ export class Editor {
         );
 
         // reset everything TODO: optimize
-        this.currentGameObject3D.add(objectToAdd);
+        this.gameObjectInput.gameObject3D.add(objectToAdd);
         this.setCurrentGameObject3DJSON(this.currentGameObject3D.toJSON());
         this.selectGameObject3D(
           this.currentGameObject3D.getFirst((o) => o.uuid == objectToAdd.uuid)
@@ -186,7 +186,7 @@ export class Editor {
       };
     }
 
-    const possibleIdRenderData = [];
+    const possibleIdRenderData = [null]; // idRenderData can be null
     for (const id in assetManager.renderData) possibleIdRenderData.push(id);
     const possibleIdSounds = [];
     for (const id in assetManager.sounds) possibleIdSounds.push(id);
@@ -227,6 +227,14 @@ export class Editor {
       GameObject3DInput.EVENT.TRANSFORM_CHANGED,
       () => {
         this.updateCollider();
+        this.updateBox3();
+      }
+    );
+
+    // update when id render data changed
+    this.gameObjectInput.addEventListener(
+      GameObject3DInput.EVENT.ID_RENDER_DATA_CHANGED,
+      () => {
         this.updateBox3();
       }
     );
@@ -628,7 +636,7 @@ export class Editor {
           const scale =
             this.frame3D.camera.position.distanceTo(
               point.position.clone().add(this.pointsParent.position)
-            ) / 60;
+            ) / 80;
           point.scale.set(scale, scale, scale);
         }
       });
@@ -646,6 +654,7 @@ export class Editor {
       if (this.currentObjectInput) this.currentObjectInput.tick(dt);
     });
 
+    // move game object 3d in hierarchy
     {
       // select game object 3d move
       this.selectParentGameObject3DMove = document.createElement('select');
@@ -672,20 +681,14 @@ export class Editor {
         );
       };
     }
-  }
 
-  initGameObject3D(gameObject3D) {
-    gameObject3D.traverse((child) => {
-      if (!child.isGameObject3D) return;
-      child.matrixAutoUpdate = true; // disable .static optimization
-
-      const renderComp = child.getComponent(RenderComponent.TYPE);
-      if (renderComp) {
-        renderComp.initController(
-          new RenderController(renderComp.getModel(), child, this.assetManager)
-        );
-      }
-    });
+    // shortcut
+    {
+      window.addEventListener('keydown', (event) => {
+        if (event.key == 'f')
+          this.setOrbitControlsTargetTo(this.gameObjectInput.gameObject3D);
+      });
+    }
   }
 
   /**
@@ -702,8 +705,18 @@ export class Editor {
 
     this.currentGameObject3D = gameObject3D;
 
-    // init render gameobject3d7
-    this.initGameObject3D(this.currentGameObject3D);
+    // init render gameobject3d
+    this.currentGameObject3D.traverse((child) => {
+      if (!child.isGameObject3D) return;
+      child.matrixAutoUpdate = true; // disable .static optimization
+
+      const renderComp = child.getComponent(RenderComponent.TYPE);
+      if (renderComp) {
+        renderComp.initController(
+          new RenderController(renderComp.getModel(), child, this.assetManager)
+        );
+      }
+    });
 
     this.frame3D.scene.add(this.currentGameObject3D);
 
@@ -1727,7 +1740,7 @@ class GameObject3DInput extends HTMLElement {
       this.detailsRender.appendChild(selectIdRenderData);
       this.idRenderDatas.forEach((id) => {
         const option = document.createElement('option');
-        option.innerText = id;
+        option.innerText = id || 'none';
         option.value = id;
         selectIdRenderData.appendChild(option);
         if (renderComp.model.idRenderData == id) {
@@ -1738,6 +1751,9 @@ class GameObject3DInput extends HTMLElement {
       selectIdRenderData.onchange = () => {
         renderComp.controller.setIdRenderData(
           selectIdRenderData.selectedOptions[0].value
+        );
+        this.dispatchEvent(
+          new CustomEvent(GameObject3DInput.EVENT.ID_RENDER_DATA_CHANGED)
         );
       };
     } else {
@@ -2001,6 +2017,7 @@ class GameObject3DInput extends HTMLElement {
       SCRIPT_DELETED: 'script_deleted',
       COMPONENT_ADD: 'component_add',
       COMPONENT_REMOVE: 'component_remove',
+      ID_RENDER_DATA_CHANGED: 'id_render_data_changed',
     };
   }
 }
