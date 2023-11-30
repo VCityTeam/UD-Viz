@@ -4,6 +4,12 @@ const { Component, Model, Controller } = require('./Component');
 const { Circle, Polygon } = require('detect-collisions');
 const { Euler, Vector3, Quaternion } = require('three');
 
+// to avoid new operation
+const _colliderPositionBuffer = new Vector3();
+const _colliderQuaternion = new Quaternion();
+const _colliderEuler = new Euler();
+const _colliderScale = new Vector3();
+
 /**
  * Collider object3D component, this component use {@link https://www.npmjs.com/package/detect-collisions}, note that collisions are handle in 2D
  *
@@ -122,17 +128,22 @@ class ColliderController extends Controller {
    * @param {Vector3} offset - offset of the collider system
    */
   update(offset) {
-    const position = new Vector3();
-    const quaternion = new Quaternion();
-    const scale = new Vector3();
     this.object3D.updateMatrixWorld();
-    this.object3D.matrixWorld.decompose(position, quaternion, scale);
+    this.object3D.matrixWorld.decompose(
+      _colliderPositionBuffer,
+      _colliderQuaternion,
+      _colliderScale
+    );
 
     // collision referential is offseted so detect-collision deals with small number
-    position.sub(offset);
+    _colliderPositionBuffer.sub(offset);
 
     this.shapeWrappers.forEach((b) => {
-      b.update(position, new Euler().setFromQuaternion(quaternion), scale);
+      b.update(
+        _colliderPositionBuffer,
+        _colliderEuler.setFromQuaternion(_colliderQuaternion),
+        _colliderScale
+      );
     });
   }
 
