@@ -7,10 +7,9 @@ import { CameraManager } from '../CameraManager';
 import './style.css';
 
 import * as THREE from 'three';
-import { ScriptBase, Context } from '@ud-viz/game_browser';
+import { ScriptBase } from '@ud-viz/game_browser';
 import { Command, Object3D } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
-import { objectOverWrite } from '@ud-viz/utils_shared';
 
 /** @class */
 export class DragAndDropAvatar extends ScriptBase {
