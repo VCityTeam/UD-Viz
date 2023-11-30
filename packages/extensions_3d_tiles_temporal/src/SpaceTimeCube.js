@@ -360,8 +360,9 @@ export class SpaceTimeCube {
    *
    * @param {itowns.PlanarView} view
    * @param delta
+   * @param {Map<number, itowns.C3DTileset>} C3DTilesDated
    */
-  constructor(view, delta) {
+  constructor(view, delta, C3DTilesDated) {
     this.view = view;
 
     this.temporalLayers = () => {
@@ -393,6 +394,9 @@ export class SpaceTimeCube {
 
     this.delta = delta;
 
+    /** @type {Map<number, itowns.C3DTileset>} */
+    this.C3DTilesDated = C3DTilesDated;
+
     this.centerLayer = this.layers()[0];
     this.temporalLayerVJA = this.temporalLayers()[0];
     this.centerLayer = this.temporalLayerVJA;
@@ -403,8 +407,8 @@ export class SpaceTimeCube {
     this.circleDisplayed;
 
     const points = [];
-    let index = 1;
-    for (let i = 0; i < 360; i += 72) {
+    let index = 0;
+    for (let i = 0; i < 360; i += 360 / C3DTilesDated.size) {
       const angle = (i * Math.PI) / 180;
       points.push(
         new THREE.Vector3(
@@ -427,9 +431,10 @@ export class SpaceTimeCube {
 
       itowns.View.prototype.addLayer.call(view, C3DTiles);
       this.layersTemporal.push(C3DTiles);
+      C3DTilesDated.set(2009 + index, C3DTiles);
       const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
       temporalWrapper.styleDate = 2009 + index;
-      index += 3;
+      index++;
     }
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -601,7 +606,6 @@ export class SpaceTimeCube {
           current.plane.wireframe = true;
           current.plane.quaternion.set(0.0871557, 0, 0, 0.9961947);
           current.plane.updateMatrixWorld();
-          /* The above code is adding a plane object to the scene in a JavaScript program. */
           this.view.scene.add(current.plane);
         }
 
@@ -666,9 +670,6 @@ export class SpaceTimeCube {
 
                     pos.applyMatrix4(translateMatrix);
 
-                    // translateMatrix.makeRotationFromQuaternion(
-                    //   new THREE.Quaternion(-0.6427876, 0, 0, 0.7660444)
-                    // );
                     translateMatrix.makeRotationAxis(
                       new THREE.Vector3(1, 0, 0),
                       0.174533
@@ -842,23 +843,22 @@ export class SpaceTimeCube {
 
     // Update with circle coordinates
     let i = 0;
-    this.layersTemporal.forEach((layertemporal) => {
+    this.C3DTilesDated.forEach((layerTemporal, key) => {
       if (
-        layertemporal.root.children != undefined &&
-        layertemporal.root.children.length != 0
+        layerTemporal.root.children != undefined &&
+        layerTemporal.root.children.length != 0
       ) {
-        const version = new Version(layertemporal.root.children, 2009 + i);
-
-        // Initial position for better rotation
-        layertemporal.root.children.forEach((obj) => {
-          version.initialPos.push(
-            new THREE.Vector3(
-              obj.position.x,
-              obj.position.y + this.RAYON / 2,
-              obj.position.z
-            )
-          );
-        });
+        const version = new Version(layerTemporal.root.children, key);
+        layerTemporal.root.children // Initial position for better rotation
+          .forEach((obj) => {
+            version.initialPos.push(
+              new THREE.Vector3(
+                obj.position.x,
+                obj.position.y + this.RAYON / 2,
+                obj.position.z
+              )
+            );
+          });
 
         this.versions.push(version);
 
@@ -936,7 +936,7 @@ export class SpaceTimeCube {
 
   update() {
     let points = [];
-    for (let i = 0; i < 300; i += 10) {
+    for (let i = 0; i < 360; i += 10) {
       const angle = (i * Math.PI) / 180;
       points.push(
         new THREE.Vector3(
@@ -953,7 +953,7 @@ export class SpaceTimeCube {
 
     points = [];
     let index = 0;
-    for (let i = 0; i < 360; i += 72) {
+    for (let i = 0; i < 360; i += 360 / this.C3DTilesDated.size) {
       const angle = (i * Math.PI) / 180;
       const pos = new THREE.Vector3(
         this.RAYON * Math.cos(angle),
