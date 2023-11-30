@@ -12,40 +12,8 @@ import { Command, Object3D } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
 import { objectOverWrite } from '@ud-viz/utils_shared';
 
-/**
- * @typedef DragAndDropAvatarVariables
- * @property {number} camera_duration - time for camera movement in ms
- * @property {{x:number,y:number,z:number}} camera_offset - offset to positioned camera behind object3D
- * @property {number} camera_angle - angle on x to positioned camera behind object3D
- * @property {number} camera_distance - distance to positioned camera behind object3D
- * @property {string} update_z_crs - projection used to update z elevation of avatar
- */
-
-/** @type {DragAndDropAvatarVariables}*/
-const defaultVariables = {
-  camera_duration: 2000,
-  camera_offset: { x: 0, y: 0, z: 2 },
-  camera_angle: 0,
-  camera_distance: 7,
-  update_z_crs: 'EPSG:3946', // the one of lyon by default /!\ must have been define before
-};
-
 /** @class */
 export class DragAndDropAvatar extends ScriptBase {
-  /**
-   * Drag and drop ui element in city to pass in avatar mode
-   *
-   * @param {Context} context - external game context
-   * @param {Object3D} object3D - object3D attach to this script
-   * @param {DragAndDropAvatarVariables} variables - variables of script
-   */
-  constructor(context, object3D, variables) {
-    // Overwrite default variables
-    const overWriteVariables = JSON.parse(JSON.stringify(defaultVariables));
-    objectOverWrite(overWriteVariables, variables);
-    super(context, object3D, overWriteVariables);
-  }
-
   init() {
     /**
      * camera manager
@@ -228,5 +196,26 @@ export class DragAndDropAvatar extends ScriptBase {
 
   static get ID_SCRIPT() {
     return 'drag_and_drop_avatar_id';
+  }
+  /**
+   * @typedef DragAndDropAvatarVariables
+   * @property {number} camera_duration - time for camera movement in ms
+   * @property {{x:number,y:number,z:number}} camera_offset - offset to positioned camera behind object3D
+   * @property {number} camera_angle - angle on x to positioned camera behind object3D
+   * @property {number} camera_distance - distance to positioned camera behind object3D
+   * @property {string} update_z_crs - projection used to update z elevation of avatar
+   */
+
+  /**
+   * @returns {DragAndDropAvatarVariables} - default variables
+   */
+  static get DEFAULT_VARIABLES() {
+    return {
+      camera_duration: 2000,
+      camera_offset: { x: 0, y: 0, z: 2 },
+      camera_angle: 0,
+      camera_distance: 7,
+      update_z_crs: 'EPSG:3946', // the one of lyon by default /!\ must have been define before
+    };
   }
 }

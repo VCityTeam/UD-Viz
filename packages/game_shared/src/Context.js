@@ -7,6 +7,7 @@ const Command = require('./Command');
 
 const { Collisions } = require('detect-collisions');
 const THREE = require('three');
+const { objectOverWrite } = require('@ud-viz/utils_shared');
 
 /**
  * @callback ContextListener
@@ -671,7 +672,10 @@ const ScriptBase = class extends THREE.EventDispatcher {
      *
      * @type {object}
      */
-    this.variables = variables;
+    this.variables = objectOverWrite(
+      JSON.parse(JSON.stringify(this.constructor.DEFAULT_VARIABLES)),
+      variables
+    );
   }
   /**
    * call after object3D controllers initialized
@@ -739,6 +743,14 @@ const ScriptBase = class extends THREE.EventDispatcher {
 
   static get IS_SCRIPTBASE() {
     return true;
+  }
+
+  /**
+   *
+   * @returns {object} - default variables of this script
+   */
+  static get DEFAULT_VARIABLES() {
+    return {};
   }
 };
 
