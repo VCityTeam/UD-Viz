@@ -466,7 +466,7 @@ Object3D.DefaultForward = function () {
  * @returns {THREE.Vector3} - forward vector of object3D
  */
 Object3D.computeForward = function (object3D) {
-  return this.DefaultForward().applyQuaternion(object3D.quaternion);
+  return Object3D.DefaultForward().applyQuaternion(object3D.quaternion);
 };
 
 /**
@@ -475,7 +475,7 @@ Object3D.computeForward = function (object3D) {
  * @returns {THREE.Vector3} - backward vector of object3D
  */
 Object3D.computeBackward = function (object3D) {
-  return this.computeForward(object3D).negate();
+  return Object3D.computeForward(object3D).negate();
 };
 
 /**

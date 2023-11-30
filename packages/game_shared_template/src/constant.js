@@ -1,5 +1,5 @@
 /**
- * Constant used in GameScriptTemplate & ExternalScriptTemplate
+ * Constant used in @ud-viz/game_shared_template & @ud-viz/game_browser_template
  */
 module.exports = {
   COMMAND: {
