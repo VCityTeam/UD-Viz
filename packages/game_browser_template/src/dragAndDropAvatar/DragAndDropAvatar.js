@@ -1,7 +1,8 @@
 import {
   computeRelativeElevationFromGround,
-  addNativeCommands,
-  removeNativeCommands,
+  addNativeCommandsController,
+  removeNativeCommandsController,
+  CONTROLLER,
 } from '../utils';
 import { CameraManager } from '../CameraManager';
 import './style.css';
@@ -155,14 +156,18 @@ export class DragAndDropAvatar extends ScriptBase {
           );
 
           // register command in input manager
-          addNativeCommands(this.context.inputManager, this.avatar.uuid);
+          addNativeCommandsController(
+            this.context.inputManager,
+            this.avatar.uuid,
+            { modeType: CONTROLLER.MODE_2.TYPE }
+          );
 
           // add ui to switch back to planar controls
           this.appendToHtml(this.leaveAvatarModeButton);
         });
     } else {
       this.leaveAvatarModeButton.remove();
-      removeNativeCommands(this.context.inputManager);
+      removeNativeCommandsController(this.context.inputManager);
       this.cameraManager.stopFollowObject3D();
 
       this.cameraManager
