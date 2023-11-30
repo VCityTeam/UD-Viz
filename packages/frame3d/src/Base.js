@@ -282,6 +282,8 @@ export class Base {
     if (!this.isRendering) return;
     this.renderer.clear();
     this.renderer.render(this.scene, this.camera);
+
+    this.renderCSS3D();
   }
 
   /**
