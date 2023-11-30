@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
     <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <style>
+      .ui {
+        z-index: 5;
+      }
+    </style>
   </head>
   <body>
     <script src="../dist/RUN_MODE/bundle.js"></script>
@@ -51,28 +56,59 @@
             this.variables.camera_angle
           );
 
-          udviz.gameBrowserTemplate.addNativeCommands(
-            this.context.inputManager,
-            this.avatar.uuid
+          const selectControllerModeType = document.createElement('select');
+          this.context.frame3D.domElementUI.appendChild(
+            selectControllerModeType
           );
+          this.context.frame3D.domElementUI.classList.add('ui');
+
+          for (const mode in udviz.gameBrowserTemplate.CONTROLLER) {
+            const option = document.createElement('option');
+            option.value = udviz.gameBrowserTemplate.CONTROLLER[mode].TYPE;
+            option.innerText = udviz.gameBrowserTemplate.CONTROLLER[mode].TYPE;
+            selectControllerModeType.appendChild(option);
+          }
+
+          const updateControllerMode = () => {
+            const modeType = selectControllerModeType.selectedOptions[0].value;
+            udviz.gameBrowserTemplate.addNativeCommandsController(
+              this.context.inputManager,
+              this.avatar.uuid,
+              { modeType: modeType, withMap: false }
+            );
+          };
+          selectControllerModeType.onchange = updateControllerMode;
+          updateControllerMode();
+
+          const onGround = udviz.createLabelInput('On ground: ', 'checkbox');
+          this.context.frame3D.domElementUI.appendChild(onGround.parent);
+
+          this.isOnGround = true;
+
+          onGround.input.checked = this.isOnGround;
+          onGround.input.onchange = () =>
+            (this.isOnGround = onGround.input.checked);
         }
 
         tick() {
-          this.context.sendCommandsToGameContext([
-            new udviz.gameShared.Command({
-              type: udviz.gameSharedTemplate.constant.COMMAND.UPDATE_TRANSFORM,
-              data: {
-                object3DUUID: this.avatar.uuid,
-                position: {
-                  z: udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
-                    this.avatar,
-                    this.context.frame3D.itownsView.tileLayer,
-                    this.variables.update_z_crs
-                  ),
+          if (this.isOnGround) {
+            this.context.sendCommandsToGameContext([
+              new udviz.gameShared.Command({
+                type: udviz.gameSharedTemplate.constant.COMMAND
+                  .UPDATE_TRANSFORM,
+                data: {
+                  object3DUUID: this.avatar.uuid,
+                  position: {
+                    z: udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
+                      this.avatar,
+                      this.context.frame3D.itownsView.tileLayer,
+                      this.variables.update_z_crs
+                    ),
+                  },
                 },
-              },
-            }),
-          ]);
+              }),
+            ]);
+          }
         }
 
         static get ID_SCRIPT() {
@@ -121,6 +157,8 @@
                   ],
                   variables: {
                     defaultSpeedRotate: 0.0005,
+                    angleMin: -Math.PI / 10,
+                    angleMax: Math.PI / 6,
                   },
                 },
                 ExternalScript: {
