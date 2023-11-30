@@ -66,7 +66,7 @@ export class ObjectInput {
   }
 
   /**
-   * to know which king of object is edited
+   * to know which kind of object is edited
    *
    * @returns {string} - all type available
    */
