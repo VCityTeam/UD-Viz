@@ -104,14 +104,6 @@ export class Planar extends Base {
           computeNearFarCamera(this.camera, bb.min, bb.max);
         }
       );
-
-      // requester rendering css3D
-      this.itownsView.addFrameRequester(
-        itowns.MAIN_LOOP_EVENTS.BEFORE_RENDER,
-        () => {
-          this.renderCSS3D();
-        }
-      );
     }
   }
 
