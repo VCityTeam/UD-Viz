@@ -117,7 +117,6 @@
                 const scene = this.context.frame3D.scene;
                 if (!this.context.frame3D.itownsView)
                   throw new Error('this script works with Frame3DPlanar');
-                const worldOrigin = this.context.object3D.position;
 
                 // Input manager of the game
                 const inputManager = this.context.inputManager;
@@ -133,15 +132,23 @@
                 );
                 scene.add(this.intersectionCube);
 
-                const translationSpeed = 0.03;
+                const translationSpeed = 0.01;
                 const speedRotate = 0.0006;
 
+                const avatarWorldPosition = new udviz.THREE.Vector3();
+                const avatarWorldQuaternion = new udviz.THREE.Quaternion();
+                const avatarWorldScale = new udviz.THREE.Vector3();
                 const checkCollisionFun = (direction) => {
-                  const origin = this.avatar.position
-                    .clone()
-                    .add(worldOrigin)
-                    .add(new udviz.THREE.Vector3(0, 0, 1));
-                  const intersection = this.buildingsHit(origin, direction);
+                  this.avatar.matrixWorld.decompose(
+                    avatarWorldPosition,
+                    avatarWorldQuaternion,
+                    avatarWorldScale
+                  );
+                  avatarWorldPosition.add(new udviz.THREE.Vector3(0, 0, 1));
+                  const intersection = this.buildingsHit(
+                    avatarWorldPosition,
+                    direction
+                  );
                   const depth = intersection ? intersection.distance : Infinity;
 
                   if (depth != Infinity) {
