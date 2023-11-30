@@ -144,6 +144,8 @@
         class Bounce extends udviz.gameBrowser.ScriptBase {
           init() {
             this.currentDt = 0;
+
+            this.initialScale = this.object3D.scale.x;
           }
 
           tick() {
@@ -153,7 +155,11 @@
             this.currentDt += this.context.dt;
             const bounce =
               (max - min) * Math.abs(Math.sin(this.currentDt * 0.001)) + min;
-            this.object3D.scale.set(bounce, bounce, bounce);
+            this.object3D.scale.set(
+              this.initialScale * bounce,
+              this.initialScale * bounce,
+              this.initialScale * bounce
+            );
             this.object3D.updateMatrix(true, true);
           }
 
