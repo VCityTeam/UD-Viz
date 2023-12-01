@@ -146,7 +146,6 @@ const generatePackagesArchitectureDoc = async () => {
 };
 
 generatePackagesArchitectureDoc();
-
 generateArchitectureDoc();
-// docScriptTag(true);
-// generateDoc().then(() => docScriptTag(false));
+docScriptTag(true);
+generateDoc().then(() => docScriptTag(false));
