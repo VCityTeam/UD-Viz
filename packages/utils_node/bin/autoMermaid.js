@@ -325,4 +325,5 @@ lines.forEach((line) => {
 });
 
 appendLine('```', fileOutput);
+appendLine('>This file has been generated using autoMermaid.js', fileOutput);
 console.log(fileOutput + ' has been created.');

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { computeFileFormat } = require('@ud-viz/utils_shared');
 const { exec } = require('child-process-promise');
+const path = require('path');
 
 const docScriptTag = (injectMermaidScriptTag) => {
   console.info('include script tag in ./docs/static ', injectMermaidScriptTag);
@@ -114,6 +115,8 @@ const generateArchitectureDoc = () => {
     ...packages,
     'end',
     ...peerDependencies,
+    '```',
+    '>This file is auto generated',
   ].forEach((line) => {
     fs.appendFileSync(filePath, '\n' + line, (err) => {
       if (err) throw err;
@@ -121,6 +124,29 @@ const generateArchitectureDoc = () => {
   });
 };
 
+const generatePackagesArchitectureDoc = async () => {
+  const packagesFolderPath = path.resolve(__dirname, '../packages');
+
+  fs.readdirSync(packagesFolderPath).forEach(async (packageName) => {
+    const packagePath = path.join(packagesFolderPath, packageName);
+    const lstat = fs.lstatSync(packagePath);
+    const isDirectory = lstat.isDirectory();
+
+    if (!isDirectory) {
+      return;
+    }
+
+    const autoMermaidCommand = `node ${packagesFolderPath}/utils_node/bin/autoMermaid.js -e ${packagePath}/src -o ${packagePath}/architecture.md`;
+
+    const result = await exec(autoMermaidCommand);
+
+    console.log(result.stdout);
+    console.error(result.stderr);
+  });
+};
+
+generatePackagesArchitectureDoc();
+
 generateArchitectureDoc();
-docScriptTag(true);
-generateDoc().then(() => docScriptTag(false));
+// docScriptTag(true);
+// generateDoc().then(() => docScriptTag(false));

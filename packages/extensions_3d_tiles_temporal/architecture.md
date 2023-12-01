@@ -1,0 +1,31 @@
+```mermaid
+flowchart
+ subgraph IDsrc["src"]
+  IDsrcIndex2ejs["index.js"]
+  subgraph IDsrcModel["model"]
+   IDsrcModelC3DTTemporalBatchTable2ejs["C3DTTemporalBatchTable.js"]
+   IDsrcModelC3DTTemporalBoundingVolume2ejs["C3DTTemporalBoundingVolume.js"]
+   IDsrcModelC3DTTemporalPrimaryTransaction2ejs["C3DTTemporalPrimaryTransaction.js"]
+   IDsrcModelC3DTTemporalTileset2ejs["C3DTTemporalTileset.js"]
+   IDsrcModelC3DTTemporalTransaction2ejs["C3DTTemporalTransaction.js"]
+   IDsrcModelC3DTTemporalTransactionAggregate2ejs["C3DTTemporalTransactionAggregate.js"]
+   IDsrcModelC3DTTemporalVersion2ejs["C3DTTemporalVersion.js"]
+   subgraph IDsrcModelJsonSchemas["jsonSchemas"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2ebatchTable2eschema2ejson["3DTILES_temporal.batchTable.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2eboundingVolume2eschema2ejson["3DTILES_temporal.boundingVolume.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2eprimaryTransaction2ejson["3DTILES_temporal.primaryTransaction.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2etileset2eschema2ejson["3DTILES_temporal.tileset.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2etransaction2eschema2ejson["3DTILES_temporal.transaction.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2etransactionAggregate2eschema2ejson["3DTILES_temporal.transactionAggregate.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2eversion2eschema2eschema2ejson["3DTILES_temporal.version.schema.schema.json"]
+    IDsrcModelJsonSchemas3DTILES5ftemporal2eversionTransition2eschema2ejson["3DTILES_temporal.versionTransition.schema.json"]
+   end
+  end
+ end
+IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalBatchTable2ejs
+IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalBoundingVolume2ejs
+IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalTileset2ejs
+IDsrcModelC3DTTemporalPrimaryTransaction2ejs-.->|import|IDsrcModelC3DTTemporalTransaction2ejs
+IDsrcModelC3DTTemporalTransactionAggregate2ejs-.->|import|IDsrcModelC3DTTemporalTransaction2ejs
+```
+>This file has been generated using autoMermaid.js
