@@ -19,9 +19,7 @@
 
     const editor = new udviz.gameEditor.Editor(
       frame3DPlanar,
-      new udviz.gameBrowser.AssetManager(),
-      [],
-      []
+      new udviz.gameBrowser.AssetManager()
     );
 
     console.log(editor);
