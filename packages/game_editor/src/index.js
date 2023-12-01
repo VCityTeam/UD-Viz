@@ -26,6 +26,7 @@ import {
   WebGLRenderer,
   AmbientLight,
   MathUtils,
+  DoubleSide,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
@@ -46,8 +47,14 @@ import {
   throttle,
 } from '@ud-viz/utils_shared';
 
-const COLLIDER_MATERIAL = new MeshBasicMaterial({ color: 'green' });
-const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({ color: 'red' });
+const COLLIDER_MATERIAL = new MeshBasicMaterial({
+  color: 'green',
+  side: DoubleSide,
+});
+const COLLIDER_MATERIAL_SELECTED = new MeshBasicMaterial({
+  color: 'red',
+  side: DoubleSide,
+});
 const COLLIDER_POINT_MATERIAL = new MeshBasicMaterial({ color: 'yellow' });
 
 import { ObjectInput } from './objectInput/ObjectInput';
