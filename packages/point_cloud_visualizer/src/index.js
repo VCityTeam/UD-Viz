@@ -635,6 +635,7 @@ export class PointCloudVisualizer {
       this.itownsView.scene.add(quad);
 
       if (
+        confirm('Voulez-vous recharger le plan ?') &&
         localStorageSetMatrix4(
           quad.matrixWorld,
           'point_cloud_visualizer_quad_matrix4'
@@ -642,15 +643,7 @@ export class PointCloudVisualizer {
       ) {
         quad.matrixWorld.decompose(quad.position, quad.quaternion, quad.scale);
       } else {
-        this.itownsView.camera.camera3D.matrixWorld.decompose(
-          quad.position,
-          quad.quaternion,
-          quad.scale
-        );
-        const directionCamera = this.orbitControls.target
-          .clone()
-          .sub(this.itownsView.camera.camera3D.position);
-        quad.position.add(directionCamera.setLength(10));
+        quad.position.set(extent.center().x, extent.center().y, 300);
       }
 
       quad.scale.set(1000, 1000, 1000); // TODO: do not harcode this
