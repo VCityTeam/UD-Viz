@@ -44,7 +44,9 @@ game_browser_template-->game_shared_template
 game_browser_template-->utils_browser
 game_browser_template-->utils_shared
 game_editor-->game_shared
+game_editor-->game_shared_template
 game_editor-->game_browser
+game_editor-->game_browser_template
 game_editor-->utils_browser
 game_editor-->utils_shared
 game_node-->game_shared
@@ -86,3 +88,5 @@ widget_slide_show-->utils_browser
 widget_sparql-->utils_browser
 widget_workspace-->utils_browser
 widget_workspace-->widget_sparql
+```
+>This file is auto generated
