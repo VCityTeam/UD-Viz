@@ -296,7 +296,7 @@
 
             // add controls to avatar
             this.avatar = this.object3D.getFirst((o) => o.userData.isAvatar);
-            udviz.gameBrowserTemplate.addNativeCommands(
+            udviz.gameBrowserTemplate.addNativeCommandsController(
               this.context.inputManager,
               this.avatar.uuid
             );
