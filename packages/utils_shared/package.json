@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/utils_shared",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "utils methods interpretable in a nodejs + a browser environment",
   "main": "src",
   "scripts": {

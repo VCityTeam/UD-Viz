@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_guided_tour",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "widget guided tour of the itowns framework",
   "main": "src",
   "scripts": {

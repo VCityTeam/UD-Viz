@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_node",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "Game library interpretable in a nodejs environment",
   "main": "src",
   "scripts": {
@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_node",
   "peerDependencies": {
-    "@ud-viz/game_shared": "4.0.2",
-    "@ud-viz/utils_shared": "4.0.2",
+    "@ud-viz/game_shared": "4.0.3",
+    "@ud-viz/utils_shared": "4.0.3",
     "socket.io": "4.7.2",
     "three": "0.154.0"
   }
