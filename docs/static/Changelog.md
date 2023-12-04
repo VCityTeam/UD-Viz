@@ -15,7 +15,7 @@
     - remove addNativeCommands/removeNativeCommands
     - ControllerNativeCommandManager script
 
-## ud-viz/game_shared
+## @ud-viz/game_shared
     - Readme.md updated
     - opti(game_shared) avoid new operation in Collider
     - feat(game) ScriptBase overwrite with DEFAULT_VARIABLES
