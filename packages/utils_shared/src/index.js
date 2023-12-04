@@ -21,10 +21,13 @@ const rotate2DCoord = (x, y, angle) => {
  */
 const polygon2DArea = (points) => {
   let area = 0;
-  for (let i = 0; i < points.length; i += 2)
+  for (let i = 0; i < points.length; i += 2) {
     area +=
-      points[i + 1].x * (points[(i + 2) % points.length].y - points[i].y) +
-      points[i + 1].y * (points[i].x - points[(i + 2) % points.length].x);
+      points[(i + 1) % points.length].x *
+        (points[(i + 2) % points.length].y - points[i % points.length].y) +
+      points[(i + 1) % points.length].y *
+        (points[i % points.length].x - points[(i + 2) % points.length].x);
+  }
   area /= 2;
   return area;
 };
