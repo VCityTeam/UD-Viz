@@ -79,11 +79,8 @@ export class ControllerNativeCommandManager extends ScriptBase {
               let pixelX = -event.movementX;
               let pixelY = -event.movementY;
 
-              const dragRatio =
-                ControllerNativeCommandManager.MODE[2].MOUSE.MOVE.SENSITIVITY;
-
-              pixelX *= dragRatio;
-              pixelY *= dragRatio;
+              pixelX *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
+              pixelY *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
 
               return new Command({
                 type: ControllerNativeCommandManager.MODE[2].MOUSE.MOVE
@@ -186,7 +183,6 @@ export class ControllerNativeCommandManager extends ScriptBase {
         MOUSE: {
           MOVE: {
             COMMAND_ID: 'controller_mode_2_mouse_move',
-            SENSITIVITY: 0.5,
             COMMAND_TYPE: constant.COMMAND.ROTATE,
           },
         },
@@ -224,3 +220,5 @@ export class ControllerNativeCommandManager extends ScriptBase {
     return constant.ID_SCRIPT.CONTROLLER_NATIVE_COMMAND_MANAGER;
   }
 }
+
+ControllerNativeCommandManager.MOUSE_SENSITIVITY = 0.5;
