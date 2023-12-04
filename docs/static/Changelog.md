@@ -51,7 +51,7 @@
 ## @ud-viz/game_node_template
     - Readme.md updated
 
-## ud-viz/point_cloud_visualizer
+## @ud-viz/point_cloud_visualizer
     - clipping plane instead of near and far camera
 
 ## @ud-viz/game_editor
