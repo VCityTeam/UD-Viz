@@ -1,8 +1,8 @@
 import { DomElement3D } from '@ud-viz/frame3d';
 import { ScriptBase } from '@ud-viz/game_browser';
 import {
-  addNativeCommandsController,
   computeRelativeElevationFromGround,
+  ControllerNativeCommandManager,
 } from '@ud-viz/game_browser_template';
 import { Command, RenderComponent } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
@@ -41,9 +41,13 @@ export class DomElement3DCube extends ScriptBase {
     );
 
     if (this.variables.socketID == this.context.socketIOWrapper.socket.id) {
-      addNativeCommandsController(
-        this.context.inputManager,
-        this.object3D.uuid
+      /** @type {ControllerNativeCommandManager} */
+      const controller = this.context.findExternalScriptWithID(
+        ControllerNativeCommandManager.ID_SCRIPT
+      );
+      controller.controls(
+        this.object3D.uuid,
+        ControllerNativeCommandManager.MODE[1].TYPE
       );
     }
   }

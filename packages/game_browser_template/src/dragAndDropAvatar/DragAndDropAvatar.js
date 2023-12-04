@@ -1,9 +1,4 @@
-import {
-  computeRelativeElevationFromGround,
-  addNativeCommandsController,
-  removeNativeCommandsController,
-  CONTROLLER,
-} from '../utils';
+import { computeRelativeElevationFromGround } from '../utils';
 import { CameraManager } from '../CameraManager';
 import './style.css';
 
@@ -11,10 +6,16 @@ import * as THREE from 'three';
 import { ScriptBase } from '@ud-viz/game_browser';
 import { Command, Object3D } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
+import { ControllerNativeCommandManager } from '../ControllerNativeCommandManager';
 
 /** @class */
 export class DragAndDropAvatar extends ScriptBase {
   init() {
+    /** @type {ControllerNativeCommandManager} */
+    this.controllerNativeCommandManager = this.context.findExternalScriptWithID(
+      ControllerNativeCommandManager.ID_SCRIPT
+    );
+
     /**
      * camera manager
      *  
@@ -155,11 +156,9 @@ export class DragAndDropAvatar extends ScriptBase {
             this.variables.camera_angle
           );
 
-          // register command in input manager
-          addNativeCommandsController(
-            this.context.inputManager,
+          this.controllerNativeCommandManager.controls(
             this.avatar.uuid,
-            { modeType: CONTROLLER.MODE_2.TYPE }
+            ControllerNativeCommandManager.MODE[2].TYPE
           );
 
           // add ui to switch back to planar controls
@@ -167,7 +166,9 @@ export class DragAndDropAvatar extends ScriptBase {
         });
     } else {
       this.leaveAvatarModeButton.remove();
-      removeNativeCommandsController(this.context.inputManager);
+
+      this.controllerNativeCommandManager.removeControls();
+
       this.cameraManager.stopFollowObject3D();
 
       this.cameraManager

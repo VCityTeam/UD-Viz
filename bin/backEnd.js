@@ -145,7 +145,9 @@ gameSocketService
             },
           },
           ExternalScript: {
-            scriptParams: [],
+            scriptParams: [
+              { id: constant.ID_SCRIPT.CONTROLLER_NATIVE_COMMAND_MANAGER },
+            ],
           },
         },
       }),

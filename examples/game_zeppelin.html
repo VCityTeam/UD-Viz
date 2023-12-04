@@ -148,9 +148,15 @@
             this.variables.camera_angle
           );
 
-          udviz.gameBrowserTemplate.addNativeCommandsController(
-            this.context.inputManager,
-            zeppelin.uuid
+          const controllerNativeCommandManager =
+            this.context.findExternalScriptWithID(
+              udviz.gameBrowserTemplate.ControllerNativeCommandManager.ID_SCRIPT
+            );
+
+          controllerNativeCommandManager.controls(
+            zeppelin.uuid,
+            udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[1]
+              .TYPE
           );
         }
 
@@ -227,6 +233,10 @@
                   scriptParams: [
                     { id: ExternalGameContextManager.ID_SCRIPT },
                     { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
+                    {
+                      id: udviz.gameBrowserTemplate
+                        .ControllerNativeCommandManager.ID_SCRIPT,
+                    },
                   ],
                 },
               },
@@ -259,6 +269,7 @@
                 ],
                 externalGameScriptClass: [
                   udviz.gameBrowserTemplate.CameraManager,
+                  udviz.gameBrowserTemplate.ControllerNativeCommandManager,
                   ExternalGameContextManager,
                 ],
               }

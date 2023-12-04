@@ -296,9 +296,17 @@
 
             // add controls to avatar
             this.avatar = this.object3D.getFirst((o) => o.userData.isAvatar);
-            udviz.gameBrowserTemplate.addNativeCommandsController(
-              this.context.inputManager,
-              this.avatar.uuid
+
+            const controllerNativeCommandManager =
+              this.context.findExternalScriptWithID(
+                udviz.gameBrowserTemplate.ControllerNativeCommandManager
+                  .ID_SCRIPT
+              );
+
+            controllerNativeCommandManager.controls(
+              this.avatar.uuid,
+              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[1]
+                .TYPE
             );
 
             // camera manager follow avatar
@@ -514,6 +522,8 @@
               ExternalScriptManager.ID_SCRIPT,
               Bounce.ID_SCRIPT,
               udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT,
+              udviz.gameBrowserTemplate.ControllerNativeCommandManager
+                .ID_SCRIPT,
             ],
             possibleGameScriptIds: [
               TreasureHuntHintGameScript.ID_SCRIPT,
@@ -566,6 +576,10 @@
                 scriptParams: [
                   { id: ExternalScriptManager.ID_SCRIPT },
                   { id: udviz.gameBrowserTemplate.CameraManager.ID_SCRIPT },
+                  {
+                    id: udviz.gameBrowserTemplate.ControllerNativeCommandManager
+                      .ID_SCRIPT,
+                  },
                 ],
                 variables: {
                   cameraDistance: 5,
@@ -632,6 +646,7 @@
                 ExternalScriptManager,
                 Bounce,
                 udviz.gameBrowserTemplate.CameraManager,
+                udviz.gameBrowserTemplate.ControllerNativeCommandManager,
               ],
             }
           );

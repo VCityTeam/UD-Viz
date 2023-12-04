@@ -34,6 +34,7 @@ module.exports = {
    */
   ID_SCRIPT: {
     CAMERA_MANAGER: 'camera_manager_id',
+    CONTROLLER_NATIVE_COMMAND_MANAGER: 'controller_native_command_manager_id',
     NOTE_ELEMENT: 'note_element_id',
     NOTE_SOCKET_SERVICE: 'note_socket_service_id',
     NOTE_UI: 'note_ui_id',
