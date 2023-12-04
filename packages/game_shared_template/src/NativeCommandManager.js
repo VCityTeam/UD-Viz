@@ -2,7 +2,6 @@ const AbstractMap = require('./AbstractMap');
 const { COMMAND } = require('./constant');
 
 const THREE = require('three');
-const { arrayPushOnce, removeFromArray } = require('@ud-viz/utils_shared');
 const {
   ScriptBase,
   Object3D,
@@ -26,6 +25,16 @@ const NativeCommandManager = class extends ScriptBase {
 
     /** @type {AbstractMap|null} */
     this.map = this.context.findGameScriptWithID(AbstractMap.ID_SCRIPT);
+  }
+
+  _removeObjectMoving(type, uuid) {
+    for (let index = 0; index < this.objectsMoving[type].length; index++) {
+      const element = this.objectsMoving[type][index];
+      if (element.object3D.uuid == uuid) {
+        this.objectsMoving[type].splice(index, 1);
+        break;
+      }
+    }
   }
 
   tick() {
@@ -223,76 +232,93 @@ const NativeCommandManager = class extends ScriptBase {
           'uuid',
           data.object3DUUID
         );
-        arrayPushOnce(this.objectsMoving[start], updatedObject3D);
+        const alreadyPushed =
+          this.objectsMoving[start].filter(
+            (el) => el.object3D == updatedObject3D
+          ).length > 0;
+        if (!alreadyPushed)
+          this.objectsMoving[start].push({
+            object3D: updatedObject3D,
+            withMap: data.withMap,
+          });
+
         return true;
       });
       this.applyCommandCallbackOf(end, (data) => {
-        const updatedObject3D = this.context.object3D.getObjectByProperty(
-          'uuid',
-          data.object3DUUID
-        );
-        removeFromArray(this.objectsMoving[start], updatedObject3D);
+        this._removeObjectMoving(start, data.object3DUUID);
         return true;
       });
     });
 
     // move objectsMoving
-    this.objectsMoving[COMMAND.MOVE_FORWARD_START].forEach((o) => {
-      if (
-        NativeCommandManager.moveForward(
-          o,
-          this.computeObjectSpeedTranslate(o) * this.context.dt,
-          this.map
-        )
-      ) {
-        this.dispatchEvent({
-          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
-          object3D: o,
-        });
+    this.objectsMoving[COMMAND.MOVE_FORWARD_START].forEach(
+      ({ object3D, withMap }) => {
+        if (
+          NativeCommandManager.moveForward(
+            object3D,
+            this.computeObjectSpeedTranslate(object3D) * this.context.dt,
+            this.map,
+            withMap
+          )
+        ) {
+          this.dispatchEvent({
+            type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+            object3D: object3D,
+          });
+        }
       }
-    });
-    this.objectsMoving[COMMAND.MOVE_BACKWARD_START].forEach((o) => {
-      if (
-        NativeCommandManager.moveBackward(
-          o,
-          this.computeObjectSpeedTranslate(o) * this.context.dt,
-          this.map
-        )
-      ) {
-        this.dispatchEvent({
-          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
-          object3D: o,
-        });
+    );
+    this.objectsMoving[COMMAND.MOVE_BACKWARD_START].forEach(
+      ({ object3D, withMap }) => {
+        if (
+          NativeCommandManager.moveBackward(
+            object3D,
+            this.computeObjectSpeedTranslate(object3D) * this.context.dt,
+            this.map,
+            withMap
+          )
+        ) {
+          this.dispatchEvent({
+            type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+            object3D: object3D,
+          });
+        }
       }
-    });
-    this.objectsMoving[COMMAND.MOVE_LEFT_START].forEach((o) => {
-      if (
-        NativeCommandManager.moveLeft(
-          o,
-          this.computeObjectSpeedTranslate(o) * this.context.dt,
-          this.map
-        )
-      ) {
-        this.dispatchEvent({
-          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
-          object3D: o,
-        });
+    );
+    this.objectsMoving[COMMAND.MOVE_LEFT_START].forEach(
+      ({ object3D, withMap }) => {
+        if (
+          NativeCommandManager.moveLeft(
+            object3D,
+            this.computeObjectSpeedTranslate(object3D) * this.context.dt,
+            this.map,
+            withMap
+          )
+        ) {
+          this.dispatchEvent({
+            type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+            object3D: object3D,
+          });
+        }
       }
-    });
-    this.objectsMoving[COMMAND.MOVE_RIGHT_START].forEach((o) => {
-      if (
-        NativeCommandManager.moveRight(
-          o,
-          this.computeObjectSpeedTranslate(o) * this.context.dt,
-          this.map
-        )
-      ) {
-        this.dispatchEvent({
-          type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
-          object3D: o,
-        });
+    );
+    this.objectsMoving[COMMAND.MOVE_RIGHT_START].forEach(
+      ({ object3D, withMap }) => {
+        if (
+          NativeCommandManager.moveRight(
+            object3D,
+            this.computeObjectSpeedTranslate(object3D) * this.context.dt,
+            this.map,
+            withMap
+          )
+        ) {
+          this.dispatchEvent({
+            type: NativeCommandManager.EVENT.OBJECT_3D_LEAVE_MAP,
+            object3D: object3D,
+          });
+        }
       }
-    });
+    );
   }
 
   /**
@@ -319,10 +345,10 @@ const NativeCommandManager = class extends ScriptBase {
    * @param {Object3D} object3D - object3D to stop
    */
   stop(object3D) {
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_FORWARD_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_BACKWARD_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_LEFT_START], object3D);
-    removeFromArray(this.objectsMoving[COMMAND.MOVE_RIGHT_START], object3D);
+    this._removeObjectMoving(COMMAND.MOVE_FORWARD_START, object3D.uuid);
+    this._removeObjectMoving(COMMAND.MOVE_BACKWARD_START, object3D.uuid);
+    this._removeObjectMoving(COMMAND.MOVE_LEFT_START, object3D.uuid);
+    this._removeObjectMoving(COMMAND.MOVE_RIGHT_START, object3D.uuid);
   }
 
   /**
