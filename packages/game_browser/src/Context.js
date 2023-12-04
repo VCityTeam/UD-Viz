@@ -214,11 +214,11 @@ export class Context {
     /** @type {Object3D[]} */
     const newGO = [];
 
-    /** @type {State} */
     const state = states[states.length - 1]; // The more current of states
 
     // Update currentGameObject3D with the new states
     if (this.currentGameObject3D) {
+      const object3DToRemove = [];
       // remove gameobject 3D that has been removed in game context
       this.currentGameObject3D.traverse((child) => {
         if (!child.isGameObject3D) return;
@@ -226,38 +226,41 @@ export class Context {
           .getObject3D()
           .getObjectByProperty('uuid', child.uuid);
         if (!gameContextChild) {
-          // Do not exist remove it
-          child.removeFromParent();
+          object3DToRemove.push(child);
+        }
+      });
+      object3DToRemove.forEach((object3D) => {
+        // Do not exist remove it
+        object3D.removeFromParent();
 
-          // external script event remove
-          const scriptComponent = child.getComponent(
+        // external script event remove
+        const scriptComponent = object3D.getComponent(
+          ExternalScriptComponent.TYPE
+        );
+        if (scriptComponent) {
+          scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
+        }
+
+        // Audio removal
+        const audioComponent = object3D.getComponent(AudioComponent.TYPE);
+        if (audioComponent) {
+          audioComponent.getController().dispose();
+        }
+
+        // notify other that object3D is removed
+        this.currentGameObject3D.traverse((otherGameObject) => {
+          if (!otherGameObject.isGameObject3D) return;
+          const externalComp = otherGameObject.getComponent(
             ExternalScriptComponent.TYPE
           );
-          if (scriptComponent) {
-            scriptComponent.getController().execute(Context.EVENT.ON_REMOVE);
+          if (externalComp) {
+            externalComp
+              .getController()
+              .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [object3D]);
           }
+        });
 
-          // Audio removal
-          const audioComponent = child.getComponent(AudioComponent.TYPE);
-          if (audioComponent) {
-            audioComponent.getController().dispose();
-          }
-
-          // notify other that child is removed
-          this.currentGameObject3D.traverse((otherGameObject) => {
-            if (!otherGameObject.isGameObject3D) return;
-            const externalComp = otherGameObject.getComponent(
-              ExternalScriptComponent.TYPE
-            );
-            if (externalComp) {
-              externalComp
-                .getController()
-                .execute(Context.EVENT.ON_GAMEOBJECT_REMOVED, [child]);
-            }
-          });
-
-          delete this.currentUUID[child.uuid];
-        }
+        delete this.currentUUID[object3D.uuid];
       });
 
       // update the others
@@ -372,11 +375,13 @@ export class Context {
             child.parentUUID
           );
 
-          parent.add(child);
-        }
+          const object3DToAdd = child.clone();
 
-        if (!this.currentUUID[child.uuid]) {
-          newGO.push(child);
+          parent.add(object3DToAdd);
+          newGO.push(object3DToAdd);
+          if (this.currentUUID[object3DToAdd.uuid]) {
+            console.error('already in current uuid');
+          }
         }
       });
     } else {
