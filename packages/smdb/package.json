@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/smdb",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "smdb frontend of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,9 +20,9 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/smdb",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.0.2",
-    "@ud-viz/utils_shared": "4.0.2",
-    "@ud-viz/widget_camera_positioner": "4.0.2",
+    "@ud-viz/utils_browser": "4.0.3",
+    "@ud-viz/utils_shared": "4.0.3",
+    "@ud-viz/widget_camera_positioner": "4.0.3",
     "three": "0.154.0"
   }
 }

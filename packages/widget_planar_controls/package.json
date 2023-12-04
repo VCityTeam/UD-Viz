@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_planar_controls",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "widget planar controls of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_planar_controls",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.0.2",
+    "@ud-viz/utils_browser": "4.0.3",
     "itowns": "2.41.1-next.9"
   }
 }

@@ -1,3 +1,73 @@
+# v4.0.3
+
+## @ud-viz
+    - autoMermaid.js generate architecture.md for each packages
+    - reload is call on the backend side only when NODE_ENV=development
+    - Readme.md updated
+    - fix(examples): change htmlElement to set onclick function
+    - create(examples): game_editor
+    - remove bundle while npm run local-ci to force the build
+    - doc(examples) game_editor example doc + addMarkdown.js to add in a generic way .md
+
+
+## @ud-viz/game_browser_template
+    - Readme.md updated
+    - remove addNativeCommands/removeNativeCommands
+    - ControllerNativeCommandManager script
+
+## ud-viz/game_shared
+    - Readme.md updated
+    - opti(game_shared) avoid new operation in Collider
+    - feat(game) ScriptBase overwrite with DEFAULT_VARIABLES
+    - fix(Collider) rotation + right order points + small coord referential
+    - fix(@ud-viz/game_shared) removal in state add
+
+## @ud-viz/game_shared_template
+    - Readme.md updated
+    - NativeCommandManager consider withMap option
+
+## @ud-viz/game_browser
+    - Readme.md updated
+    - Context do not modify state received
+    - feat(game) ScriptBase overwrite with DEFAULT_VARIABLES
+
+## @ud-viz/utils_shared
+    - polygon2DArea
+
+## @ud-viz/utils_node
+    - fix(automermaid):remove double import
+    - fix(automermaid):use process.cwd() better id
+
+## @ud-viz/extensions_3d_tiles_temporal
+    - Readme.md updated
+
+## @ud-viz/frame3d
+    - Readme.md updated
+    - feat(frame3d) renderCss while render 3d
+
+## @ud-viz/game_node
+    - Readme.md updated
+
+## @ud-viz/game_node_template
+    - Readme.md updated
+
+## ud-viz/point_cloud_visualizer
+    - clipping plane instead of near and far camera
+
+## @ud-viz/game_editor
+    - double side on shape meshes
+    - "f" focus selected game object 3d
+    - feat(game_editor) point shape have a constant size on screen
+    - feat(game_editor) add/remove component
+    - feat(game_editor) game object 3d can be move in hierarchy
+    - feat(game_editor) DebugCollision
+    - feat(@ud-viz/game_editor) userdata can be edited
+    - script input => object input
+
+## @ud-viz/utils_browser
+    - feat(RequestAnimationFrameProcess) multi requester
+
+
 # v4.0.2
 
 ## @ud-viz
