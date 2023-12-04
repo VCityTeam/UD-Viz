@@ -2,6 +2,7 @@
 flowchart
  subgraph IDsrc["src"]
   IDsrcCameraManager2ejs["CameraManager.js"]
+  IDsrcControllerNativeCommandManager2ejs["ControllerNativeCommandManager.js"]
   IDsrcDomElement3DCube2ejs["DomElement3DCube.js"]
   IDsrcMap2ejs["Map.js"]
   IDsrcIndex2ejs["index.js"]
@@ -33,6 +34,7 @@ IDsrcIndex2ejs-.->|import|IDsrcDomElement3DCube2ejs
 IDsrcIndex2ejs-.->|import|IDsrcNoteNote2ejs
 IDsrcDragAndDropAvatarDragAndDropAvatar2ejs-.->|import|IDsrcUtils2ejs
 IDsrcDragAndDropAvatarDragAndDropAvatar2ejs-.->|import|IDsrcCameraManager2ejs
+IDsrcDragAndDropAvatarDragAndDropAvatar2ejs-.->|import|IDsrcControllerNativeCommandManager2ejs
 IDsrcNoteNote2ejs-.->|import|IDsrcNoteUiUI2ejs
 IDsrcNoteNote2ejs-.->|import|IDsrcNoteSocketServiceSocketService2ejs
 IDsrcNoteNote2ejs-.->|import|IDsrcNoteElementElement2ejs
