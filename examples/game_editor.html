@@ -305,7 +305,7 @@
 
             controllerNativeCommandManager.controls(
               this.avatar.uuid,
-              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[1]
+              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[2]
                 .TYPE
             );
 
@@ -344,23 +344,24 @@
           }
 
           tick() {
-            // avatar
-            this.context.sendCommandsToGameContext([
-              new udviz.gameShared.Command({
-                type: udviz.gameSharedTemplate.constant.COMMAND
-                  .UPDATE_TRANSFORM,
-                data: {
-                  object3DUUID: this.avatar.uuid,
-                  position: {
-                    z: udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
-                      this.avatar,
-                      this.context.frame3D.itownsView.tileLayer,
-                      extent.crs
-                    ),
+            if (this.variables.avatarOnGround) {
+              this.context.sendCommandsToGameContext([
+                new udviz.gameShared.Command({
+                  type: udviz.gameSharedTemplate.constant.COMMAND
+                    .UPDATE_TRANSFORM,
+                  data: {
+                    object3DUUID: this.avatar.uuid,
+                    position: {
+                      z: udviz.gameBrowserTemplate.computeRelativeElevationFromGround(
+                        this.avatar,
+                        this.context.frame3D.itownsView.tileLayer,
+                        extent.crs
+                      ),
+                    },
                   },
-                },
-              }),
-            ]);
+                }),
+              ]);
+            }
           }
 
           static get ID_SCRIPT() {
@@ -434,6 +435,18 @@
                     this.object.cameraDistance =
                       cameraDistance.input.valueAsNumber;
                   };
+
+                  // avatar on ground
+                  const avatarOnGroundCheckbox = udviz.createLabelInput(
+                    'Avatar on ground: ',
+                    'checkbox'
+                  );
+                  this.domElement.appendChild(avatarOnGroundCheckbox.parent);
+                  avatarOnGroundCheckbox.input.checked =
+                    this.object.avatarOnGround;
+                  avatarOnGroundCheckbox.input.onchange = () =>
+                    (this.object.avatarOnGround =
+                      avatarOnGroundCheckbox.input.checked);
                 }
                 static condition(id) {
                   return id == ExternalScriptManager.ID_SCRIPT;
@@ -585,6 +598,7 @@
                   cameraDistance: 5,
                   cameraAngle: Math.PI / 6,
                   endingMessage: 'Bravo',
+                  avatarOnGround: true,
                 },
               },
             },

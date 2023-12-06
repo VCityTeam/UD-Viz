@@ -17,6 +17,10 @@ import {
 import { arrayEquals, objectOverWrite } from '@ud-viz/utils_shared';
 import * as frame3d from '@ud-viz/frame3d';
 
+// use to avoid new operation
+const _quaternion = new THREE.Quaternion();
+const _scale = new THREE.Vector3();
+
 /** @class */
 export class Context {
   /**
@@ -441,6 +445,12 @@ export class Context {
       );
     }
 
+    const cameraWorldPosition = new THREE.Vector3();
+    this.frame3D.camera.matrixWorld.decompose(
+      cameraWorldPosition,
+      _quaternion,
+      _scale
+    );
     this.currentGameObject3D.traverse((child) => {
       if (!child.isGameObject3D) return;
 
@@ -454,9 +464,7 @@ export class Context {
       const audioComp = child.getComponent(AudioComponent.TYPE);
       // Position in world referential
       if (audioComp) {
-        const camera = this.frame3D.camera;
-        const cameraMatWorldInverse = camera.matrixWorldInverse;
-        audioComp.getController().tick(cameraMatWorldInverse);
+        audioComp.getController().tick(cameraWorldPosition);
       }
 
       // Render component

@@ -2,7 +2,10 @@ import { AssetManager } from './AssetManager';
 
 import { Model, Object3D, Controller } from '@ud-viz/game_shared';
 import { Howl } from 'howler';
-import * as THREE from 'three';
+import { Vector3, Quaternion } from 'three';
+
+const _quaternion = new Quaternion();
+const _scale = new Vector3();
 
 /** @class */
 export class AudioController extends Controller {
@@ -33,6 +36,8 @@ export class AudioController extends Controller {
         idS,
         this.model.getConf()
       );
+      if (!isNaN(this.model.getConf().volume))
+        this.sounds[idS].volume(this.model.getConf().volume);
     });
   }
 
@@ -57,7 +62,7 @@ export class AudioController extends Controller {
    */
   dispose() {
     for (const key in this.sounds) {
-      if (this.sounds[key]._state == 'loaded') {
+      if (this.sounds[key].state() == 'loaded') {
         this.sounds[key].unload();
       }
       delete this.sounds[key];
@@ -67,31 +72,25 @@ export class AudioController extends Controller {
   /**
    * Tick controller
    *
-   * @param {THREE.Matrix4} cameraMatrixWorldInverse - camera matrix world inverse
+   * @param {Vector3} cameraWorldPosition - camera World Position
    */
-  tick(cameraMatrixWorldInverse) {
+  tick(cameraWorldPosition) {
     for (const key in this.sounds) {
+      /** @type {Howl} */
       const sound = this.sounds[key];
 
       if (sound.state() != 'loaded') continue;
 
       if (this.model.getConf().autoplay && !sound.playing()) sound.play();
-      if (!isNaN(this.model.getConf().volume))
-        sound.volume(this.model.getConf().volume);
 
       // https://github.com/goldfire/howler.js#documentation
       if (this.model.getConf().spatialized) {
-        const worldPosition = new THREE.Vector3();
-        this.object3D.matrixWorld.decompose(
-          worldPosition,
-          new THREE.Quaternion(),
-          new THREE.Vector3()
-        );
-
+        // compute world position
+        const worldPosition = new Vector3();
+        this.object3D.matrixWorld.decompose(worldPosition, _quaternion, _scale);
         // in camera referential
-        const positionAudio = worldPosition.applyMatrix4(
-          cameraMatrixWorldInverse
-        );
+        const positionAudio = worldPosition.sub(cameraWorldPosition);
+        console.log(positionAudio);
         sound.pos(positionAudio.x, positionAudio.y, positionAudio.z);
       }
     }

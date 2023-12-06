@@ -24,7 +24,7 @@
     "@ud-viz/game_shared": "4.0.3",
     "@ud-viz/utils_browser": "4.0.3",
     "@ud-viz/utils_shared": "4.0.3",
-    "howler": "2.2.3",
+    "howler": "2.2.4",
     "itowns": "2.41.1-next.9",
     "socket.io-client": "^4.7.2",
     "three": "0.154.0"
