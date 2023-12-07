@@ -214,6 +214,9 @@ export class Version {
     /** @type {Array<THREE.Vector3>}*/
     this.initialPos = [];
 
+    /** @type {Array<THREE.Vector3>}*/
+    this.newPosition = [];
+
     /** @type {THREE.Sprite} */
     this.dateSprite;
 
@@ -296,9 +299,9 @@ export class Version {
     const dirsToPoint = [];
     for (let i = 0; i < this.object3DTiles.length; i++) {
       const dirToPos = new THREE.Vector3(
-        this.initialPos[i].x - this.object3DTiles[i].position.x,
-        this.initialPos[i].y - this.object3DTiles[i].position.y,
-        this.initialPos[i].z - this.object3DTiles[i].position.z
+        this.newPosition[i].x - this.object3DTiles[i].position.x,
+        this.newPosition[i].y - this.object3DTiles[i].position.y,
+        this.newPosition[i].z - this.object3DTiles[i].position.z
       );
       dirsToPoint.push(dirToPos);
     }
@@ -308,14 +311,15 @@ export class Version {
   /**
    *
    * @param {THREE.Vector3} newPos
+   * @param vector
    */
-  translateVersion(newPos) {
+  translateVersion(vector) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       this.object3DTiles[i].position.copy(
         new THREE.Vector3(
-          newPos.x + this.initialPos[i].x,
-          newPos.y + this.initialPos[i].y,
-          newPos.z + this.initialPos[i].z
+          vector.x + this.newPosition[i].x,
+          vector.y + this.newPosition[i].y,
+          vector.z + this.newPosition[i].z
         )
       );
       this.object3DTiles[i].updateMatrixWorld();
@@ -330,7 +334,7 @@ export class Version {
   updateRotation(angle) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       const dir = this.directions[i].clone();
-      this.object3DTiles[i].position.copy(this.initialPos[i]);
+      this.object3DTiles[i].position.copy(this.newPosition[i]);
       dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
       this.object3DTiles[i].position.sub(dir);
       this.object3DTiles[i].updateMatrixWorld();
@@ -813,7 +817,7 @@ export class SpaceTimeCube {
 
     const centroid = new THREE.Vector3(
       initVersion.centroid.x,
-      initVersion.centroid.y + 500,
+      initVersion.centroid.y,
       initVersion.centroid.z
     );
 
@@ -833,11 +837,11 @@ export class SpaceTimeCube {
     const geometry2 = new THREE.BufferGeometry().setFromPoints(points2);
     const material2 = new THREE.LineBasicMaterial({ color: 0x0000ff });
     this.circleDisplayed = new THREE.Line(geometry2, material2);
-    this.circleDisplayed.position.set(centroid.x, centroid.y, 500);
+    this.circleDisplayed.position.set(centroid.x, centroid.y + this.RAYON, 500);
     this.circleDisplayed.updateMatrixWorld();
     view.scene.add(this.circleDisplayed);
 
-    this.circle.position.set(centroid.x, centroid.y, 500);
+    this.circle.position.set(centroid.x, centroid.y + this.RAYON, 500);
 
     const object3DCircle = [];
 
@@ -854,12 +858,13 @@ export class SpaceTimeCube {
             version.initialPos.push(
               new THREE.Vector3(
                 obj.position.x,
-                obj.position.y + this.RAYON / 2,
+                obj.position.y + this.RAYON,
                 obj.position.z
               )
             );
           });
 
+        version.newPosition = version.initialPos;
         this.versions.push(version);
 
         version.translateVersion(
@@ -923,9 +928,9 @@ export class SpaceTimeCube {
       versions.forEach((version) => {
         version.updateRotation(angle);
         version.dateSprite.position.set(
-          version.centroid.x + 150,
-          version.centroid.y + 200,
-          version.centroid.z
+          version.centroid.x + 350,
+          version.centroid.y + 400,
+          version.centroid.z + 50
         );
         version.dateSprite.updateMatrixWorld();
       });
@@ -935,7 +940,7 @@ export class SpaceTimeCube {
   }
 
   update() {
-    let points = [];
+    const points = [];
     for (let i = 0; i < 360; i += 10) {
       const angle = (i * Math.PI) / 180;
       points.push(
@@ -949,9 +954,14 @@ export class SpaceTimeCube {
     this.circleDisplayed.geometry = new THREE.BufferGeometry().setFromPoints(
       points
     );
+
+    this.circleDisplayed.position.set(
+      this.centerLayer.root.children[0].position.x,
+      this.centerLayer.root.children[0].position.y + Number(this.RAYON),
+      this.circleDisplayed.position.z
+    );
     this.circleDisplayed.updateMatrixWorld();
 
-    points = [];
     let index = 0;
     for (let i = 0; i < 360; i += 360 / this.C3DTilesDated.size) {
       const angle = (i * Math.PI) / 180;
@@ -960,7 +970,15 @@ export class SpaceTimeCube {
         this.RAYON * Math.sin(angle),
         0
       );
-      points.push(pos);
+
+      // Update newPosition for the circle translation
+      for (let j = 0; j < this.versions[index].newPosition.length; j++) {
+        this.versions[index].newPosition[j].set(
+          this.versions[index].initialPos[j].x,
+          this.versions[index].initialPos[j].y + Number(this.RAYON) / 2,
+          this.versions[index].initialPos[j].z
+        );
+      }
 
       this.versions[index].translateVersion(
         new THREE.Vector3(
@@ -972,11 +990,11 @@ export class SpaceTimeCube {
       this.versions[index].dateSprite.position.copy(
         this.versions[index].centroid
       );
+
       this.versions[index].dateSprite.updateMatrixWorld();
       index++;
     }
 
-    this.circle.geometry = new THREE.BufferGeometry().setFromPoints(points);
     this.circle.updateMatrixWorld();
     this.versions.forEach((v) => {
       v.directionToInitialPos();
