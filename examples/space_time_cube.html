@@ -143,20 +143,11 @@
 
         udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
 
-
         const versionsDated = new Map();
         versionsDated.set(2009, c3DTilesLayer);
-        versionsDated.set(2010, c3DTilesLayer);
-        versionsDated.set(2011, c3DTilesLayer);
         versionsDated.set(2012, c3DTilesLayer);
-        versionsDated.set(2013, c3DTilesLayer);
-        versionsDated.set(2014, c3DTilesLayer);
         versionsDated.set(2015, c3DTilesLayer);
-        versionsDated.set(2016, c3DTilesLayer);
-        versionsDated.set(2017, c3DTilesLayer);
         versionsDated.set(2018, c3DTilesLayer);
-
-
 
         const stc = new udviz.extensions3DTilesTemporal.SpaceTimeCube(
           view, 100, versionsDated

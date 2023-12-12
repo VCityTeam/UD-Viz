@@ -205,9 +205,6 @@ export class Version {
     /** @type {THREE.Vector3} */
     this.centroid;
 
-    /** @type {Array<THREE.Object3D>}*/
-    this.planes = [];
-
     /** @type {Array<THREE.Vector3>}*/
     this.directions = [];
 
@@ -219,6 +216,12 @@ export class Version {
 
     /** @type {THREE.Sprite} */
     this.dateSprite;
+
+    /** @type {itowns.C3DTilesLayer} */
+    this.diffOlder;
+
+    /** @type {itowns.C3DTilesLayer} */
+    this.diffNew;
 
     this.updateCentroid();
   }
@@ -264,31 +267,6 @@ export class Version {
     this.dateSprite = label;
 
     return this.dateSprite;
-  }
-
-  createPlane() {
-    this.updateCentroid();
-    const planes = [];
-    this.object3DTiles.forEach((object3D) => {
-      const planeGeometry = new THREE.PlaneGeometry(
-        object3D.boundingVolume.box.max.x - object3D.boundingVolume.box.min.x,
-        object3D.boundingVolume.box.max.y - object3D.boundingVolume.box.min.y
-      );
-
-      const planeMesh = new THREE.Mesh(
-        planeGeometry,
-        new THREE.MeshBasicMaterial({
-          color: 'white',
-          side: THREE.DoubleSide,
-        })
-      );
-
-      planeMesh.position.copy(this.centroid);
-      planeMesh.position.z -= 20;
-      planeMesh.updateMatrixWorld();
-      planes.push(planeMesh);
-    });
-    return (this.planes = planes);
   }
 
   /**
@@ -409,22 +387,24 @@ export class SpaceTimeCube {
     // Circle paramaters
     this.RAYON = 1000;
     this.circleDisplayed;
+    const oldestDate = Math.min(...C3DTilesDated.keys());
 
     const points = [];
-    let index = 0;
-    for (let i = 0; i < 360; i += 360 / C3DTilesDated.size) {
-      const angle = (i * Math.PI) / 180;
+    let angleDeg = -90;
+    this.C3DTilesDated.forEach((c3DTilesLayer, key) => {
+      angleDeg = angleDeg + 360 / this.C3DTilesDated.size;
+      const angleRad = (angleDeg * Math.PI) / 180;
       points.push(
         new THREE.Vector3(
-          this.RAYON * Math.cos(angle),
-          this.RAYON * Math.sin(angle),
+          this.RAYON * Math.cos(angleRad),
+          this.RAYON * Math.sin(angleRad),
           0
         )
       );
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
-        this.temporalLayerVJA.id + '_' + i,
+        this.temporalLayerVJA.id + '_' + key.toString(),
         {
-          name: this.temporalLayerVJA.id + i,
+          name: this.temporalLayerVJA.id + key.toString(),
           source: new udviz.itowns.C3DTilesSource({
             url: this.temporalLayerVJA.source.url,
           }),
@@ -432,14 +412,14 @@ export class SpaceTimeCube {
         },
         this.view
       );
+      c3DTilesLayer = C3DTiles;
 
       itowns.View.prototype.addLayer.call(view, C3DTiles);
       this.layersTemporal.push(C3DTiles);
-      C3DTilesDated.set(2009 + index, C3DTiles);
+      C3DTilesDated.set(key, C3DTiles);
       const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
-      temporalWrapper.styleDate = 2009 + index;
-      index++;
-    }
+      temporalWrapper.styleDate = key;
+    });
 
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
@@ -822,10 +802,10 @@ export class SpaceTimeCube {
     );
 
     // Init circle line
-    const points2 = [];
+    const pointsDisplayed = [];
     for (let i = 0; i < 300; i += 10) {
       const angle = (i * Math.PI) / 180;
-      points2.push(
+      pointsDisplayed.push(
         new THREE.Vector3(
           this.RAYON * Math.cos(angle),
           this.RAYON * Math.sin(angle),
@@ -834,9 +814,11 @@ export class SpaceTimeCube {
       );
     }
 
-    const geometry2 = new THREE.BufferGeometry().setFromPoints(points2);
-    const material2 = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    this.circleDisplayed = new THREE.Line(geometry2, material2);
+    const geometryDisplayed = new THREE.BufferGeometry().setFromPoints(
+      pointsDisplayed
+    );
+    const materialDsiplayed = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    this.circleDisplayed = new THREE.Line(geometryDisplayed, materialDsiplayed);
     this.circleDisplayed.position.set(centroid.x, centroid.y + this.RAYON, 500);
     this.circleDisplayed.updateMatrixWorld();
     view.scene.add(this.circleDisplayed);
