@@ -382,25 +382,13 @@ export class SpaceTimeCube {
     this.centerLayer = this.layers()[0];
     this.temporalLayerVJA = this.temporalLayers()[0];
     this.centerLayer = this.temporalLayerVJA;
-    this.layersTemporal = [];
 
     // Circle paramaters
     this.RAYON = 1000;
     this.circleDisplayed;
     const oldestDate = Math.min(...C3DTilesDated.keys());
 
-    const points = [];
-    let angleDeg = -90;
     this.C3DTilesDated.forEach((c3DTilesLayer, key) => {
-      angleDeg = angleDeg + 360 / this.C3DTilesDated.size;
-      const angleRad = (angleDeg * Math.PI) / 180;
-      points.push(
-        new THREE.Vector3(
-          this.RAYON * Math.cos(angleRad),
-          this.RAYON * Math.sin(angleRad),
-          0
-        )
-      );
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
         this.temporalLayerVJA.id + '_' + key.toString(),
         {
@@ -412,18 +400,12 @@ export class SpaceTimeCube {
         },
         this.view
       );
-      c3DTilesLayer = C3DTiles;
-
+      // c3DTilesLayer = C3DTiles;
       itowns.View.prototype.addLayer.call(view, C3DTiles);
-      this.layersTemporal.push(C3DTiles);
-      C3DTilesDated.set(key, C3DTiles);
-      const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
-      temporalWrapper.styleDate = key;
+      this.C3DTilesDated.set(key, C3DTiles);
     });
 
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-    this.circle = new THREE.Line(geometry, material);
+    this.view.notifyChange();
   }
 
   vectorRepresentation() {
@@ -789,7 +771,16 @@ export class SpaceTimeCube {
     });
   }
 
+  initVersions() {
+    this.C3DTilesDated.forEach((c3DTilesLayer, key) => {
+      this.versions.push(new Version(c3DTilesLayer.root.children, key));
+      const temporalWrapper = new Temporal3DTilesLayerWrapper(c3DTilesLayer);
+      temporalWrapper.styleDate = key;
+    });
+  }
+
   displayVersionsCircle() {
+    this.initVersions();
     const view = this.view;
 
     const initVersion = new Version(this.centerLayer.root.children, 0);
@@ -823,56 +814,45 @@ export class SpaceTimeCube {
     this.circleDisplayed.updateMatrixWorld();
     view.scene.add(this.circleDisplayed);
 
-    this.circle.position.set(centroid.x, centroid.y + this.RAYON, 500);
-
-    const object3DCircle = [];
-
-    // Update with circle coordinates
-    let i = 0;
-    this.C3DTilesDated.forEach((layerTemporal, key) => {
-      if (
-        layerTemporal.root.children != undefined &&
-        layerTemporal.root.children.length != 0
-      ) {
-        const version = new Version(layerTemporal.root.children, key);
-        layerTemporal.root.children // Initial position for better rotation
-          .forEach((obj) => {
-            version.initialPos.push(
-              new THREE.Vector3(
-                obj.position.x,
-                obj.position.y + this.RAYON,
-                obj.position.z
-              )
-            );
-          });
-
-        version.newPosition = version.initialPos;
-        this.versions.push(version);
-
-        version.translateVersion(
+    let angleDeg = -90;
+    this.versions.forEach((version) => {
+      version.object3DTiles.forEach((obj) => {
+        version.initialPos.push(
           new THREE.Vector3(
-            this.circle.geometry.attributes.position.array[i],
-            this.circle.geometry.attributes.position.array[i + 1],
-            500 - this.centerLayer.root.children[0].position.z
+            obj.position.x,
+            obj.position.y + this.RAYON,
+            obj.position.z
           )
         );
+      }); // Initial position for better rotation
+      version.newPosition = version.initialPos;
 
-        // Date sprite creation
-        const dateSprite = version.createSpriteDate();
-        dateSprite.position.copy(version.centroid);
-        dateSprite.scale.multiplyScalar(0.02);
-        dateSprite.renderOrder = 1;
-        dateSprite.updateMatrixWorld();
-        view.scene.add(dateSprite);
+      // Calcul circle coordinates
+      const angleRad = (angleDeg * Math.PI) / 180;
+      angleDeg = 360 / this.versions.length + angleDeg;
+      const point = new THREE.Vector3(
+        this.RAYON * Math.cos(angleRad),
+        this.RAYON * Math.sin(angleRad),
+        0
+      );
+      version.translateVersion(
+        new THREE.Vector3(
+          point.x,
+          point.y,
+          500 - this.centerLayer.root.children[0].position.z
+        )
+      );
 
-        version.object3DTiles.forEach((object3D) => {
-          object3DCircle.push(object3D);
-        });
-
-        i += 3;
-        view.notifyChange();
-      }
+      // Date sprite creation
+      const dateSprite = version.createSpriteDate();
+      dateSprite.position.copy(version.centroid);
+      dateSprite.scale.multiplyScalar(0.02);
+      dateSprite.renderOrder = 1;
+      dateSprite.updateMatrixWorld();
+      view.scene.add(dateSprite);
     });
+
+    this.view.notifyChange();
 
     this.versions.forEach((v) => {
       v.directionToInitialPos();
@@ -944,44 +924,37 @@ export class SpaceTimeCube {
     );
     this.circleDisplayed.updateMatrixWorld();
 
-    let index = 0;
-    for (let i = 0; i < 360; i += 360 / this.C3DTilesDated.size) {
-      const angle = (i * Math.PI) / 180;
+    let angleDeg = -90;
+    this.versions.forEach((version) => {
+      const angle = (angleDeg * Math.PI) / 180;
+      angleDeg = 360 / this.versions.length + angleDeg;
       const pos = new THREE.Vector3(
         this.RAYON * Math.cos(angle),
         this.RAYON * Math.sin(angle),
         0
       );
-
       // Update newPosition for the circle translation
-      for (let j = 0; j < this.versions[index].newPosition.length; j++) {
-        this.versions[index].newPosition[j] = new THREE.Vector3(
-          this.versions[index].initialPos[j].x,
+      for (let j = 0; j < version.newPosition.length; j++) {
+        version.newPosition[j] = new THREE.Vector3(
+          version.initialPos[j].x,
           this.circleDisplayed.position.y,
-          this.versions[index].initialPos[j].z
+          version.initialPos[j].z
         );
-        console.log(this.versions[index].newPosition[j].y);
       }
 
-      this.versions[index].translateVersion(
+      version.translateVersion(
         new THREE.Vector3(
           pos.x,
           pos.y,
           500 - this.centerLayer.root.children[0].position.z
         )
       );
-      this.versions[index].dateSprite.position.copy(
-        this.versions[index].centroid
-      );
+      version.dateSprite.position.copy(version.centroid);
 
-      this.versions[index].dateSprite.updateMatrixWorld();
-      index++;
-    }
-
-    this.circle.updateMatrixWorld();
-    this.versions.forEach((v) => {
-      v.directionToInitialPos();
+      version.dateSprite.updateMatrixWorld();
+      version.directionToInitialPos();
     });
+
     this.view.notifyChange();
   }
 }
