@@ -973,11 +973,12 @@ export class SpaceTimeCube {
 
       // Update newPosition for the circle translation
       for (let j = 0; j < this.versions[index].newPosition.length; j++) {
-        this.versions[index].newPosition[j].set(
+        this.versions[index].newPosition[j] = new THREE.Vector3(
           this.versions[index].initialPos[j].x,
-          this.versions[index].initialPos[j].y + Number(this.RAYON) / 2,
+          this.circleDisplayed.position.y,
           this.versions[index].initialPos[j].z
         );
+        console.log(this.versions[index].newPosition[j].y);
       }
 
       this.versions[index].translateVersion(
