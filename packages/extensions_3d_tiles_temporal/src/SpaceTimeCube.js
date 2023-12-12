@@ -309,7 +309,7 @@ export class Version {
    *
    * @param {number} angle
    */
-  updateRotation(angle) {
+  rotateVersionFromCentroid(angle) {
     for (let i = 0; i < this.object3DTiles.length; i++) {
       const dir = this.directions[i].clone();
       this.object3DTiles[i].position.copy(this.newPosition[i]);
@@ -318,6 +318,28 @@ export class Version {
       this.object3DTiles[i].updateMatrixWorld();
     }
     this.updateCentroid();
+  }
+
+  rotateOlderDiffFromCentroid(angle) {
+    if (this.diffOlder != null)
+      for (let i = 0; i < this.diffOlder.root.children.length; i++) {
+        const dir = this.directions[i].clone();
+        this.diffOlder.root.children[i].position.copy(this.newPosition[i]);
+        dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        this.diffOlder.root.children[i].position.sub(dir);
+        this.diffOlder.root.children[i].updateMatrixWorld();
+      }
+  }
+
+  rotateNewDiffFromCentroid(angle) {
+    if (this.diffNew != null)
+      for (let i = 0; i < this.diffNew.root.children.length; i++) {
+        const dir = this.directions[i].clone();
+        this.diffNew.root.children[i].position.copy(this.newPosition[i]);
+        dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
+        this.diffNew.root.children[i].position.sub(dir);
+        this.diffNew.root.children[i].updateMatrixWorld();
+      }
   }
 
   /**
@@ -334,6 +356,11 @@ export class Version {
       sumPos.y / this.object3DTiles.length,
       sumPos.z / this.object3DTiles.length
     );
+  }
+
+  transactionVisibility(visibility) {
+    if (this.diffNew) this.diffNew.visible = visibility;
+    if (this.diffOlder) this.diffOlder.visible = visibility;
   }
 }
 
@@ -402,10 +429,35 @@ export class SpaceTimeCube {
       );
       // c3DTilesLayer = C3DTiles;
       itowns.View.prototype.addLayer.call(view, C3DTiles);
+      const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
+      temporalWrapper.styleDate = key;
       this.C3DTilesDated.set(key, C3DTiles);
     });
 
-    this.view.notifyChange();
+    this.transactions = [];
+    // Create Diff
+    let j = 0;
+    for (let i = 0; i < this.C3DTilesDated.size - 1; i++) {
+      const C3DTiles = new udviz.itowns.C3DTilesLayer(
+        this.temporalLayerVJA.id + '_diff_' + i.toString(),
+        {
+          name: this.temporalLayerVJA.id + i.toString(),
+          source: new udviz.itowns.C3DTilesSource({
+            url: this.temporalLayerVJA.source.url,
+          }),
+          registeredExtensions: this.temporalLayerVJA.registeredExtensions,
+        },
+        this.view
+      );
+      // c3DTilesLayer = C3DTiles;
+      itowns.View.prototype.addLayer.call(view, C3DTiles);
+      const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
+      temporalWrapper.styleDate = 2010 + j;
+      this.view.notifyChange();
+      j += 3;
+      this.transactions.push(C3DTiles);
+      // C3DTiles.visible = false;
+    }
   }
 
   vectorRepresentation() {
@@ -772,10 +824,19 @@ export class SpaceTimeCube {
   }
 
   initVersions() {
+    let indexDiff = 0;
     this.C3DTilesDated.forEach((c3DTilesLayer, key) => {
-      this.versions.push(new Version(c3DTilesLayer.root.children, key));
-      const temporalWrapper = new Temporal3DTilesLayerWrapper(c3DTilesLayer);
-      temporalWrapper.styleDate = key;
+      const version = new Version(c3DTilesLayer.root.children, key);
+      if (indexDiff == 0) {
+        version.diffOlder = this.transactions[indexDiff];
+      } else if (indexDiff == this.C3DTilesDated.size - 1) {
+        version.diffNew = this.transactions[indexDiff - 1];
+      } else {
+        version.diffOlder = this.transactions[indexDiff - 1];
+        version.diffNew = this.transactions[indexDiff];
+      }
+      indexDiff++;
+      this.versions.push(version);
     });
   }
 
@@ -786,6 +847,7 @@ export class SpaceTimeCube {
     const initVersion = new Version(this.centerLayer.root.children, 0);
     initVersion.updateCentroid();
 
+    // TESTING
     const centroid = new THREE.Vector3(
       initVersion.centroid.x,
       initVersion.centroid.y,
@@ -794,7 +856,7 @@ export class SpaceTimeCube {
 
     // Init circle line
     const pointsDisplayed = [];
-    for (let i = 0; i < 300; i += 10) {
+    for (let i = 90; i < 360; i += 10) {
       const angle = (i * Math.PI) / 180;
       pointsDisplayed.push(
         new THREE.Vector3(
@@ -814,7 +876,7 @@ export class SpaceTimeCube {
     this.circleDisplayed.updateMatrixWorld();
     view.scene.add(this.circleDisplayed);
 
-    let angleDeg = -90;
+    let angleDeg = 90;
     this.versions.forEach((version) => {
       version.object3DTiles.forEach((obj) => {
         version.initialPos.push(
@@ -850,6 +912,11 @@ export class SpaceTimeCube {
       dateSprite.renderOrder = 1;
       dateSprite.updateMatrixWorld();
       view.scene.add(dateSprite);
+
+      // TEST 2012
+      if (version.date == 2012) {
+        version.transactionVisibility(true);
+      }
     });
 
     this.view.notifyChange();
@@ -888,13 +955,17 @@ export class SpaceTimeCube {
 
       // Versions
       versions.forEach((version) => {
-        version.updateRotation(angle);
+        version.rotateVersionFromCentroid(angle);
         version.dateSprite.position.set(
           version.centroid.x + 350,
           version.centroid.y + 400,
           version.centroid.z + 50
         );
         version.dateSprite.updateMatrixWorld();
+        if (version.date == 2012) {
+          version.rotateNewDiffFromCentroid(angle + (30 * Math.PI) / 180);
+          version.rotateOlderDiffFromCentroid(angle - (30 * Math.PI) / 180);
+        }
       });
 
       requestAnimationFrame(rotateVersionsAroundObject);
@@ -903,7 +974,7 @@ export class SpaceTimeCube {
 
   update() {
     const points = [];
-    for (let i = 0; i < 360; i += 10) {
+    for (let i = 90; i < 360; i += 10) {
       const angle = (i * Math.PI) / 180;
       points.push(
         new THREE.Vector3(
@@ -924,7 +995,7 @@ export class SpaceTimeCube {
     );
     this.circleDisplayed.updateMatrixWorld();
 
-    let angleDeg = -90;
+    let angleDeg = 90;
     this.versions.forEach((version) => {
       const angle = (angleDeg * Math.PI) / 180;
       angleDeg = 360 / this.versions.length + angleDeg;
