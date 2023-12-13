@@ -925,6 +925,26 @@ export class SpaceTimeCube {
       v.directionToInitialPos();
     });
 
+    // Create a closed wavey loop
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      // new THREE.Vector3(50, -50, 75),
+      new THREE.Vector3(105, -105, 160),
+      // new THREE.Vector3(150, -150, 75),
+      new THREE.Vector3(200, -200, 0),
+    ]);
+
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+
+    // Create the final object to add to the scene
+    const curveObject = new THREE.Line(geometry, material);
+    // curveObject.position.copy(this.versions[1].object3DTiles[0].position);
+    // curveObject.updateMatrixWorld();
+    view.scene.add(curveObject);
+
     const circleDisplayed = this.circleDisplayed;
     const versions = this.versions;
 
@@ -965,6 +985,26 @@ export class SpaceTimeCube {
         if (version.date == 2012) {
           version.rotateNewDiffFromCentroid(angle + (30 * Math.PI) / 180);
           version.rotateOlderDiffFromCentroid(angle - (30 * Math.PI) / 180);
+          const obj = version.diffNew.root.children[0].position;
+
+          const curve = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(obj.x, obj.y, obj.z),
+            new THREE.Vector3(
+              (obj.x + version.centroid.x) / 2,
+              (obj.y + version.centroid.y) / 2,
+              (obj.z + version.centroid.z) / 2 + 150
+            ),
+
+            new THREE.Vector3(
+              version.object3DTiles[0].position.x,
+              version.object3DTiles[0].position.y,
+              version.object3DTiles[0].position.z
+            ),
+          ]);
+
+          const points = curve.getPoints(50);
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          curveObject.geometry = geometry;
         }
       });
 
