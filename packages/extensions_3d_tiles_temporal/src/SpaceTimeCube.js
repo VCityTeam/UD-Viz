@@ -928,22 +928,22 @@ export class SpaceTimeCube {
     // Create a closed wavey loop
     const curve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(0, 0, 0),
-      // new THREE.Vector3(50, -50, 75),
       new THREE.Vector3(105, -105, 160),
-      // new THREE.Vector3(150, -150, 75),
       new THREE.Vector3(200, -200, 0),
     ]);
 
     const points = curve.getPoints(50);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-    const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-    // Create the final object to add to the scene
-    const curveObject = new THREE.Line(geometry, material);
-    // curveObject.position.copy(this.versions[1].object3DTiles[0].position);
-    // curveObject.updateMatrixWorld();
-    view.scene.add(curveObject);
+    const curveObjectNew = new THREE.Line(
+      geometry,
+      new THREE.LineBasicMaterial({ color: 0xff0000 })
+    );
+    const curveObjectOlder = new THREE.Line(
+      geometry,
+      new THREE.LineBasicMaterial({ color: 'yellow' })
+    );
+    view.scene.add(curveObjectNew);
+    view.scene.add(curveObjectOlder);
 
     const circleDisplayed = this.circleDisplayed;
     const versions = this.versions;
@@ -985,26 +985,66 @@ export class SpaceTimeCube {
         if (version.date == 2012) {
           version.rotateNewDiffFromCentroid(angle + (30 * Math.PI) / 180);
           version.rotateOlderDiffFromCentroid(angle - (30 * Math.PI) / 180);
-          const obj = version.diffNew.root.children[0].position;
 
-          const curve = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(obj.x, obj.y, obj.z),
-            new THREE.Vector3(
-              (obj.x + version.centroid.x) / 2,
-              (obj.y + version.centroid.y) / 2,
-              (obj.z + version.centroid.z) / 2 + 150
-            ),
+          const objNew = version.diffNew.root.children[0].position;
+          const objOlder = version.diffOlder.root.children[0].position;
 
+          const curveNew = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(objNew.x, objNew.y, objNew.z),
             new THREE.Vector3(
-              version.object3DTiles[0].position.x,
-              version.object3DTiles[0].position.y,
-              version.object3DTiles[0].position.z
+              (objNew.x + version.centroid.x) / 2,
+              (objNew.y + version.centroid.y) / 2,
+              (objNew.z + version.centroid.z) / 2 + 150
             ),
+            // new THREE.Vector3(
+            //   version.object3DTiles[0].position.x,
+            //   version.object3DTiles[0].position.y,
+            //   version.object3DTiles[0].position.z
+            // ),
+            new THREE.Vector3(centroid.x, centroid.y, centroid.z),
+          ]);
+          const curveOlder = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(objOlder.x, objOlder.y, objOlder.z),
+            new THREE.Vector3(
+              (objOlder.x + version.centroid.x) / 2,
+              (objOlder.y + version.centroid.y) / 2,
+              (objOlder.z + version.centroid.z) / 2 + 150
+            ),
+            // new THREE.Vector3(
+            //   version.object3DTiles[0].position.x,
+            //   version.object3DTiles[0].position.y,
+            //   version.object3DTiles[0].position.z
+            // ),
+            new THREE.Vector3(centroid.x, centroid.y, centroid.z),
           ]);
 
-          const points = curve.getPoints(50);
-          const geometry = new THREE.BufferGeometry().setFromPoints(points);
-          curveObject.geometry = geometry;
+          curveObjectNew.geometry = new THREE.BufferGeometry().setFromPoints(
+            curveNew.getPoints(50)
+          );
+
+          curveObjectOlder.geometry = new THREE.BufferGeometry().setFromPoints(
+            curveOlder.getPoints(50)
+          );
+
+          let i = 0;
+          version.object3DTiles.forEach((obj) => {
+            obj.position.set(
+              new THREE.Vector3(
+                version.initialPos[i].x,
+                version.initialPos[i].y,
+                version.initialPos[i].z
+              )
+            );
+            i++;
+            obj.updateMatrixWorld();
+          });
+          version.updateCentroid();
+          version.dateSprite.position.set(
+            version.centroid.x + 350,
+            version.centroid.y + 400,
+            version.centroid.z + 50
+          );
+          version.dateSprite.updateMatrixWorld();
         }
       });
 
