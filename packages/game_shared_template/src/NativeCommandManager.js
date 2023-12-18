@@ -108,7 +108,30 @@ const NativeCommandManager = class extends ScriptBase {
           -this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
         )
       );
+      return true;
+    });
 
+    this.applyCommandCallbackOf(COMMAND.MOVE_UP, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      NativeCommandManager.moveUp(
+        updatedObject3D,
+        this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
+      );
+      return true;
+    });
+
+    this.applyCommandCallbackOf(COMMAND.MOVE_DOWN, (data) => {
+      const updatedObject3D = this.context.object3D.getObjectByProperty(
+        'uuid',
+        data.object3DUUID
+      );
+      NativeCommandManager.moveDown(
+        updatedObject3D,
+        this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
+      );
       return true;
     });
     this.applyCommandCallbackOf(COMMAND.UPDATE_TRANSFORM, (data) => {
@@ -500,6 +523,44 @@ NativeCommandManager.moveRight = function (
       .setLength(value),
     map,
     withMap
+  );
+};
+
+/**
+ * Move up object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move up
+ * @param {number} value - amount to move up
+ * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
+ * @returns {boolean} - the movement make the object3D leaves the map
+ */
+NativeCommandManager.moveUp = function (object3D, value, map, withMap = true) {
+  return NativeCommandManager.move(
+    object3D,
+    Object3D.computeUp(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .setLength(value),
+    map,
+    withMap
+  );
+};
+
+/**
+ * Move up object3D of a certain value
+ *
+ * @param {Object3D} object3D - object3D to move up
+ * @param {number} value - amount to move up
+ * @param {AbstractMap} map - map script
+ * @param {boolean} [withMap=true] - map should be consider
+ * @returns {boolean} - the movement make the object3D leaves the map
+ */
+NativeCommandManager.moveDown = function (object3D, value) {
+  return NativeCommandManager.move(
+    object3D,
+    Object3D.computeDown(object3D)
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .setLength(value)
   );
 };
 
