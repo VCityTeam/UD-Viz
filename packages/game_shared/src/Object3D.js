@@ -462,6 +462,14 @@ Object3D.DefaultForward = function () {
 
 /**
  *
+ * @returns {THREE.Vector3} - Default up vector of Object3D
+ */
+Object3D.DefaultUp = function () {
+  return new THREE.Vector3(0, 0, 1);
+};
+
+/**
+ *
  * @param {Object3D} object3D - object3D to compute forward vector
  * @returns {THREE.Vector3} - forward vector of object3D
  */
@@ -476,6 +484,24 @@ Object3D.computeForward = function (object3D) {
  */
 Object3D.computeBackward = function (object3D) {
   return Object3D.computeForward(object3D).negate();
+};
+
+/**
+ *
+ * @param {Object3D} object3D - object3D to compute up vector
+ * @returns {THREE.Vector3} - up vector of object3D
+ */
+Object3D.computeUp = function (object3D) {
+  return Object3D.DefaultUp().applyQuaternion(object3D.quaternion);
+};
+
+/**
+ *
+ * @param {Object3D} object3D - object3D to compute down vector
+ * @returns {THREE.Vector3} - down vector of object3D
+ */
+Object3D.computeDown = function (object3D) {
+  return Object3D.computeUp(object3D).negate();
 };
 
 /**

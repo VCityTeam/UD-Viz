@@ -8,6 +8,8 @@ module.exports = {
     MOVE_BACKWARD: 'move_backward',
     ROTATE_LEFT: 'rotate_left',
     ROTATE_RIGHT: 'rotate_right',
+    MOVE_UP: 'move_up',
+    MOVE_DOWN: 'move_down',
     UPDATE_TRANSFORM: 'update_transform',
     UPDATE_EXTERNALSCRIPT_VARIABLES: 'update_externalscript_variables',
     REMOVE_OBJECT3D: 'remove_object3D',
