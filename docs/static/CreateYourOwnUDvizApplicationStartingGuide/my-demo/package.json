@@ -1,0 +1,38 @@
+{
+  "name": "tunnetview",
+  "version": "1.0.0",
+  "description": "A webGL based viewer of underground 3DTiles point cloud data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/TunNetView.git"
+  },
+  "keywords": [
+    "webGL",
+    "3DTiles",
+    "LAS",
+    "point",
+    "cloud"
+  ],
+  "author": "VCity/LIRIS",
+  "license": "LGPL-2.1-only",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/TunNetView/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/TunNetView#readme",
+  "dependencies": {
+    "@ud-viz/point_cloud_visualizer": "^4.0.3",
+    "@ud-viz/widget_bookmark": "^4.0.3",
+    "@ud-viz/widget_layer_choice": "^4.0.3",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
