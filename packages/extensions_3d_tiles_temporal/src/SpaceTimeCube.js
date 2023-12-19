@@ -359,8 +359,8 @@ export class Version {
   }
 
   transactionVisibility(visibility) {
-    if (this.diffNew) this.diffNew.visible = visibility;
-    if (this.diffOlder) this.diffOlder.visible = visibility;
+    if (this.diffNew) this.diffNew.object3d.visible = visibility;
+    if (this.diffOlder) this.diffNew.object3d.visible = visibility;
   }
 }
 
@@ -413,7 +413,7 @@ export class SpaceTimeCube {
     // Circle paramaters
     this.RAYON = 1000;
     this.circleDisplayed;
-    const oldestDate = Math.min(...C3DTilesDated.keys());
+    // const oldestDate = Math.min(...C3DTilesDated.keys());
 
     this.C3DTilesDated.forEach((c3DTilesLayer, key) => {
       const C3DTiles = new udviz.itowns.C3DTilesLayer(
@@ -912,10 +912,13 @@ export class SpaceTimeCube {
       dateSprite.renderOrder = 1;
       dateSprite.updateMatrixWorld();
       view.scene.add(dateSprite);
+      // version.transactionVisibility(false);
 
       // TEST 2012
       if (version.date == 2012) {
         version.transactionVisibility(true);
+        console.log('DEBUG');
+        view.notifyChange();
       }
     });
 
@@ -955,8 +958,8 @@ export class SpaceTimeCube {
      */
     function rotateVersionsAroundObject() {
       const dirToCamera = new THREE.Vector2(
-        circleDisplayed.position.x - view.camera.camera3D.position.x,
-        circleDisplayed.position.y - view.camera.camera3D.position.y
+        centroid.x - view.camera.camera3D.position.x,
+        centroid.y - view.camera.camera3D.position.y
       ).normalize();
 
       const dirObject = new THREE.Vector2(0, 1);
@@ -970,6 +973,11 @@ export class SpaceTimeCube {
       circleDisplayed.setRotationFromAxisAngle(
         new THREE.Vector3(0, 0, 1),
         angle
+      );
+      circleDisplayed.position.set(
+        centroid.x + dirToCamera.x * 1000,
+        centroid.y + dirToCamera.y * 1000,
+        circleDisplayed.position.z
       );
       circleDisplayed.updateMatrixWorld();
 
@@ -986,56 +994,57 @@ export class SpaceTimeCube {
           version.rotateNewDiffFromCentroid(angle + (30 * Math.PI) / 180);
           version.rotateOlderDiffFromCentroid(angle - (30 * Math.PI) / 180);
 
-          const objNew = version.diffNew.root.children[0].position;
-          const objOlder = version.diffOlder.root.children[0].position;
+          if (version.diffNew.ready == true) {
+            const objNew = version.diffNew.root.children[0].position;
 
-          const curveNew = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(objNew.x, objNew.y, objNew.z),
-            new THREE.Vector3(
-              (objNew.x + version.centroid.x) / 2,
-              (objNew.y + version.centroid.y) / 2,
-              (objNew.z + version.centroid.z) / 2 + 150
-            ),
-            // new THREE.Vector3(
-            //   version.object3DTiles[0].position.x,
-            //   version.object3DTiles[0].position.y,
-            //   version.object3DTiles[0].position.z
-            // ),
-            new THREE.Vector3(centroid.x, centroid.y, centroid.z),
-          ]);
-          const curveOlder = new THREE.CatmullRomCurve3([
-            new THREE.Vector3(objOlder.x, objOlder.y, objOlder.z),
-            new THREE.Vector3(
-              (objOlder.x + version.centroid.x) / 2,
-              (objOlder.y + version.centroid.y) / 2,
-              (objOlder.z + version.centroid.z) / 2 + 150
-            ),
-            // new THREE.Vector3(
-            //   version.object3DTiles[0].position.x,
-            //   version.object3DTiles[0].position.y,
-            //   version.object3DTiles[0].position.z
-            // ),
-            new THREE.Vector3(centroid.x, centroid.y, centroid.z),
-          ]);
+            const curveNew = new THREE.CatmullRomCurve3([
+              new THREE.Vector3(objNew.x, objNew.y, objNew.z),
+              new THREE.Vector3(
+                (objNew.x + version.centroid.x) / 2,
+                (objNew.y + version.centroid.y) / 2,
+                (objNew.z + version.centroid.z) / 2 + 150
+              ),
+              // new THREE.Vector3(
+              //   version.object3DTiles[0].position.x,
+              //   version.object3DTiles[0].position.y,
+              //   version.object3DTiles[0].position.z
+              // ),
+              new THREE.Vector3(centroid.x, centroid.y, centroid.z),
+            ]);
 
-          curveObjectNew.geometry = new THREE.BufferGeometry().setFromPoints(
-            curveNew.getPoints(50)
-          );
+            curveObjectNew.geometry = new THREE.BufferGeometry().setFromPoints(
+              curveNew.getPoints(50)
+            );
+          }
 
-          curveObjectOlder.geometry = new THREE.BufferGeometry().setFromPoints(
-            curveOlder.getPoints(50)
-          );
+          if (version.diffNew.ready == true) {
+            const objOlder = version.diffOlder.root.children[0].position;
+            const curveOlder = new THREE.CatmullRomCurve3([
+              new THREE.Vector3(objOlder.x, objOlder.y, objOlder.z),
+              new THREE.Vector3(
+                (objOlder.x + version.centroid.x) / 2,
+                (objOlder.y + version.centroid.y) / 2,
+                (objOlder.z + version.centroid.z) / 2 + 150
+              ),
+              // new THREE.Vector3(
+              //   version.object3DTiles[0].position.x,
+              //   version.object3DTiles[0].position.y,
+              //   version.object3DTiles[0].position.z
+              // ),
+              new THREE.Vector3(centroid.x, centroid.y, centroid.z),
+            ]);
+            curveObjectOlder.geometry =
+              new THREE.BufferGeometry().setFromPoints(
+                curveOlder.getPoints(50)
+              );
+          }
 
-          let i = 0;
           version.object3DTiles.forEach((obj) => {
             obj.position.set(
-              new THREE.Vector3(
-                version.initialPos[i].x,
-                version.initialPos[i].y,
-                version.initialPos[i].z
-              )
+              initVersion.centroid.x,
+              initVersion.centroid.y,
+              initVersion.centroid.z
             );
-            i++;
             obj.updateMatrixWorld();
           });
           version.updateCentroid();
@@ -1085,13 +1094,13 @@ export class SpaceTimeCube {
         0
       );
       // Update newPosition for the circle translation
-      for (let j = 0; j < version.newPosition.length; j++) {
-        version.newPosition[j] = new THREE.Vector3(
-          version.initialPos[j].x,
-          this.circleDisplayed.position.y,
-          version.initialPos[j].z
-        );
-      }
+      // for (let j = 0; j < version.newPosition.length; j++) {
+      //   version.newPosition[j] = new THREE.Vector3(
+      //     version.initialPos[j].x,
+      //     this.circleDisplayed.position.y,
+      //     version.initialPos[j].z
+      //   );
+      // }
 
       version.translateVersion(
         new THREE.Vector3(
