@@ -154,30 +154,48 @@
         );
 
         // Html
-        const elementVectorRepresentation = document.createElement('button');
-        elementVectorRepresentation.textContent = 'Vector';
-        elementVectorRepresentation.style = 'position: absolute; left: 0%; top: 0%; z-index:10';
-        document.body.appendChild(elementVectorRepresentation);
 
-        const elementCircleRepresentation = document.createElement('button');
-        elementCircleRepresentation.textContent = 'Circle';
-        elementCircleRepresentation.style = 'position: absolute; left: 0%; top: 5%; z-index:10';
-        document.body.appendChild(elementCircleRepresentation);
+        // Line
+        // const elementVectorRepresentation = document.createElement('button');
+        // elementVectorRepresentation.textContent = 'Vector';
+        // elementVectorRepresentation.style = 'position: absolute; left: 0%; top: 0%; z-index:10';
+        // document.body.appendChild(elementVectorRepresentation);
+
+        // Circle 
+        const elementCircleRepresentation = document.createElement('div');
+        elementCircleRepresentation.style = 'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
+
+        const buttonCircleRepresentation = document.createElement('button');
+        buttonCircleRepresentation.textContent = 'Circle';
+        elementCircleRepresentation.appendChild(buttonCircleRepresentation);
 
         const elementRayonParameter = document.createElement('input');
         elementRayonParameter.type = 'number';
         elementRayonParameter.name = 'rayon';
         elementRayonParameter.value = '1000'; 
-        elementRayonParameter.style = 'position: absolute; left: 0%; top: 10%; z-index:10';
-        document.body.appendChild(elementRayonParameter);
+        elementCircleRepresentation.appendChild(elementRayonParameter);
+
+        const elementHeightParameter = document.createElement('input');
+        elementHeightParameter.type = 'number';
+        elementHeightParameter.name = 'height';
+        elementHeightParameter.value = '500'; 
+        elementCircleRepresentation.appendChild(elementHeightParameter);
+
+        document.body.appendChild(elementCircleRepresentation);
+
 
         // Events
-        elementCircleRepresentation.onclick = () => {stc.displayVersionsCircle();};
-        elementVectorRepresentation.onclick = () => {
+        buttonCircleRepresentation.onclick = () => {stc.displayVersionsCircle();};
+        // elementVectorRepresentation.onclick = () => {
  
-        };
+        // };
         elementRayonParameter.addEventListener('change', (event) => {
-          stc.RAYON = event.target.value;
+          stc.RAYON = Number(event.target.value);
+          stc.updateParameters();
+        });
+
+        elementHeightParameter.addEventListener('change', (event) => {
+          stc.height = Number(event.target.value);
           stc.updateParameters();
         });
 
