@@ -208,15 +208,6 @@ export class Version {
     /** @type {THREE.Vector3} */
     this.centroid;
 
-    /** @type {Array<THREE.Vector3>}*/
-    this.directions = [];
-
-    /** @type {Array<THREE.Vector3>}*/
-    this.initialPos = [];
-
-    /** @type {Array<THREE.Vector3>}*/
-    this.newPosition = [];
-
     /** @type {THREE.Sprite} */
     this.dateSprite;
 
@@ -225,6 +216,9 @@ export class Version {
 
     /** @type {itowns.C3DTilesLayer} */
     this.diffNew;
+
+    /** @type {Array<THREE.Line>} */
+    this.transactionsLines = [];
 
     /** @type {Temporal3DTilesLayerWrapper} */
     this.temporalWrapper;
@@ -277,75 +271,23 @@ export class Version {
 
   /**
    *
-   * @param {THREE.Vector3} posDir
+   * @param {THREE.Line} line
+   * @param {THREE.Vector3} p1
+   * @param {THREE.Vector3} p2
    */
-  directionToInitialPos() {
-    const dirsToPoint = [];
-    for (let i = 0; i < this.object3DTiles.length; i++) {
-      const dirToPos = new THREE.Vector3(
-        this.newPosition[i].x - this.object3DTiles[i].position.x,
-        this.newPosition[i].y - this.object3DTiles[i].position.y,
-        this.newPosition[i].z - this.object3DTiles[i].position.z
-      );
-      dirsToPoint.push(dirToPos);
-    }
-    this.directions = dirsToPoint;
-  }
-
-  /**
-   *
-   * @param {THREE.Vector3} newPos
-   * @param vector
-   */
-  translateVersion(vector) {
-    for (let i = 0; i < this.object3DTiles.length; i++) {
-      this.object3DTiles[i].position.copy(
-        new THREE.Vector3(
-          vector.x + this.newPosition[i].x,
-          vector.y + this.newPosition[i].y,
-          vector.z + this.newPosition[i].z
-        )
-      );
-      this.object3DTiles[i].updateMatrixWorld();
-    }
-    this.updateCentroid();
-  }
-
-  /**
-   *
-   * @param {number} angle
-   */
-  rotateVersionFromCentroid(angle) {
-    for (let i = 0; i < this.object3DTiles.length; i++) {
-      const dir = this.directions[i].clone();
-      this.object3DTiles[i].position.copy(this.newPosition[i]);
-      dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-      this.object3DTiles[i].position.sub(dir);
-      this.object3DTiles[i].updateMatrixWorld();
-    }
-    this.updateCentroid();
-  }
-
-  rotateOlderDiffFromCentroid(angle) {
-    if (this.diffOlder != null)
-      for (let i = 0; i < this.diffOlder.root.children.length; i++) {
-        const dir = this.directions[i].clone();
-        this.diffOlder.root.children[i].position.copy(this.newPosition[i]);
-        dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-        this.diffOlder.root.children[i].position.sub(dir);
-        this.diffOlder.root.children[i].updateMatrixWorld();
-      }
-  }
-
-  rotateNewDiffFromCentroid(angle) {
-    if (this.diffNew != null)
-      for (let i = 0; i < this.diffNew.root.children.length; i++) {
-        const dir = this.directions[i].clone();
-        this.diffNew.root.children[i].position.copy(this.newPosition[i]);
-        dir.applyAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-        this.diffNew.root.children[i].position.sub(dir);
-        this.diffNew.root.children[i].updateMatrixWorld();
-      }
+  updateTransaction(line, p1, p2) {
+    const curve = new THREE.CatmullRomCurve3([
+      p1,
+      new THREE.Vector3(
+        (p1.x + p2.x) / 2,
+        (p1.y + p2.y) / 2,
+        (p1.z + p2.z) / 2 + 150
+      ),
+      p2,
+    ]);
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    line.geometry = geometry;
   }
 
   /**
@@ -364,7 +306,7 @@ export class Version {
     );
   }
 
-  transactionVisibility(visibility) {
+  differenceVisibility(visibility) {
     if (this.diffNew) this.diffNew.object3d.visible = visibility;
     if (this.diffOlder) this.diffNew.object3d.visible = visibility;
   }
@@ -446,35 +388,16 @@ export class SpaceTimeCube {
       // c3DTilesLayer = C3DTiles;
       itowns.View.prototype.addLayer.call(view, C3DTiles);
       this.temporalsWrappers.push(new Temporal3DTilesLayerWrapper(C3DTiles));
-      this.temporalsWrappers[this.temporalsWrappers.length - 1].styleDate =
-        key + 1;
+      if (key - 1 < 2009) {
+        this.temporalsWrappers[this.temporalsWrappers.length - 1].styleDate =
+          key + 1;
+      } else {
+        this.temporalsWrappers[this.temporalsWrappers.length - 1].styleDate =
+          key - 2;
+      }
+
       this.C3DTilesDated.set(key, C3DTiles);
     });
-
-    this.transactions = [];
-    // Create Diff
-    // let j = 0;
-    // for (let i = 0; i < this.C3DTilesDated.size - 1; i++) {
-    //   const C3DTiles = new udviz.itowns.C3DTilesLayer(
-    //     this.temporalLayerVJA.id + '_diff_' + i.toString(),
-    //     {
-    //       name: this.temporalLayerVJA.id + i.toString(),
-    //       source: new udviz.itowns.C3DTilesSource({
-    //         url: this.temporalLayerVJA.source.url,
-    //       }),
-    //       registeredExtensions: this.temporalLayerVJA.registeredExtensions,
-    //     },
-    //     this.view
-    //   );
-    //   // c3DTilesLayer = C3DTiles;
-    //   itowns.View.prototype.addLayer.call(view, C3DTiles);
-    //   const temporalWrapper = new Temporal3DTilesLayerWrapper(C3DTiles);
-    //   temporalWrapper.styleDate = 2010 + j;
-    //   this.view.notifyChange();
-    //   j += 3;
-    //   this.transactions.push(C3DTiles);
-    // C3DTiles.visible = false;
-    // }
   }
 
   vectorRepresentation() {
@@ -849,19 +772,9 @@ export class SpaceTimeCube {
         key
       );
       version.temporalWrapper = this.temporalsWrappers[i];
-      // version.temporalWrapper = new Temporal3DTilesLayerWrapper(c3DTilesLayer);
-      // if (indexDiff == 0) {
-      //   version.diffOlder = this.transactions[indexDiff];
-      // } else if (indexDiff == this.C3DTilesDated.size - 1) {
-      //   version.diffNew = this.transactions[indexDiff - 1];
-      // } else {
-      //   version.diffOlder = this.transactions[indexDiff - 1];
-      //   version.diffNew = this.transactions[indexDiff];
-      // }
       i++;
       this.versions.push(version);
     });
-    console.log(this.versions.length);
   }
 
   displayVersionsCircle() {
@@ -921,31 +834,47 @@ export class SpaceTimeCube {
         0
       );
 
-      version.object3DTiles.forEach((obj) => {
-        obj.position.set(point.x, point.y, 0);
-      }); // Initial position for better rotation
+      // TO-DO: should be change by a selected param
+      if (version.date != 2012) {
+        version.object3DTiles.forEach((obj) => {
+          obj.position.set(point.x, point.y, 0);
+        }); // Initial position for better rotation
 
-      version.updateCentroid();
-      version.c3DTiles.object3d.position.set(
-        centroid.x,
-        centroid.y,
-        centroid.z + 500
-      );
-      version.c3DTiles.object3d.updateMatrixWorld();
-
+        version.updateCentroid();
+        version.c3DTiles.object3d.position.set(
+          centroid.x,
+          centroid.y,
+          centroid.z + 500
+        );
+        version.c3DTiles.object3d.updateMatrixWorld();
+      } else {
+        version.object3DTiles.forEach((obj) => {
+          obj.position.set(0, 0, 0);
+        }); // Initial position for better rotation
+        version.c3DTiles.object3d.position.copy(this.centroid);
+        version.c3DTiles.object3d.updateMatrixWorld();
+      }
       // Date sprite creation
       const dateSprite = version.createSpriteDate();
-      dateSprite.position.copy(version.centroid);
-
+      dateSprite.position.copy(
+        version.c3DTiles.object3d.position.add(
+          version.object3DTiles[0].position
+        )
+      );
       dateSprite.scale.multiplyScalar(0.02);
       dateSprite.renderOrder = 1;
+      dateSprite.updateMatrixWorld();
       view.scene.add(dateSprite);
 
-      // TEST 2012
-      if (version.date == 2012) {
-        // version.transactionVisibility(true);
-        view.notifyChange();
-      }
+      // TESTING Need to generalize
+      const geometry = new THREE.BufferGeometry();
+      const line = new THREE.Line(
+        geometry,
+        new THREE.LineBasicMaterial({ color: 0xff0000 })
+      );
+
+      view.scene.add(line);
+      version.transactionsLines.push(line);
     });
 
     this.updateCircle();
@@ -974,7 +903,6 @@ export class SpaceTimeCube {
 
     let angleDeg = (a.z * 180) / Math.PI;
     this.versions.forEach((version) => {
-      console.log(this.RAYON);
       const angle = (angleDeg * Math.PI) / 180;
       angleDeg = 360 / this.versions.length + angleDeg;
       const pos = new THREE.Vector2(
@@ -982,14 +910,21 @@ export class SpaceTimeCube {
         Number(this.RAYON) * Math.sin(angle)
       );
 
-      version.object3DTiles.forEach((obj) => {
-        obj.position.set(pos.x, pos.y, 0);
-        obj.updateMatrix();
-      });
-      version.c3DTiles.object3d.position.copy(this.circleDisplayed.position);
-      version.c3DTiles.root.visible = true;
-      version.c3DTiles.object3d.updateMatrixWorld();
-      version.dateSprite.position.copy(version.centroid);
+      if (version.date != 2012) {
+        version.object3DTiles.forEach((obj) => {
+          obj.position.set(pos.x, pos.y, 0);
+          obj.updateMatrix();
+        });
+
+        version.c3DTiles.object3d.position.copy(this.circleDisplayed.position);
+        version.c3DTiles.root.visible = true;
+        version.c3DTiles.object3d.updateMatrixWorld();
+      }
+      version.dateSprite.position.copy(
+        version.c3DTiles.object3d.position.add(
+          version.object3DTiles[0].position
+        )
+      );
       version.dateSprite.updateMatrixWorld();
     });
 
@@ -1024,7 +959,7 @@ export class SpaceTimeCube {
     const a = new THREE.Euler().setFromQuaternion(
       this.circleDisplayed.quaternion
     );
-    let angleDeg = -90 + (a.z * 180) / Math.PI;
+    let angleDeg = 90 + (a.z * 180) / Math.PI;
 
     this.versions.forEach((version) => {
       const angle = (angleDeg * Math.PI) / 180;
@@ -1034,25 +969,34 @@ export class SpaceTimeCube {
         this.RAYON * Math.sin(angle),
         0
       );
-      version.object3DTiles.forEach((obj) => {
-        obj.position.set(pos.x, pos.y, 0);
-        obj.updateMatrix();
-      });
-      version.c3DTiles.object3d.position.copy(this.circleDisplayed.position);
-      // version.c3DTiles.root.visible = true;
-      version.c3DTiles.object3d.updateMatrixWorld();
-      console.log(
-        itowns.$3dTilesCulling(
-          version.c3DTiles,
-          this.view.camera,
-          version.c3DTiles.root,
-          version.c3DTiles.root.matrixWorld
+      if (version.date != 2012) {
+        version.object3DTiles.forEach((obj) => {
+          obj.position.set(pos.x, pos.y, 0);
+          obj.updateMatrix();
+        });
+        version.c3DTiles.object3d.position.copy(this.circleDisplayed.position);
+        version.c3DTiles.object3d.updateMatrixWorld();
+      }
+      version.dateSprite.position.copy(
+        version.c3DTiles.object3d.position.add(
+          version.object3DTiles[0].position
         )
       );
-
-      version.dateSprite.position.copy(version.centroid);
       version.dateSprite.updateMatrixWorld();
     });
+    // make transactions
+    this.versions.forEach((version, index) => {
+      const transactionLine = version.transactionsLines[0];
+      if (index != this.versions.length - 1) {
+        version.dateSprite.position;
+        version.updateTransaction(
+          transactionLine,
+          version.c3DTiles.object3d.position,
+          this.versions[index + 1].c3DTiles.object3d.position
+        );
+      }
+    });
+    this.view.notifyChange();
 
     requestAnimationFrame(this.updateCircle);
   }
