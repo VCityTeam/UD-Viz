@@ -2,6 +2,7 @@ import {
   createLocalStorageCheckbox,
   createLocalStorageDetails,
   createLocalStorageSlider,
+  focusC3DTilesLayer,
 } from '@ud-viz/utils_browser';
 
 import { PointsMaterial } from 'three';
@@ -99,6 +100,15 @@ export class LayerChoice {
         param.layer.visible = visibleInput.checked;
         this.view.notifyChange(this.view.camera.camera3D);
       };
+
+      if (param.layer.isC3DTilesLayer) {
+        const focusButton = document.createElement('button');
+        focusButton.innerText = 'Focus';
+        layerContainerDomElement.appendChild(focusButton);
+        focusButton.onclick = () => {
+          focusC3DTilesLayer(this.view, param.layer);
+        };
+      }
 
       // opacity checkbox
       const opacityInput = createLocalStorageSlider(

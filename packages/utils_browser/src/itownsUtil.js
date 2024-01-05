@@ -6,9 +6,29 @@ const itowns = require('itowns');
 /** CAMERA */
 
 /**
+ * Compute a distance automatically for travel features of itowns Planar View
+ *
+ * @param {itowns.PlanarControls} controls - planar controls of itownsView
+ * @param {THREE.Vector3} targetPos - position of our target
+ * @returns {number} - the duration of travel to focus a targetPosition
+ */
+function autoDurationTravel(controls, targetPos) {
+  const normalizedDistance = Math.min(
+    1,
+    targetPos.distanceTo(controls.camera.position) / controls.autoTravelTimeDist
+  );
+
+  return THREE.MathUtils.lerp(
+    controls.autoTravelTimeMin,
+    controls.autoTravelTimeMax,
+    normalizedDistance
+  );
+}
+
+/**
  * Makes the camera move to focus on the target position.
  *
- * @param {itowns.View} view The iTowns view.
+ * @param {itowns.PlanarView} view The iTowns view.
  * @param {itowns.PlanarControls} controls The camera controls.
  * @param {THREE.Vector3} targetPos The target position.
  * @param {*} [options] Optional parameters for the travel. Accepted entries
@@ -38,10 +58,26 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
       );
       cameraPos.addScaledVector(direction, 1 - horizontalDist / currentDist);
       cameraPos.z = targetPos.z + verticalDist;
-      const travelDuration = duration ? duration : 'auto';
-      const timeoutDuration = duration ? duration * 1000 : 0;
+
+      const noControls = !view.controls;
+
+      if (noControls) controls = new itowns.PlanarControls(view);
+
+      const travelDuration =
+        duration || duration == 0
+          ? duration
+          : autoDurationTravel(controls, targetPos);
+
+      const timeoutDuration = travelDuration * 1000;
       controls.initiateTravel(cameraPos, travelDuration, targetPos, true);
-      setTimeout(resolve, timeoutDuration);
+
+      setTimeout(() => {
+        if (noControls) {
+          view.controls.dispose();
+          view.controls = undefined;
+        }
+        resolve();
+      }, timeoutDuration);
     } catch (e) {
       reject(e);
     }
@@ -66,10 +102,16 @@ export function focusC3DTilesLayer(itownsView, layer) {
   coordinates.z = 200;
   if (layer.tileset.tiles[0])
     coordinates.z = layer.tileset.tiles[0].boundingVolume.box.max.z;
-  focusCameraOn(itownsView, itownsView.controls, coordinates, {
-    verticalDistance: 200,
-    horizontalDistance: 200,
-  });
+
+  focusCameraOn(
+    itownsView,
+    itownsView.controls,
+    new THREE.Vector3().copy(coordinates),
+    {
+      verticalDistance: 200,
+      horizontalDistance: 200,
+    }
+  );
 }
 
 /**
