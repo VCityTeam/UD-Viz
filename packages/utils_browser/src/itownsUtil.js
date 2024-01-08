@@ -8,9 +8,10 @@ const itowns = require('itowns');
 /**
  * Compute a distance automatically for travel features of itowns Planar View
  *
+ * @note Code retrieve itowns - {@link https://github.com/iTowns/itowns/blob/1bad0d627764c73b606179c636ad7b70105dd633/src/Controls/PlanarControls.js#L712}
  * @param {itowns.PlanarControls} controls - planar controls of itownsView
  * @param {THREE.Vector3} targetPos - position of our target
- * @returns {number} - the duration of travel to focus a targetPosition
+ * @returns {number} the duration of travel to focus a targetPosition
  */
 function autoDurationTravel(controls, targetPos) {
   const normalizedDistance = Math.min(
