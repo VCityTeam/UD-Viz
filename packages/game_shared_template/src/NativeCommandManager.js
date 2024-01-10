@@ -116,11 +116,14 @@ const NativeCommandManager = class extends ScriptBase {
         'uuid',
         data.object3DUUID
       );
-      NativeCommandManager.moveUp(
-        updatedObject3D,
-        this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
-      );
-      return true;
+      if (this.checkMaxAltitude(updatedObject3D)) {
+        NativeCommandManager.moveUp(
+          updatedObject3D,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
+        );
+        return true;
+      }
+      return false;
     });
 
     this.applyCommandCallbackOf(COMMAND.MOVE_DOWN, (data) => {
@@ -128,12 +131,16 @@ const NativeCommandManager = class extends ScriptBase {
         'uuid',
         data.object3DUUID
       );
-      NativeCommandManager.moveDown(
-        updatedObject3D,
-        this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
-      );
-      return true;
+      if (this.checkMinAltitude(updatedObject3D)) {
+        NativeCommandManager.moveDown(
+          updatedObject3D,
+          this.computeObjectSpeedTranslate(updatedObject3D) * this.context.dt
+        );
+        return true;
+      }
+      return false;
     });
+
     this.applyCommandCallbackOf(COMMAND.UPDATE_TRANSFORM, (data) => {
       const updatedObject3D = this.context.object3D.getObjectByProperty(
         'uuid',
@@ -363,6 +370,44 @@ const NativeCommandManager = class extends ScriptBase {
   }
 
   /**
+   * Checks if the given object's altitude is below the maximum allowed altitude.
+   *
+   * @param {Object3D} object3D - The object to check.
+   * @returns {boolean} - True if the object's altitude is below the maximum allowed altitude, false otherwise.
+   */
+  checkMaxAltitude(object3D) {
+    return object3D.position.z <= this.computeMaxAltitude(object3D);
+  }
+
+  /**
+   * Checks if the given object's altitude is above the minimum allowed altitude.
+   *
+   * @param {Object3D} object3D - The object to check.
+   * @returns {boolean} - True if the object's altitude is above the minimum allowed altitude, false otherwise.
+   */
+  checkMinAltitude(object3D) {
+    return object3D.position.z >= this.computeMinAltitude(object3D);
+  }
+
+  /**
+   * Computes the maximum allowed altitude.
+   *
+   * @returns {number} - The maximum allowed altitude.
+   */
+  computeMaxAltitude() {
+    return this.variables.maxAltitude;
+  }
+
+  /**
+   * Computes the minimum allowed altitude.
+   *
+   * @returns {number} - The minimum allowed altitude.
+   */
+  computeMinAltitude() {
+    return this.variables.minAltitude;
+  }
+
+  /**
    * End Movement of an object3D
    *
    * @param {Object3D} object3D - object3D to stop
@@ -426,6 +471,8 @@ const NativeCommandManager = class extends ScriptBase {
       angleMax: 2 * Math.PI - Math.PI / 10,
       defaultSpeedTranslate: 0.04,
       defaultSpeedRotate: 0.00001,
+      maxAltitude: 1000,
+      minAltitude: 0,
     };
   }
 };
