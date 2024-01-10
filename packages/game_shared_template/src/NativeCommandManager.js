@@ -471,7 +471,7 @@ const NativeCommandManager = class extends ScriptBase {
       angleMax: 2 * Math.PI - Math.PI / 10,
       defaultSpeedTranslate: 0.04,
       defaultSpeedRotate: 0.00001,
-      maxAltitude: 1000,
+      maxAltitude: 500,
       minAltitude: 0,
     };
   }

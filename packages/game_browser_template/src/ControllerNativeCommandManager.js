@@ -11,133 +11,141 @@ export class ControllerNativeCommandManager extends ScriptBase {
     this._clickListener = null;
 
     /** @type {string} */
-    this._currentModeType = null;
+    this._currentMode = null;
   }
 
   /**
    * Add native commands in input manager @see NativeCommandManager of @ud-viz/game_shared_template
    *
    * @param {string} object3DUUID - uuid of the object3D to contol
-   * @param {string} modeType - which mode to controls object3D @see ControllerNativeCommandManager.MODE
+   * @param {object} mode - which mode to controls object3D @see ControllerNativeCommandManager.MODE
    * @param {object} options - options
    * @param {boolean} [options.withMap=true] - z is not compute with map
    */
-  controls(object3DUUID, modeType, options = { withMap: true }) {
-    if (this._currentModeType) this.removeControls();
-
-    if (modeType == ControllerNativeCommandManager.MODE[1].TYPE) {
-      ControllerNativeCommandManager.MODE[1].KEYS_MAPPING.forEach(
-        ({ COMMAND_ID, COMMAND_TYPE, KEYS }) => {
+  controls(object3DUUID, mode, options = { withMap: true }) {
+    if (this._currentMode) this.removeControls();
+    switch (mode.TYPE) {
+      case ControllerNativeCommandManager.MODE_TYPE.CLASSIC:
+        mode.KEYS_MAPPING.forEach(({ COMMAND_ID, COMMAND_TYPE, KEYS }) => {
           this.context.inputManager.addKeyCommand(COMMAND_ID, KEYS, () => {
             return new Command({
               type: COMMAND_TYPE,
               data: { object3DUUID: object3DUUID, withMap: options.withMap }, // object3D to control
             });
           });
-        }
-      );
-    } else if (modeType == ControllerNativeCommandManager.MODE[2].TYPE) {
-      // keys
-      ControllerNativeCommandManager.MODE[2].KEYS_MAPPING.forEach(
-        ({ COMMAND_ID, KEYS, COMMAND_TYPE_START, COMMAND_TYPE_END }) => {
-          let start = false;
-          this.context.inputManager.addKeyCommand(COMMAND_ID, KEYS, () => {
-            let oneKeyIsPressed = false;
-            KEYS.forEach((key) => {
-              oneKeyIsPressed =
-                oneKeyIsPressed || this.context.inputManager.isPressed(key);
+        });
+        break;
+      case ControllerNativeCommandManager.MODE_TYPE.START_END_MOUSE:
+        // keys
+        mode.KEYS_MAPPING.forEach(
+          ({ COMMAND_ID, KEYS, COMMAND_TYPE_START, COMMAND_TYPE_END }) => {
+            let start = false;
+            this.context.inputManager.addKeyCommand(COMMAND_ID, KEYS, () => {
+              let oneKeyIsPressed = false;
+              KEYS.forEach((key) => {
+                oneKeyIsPressed =
+                  oneKeyIsPressed || this.context.inputManager.isPressed(key);
+              });
+
+              if (oneKeyIsPressed && !start) {
+                start = true;
+                this.context.inputManager.setPointerLock(true);
+                return new Command({
+                  type: COMMAND_TYPE_START,
+                  data: {
+                    object3DUUID: object3DUUID,
+                    withMap: options.withMap,
+                  },
+                });
+              } else if (!oneKeyIsPressed && start) {
+                start = false; // reset
+                return new Command({
+                  type: COMMAND_TYPE_END,
+                  data: {
+                    object3DUUID: object3DUUID,
+                    withMap: options.withMap,
+                  },
+                });
+              }
             });
-
-            if (oneKeyIsPressed && !start) {
-              start = true;
-              this.context.inputManager.setPointerLock(true);
-              return new Command({
-                type: COMMAND_TYPE_START,
-                data: { object3DUUID: object3DUUID, withMap: options.withMap },
-              });
-            } else if (!oneKeyIsPressed && start) {
-              start = false; // reset
-              return new Command({
-                type: COMMAND_TYPE_END,
-                data: { object3DUUID: object3DUUID, withMap: options.withMap },
-              });
-            }
-          });
-        }
-      );
-      // mouse
-      this.context.inputManager.addMouseCommand(
-        ControllerNativeCommandManager.MODE[2].MOUSE.MOVE.COMMAND_ID,
-        'mousemove',
-        (event) => {
-          if (
-            this.context.inputManager.getPointerLock() ||
-            (this.context.inputManager.mouseState.isDragging() &&
-              !this.context.inputManager.getPointerLock())
-          ) {
-            if (event.movementX != 0 || event.movementY != 0) {
-              let pixelX = -event.movementX;
-              let pixelY = -event.movementY;
-
-              pixelX *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
-              pixelY *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
-
-              return new Command({
-                type: ControllerNativeCommandManager.MODE[2].MOUSE.MOVE
-                  .COMMAND_TYPE,
-                data: {
-                  object3DUUID: object3DUUID,
-                  vector: new Vector3(pixelY, 0, pixelX),
-                },
-              });
-            }
           }
-          return null;
-        }
-      );
-      // exit pointer lock method
-      this._clickListener = () => {
-        this.context.inputManager.setPointerLock(false);
-      };
-      this.context.inputManager.addMouseInput(
-        this.context.inputManager.element,
-        'click',
-        this._clickListener
-      );
-    } else {
-      throw new Error('Unknown controller type');
+        );
+        // mouse
+        this.context.inputManager.addMouseCommand(
+          mode.MOUSE.MOVE.COMMAND_ID,
+          'mousemove',
+          (event) => {
+            if (
+              this.context.inputManager.getPointerLock() ||
+              (this.context.inputManager.mouseState.isDragging() &&
+                !this.context.inputManager.getPointerLock())
+            ) {
+              if (event.movementX != 0 || event.movementY != 0) {
+                let pixelX = -event.movementX;
+                let pixelY = -event.movementY;
+
+                pixelX *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
+                pixelY *= ControllerNativeCommandManager.MOUSE_SENSITIVITY;
+
+                return new Command({
+                  type: ControllerNativeCommandManager.MODE[2].MOUSE.MOVE
+                    .COMMAND_TYPE,
+                  data: {
+                    object3DUUID: object3DUUID,
+                    vector: new Vector3(pixelY, 0, pixelX),
+                  },
+                });
+              }
+            }
+            return null;
+          }
+        );
+        // exit pointer lock method
+        this._clickListener = () => {
+          this.context.inputManager.setPointerLock(false);
+        };
+        this.context.inputManager.addMouseInput(
+          this.context.inputManager.element,
+          'click',
+          this._clickListener
+        );
+        break;
+      default:
+        throw new Error('Unknown controller type');
     }
-    this._currentModeType = modeType;
+
+    this._currentMode = mode;
   }
+
   /**
    * Remove native commands in input manager
    */
   removeControls() {
-    if (this._currentModeType == ControllerNativeCommandManager.MODE[1].TYPE) {
-      ControllerNativeCommandManager.MODE[1].KEYS_MAPPING.forEach(
-        ({ COMMAND_ID, KEYS }) => {
-          this.context.inputManager.removeKeyCommand(COMMAND_ID, KEYS);
+    switch (this._currentMode.TYPE) {
+      case ControllerNativeCommandManager.MODE_TYPE.CLASSIC:
+        {
+          this._currentMode.KEYS_MAPPING.forEach(({ COMMAND_ID, KEYS }) => {
+            this.context.inputManager.removeKeyCommand(COMMAND_ID, KEYS);
+          });
         }
-      );
-    } else if (
-      this._currentModeType == ControllerNativeCommandManager.MODE[2].TYPE
-    ) {
-      ControllerNativeCommandManager.MODE[2].KEYS_MAPPING.forEach(
-        ({ COMMAND_ID, KEYS }) => {
-          this.context.inputManager.removeKeyCommand(COMMAND_ID, KEYS);
+        break;
+      case ControllerNativeCommandManager.MODE_TYPE.START_END_MOUSE:
+        {
+          this._currentMode.KEYS_MAPPING.forEach(({ COMMAND_ID, KEYS }) => {
+            this.context.inputManager.removeKeyCommand(COMMAND_ID, KEYS);
+          });
+          this.context.inputManager.removeMouseCommand(
+            this._currentMode.MOUSE.MOVE.COMMAND_ID,
+            'mousemove'
+          );
+          this.context.inputManager.removeInputListener(this._clickListener);
+          this.context.inputManager.setPointerLock(false);
         }
-      );
-      this.context.inputManager.removeMouseCommand(
-        ControllerNativeCommandManager.MODE[2].MOUSE.MOVE.COMMAND_ID,
-        'mousemove'
-      );
-      this.context.inputManager.removeInputListener(this._clickListener);
-      this.context.inputManager.setPointerLock(false);
-    } else {
-      throw new Error('current controller mode type is corrupted');
+        break;
+      default:
+        throw new Error('current controller mode type is corrupted');
     }
-
-    this._currentModeType = null;
+    this._currentMode = null;
   }
 
   /**
@@ -151,7 +159,7 @@ export class ControllerNativeCommandManager extends ScriptBase {
        * Can move forward and backward and rotateZ left and right
        */
       1: {
-        TYPE: 'mode_1_type',
+        TYPE: ControllerNativeCommandManager.MODE_TYPE.CLASSIC,
         KEYS_MAPPING: [
           {
             COMMAND_ID: 'controller_mode_1_forward_id',
@@ -179,7 +187,7 @@ export class ControllerNativeCommandManager extends ScriptBase {
        * Can move forward and backward left and right and rotate with mouse
        */
       2: {
-        TYPE: 'mode_2_type',
+        TYPE: ControllerNativeCommandManager.MODE_TYPE.START_END_MOUSE,
         MOUSE: {
           MOVE: {
             COMMAND_ID: 'controller_mode_2_mouse_move',
@@ -217,7 +225,7 @@ export class ControllerNativeCommandManager extends ScriptBase {
        * Can move forward, backward, up and down. Can rotateZ left and right
        */
       3: {
-        TYPE: 'mode_3_type',
+        TYPE: ControllerNativeCommandManager.MODE_TYPE.CLASSIC,
         KEYS_MAPPING: [
           {
             COMMAND_ID: 'controller_mode_3_forward_id',
@@ -260,3 +268,8 @@ export class ControllerNativeCommandManager extends ScriptBase {
 }
 
 ControllerNativeCommandManager.MOUSE_SENSITIVITY = 0.5;
+
+ControllerNativeCommandManager.MODE_TYPE = {
+  CLASSIC: 'classic',
+  START_END_MOUSE: 'start_end_mouse',
+};
