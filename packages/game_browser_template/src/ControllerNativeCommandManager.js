@@ -213,6 +213,44 @@ export class ControllerNativeCommandManager extends ScriptBase {
           },
         ],
       },
+      /**
+       * Can move forward, backward, up and down. Can rotateZ left and right
+       */
+      3: {
+        TYPE: 'mode_3_type',
+        KEYS_MAPPING: [
+          {
+            COMMAND_ID: 'controller_mode_3_forward_id',
+            COMMAND_TYPE: constant.COMMAND.MOVE_FORWARD,
+            KEYS: ['z', 'ArrowUp'],
+          },
+          {
+            COMMAND_ID: 'controller_mode_3_backward_id',
+            COMMAND_TYPE: constant.COMMAND.MOVE_BACKWARD,
+            KEYS: ['s', 'ArrowDown'],
+          },
+          {
+            COMMAND_ID: 'controller_mode_3_move_up_id',
+            COMMAND_TYPE: constant.COMMAND.MOVE_UP,
+            KEYS: ['Shift'],
+          },
+          {
+            COMMAND_ID: 'controller_mode_3_move_down_id',
+            COMMAND_TYPE: constant.COMMAND.MOVE_DOWN,
+            KEYS: ['Control'],
+          },
+          {
+            COMMAND_ID: 'controller_mode_3_rotate_left_id',
+            COMMAND_TYPE: constant.COMMAND.ROTATE_LEFT,
+            KEYS: ['q', 'ArrowLeft'],
+          },
+          {
+            COMMAND_ID: 'controller_mode_3_rotate_right_id',
+            COMMAND_TYPE: constant.COMMAND.ROTATE_RIGHT,
+            KEYS: ['d', 'ArrowRight'],
+          },
+        ],
+      },
     };
   }
 
