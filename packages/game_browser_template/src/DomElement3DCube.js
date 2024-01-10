@@ -47,7 +47,7 @@ export class DomElement3DCube extends ScriptBase {
       );
       controller.controls(
         this.object3D.uuid,
-        ControllerNativeCommandManager.MODE[1].TYPE
+        ControllerNativeCommandManager.MODE[1]
       );
     }
   }

@@ -56,24 +56,16 @@
             this.variables.camera_angle
           );
 
-          const selectControllerModeType = document.createElement('select');
-          this.context.frame3D.domElementUI.appendChild(
-            selectControllerModeType
-          );
+          const selectControllerMode = document.createElement('select');
+          this.context.frame3D.domElementUI.appendChild(selectControllerMode);
           this.context.frame3D.domElementUI.classList.add('ui');
 
           for (const id in udviz.gameBrowserTemplate
             .ControllerNativeCommandManager.MODE) {
             const option = document.createElement('option');
-            option.value =
-              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[
-                id
-              ].TYPE;
-            option.innerText =
-              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[
-                id
-              ].TYPE;
-            selectControllerModeType.appendChild(option);
+            option.value = id;
+            option.innerText = id;
+            selectControllerMode.appendChild(option);
           }
 
           this.controllerNativeCommandManager =
@@ -82,14 +74,16 @@
             );
 
           const updateControllerMode = () => {
-            const modeType = selectControllerModeType.selectedOptions[0].value;
+            const id = selectControllerMode.selectedOptions[0].value;
+            const mode =
+              udviz.gameBrowserTemplate.ControllerNativeCommandManager.MODE[id];
             this.controllerNativeCommandManager.controls(
               this.avatar.uuid,
-              modeType,
+              mode,
               { withMap: false }
             );
           };
-          selectControllerModeType.onchange = updateControllerMode;
+          selectControllerMode.onchange = updateControllerMode;
           updateControllerMode();
 
           const onGround = udviz.createLabelInput('On ground: ', 'checkbox');

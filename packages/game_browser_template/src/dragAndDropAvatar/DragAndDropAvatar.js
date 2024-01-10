@@ -158,7 +158,7 @@ export class DragAndDropAvatar extends ScriptBase {
 
           this.controllerNativeCommandManager.controls(
             this.avatar.uuid,
-            ControllerNativeCommandManager.MODE[2].TYPE
+            ControllerNativeCommandManager.MODE[2]
           );
 
           // add ui to switch back to planar controls
