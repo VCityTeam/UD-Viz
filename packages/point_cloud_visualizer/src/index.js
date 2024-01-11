@@ -635,7 +635,6 @@ export class PointCloudVisualizer {
       this.itownsView.scene.add(quad);
 
       if (
-        confirm('Voulez-vous recharger le plan ?') &&
         localStorageSetMatrix4(
           quad.matrixWorld,
           'point_cloud_visualizer_quad_matrix4'
