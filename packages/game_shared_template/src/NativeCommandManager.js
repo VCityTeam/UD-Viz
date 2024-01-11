@@ -1,7 +1,7 @@
 const AbstractMap = require('./AbstractMap');
 const { COMMAND } = require('./constant');
 
-const THREE = require('three');
+const { Vector3, Euler } = require('three');
 const {
   ScriptBase,
   Object3D,
@@ -86,7 +86,7 @@ const NativeCommandManager = class extends ScriptBase {
       );
       NativeCommandManager.rotate(
         updatedObject3D,
-        new THREE.Vector3(
+        new Vector3(
           0,
           0,
           this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
@@ -102,7 +102,7 @@ const NativeCommandManager = class extends ScriptBase {
       );
       NativeCommandManager.rotate(
         updatedObject3D,
-        new THREE.Vector3(
+        new Vector3(
           0,
           0,
           -this.computeObjectSpeedRotate(updatedObject3D) * this.context.dt
@@ -376,7 +376,10 @@ const NativeCommandManager = class extends ScriptBase {
    * @returns {boolean} - True if the object's altitude is below the maximum allowed altitude, false otherwise.
    */
   checkMaxAltitude(object3D) {
-    return object3D.position.z <= this.computeMaxAltitude(object3D);
+    return (
+      object3D.getWorldPosition(new Vector3()).z <=
+      this.computeMaxAltitude(object3D)
+    );
   }
 
   /**
@@ -386,11 +389,15 @@ const NativeCommandManager = class extends ScriptBase {
    * @returns {boolean} - True if the object's altitude is above the minimum allowed altitude, false otherwise.
    */
   checkMinAltitude(object3D) {
-    return object3D.position.z >= this.computeMinAltitude(object3D);
+    return (
+      object3D.getWorldPosition(new Vector3()).z >=
+      this.computeMinAltitude(object3D)
+    );
   }
 
   /**
    * Computes the maximum allowed altitude.
+   * If you want to have different max altitude for gameobject you should override this method
    *
    * @returns {number} - The maximum allowed altitude.
    */
@@ -400,6 +407,7 @@ const NativeCommandManager = class extends ScriptBase {
 
   /**
    * Computes the minimum allowed altitude.
+   * If you want to have different min altitude for gameobject you should override this method
    *
    * @returns {number} - The minimum allowed altitude.
    */
@@ -541,7 +549,7 @@ NativeCommandManager.moveLeft = function (
   return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * 0.5)
+      .applyAxisAngle(new Vector3(0, 0, 1), Math.PI * 0.5)
       .setLength(value),
     map,
     withMap
@@ -566,7 +574,7 @@ NativeCommandManager.moveRight = function (
   return NativeCommandManager.move(
     object3D,
     Object3D.computeForward(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5)
       .setLength(value),
     map,
     withMap
@@ -586,7 +594,7 @@ NativeCommandManager.moveUp = function (object3D, value, map, withMap = true) {
   return NativeCommandManager.move(
     object3D,
     Object3D.computeUp(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5)
       .setLength(value),
     map,
     withMap
@@ -606,7 +614,7 @@ NativeCommandManager.moveDown = function (object3D, value) {
   return NativeCommandManager.move(
     object3D,
     Object3D.computeDown(object3D)
-      .applyAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI * 0.5)
+      .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5)
       .setLength(value)
   );
 };
@@ -615,7 +623,7 @@ NativeCommandManager.moveDown = function (object3D, value) {
  * Move object3D on a map
  *
  * @param {Object3D} object3D - object3D to move
- * @param {THREE.Vector3} vector - move vector
+ * @param {Vector3} vector - move vector
  * @param {AbstractMap} map - map script
  * @param {boolean} withMap - map should be consider
  * @returns {boolean} isOutOfMap - the movement make the object3D leaves the map
@@ -639,10 +647,10 @@ NativeCommandManager.move = function (object3D, vector, map, withMap) {
  * Rotate an object3D with an euler
  *
  * @param {Object3D} object3D - object3D to rotate
- * @param {THREE.Euler} euler - euler to rotate from
+ * @param {Euler} euler - euler to rotate from
  */
 NativeCommandManager.rotate = function (object3D, euler) {
-  // shoudl check euler order
+  // should check euler order
   object3D.rotateZ(euler.z);
   object3D.rotateX(euler.x);
   object3D.rotateY(euler.y);
