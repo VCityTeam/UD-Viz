@@ -5,7 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: ['master']
+    branches: ['github-actions']
 
 jobs:
   build:
@@ -16,25 +16,25 @@ jobs:
         node-version: ['18.x']
 
     steps:
-      - name: Checkout docs branch
+      - name: Checkout master branch
         uses: actions/checkout@v4
         with:
-          ref: docs
-      # reset on master branch
-      - name: Reset master branch last commit
-        run: git reset origin/master --hard
+          ref: master
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       # generate the documentation
+      - run: npm install
       - run: npm run docs
       # commit and push the changes on the docs branch
       - name: Commit docs changes
         run: |
+          git checkout -b docs
           git config --global user.name 'VCity Github Action'
           git config --global user.email 'vcity@liris.cnrs.fr'
           git add .
           git commit -m "Documentation update"
-          git push origin docs
+          git push --set-upstream origin docs --force
+
