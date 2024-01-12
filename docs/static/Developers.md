@@ -77,27 +77,52 @@ npm run dev-examples
 
 ### Develop with modified ud-viz library in your demo 
 
-If you need to code in your demo and [UD-Viz](https://github.com/VCityTeam/UD-Viz) library you should clone the two repositories side by side on your disk. Then in the package.json of Imuv you have to link with UD-Viz library (for all fields in the package.json like `@ud-viz/*`):
-```json
-"@ud-viz/*": "x.x.x" => "@ud-viz/*": "file:../../../UD-Viz/packages/*" //where the path is a relative path to your UD-Viz directory
-```
+When developing an application that uses 
+[UD-Viz](https://github.com/VCityTeam/UD-Viz)
+as library, you might need to propose modifications/fixes/improvements
+of UD-Viz. 
+In doing so you will need a set up that allows for simultaneously modifying 
+both codes (the one of your application and the one of UD-Viz) in order to
+co-evolve UD-Viz and its usage within your application. 
 
-Then reinstall ud-viz npm packages
-
-```
-npm run reset
-```
-
-Finally you have to modify the `webpack.config.js`. Add in the first position of the array which tell webpack what directories should be searched when resolving modules the UD-Viz's 'node_modules' folder: 
-
-```js
-module.exports = {
-  //...
-  resolve: {
-    modules: ['../UD-Viz/node_modules', './node_modules'],
-  },
-};
-```
+In order to establish that specific developing context you might
+- clone both repositories side by side (that is your cloned application 
+  repository stands in the same directory as the cloned UD-Viz) on your local 
+- Modify your the `package.json` of your application in order to "point" 
+  to the cloned version of the UD-Viz library.
+  Entries of the form
+  ```json
+  "dependencies": {
+     "@ud-viz/*": "x.x.x"
+  }
+  ```
+  should replaced with
+  ```json
+  "dependencies": {
+    "@ud-viz/*": "file:../../../UD-Viz/packages/*"
+  }
+  ```
+  where the path is a relative path from the `package.json` to your cloned 
+  version of the UD-Viz library. 
+  Notice that you should only modify the paths to the UD-Viz npm (sub-)packages
+  that you wish to adapt. 
+- Reinstall ud-viz npm packages
+  ```bash
+  npm run reset
+  ```
+- Eventually you have to modify the `webpack.config.js` in order to indicate
+  to webpack what directories should be searched when resolving modules the 
+  UD-Viz's 'node_modules' folder: 
+  ```js
+  module.exports = {
+    //...
+    resolve: {
+      modules: ['../UD-Viz/node_modules', './node_modules'],
+    },
+  };
+  ```
+  It is important to add the '../UD-Viz/node_modules' in first position of the
+  array.
 
 Note that when you make a change in UD-Viz library watchers (nodemon) of Imuv will not notice it, you have to restart it yourself by typing "rs" in the watcher console.
 
