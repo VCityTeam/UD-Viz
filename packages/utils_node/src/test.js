@@ -225,9 +225,17 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
                 }
               })
               .on('requestfailed', (request) => {
-                throw new Error(
-                  `${request.failure().errorText} ${request.url()}`
-                );
+                const url = request.url();
+                if (url.includes('vcityliris.data.alpha.grandlyon.com'))
+                  console.warn(
+                    `ERROR SKIP: ${
+                      request.failure().errorText
+                    } ${request.url()}`
+                  );
+                else
+                  throw new Error(
+                    `${request.failure().errorText} ${request.url()}`
+                  );
               });
 
             await pageTest(page, currentFile);
