@@ -15,20 +15,20 @@ UD-Viz is a javascript mono repository for creating web applications for visuali
 **Online demos**:
 
 <p>
-  <a href="https://ud-viz.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UDVIZ-Examples.png" alt="UD-VizExamples Mosaic" width="32.5%"></a>
+  <a href="https://ud-viz.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UDVIZ-Examples.png" alt="UD-VizExamples Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
   <a href="https://www.imuvirtuel.fr/"><img src="./img/IMUV_Homepage.png" alt="IMUV Flying Campus Mosaic" width="32.5%"></a>
-  <a href="https://deambulation-bron.vcityliris.data.alpha.grandlyon.com/"><img src="./img/Deambulation Bron.png" alt="Deambulation Bron Mosaic" width="32.5%"></a>
+  <a href="https://deambulation-bron.vcityliris.data.alpha.grandlyon.com/"><img src="./img/Deambulation Bron.png" alt="Deambulation Bron Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
 </p>
 <p>
-  <a href="https://ui-driven-data-lyon.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UI_Data_Driven.png" alt="UI Data Driven Mosaic" width="32.5%"></a>
-  <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
+  <a href="https://ui-driven-data-lyon.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/UI_Data_Driven.png" alt="UI Data Driven Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
+  <a href="https://spatial-multimedia-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
 </p>
 
 _3D tiles related_
 
 <p>
-  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%"></a>
-  <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%"></a>
+  <a href="https://py3dtilers-demo.vcityliris.data.alpha.grandlyon.com/"><img src="./img/3Dtiles.png" alt="Py3dTilers Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
+  <a href="https://point-cloud.vcityliris.data.alpha.grandlyon.com/" ><img src="./img/PointClouds.png" alt="Point Clouds Mosaic" width="32.5%" style="filter:brightness(0.5);pointer-events: none;"></a>
 </p>
 
 
