@@ -99,7 +99,7 @@ In order to establish that specific developing context you might
   should replaced with
   ```json
   "dependencies": {
-    "@ud-viz/*": "file:../../../UD-Viz/packages/*"
+    "@ud-viz/*": "file:../UD-Viz/packages/*"
   }
   ```
   where the path is a relative path from the `package.json` to your cloned 
@@ -124,7 +124,8 @@ In order to establish that specific developing context you might
   It is important to add the '../UD-Viz/node_modules' in first position of the
   array.
 
-Note that when you make a change in UD-Viz library watchers (nodemon) of Imuv will not notice it, you have to restart it yourself by typing "rs" in the watcher console.
+When you application uses code watchers (e.g. nodemon) on automatic rebuild purposes, the code watchers will be blind to changes operated in the ../UD-Viz/ file hierarchy.
+
 
 ## Continuous Integration (Travis CI)
 
