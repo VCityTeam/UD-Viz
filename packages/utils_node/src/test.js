@@ -225,8 +225,12 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
                 }
               })
               .on('requestfailed', (request) => {
-                const url = request.url();
-                if (url.includes('vcityliris.data.alpha.grandlyon.com'))
+                const url = new URL(request.url());
+
+                if (
+                  url.host ==
+                  'spatial-multimedia-db.vcityliris.data.alpha.grandlyon.com'
+                )
                   console.warn(
                     `ERROR SKIP: ${
                       request.failure().errorText
