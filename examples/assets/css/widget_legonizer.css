@@ -1,0 +1,17 @@
+.widget_legonizer {
+  position: absolute;
+  resize: both;
+  z-index: 2;
+  background-color: #313336bb;
+  color: white;
+}
+
+.widget_legonizer_vector_container {
+  display: inline-flex;
+}
+
+.widget_legonizer_grid {
+  display: 'grid';
+  width: '100%';
+  height: 'auto';
+}

@@ -1,30 +1,17 @@
-/** @format */
+import { Vector3Input } from '@ud-viz/utils_browser';
+import { PlanarView } from 'itowns';
 
-// Components
-import { Window } from '../Component/GUI/js/Window';
-import { checkParentChild, InputManager } from '../../Component';
-import * as THREE from 'three';
-import * as itowns from 'itowns';
-// Import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
-import { MAIN_LOOP_EVENTS } from 'itowns';
-import { updateMockUpObject } from './MockUpUtils.js';
-import { LegoMockupVisualizer } from './LegoMockupVisualizer';
-import {
-  createHeightMapFromBufferGeometry,
-  generateCSVwithHeightMap,
-} from 'legonizer';
+export class Legonizer {
+  /**
+   *
+   * @param {PlanarView} view
+   */
+  constructor(view) {
+    /** @type {HTMLElement} */
+    this.domElement = document.createElement('div');
 
-/**
- *
- *
- */
-/*  */
-export class LegonizerWindow extends Window {
-  constructor(frame3D) {
-    super('legonizer', 'Legonizer', false);
-
-    this.frame3D = frame3D;
+    /** @type {PlanarView} */
+    this.view = view;
 
     this.boxSelector;
 
@@ -38,49 +25,33 @@ export class LegonizerWindow extends Window {
 
     this.ratio = 3;
 
-    this.inputManager = new InputManager();
+    this.createLegonizerDomEl();
   }
 
-  get innerContentHtml() {
-    return `
-    <div id="${this.paramLegonizerId}">
-      <div class="box-section" id="${this.coordBoxSectionId}"> 
-        <label for="color-layers-spoiler" class="section-title">Coordinates</Label>
-      </div>
-      <div class="box-section" id="${this.scaleSectionId}"> 
-        <label for="elevation-layers-spoiler" class="section-title">Scales parameters</Label>
-      </div>
-    </div>`;
+  createLegonizerDomEl() {
+    const legonizerDomElement = document.createElement('div');
+
+    legonizerDomElement.appendChild(this.createCoordinatesDomEl());
+
+    // Scales Box DOM
+    const scalesDomElement = document.createElement('div');
+    legonizerDomElement.appendChild(scalesDomElement);
+
+    this.domElement.appendChild(legonizerDomElement);
   }
 
-  innerContentCoordinates() {
-    const inputVector = document.createElement('div');
-    inputVector.id = 'Coordinates' + '_inputVector';
-    inputVector.style.display = 'inline-flex';
+  createCoordinatesDomEl() {
+    // Coordinates Box DOM
+    const coordinatesDomElement = document.createElement('div');
+    coordinatesDomElement.id = 'widget_legonizer_vector_container';
 
-    const coordinatesString = ['x', 'y', 'z'];
+    const coordinatesTitle = document.createElement('h3');
+    coordinatesTitle.innerText = 'Coordinates';
+    coordinatesDomElement.appendChild(coordinatesTitle);
 
-    for (let i = 0; i < 3; i++) {
-      // Coord Elements
-      const coordElement = document.createElement('div');
-      coordElement.id = coordinatesString[i] + '_grid';
-      coordElement.style.display = 'grid';
-      coordElement.style.width = '100%';
-      coordElement.style.height = 'auto';
-
-      // Label
-      const labelElement = document.createElement('h3');
-      labelElement.textContent = coordinatesString[i];
-
-      // Input pos
-      const inputElement = document.createElement('input');
-      inputElement.id = 'input_' + coordinatesString[i];
-      inputElement.type = 'number';
-      inputElement.style.width = 'inherit';
-      inputElement.setAttribute('value', '0');
-
-      // Event Listener
-      inputElement.addEventListener('change', (event) => {
+    const positionVec3Input = new Vector3Input('Position', 1, 0);
+    positionVec3Input.inputElements.forEach((input) => {
+      input.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
           this.boxSelector.position.set(
@@ -93,23 +64,12 @@ export class LegonizerWindow extends Window {
           this.frame3D.getItownsView().notifyChange();
         }
       });
+    });
+    coordinatesDomElement.appendChild(positionVec3Input);
 
-      // Input Scale
-      const inputScaleElement = document.createElement('input');
-      inputScaleElement.id = 'input_scale_' + coordinatesString[i];
-      inputScaleElement.type = 'number';
-      inputScaleElement.style.width = 'inherit';
-      inputScaleElement.setAttribute('value', '0');
-
-      // Input Rotation
-      const inputRotationElement = document.createElement('input');
-      inputRotationElement.id = 'input_rotation_' + coordinatesString[i];
-      inputRotationElement.type = 'number';
-      inputRotationElement.style.width = 'inherit';
-      inputRotationElement.setAttribute('value', '0');
-
-      // Event Listener
-      inputRotationElement.addEventListener('change', (event) => {
+    const rotationVec3Input = new Vector3Input('Rotation', 1, 0);
+    rotationVec3Input.inputElements.forEach((input) => {
+      input.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
           this.boxSelector.rotation.set(
@@ -122,17 +82,31 @@ export class LegonizerWindow extends Window {
           this.frame3D.getItownsView().notifyChange();
         }
       });
+    });
+    coordinatesDomElement.appendChild(rotationVec3Input);
 
-      coordElement.appendChild(labelElement);
-      coordElement.appendChild(inputElement);
-      coordElement.appendChild(inputScaleElement);
-      coordElement.appendChild(inputRotationElement);
+    const scaleVec3Input = new Vector3Input('Scale', 1, 0);
+    scaleVec3Input.inputElements.forEach((input) => {
+      input.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (value) {
+          this.boxSelector.scale.set(
+            parseFloat(this.inputScaleXElement.value),
+            parseFloat(this.inputScaleYElement.value),
+            parseFloat(this.inputScaleZElement.value)
+          );
+          this.boxSelector.updateMatrixWorld();
+          this.transformCtrls.updateMatrixWorld();
+          this.frame3D.getItownsView().notifyChange();
+        }
+      });
+    });
+    coordinatesDomElement.appendChild(scaleVec3Input);
 
-      inputVector.appendChild(coordElement);
-    }
+    return coordinatesDomElement;
+  }
 
-    this.coordBoxElement.appendChild(inputVector);
-
+  innerContentCoordinates() {
     // Button Select an area
     const buttonSelectionAreaElement = document.createElement('button');
     buttonSelectionAreaElement.id = 'button_selection';
@@ -305,11 +279,9 @@ export class LegonizerWindow extends Window {
     this.innerContentScale();
 
     // Request update every active frame
-    this.frame3D
-      .getItownsView()
-      .addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
-        this._updateFieldsFromBoxSelector();
-      });
+    this.view.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
+      this._updateFieldsFromBoxSelector();
+    });
   }
 
   /**
@@ -540,136 +512,5 @@ export class LegonizerWindow extends Window {
       manager.removeInputListener(listener);
     });
     this.listeners.length = 0;
-  }
-
-  // //// GETTERS
-  // /ID
-
-  get coordBoxSectionId() {
-    return `box_section_coordinates`;
-  }
-
-  get scaleSectionId() {
-    return `box_section_scale`;
-  }
-
-  get paramLegonizerId() {
-    return `div_parameters`;
-  }
-
-  get inputCoordinateXId() {
-    return `input_x`;
-  }
-
-  get inputCoordinateYId() {
-    return `input_y`;
-  }
-
-  get inputCoordinateZId() {
-    return `input_z`;
-  }
-
-  get inputRatioId() {
-    return `input_ratio`;
-  }
-
-  get buttonSelectionId() {
-    return `button_selection`;
-  }
-
-  get inputScaleXId() {
-    return `input_scale_x`;
-  }
-
-  get inputScaleYId() {
-    return `input_scale_y`;
-  }
-
-  get inputScaleZId() {
-    return `input_scale_z`;
-  }
-
-  get inputRotationXId() {
-    return `input_rotation_x`;
-  }
-
-  get inputRotationYId() {
-    return `input_rotation_y`;
-  }
-
-  get inputRotationZId() {
-    return `input_rotation_z`;
-  }
-
-  get inputLegoXId() {
-    return `input_x count lego plate`;
-  }
-
-  get inputLegoYId() {
-    return `input_y count lego plate`;
-  }
-
-  get coordBoxElement() {
-    return document.getElementById(this.coordBoxSectionId);
-  }
-
-  get parametersElement() {
-    return document.getElementById(this.paramLegonizerId);
-  }
-
-  get scaleBoxElement() {
-    return document.getElementById(this.scaleSectionId);
-  }
-
-  get inputCoordXElement() {
-    return document.getElementById(this.inputCoordinateXId);
-  }
-
-  get inputCoordYElement() {
-    return document.getElementById(this.inputCoordinateYId);
-  }
-
-  get inputCoordZElement() {
-    return document.getElementById(this.inputCoordinateZId);
-  }
-
-  get inputScaleXElement() {
-    return document.getElementById(this.inputScaleXId);
-  }
-
-  get inputScaleYElement() {
-    return document.getElementById(this.inputScaleYId);
-  }
-
-  get inputScaleZElement() {
-    return document.getElementById(this.inputScaleZId);
-  }
-
-  get inputRotationXElement() {
-    return document.getElementById(this.inputRotationXId);
-  }
-
-  get inputRotationYElement() {
-    return document.getElementById(this.inputRotationYId);
-  }
-
-  get inputRotationZElement() {
-    return document.getElementById(this.inputRotationZId);
-  }
-
-  get inputRatioElement() {
-    return document.getElementById(this.inputRatioId);
-  }
-
-  get buttonSelectionElement() {
-    return document.getElementById(this.buttonSelectionId);
-  }
-
-  get inputLegoScaleXElement() {
-    return document.getElementById(this.inputLegoXId);
-  }
-
-  get inputLegoScaleYElement() {
-    return document.getElementById(this.inputLegoYId);
   }
 }
