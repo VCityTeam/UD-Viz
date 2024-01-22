@@ -23,34 +23,49 @@ import {
   SphereGeometry,
   Line,
   BufferGeometry,
+  Plane,
+  PlaneGeometry,
+  DoubleSide,
+  Matrix3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import {
-  localStorageSetCameraMatrix,
+  localStorageSetMatrix4,
   localStorageSetVector3,
   computeNearFarCamera,
   RequestAnimationFrameProcess,
   createLocalStorageSlider,
   createLocalStorageDetails,
   createLocalStorageCheckbox,
-  createLocalStorageNumberInput,
 } from '@ud-viz/utils_browser';
+
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 
 import { round, vector3ToLabel } from '@ud-viz/utils_shared';
 
 import './style.css';
+
+/**
+ * @typedef {object} PointCloudOptions
+ * @property {string} name - name of C3DTilesLayer
+ * @property {object} source - C3DTilesLayer source
+ * @property {string} source.url - url to the tileset.json
+ */
 export class PointCloudVisualizer {
   /**
-   *
+   * Note: options.camera.default.quaternion is not available option since the camera
+   * is initialized as pointing towards the center of the bounding box of the
+   * observed 3DTiles.
    * @param {import("itowns").Extent} extent - itowns extent
-   * @param {Array<C3DTilesLayer>} pointClouds - points cloud layer params
+   * @param {Array<PointCloudOptions>} pointClouds - points cloud layer params
    * @param {object} options - options
    * @param {HTMLElement} options.parentDomElement - where to append planar view domelement
    * @param {string} options.domElementClass - css class to apply to this.domElement
    * @param {Array<string>} options.c3DTilesLoadingDomElementClasses - css classes to apply to c3DTilesLoadingDomElement
    * @param {object} options.camera - options camera
-   * @param {object} options.default - options camera default
-   * @param {object} options.default.position - options camera default position
+   * @param {object} options.camera.default - options camera default
+   * @param {object} options.camera.default.position - options camera default position
+
    * @param {number} options.maxSubdivisionLevel - default points cloud size
    * @param {number} options.defaultPointCloudSize - default points cloud size
    * @param {number} [options.raycasterPointsThreshold=PointCloudVisualizer.RAYCASTER_POINTS_THRESHOLD] - raycaster points treshold
@@ -104,6 +119,14 @@ export class PointCloudVisualizer {
     };
 
     // initialize point clouds
+    this.clippingPlane = new Plane();
+    const pointCloudMaterial = new PointsMaterial({
+      size:
+        options.defaultPointCloudSize ||
+        PointCloudVisualizer.DEFAULT_POINT_SIZE,
+      vertexColors: true,
+      clippingPlanes: [this.clippingPlane],
+    });
 
     /** @type {Array<C3DTilesLayer>} */
     this.pointCloudLayers = [];
@@ -120,12 +143,17 @@ export class PointCloudVisualizer {
         this.itownsView
       );
       // itowns hack working to intialize point cloud material
-      c3dTilesLayer.material = new PointsMaterial({
-        size:
-          options.defaultPointCloudSize ||
-          PointCloudVisualizer.DEFAULT_POINT_SIZE,
-        vertexColors: true,
-      });
+      c3dTilesLayer.material = pointCloudMaterial;
+      c3dTilesLayer.addEventListener(
+        C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+        ({ tileContent }) => {
+          // itowns is cloning the material breaking the reference on this.clippingPlane
+          tileContent.traverse((child) => {
+            if (child.material) child.material = pointCloudMaterial;
+          });
+        }
+      );
+
       View.prototype.addLayer.call(this.itownsView, c3dTilesLayer);
       this.pointCloudLayers.push(c3dTilesLayer); // ref pointCloud layer there to make difference between C3DTilesLayer b3dm and pnts
     });
@@ -138,7 +166,7 @@ export class PointCloudVisualizer {
     // target orbit controls is a mesh
     /** @type {Mesh} */
     this.targetOrbitControlsMesh = new Mesh(
-      new BoxGeometry(1, 1, 1),
+      new SphereGeometry(),
       new MeshBasicMaterial({ color: 'red' })
     );
     this.targetOrbitControlsMesh.name = 'target_oribit_controls';
@@ -148,22 +176,19 @@ export class PointCloudVisualizer {
       const scale =
         this.itownsView.camera.camera3D.position.distanceTo(
           this.orbitControls.target
-        ) / 80;
+        ) / 150;
       this.targetOrbitControlsMesh.scale.set(scale, scale, scale);
     };
     this.orbitControls.addEventListener('change', () => {
       updateTargetMesh();
-      // compute near far dynamically
-      const bb = new Box3().setFromObject(this.itownsView.scene);
-      computeNearFarCamera(this.itownsView.camera.camera3D, bb.min, bb.max);
       this.itownsView.notifyChange(this.itownsView.camera.camera3D);
     });
 
     // camera default placement
     {
       if (
-        !localStorageSetCameraMatrix(
-          this.itownsView.camera.camera3D,
+        !localStorageSetMatrix4(
+          this.itownsView.camera.camera3D.matrixWorld,
           PointCloudVisualizer.CAMERA_LOCAL_STORAGE_KEY
         )
       ) {
@@ -173,6 +198,13 @@ export class PointCloudVisualizer {
             options.camera.default.position.y,
             options.camera.default.position.z
           );
+      } else {
+        this.itownsView.camera.camera3D.matrixWorld.decompose(
+          this.itownsView.camera.camera3D.position,
+          this.itownsView.camera.camera3D.quaternion,
+          this.itownsView.camera.camera3D.scale
+        );
+        this.itownsView.camera.camera3D.updateProjectionMatrix();
       }
 
       if (
@@ -588,86 +620,129 @@ export class PointCloudVisualizer {
     }
 
     // near far
-    this.cameraNearFarDomElement = createLocalStorageDetails(
-      PointCloudVisualizer.CAMERA_NEAR_FAR_LOCAL_STORAGE_KEY,
-      'Camera near far',
+    this.clippingPlaneDetails = createLocalStorageDetails(
+      PointCloudVisualizer.CLIPPING_PLANE_LOCAL_STORAGE_KEY,
+      'Clipping plane',
       null
     );
     {
-      const checkboxAutoComputation = createLocalStorageCheckbox(
-        PointCloudVisualizer.CAMERA_NEAR_FAR_AUTO_COMPUTATION_LOCAL_STORAGE_KEY,
-        'Auto',
-        this.cameraNearFarDomElement,
+      const quad = new Mesh(
+        new PlaneGeometry(),
+        new MeshBasicMaterial({
+          opacity: 0.5,
+          transparent: true,
+          side: DoubleSide,
+        })
+      );
+      quad.name = 'quadOfClippingPlane';
+      this.itownsView.scene.add(quad);
+
+      if (
+        localStorageSetMatrix4(
+          quad.matrixWorld,
+          'point_cloud_visualizer_quad_matrix4'
+        )
+      ) {
+        quad.matrixWorld.decompose(quad.position, quad.quaternion, quad.scale);
+      } else {
+        quad.position.set(extent.center().x, extent.center().y, 300);
+      }
+
+      quad.scale.set(1000, 1000, 1000); // TODO: do not harcode this
+
+      const transformControlsProcess = new RequestAnimationFrameProcess(30);
+
+      const transformControls = new TransformControls(
+        this.itownsView.camera.camera3D,
+        this.itownsView.mainLoop.gfxEngine.label2dRenderer.domElement
+      );
+
+      // need to tick the rendering when quad visible since it's necessary to render due to the transform control and the camera is not moving
+      transformControlsProcess.start(() => {
+        if (!quad.visible) return;
+        transformControls.updateMatrixWorld();
+        this.itownsView.render();
+      });
+
+      const updateClippingPlane = () => {
+        this.clippingPlane.normal.copy(
+          new Vector3(0, 0, 1).applyNormalMatrix(
+            new Matrix3().getNormalMatrix(quad.matrixWorld)
+          )
+        );
+        // quad.position belongs to plane => quad.position.dot(plane.normal) = -constant
+        this.clippingPlane.constant = -(
+          this.clippingPlane.normal.x * quad.position.x +
+          this.clippingPlane.normal.y * quad.position.y +
+          this.clippingPlane.normal.z * quad.position.z
+        );
+      };
+
+      transformControls.addEventListener('change', updateClippingPlane);
+      updateClippingPlane();
+
+      this.itownsView.scene.add(transformControls);
+      // gizmo mode ui
+      {
+        const addButtonMode = (mode) => {
+          const buttonMode = document.createElement('button');
+          buttonMode.innerText = mode;
+          this.clippingPlaneDetails.appendChild(buttonMode);
+
+          buttonMode.onclick = () => {
+            transformControls.setMode(mode);
+          };
+        };
+        addButtonMode('translate');
+        addButtonMode('rotate');
+        addButtonMode('scale');
+      }
+      transformControls.addEventListener('dragging-changed', (event) => {
+        this.orbitControls.enabled = !event.value;
+      });
+
+      const planeVisible = createLocalStorageCheckbox(
+        'plane_visibility_key_loacal_storage',
+        'Visible: ',
+        this.clippingPlaneDetails,
         true
       );
-
-      const epsilon = 0.0001;
-
-      // slider near far
-      const sliderNear = createLocalStorageNumberInput(
-        PointCloudVisualizer.CAMERA_NEAR_NUMBER_LOCAL_STORAGE_KEY,
-        'Near',
-        this.cameraNearFarDomElement,
-        {
-          min: epsilon,
-          max: 1,
-          step: epsilon,
-          defaultValue: epsilon,
+      const updateQuadVisibility = () => {
+        quad.visible = planeVisible.checked;
+        if (quad.visible) {
+          transformControls.attach(quad);
+        } else {
+          transformControls.detach();
         }
+        transformControls.updateMatrixWorld();
+        this.itownsView.notifyChange();
+      };
+      planeVisible.onchange = updateQuadVisibility;
+      updateQuadVisibility();
+
+      const clippingEnable = createLocalStorageCheckbox(
+        'plane_enable_key_loacal_storage',
+        'Enable: ',
+        this.clippingPlaneDetails
       );
 
-      const sliderFar = createLocalStorageNumberInput(
-        PointCloudVisualizer.CAMERA_FAR_NUMBER_LOCAL_STORAGE_KEY,
-        'Far',
-        this.cameraNearFarDomElement,
-        {
-          min: epsilon,
-          max: 1,
-          step: epsilon,
-          defaultValue: 1,
-        }
-      );
+      const updateEnable = () => {
+        this.itownsView.mainLoop.gfxEngine.renderer.localClippingEnabled =
+          clippingEnable.checked;
+        this.itownsView.notifyChange();
+      };
+      clippingEnable.onchange = updateEnable;
+      updateEnable();
+    }
 
-      const updateCameraNearFar = () => {
+    // compute dynamically near and far
+    this.itownsView.addFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      () => {
         const bb = new Box3().setFromObject(this.itownsView.scene);
         computeNearFarCamera(this.itownsView.camera.camera3D, bb.min, bb.max);
-        if (!checkboxAutoComputation.checked) {
-          const maxDistance = this.itownsView.camera.camera3D.far;
-
-          const ratioFar = Math.max(
-            parseFloat(sliderFar.value),
-            parseFloat(sliderNear.value) + epsilon
-          );
-
-          const ratioNear = Math.min(
-            Math.max(epsilon, parseFloat(sliderFar.value) - epsilon),
-            parseFloat(sliderNear.value)
-          );
-
-          if (!isNaN(ratioFar) && !isNaN(ratioNear)) {
-            this.itownsView.camera.camera3D.far = maxDistance * ratioFar;
-            this.itownsView.camera.camera3D.near = maxDistance * ratioNear;
-
-            this.itownsView.camera.camera3D.updateProjectionMatrix();
-          }
-        }
-      };
-
-      this.itownsView.addFrameRequester(
-        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-        updateCameraNearFar
-      );
-
-      const updateCameraNearFarAndRedraw = () => {
-        updateCameraNearFar();
-        this.itownsView.notifyChange(this.itownsView.camera.camera3D);
-      };
-
-      sliderNear.oninput = updateCameraNearFarAndRedraw;
-      sliderFar.oninput = updateCameraNearFarAndRedraw;
-      checkboxAutoComputation.oninput = updateCameraNearFarAndRedraw;
-      updateCameraNearFar();
-    }
+      }
+    );
 
     // redraw
     this.itownsView.notifyChange(this.itownsView.camera.camera3D);
@@ -773,20 +848,8 @@ export class PointCloudVisualizer {
     return 'camera_local_storage_key_point_cloud_visualizer';
   }
 
-  static get CAMERA_NEAR_FAR_LOCAL_STORAGE_KEY() {
-    return 'camera_near_far_local_storage_key_point_cloud_visualizer';
-  }
-
-  static get CAMERA_NEAR_FAR_AUTO_COMPUTATION_LOCAL_STORAGE_KEY() {
-    return 'camera_near_far_auto_computation_local_storage_key_point_cloud_visualizer';
-  }
-
-  static get CAMERA_NEAR_NUMBER_LOCAL_STORAGE_KEY() {
-    return 'camera_near_slider_local_storage_key_point_cloud_visualizer';
-  }
-
-  static get CAMERA_FAR_NUMBER_LOCAL_STORAGE_KEY() {
-    return 'camera_far_slider_local_storage_key_point_cloud_visualizer';
+  static get CLIPPING_PLANE_LOCAL_STORAGE_KEY() {
+    return 'clipping_plane_local_storage_key_point_cloud_visualizer';
   }
 
   static get RAYCASTER_POINTS_THRESHOLD() {
