@@ -54,6 +54,10 @@ import './style.css';
 export class PointCloudVisualizer {
   /**
    *
+   * Note: options.camera.default.quaternion is not available option since the camera
+   * is initialized as pointing towards the center of the bounding box of the
+   * observed 3DTiles.
+   *
    * @param {import("itowns").Extent} extent - itowns extent
    * @param {Array<PointCloudOptions>} pointClouds - points cloud layer params
    * @param {object} options - options
