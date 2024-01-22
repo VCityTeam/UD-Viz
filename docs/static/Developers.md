@@ -108,7 +108,7 @@ In order to establish that specific developing context you might
   that you wish to adapt. 
 - Reinstall ud-viz npm packages
   ```bash
-  npm run reset
+  rm -f -r node_modules && rm -f package-lock.json && npm i
   ```
 - Eventually you have to modify the `webpack.config.js` in order to indicate
   to webpack what directories should be searched when resolving modules the 
