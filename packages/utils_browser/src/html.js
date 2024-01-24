@@ -69,7 +69,7 @@ export function createLabelInput(labelText, inputType) {
   parent.appendChild(label);
   parent.appendChild(input);
 
-  return { parent: parent, input: input };
+  return { parent: parent, input: input, label: label };
 }
 
 /**
@@ -102,21 +102,42 @@ export function createDateIntervalInput(labelText) {
   };
 }
 
+/**
+ * A custom HTML element that represents a vector input with three numeric
+ * values (x, y, z) and allows for event handling when the values are changed.
+ */
 export class Vector3Input extends HTMLElement {
-  constructor(label, step) {
+  /**
+   * A custom element with three input fields for x, y and z values, and
+   * dispatches a 'change' event when any of the input values are changed.
+   *
+   * @param {string} labelVector - A string that represents the label for the
+   * vector input.
+   * @param {number} step - A number that specifies the increment or decrement value for
+   * the input fields.
+   * @param {number} value - The initial value that will be set for all three input
+   * fields (`x`, `y` and `z`).
+   * @param {Array<string>} [labels] - An optional array that contains the labels for the
+   * input fields. By default, it is set to `['x', 'y', 'z']`.
+   */
+  constructor(labelVector, step, value, labels = ['x', 'y', 'z']) {
     super();
 
-    this.label = document.createElement('label');
-    this.label.innerText = label;
-    this.appendChild(this.label);
+    this.labelVector = document.createElement('label');
+    this.labelVector.innerText = labelVector;
+    this.appendChild(this.labelVector);
 
-    this.x = createLabelInput('X: ', 'number');
-    this.y = createLabelInput('Y: ', 'number');
-    this.z = createLabelInput('Z: ', 'number');
+    this.x = createLabelInput(labels[0], 'number');
+    this.y = createLabelInput(labels[1], 'number');
+    this.z = createLabelInput(labels[2], 'number');
 
     this.x.input.step = step;
     this.y.input.step = step;
     this.z.input.step = step;
+
+    this.x.input.value = value;
+    this.y.input.value = value;
+    this.z.input.value = value;
 
     this.appendChild(this.x.parent);
     this.appendChild(this.y.parent);
@@ -132,5 +153,140 @@ export class Vector3Input extends HTMLElement {
       this.dispatchEvent(new Event('change'))
     );
   }
+
+  /**
+   * The function returns an array of input elements.
+   *
+   * @returns {Array<HTMLInputElement>} Containing the input elements for the x, y, and z properties.
+   */
+  get inputElements() {
+    return [this.x.input, this.y.input, this.z.input];
+  }
 }
 window.customElements.define('vector3-input', Vector3Input); // mandatory to extends HTMLElement
+
+/**
+ * A custom HTML element that represents a vector input with two numeric
+ * values (x, y) and allows for event handling when the values are changed.
+ */
+export class Vector2Input extends HTMLElement {
+  /**
+   * A custom element with two input fields for x and y values, and
+   * dispatches a 'change' event when any of the input values are changed.
+   *
+   * @param {string} labelVector - A string that represents the label for the
+   * vector input.
+   * @param {number} step - A number that specifies the increment or decrement value for
+   * the input fields.
+   * @param {number} value - The initial value that will be set for all two input
+   * fields (`x` and `y`).
+   * @param {Array<string>} [labels] - An optional array that contains the labels for the
+   * input fields. By default, it is set to `['x', 'y']`.
+   */
+  constructor(labelVector, step, value, labels = ['x', 'y']) {
+    super();
+
+    this.labelVector = document.createElement('label');
+    this.labelVector.innerText = labelVector;
+    this.appendChild(this.labelVector);
+
+    this.x = createLabelInput(labels[0], 'number');
+    this.y = createLabelInput(labels[1], 'number');
+
+    this.x.input.step = step;
+    this.y.input.step = step;
+
+    this.x.input.value = value;
+    this.y.input.value = value;
+
+    this.appendChild(this.x.parent);
+    this.appendChild(this.y.parent);
+
+    this.x.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.y.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+  }
+
+  /**
+   * The function returns an array of input elements.
+   *
+   * @returns {Array<HTMLInputElement>} Containing the input elements for the x and y properties.
+   */
+  get inputElements() {
+    return [this.x.input, this.y.input];
+  }
+}
+window.customElements.define('vector2-input', Vector2Input); // mandatory to extends HTMLElement
+
+/**
+ * A custom HTML element that represents a vector input with four numeric
+ * values (x, y, z, w) and allows for event handling when the values are changed.
+ */
+export class Vector4Input extends HTMLElement {
+  /**
+   * A custom element with four input fields for x, y, z and w values, and
+   * dispatches a 'change' event when any of the input values are changed.
+   *
+   * @param {string} labelVector - A string that represents the label for the
+   * vector input.
+   * @param {number} step - A number that specifies the increment or decrement value for
+   * the input fields.
+   * @param {number} value - The initial value that will be set for all four input
+   * fields (`x`, `y`, `z` and `w`).
+   * @param {Array<string>} [labels] - An optional array that contains the labels for the
+   * input fields. By default, it is set to `['x', 'y', 'z', 'w']`.
+   */
+  constructor(labelVector, step, value, labels = ['x', 'y', 'z', 'w']) {
+    super();
+
+    this.labelVector = document.createElement('label');
+    this.labelVector.innerText = labelVector;
+    this.appendChild(this.labelVector);
+
+    this.x = createLabelInput(labels[0], 'number');
+    this.y = createLabelInput(labels[1], 'number');
+    this.z = createLabelInput(labels[2], 'number');
+    this.w = createLabelInput(labels[3], 'number');
+
+    this.x.input.step = step;
+    this.y.input.step = step;
+    this.z.input.step = step;
+    this.w.input.step = step;
+
+    this.x.input.value = value;
+    this.y.input.value = value;
+    this.z.input.value = value;
+    this.w.input.value = value;
+
+    this.appendChild(this.x.parent);
+    this.appendChild(this.y.parent);
+    this.appendChild(this.z.parent);
+    this.appendChild(this.w.parent);
+
+    this.x.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.y.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.z.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+    this.w.input.addEventListener('change', () =>
+      this.dispatchEvent(new Event('change'))
+    );
+  }
+
+  /**
+   * The function returns an array of input elements.
+   *
+   * @returns {Array<HTMLInputElement>} Containing the input elements for the x, y, z and w properties.
+   */
+  get inputElements() {
+    return [this.x.input, this.y.input, this.z.input, this.w.input];
+  }
+}
+window.customElements.define('vector4-input', Vector4Input); // mandatory to extends HTMLElement

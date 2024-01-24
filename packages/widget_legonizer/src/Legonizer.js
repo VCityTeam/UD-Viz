@@ -1,43 +1,109 @@
-import { Vector3Input } from '@ud-viz/utils_browser';
-import { PlanarView } from 'itowns';
+import {
+  Vector2Input,
+  Vector3Input,
+  Vector4Input,
+  createLabelInput,
+  checkParentChild,
+} from '@ud-viz/utils_browser';
+import { PlanarView, MAIN_LOOP_EVENTS } from 'itowns';
+import { Planar } from '@ud-viz/frame3d';
+import {
+  BoxGeometry,
+  Mesh,
+  MeshLambertMaterial,
+  Vector2,
+  Vector3,
+  Vector4,
+  MeshBasicMaterial,
+} from 'three';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
+import { InputManager } from '@ud-viz/game_browser';
+import { updateMockUpObject } from './MockUpUtils';
+import { LegoMockupVisualizer } from './LegoMockupVisualizer';
 
 export class Legonizer {
   /**
    *
-   * @param {PlanarView} view
+   * @param {Planar} planar
    */
-  constructor(view) {
+  constructor(planar) {
     /** @type {HTMLElement} */
-    this.domElement = document.createElement('div');
+    this.domElement = null;
+    /** @type {Vector3Input} */
+    this.positionVec3Input = null;
+    /** @type {Vector3Input} */
+    this.rotationVec3Input = null;
+    /** @type {Vector3Input} */
+    this.scaleVec3Input = null;
+    /** @type {Vector2Input} */
+    this.countLegoVec2Input = null;
+    /** @type {{parent:HTMLDivElement,input:HTMLInputElement,label:HTMLLabelElement}} */
+    this.ratioParameterLabelInput = null;
+    /** @type {HTMLButtonElement} */
+    this.buttonSelectionAreaElement = null;
 
+    /** @type {Planar} */
+    this.planar = planar;
     /** @type {PlanarView} */
-    this.view = view;
+    this.view = planar.itownsView;
 
-    this.boxSelector;
+    /** @type {Mesh<BoxGeometry, MeshLambertMaterial, Object3DEventMap>} */
+    this.boxSelector = null;
+    /** @type {Mesh<BoxGeometry, MeshLambertMaterial, Object3DEventMap>} */
+    this.legoPrevisualisation = null;
+    /** @type {TransformControls} */
+    this.transformCtrls = null;
 
-    this.legoPrevisualisation;
-
-    this.transformCtrls;
-
-    this.itownsController = true;
-
-    this.listeners = [];
-
+    /** @type {number} */
     this.ratio = 3;
 
-    this.createLegonizerDomEl();
+    this.inputManager = new InputManager();
+
+    this.initDomElement();
+    this.initScene();
+    this.view.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
+      this._updateFieldsFromBoxSelector();
+    });
   }
 
-  createLegonizerDomEl() {
+  initDomElement() {
     const legonizerDomElement = document.createElement('div');
-
     legonizerDomElement.appendChild(this.createCoordinatesDomEl());
+    legonizerDomElement.appendChild(this.createScaleDomEl());
+    // Button Generate Lego Mockup
+    const buttonGenerateMockupElement = document.createElement('button');
+    buttonGenerateMockupElement.id = 'button_generate_Mockup';
+    buttonGenerateMockupElement.textContent = 'Generate Lego Mockup';
+    buttonGenerateMockupElement.onclick = () => {
+      this.generateMockup();
+    };
+    legonizerDomElement.appendChild(buttonGenerateMockupElement);
 
-    // Scales Box DOM
-    const scalesDomElement = document.createElement('div');
-    legonizerDomElement.appendChild(scalesDomElement);
+    this.domElement = legonizerDomElement;
+    return legonizerDomElement;
+  }
 
-    this.domElement.appendChild(legonizerDomElement);
+  initScene() {
+    this.createBoxSelector();
+    this.createLegoPrevisualisation();
+
+    // Transform controls
+    this.transformCtrls = new TransformControls(
+      this.view.camera.camera3D,
+      this.view.mainLoop.gfxEngine.label2dRenderer.domElement
+    );
+
+    // Update view when the box selector is changed
+    this.transformCtrls.addEventListener('dragging-changed', (event) => {
+      this.view.controls.enabled = !event.value;
+    });
+    this.transformCtrls.addEventListener('change', () => {
+      this.transformCtrls.updateMatrixWorld();
+      this.view.notifyChange();
+    });
+    this.view.scene.add(this.transformCtrls);
+    this.view.scene.add(this.boxSelector);
+    this.view.scene.add(this.legoPrevisualisation);
   }
 
   createCoordinatesDomEl() {
@@ -49,270 +115,175 @@ export class Legonizer {
     coordinatesTitle.innerText = 'Coordinates';
     coordinatesDomElement.appendChild(coordinatesTitle);
 
-    const positionVec3Input = new Vector3Input('Position', 1, 0);
-    positionVec3Input.inputElements.forEach((input) => {
+    this.positionVec3Input = new Vector3Input('Position', 1, 0);
+    this.positionVec3Input.inputElements.forEach((input) => {
       input.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
           this.boxSelector.position.set(
-            parseFloat(this.inputCoordXElement.value),
-            parseFloat(this.inputCoordYElement.value),
-            parseFloat(this.inputCoordZElement.value)
+            parseFloat(this.positionVec3Input.x.input.value),
+            parseFloat(this.positionVec3Input.y.input.value),
+            parseFloat(this.positionVec3Input.z.input.value)
           );
           this.boxSelector.updateMatrixWorld();
           this.transformCtrls.updateMatrixWorld();
-          this.frame3D.getItownsView().notifyChange();
+          this.view.notifyChange();
         }
       });
     });
-    coordinatesDomElement.appendChild(positionVec3Input);
+    coordinatesDomElement.appendChild(this.positionVec3Input);
 
-    const rotationVec3Input = new Vector3Input('Rotation', 1, 0);
-    rotationVec3Input.inputElements.forEach((input) => {
+    this.rotationVec3Input = new Vector3Input('Rotation', 1, 0);
+    this.rotationVec3Input.inputElements.forEach((input) => {
       input.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
           this.boxSelector.rotation.set(
-            parseFloat(this.inputRotationXElement.value),
-            parseFloat(this.inputRotationYElement.value),
-            parseFloat(this.inputRotationZElement.value)
+            parseFloat(this.rotationVec3Input.x.input.value),
+            parseFloat(this.rotationVec3Input.y.input.value),
+            parseFloat(this.rotationVec3Input.z.input.value)
           );
           this.boxSelector.updateMatrixWorld();
           this.transformCtrls.updateMatrixWorld();
-          this.frame3D.getItownsView().notifyChange();
+          this.view.notifyChange();
         }
       });
     });
-    coordinatesDomElement.appendChild(rotationVec3Input);
+    coordinatesDomElement.appendChild(this.rotationVec3Input);
 
-    const scaleVec3Input = new Vector3Input('Scale', 1, 0);
-    scaleVec3Input.inputElements.forEach((input) => {
+    this.scaleVec3Input = new Vector3Input('Scale', 1, 0);
+    this.scaleVec3Input.inputElements.forEach((input) => {
       input.addEventListener('change', (event) => {
         const value = event.target.value;
         if (value) {
           this.boxSelector.scale.set(
-            parseFloat(this.inputScaleXElement.value),
-            parseFloat(this.inputScaleYElement.value),
-            parseFloat(this.inputScaleZElement.value)
+            parseFloat(this.scaleVec3Input.x.input.value),
+            parseFloat(this.scaleVec3Input.y.input.value),
+            parseFloat(this.scaleVec3Input.z.input.value)
           );
           this.boxSelector.updateMatrixWorld();
           this.transformCtrls.updateMatrixWorld();
-          this.frame3D.getItownsView().notifyChange();
+          this.view.notifyChange();
         }
       });
     });
-    coordinatesDomElement.appendChild(scaleVec3Input);
+    coordinatesDomElement.appendChild(this.scaleVec3Input);
+
+    // Button Select an area
+    this.buttonSelectionAreaElement = document.createElement('button');
+    this.buttonSelectionAreaElement.id = 'button_selection';
+    this.buttonSelectionAreaElement.textContent = 'Select an area';
+    this.buttonSelectionAreaElement.onclick = () => {
+      this.selectArea();
+    };
+
+    coordinatesDomElement.appendChild(this.buttonSelectionAreaElement);
 
     return coordinatesDomElement;
   }
 
-  innerContentCoordinates() {
-    // Button Select an area
-    const buttonSelectionAreaElement = document.createElement('button');
-    buttonSelectionAreaElement.id = 'button_selection';
-    buttonSelectionAreaElement.textContent = 'Select an area';
+  createScaleDomEl() {
+    // Scale Box DOM
+    const scalesSectionDomElement = document.createElement('div');
+    scalesSectionDomElement.id = 'widget_legonizer_vector_container';
 
-    buttonSelectionAreaElement.onclick = () => {
-      this.selectArea(!this.itownsController);
-    };
+    const scaleTitle = document.createElement('h3');
+    scaleTitle.innerText = 'Scales Parameters';
+    scalesSectionDomElement.appendChild(scaleTitle);
 
-    this.coordBoxElement.appendChild(buttonSelectionAreaElement);
-
-    // Button Generate Lego Mockup
-    const buttonGenerateMockupElement = document.createElement('button');
-    buttonGenerateMockupElement.id = 'button_generate_Mockup';
-    buttonGenerateMockupElement.textContent = 'Generate Lego Mockup';
-
-    buttonGenerateMockupElement.onclick = () => {
-      this.generateMockup();
-    };
-
-    this.parametersElement.appendChild(buttonGenerateMockupElement);
-  }
-
-  innerContentScale() {
-    const inputVector = document.createElement('div');
-    inputVector.id = 'lego' + '_inputVector';
-    inputVector.style.display = 'inline-flex';
-
-    const coordinatesString = ['x count lego plate', 'y count lego plate'];
-
-    for (let i = 0; i < 2; i++) {
-      // //coord Elements
-      const scaleElement = document.createElement('div');
-      scaleElement.id = coordinatesString[i] + '_grid';
-      scaleElement.style.display = 'grid';
-      scaleElement.style.width = '50%';
-      scaleElement.style.height = 'auto';
-
-      // Label
-      const labelElement = document.createElement('h3');
-      labelElement.textContent = coordinatesString[i];
-
-      // Input
-      const inputElement = document.createElement('input');
-      inputElement.id = 'input_' + coordinatesString[i];
-      inputElement.type = 'number';
-      inputElement.style.width = 'inherit';
-      inputElement.setAttribute('value', '0');
-
-      // Event listener
-      inputElement.addEventListener('change', (event) => {
-        const value = event.target.value;
-        if (value) {
-          const scaleX =
-            parseInt(this.inputLegoScaleXElement.value) * this.ratio * 32;
-
-          const scaleY =
-            parseInt(this.inputLegoScaleYElement.value) * this.ratio * 32;
-
-          this.boxSelector.scale.set(scaleX, scaleY, this.boxSelector.scale.z);
-          this.boxSelector.updateMatrixWorld();
-          this.transformCtrls.updateMatrixWorld();
-          this.frame3D.getItownsView().notifyChange();
-        }
-      });
-
-      scaleElement.appendChild(labelElement);
-      scaleElement.appendChild(inputElement);
-
-      inputVector.appendChild(scaleElement);
-    }
-
-    // Label
-    const labelElement = document.createElement('h3');
-    labelElement.textContent = 'Ratio parameter';
-
-    // Input pos
-    const inputElement = document.createElement('input');
-    inputElement.id = 'input_ratio';
-    inputElement.type = 'number';
-    inputElement.style.width = 'inherit';
-    inputElement.setAttribute('value', '0');
-
-    inputElement.addEventListener('change', (event) => {
+    this.ratioParameterLabelInput = createLabelInput('Ratio', 'number');
+    this.ratioParameterLabelInput.input.value = 0;
+    this.ratioParameterLabelInput.input.addEventListener('change', (event) => {
       const value = event.target.value;
       if (value) {
         this.ratio = this.inputRatioElement.value;
-
         this.boxSelector.updateMatrixWorld();
         this.transformCtrls.updateMatrixWorld();
-        this.frame3D.getItownsView().notifyChange();
+        this.view.notifyChange();
       }
     });
 
-    this.scaleBoxElement.appendChild(labelElement);
-    this.scaleBoxElement.appendChild(inputElement);
-    this.scaleBoxElement.appendChild(inputVector);
+    scalesSectionDomElement.appendChild(this.ratioParameterLabelInput.parent);
+
+    this.countLegoVec2Input = new Vector2Input('Count Lego', 1, 0);
+
+    scalesSectionDomElement.appendChild(this.countLegoVec2Input);
+    return scalesSectionDomElement;
   }
 
-  windowCreated() {
-    if (!this.boxSelector) {
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const object = new THREE.Mesh(
-        geometry,
-        new THREE.MeshLambertMaterial({
-          color: 0x00ff00,
-          opacity: 0.3,
-          transparent: true,
-        })
-      );
+  createBoxSelector() {
+    const geometry = new BoxGeometry(1, 1, 1);
+    const boxSelector = new Mesh(
+      geometry,
+      new MeshLambertMaterial({
+        color: 0x00ff00,
+        opacity: 0.3,
+        transparent: true,
+      })
+    );
 
-      object.position.x = this.frame3D.itownsView.tileLayer.extent.center().x;
-      object.position.y = this.frame3D.itownsView.tileLayer.extent.center().y;
-      object.position.z = 200;
+    boxSelector.position.x = this.view.tileLayer.extent.center().x;
+    boxSelector.position.y = this.view.tileLayer.extent.center().y;
+    boxSelector.position.z = 200;
 
-      object.updateMatrixWorld();
+    boxSelector.updateMatrixWorld();
+    this.boxSelector = boxSelector;
+    return boxSelector;
+  }
 
-      // Box selector
-      this.boxSelector = object;
-      this.frame3D.getScene().add(this.boxSelector);
+  createLegoPrevisualisation() {
+    const geometryLego = new BoxGeometry(
+      this.ratio,
+      this.ratio,
+      (this.ratio * 9.6) / 7.8 // Lego dimension
+    );
+    const objectLego = new Mesh(
+      geometryLego,
+      new MeshLambertMaterial({
+        color: 0x00ff00,
+      })
+    );
 
-      const geometryLego = new THREE.BoxGeometry(
-        this.ratio,
-        this.ratio,
-        (this.ratio * 9.6) / 7.8 // Lego dimension
-      );
-      const objectLego = new THREE.Mesh(
-        geometryLego,
-        new THREE.MeshLambertMaterial({
-          color: 0x00ff00,
-        })
-      );
+    objectLego.position.x = this.boxSelector.position.x;
+    objectLego.position.y = this.boxSelector.position.y;
+    objectLego.position.z = 300;
 
-      objectLego.position.x = object.position.x;
-      objectLego.position.y = object.position.y;
-      objectLego.position.z = 300;
+    objectLego.updateMatrixWorld();
 
-      objectLego.updateMatrixWorld();
+    this.legoPrevisualisation = objectLego;
 
-      this.legoPrevisualisation = objectLego;
-      this.frame3D.getScene().add(this.legoPrevisualisation);
-
-      // Transform controls
-      this.transformCtrls = new TransformControls(
-        this.frame3D.getCamera(),
-        this.frame3D.getItownsView().mainLoop.gfxEngine.label2dRenderer.domElement
-      );
-
-      // Update view when the box selector is changed
-      this.transformCtrls.addEventListener('dragging-changed', (event) => {
-        console.log(event);
-        if (event.value) {
-          this.frame3D.getItownsView().controls.dispose();
-          this.frame3D.getItownsView().controls = null;
-          this.frame3D.getItownsView().notifyChange(this.frame3D.getCamera());
-          this.transformCtrls.updateMatrixWorld();
-        } else {
-          const planarControl = new itowns.PlanarControls(
-            this.frame3D.getItownsView()
-          );
-        }
-      });
-
-      this.frame3D.getScene().add(this.transformCtrls);
-    }
-
-    this.boxSelector.visible = true;
-    // HTML content
-    this.innerContentCoordinates();
-    this.innerContentScale();
-
-    // Request update every active frame
-    this.view.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
-      this._updateFieldsFromBoxSelector();
-    });
+    return objectLego;
   }
 
   /**
    * Updates the form fields from the box selector position.
    */
   _updateFieldsFromBoxSelector() {
-    if (this.isVisible) {
-      const position = this.boxSelector.position;
-      this.inputCoordXElement.value = position.x;
-      this.inputCoordYElement.value = position.y;
-      this.inputCoordZElement.value = position.z;
+    /**
+     * Sets the values of input fields in a vector input
+     *
+     * @param {Vector2Input | Vector3Input | Vector4Input} vecInput - Contains input fields for each component of a vector.
+     * @param {Vector2 | Vector3| Vector4} vector - A vector from three.
+     */
+    const setVecInputFromVector = (vecInput, vector) => {
+      vecInput.x.input.value = vector.x;
+      vecInput.y.input.value = vector.y;
+      if (vecInput.z) vecInput.z.input.value = vector.z;
+      if (vecInput.w) vecInput.w.input.value = vector.w;
+    };
 
-      const rotation = this.boxSelector.rotation;
-      this.inputRotationXElement.value = rotation.x;
-      this.inputRotationYElement.value = rotation.y;
-      this.inputRotationZElement.value = rotation.z;
+    setVecInputFromVector(this.positionVec3Input, this.boxSelector.position);
+    setVecInputFromVector(this.rotationVec3Input, this.boxSelector.rotation);
+    setVecInputFromVector(this.scaleVec3Input, this.boxSelector.scale);
+    setVecInputFromVector(
+      this.countLegoVec2Input,
+      new Vector2(
+        Math.trunc(this.boxSelector.scale.x / this.ratio / 32),
+        Math.trunc(this.boxSelector.scale.y / this.ratio / 32)
+      )
+    );
 
-      this.inputScaleXElement.value = this.boxSelector.scale.x;
-      this.inputScaleYElement.value = this.boxSelector.scale.y;
-      this.inputScaleZElement.value = this.boxSelector.scale.z;
-
-      this.inputLegoScaleXElement.value = Math.abs(
-        Math.trunc(this.boxSelector.scale.x / this.ratio / 32)
-      );
-
-      this.inputLegoScaleYElement.value = Math.abs(
-        Math.trunc(Math.abs(this.boxSelector.scale.y) / this.ratio / 32)
-      );
-
-      this.inputRatioElement.value = this.ratio;
-    }
+    this.ratioParameterLabelInput.input.value = this.ratio;
   }
 
   windowDestroyed() {
@@ -327,16 +298,13 @@ export class Legonizer {
     bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
     bufferBoxGeometry.computeBoundingBox();
 
-    const xPlates = parseInt(this.inputLegoScaleXElement.value);
-    const yPlates = parseInt(this.inputLegoScaleYElement.value);
+    const xPlates = parseInt(this.countLegoVec2Input.x.input.value);
+    const yPlates = parseInt(this.countLegoVec2Input.y.input.value);
 
-    const legoVisu = new LegoMockupVisualizer(this.frame3D);
-    // bufferBoxGeometry.boundingBox.applyMatrix4(this.boxSelector.matrixWorld);
-    // console.log(bufferBoxGeometry.boundingBox.min);
-    // bufferBoxGeometry.boundingBox.min.applyMatrix4(this.boxSelector.matrixWorld);
-    // console.log(bufferBoxGeometry.boundingBox.min);
+    const legoVisu = new LegoMockupVisualizer(this.planar);
+
     const dataSelected = updateMockUpObject(
-      this.frame3D.getLayerManager(),
+      this.view.getLayers().filter((el) => el.isC3DTilesLayer),
       bufferBoxGeometry.boundingBox,
       this.boxSelector.quaternion
     );
@@ -352,67 +320,47 @@ export class Legonizer {
   }
 
   // Select Area from 3DTiles
-  selectArea(value) {
-    this.itownsController = value;
-    const frame3D = this.frame3D;
+  selectArea() {
+    this.view.controls.enabled = !this.view.controls.enabled;
 
-    if (value == true) {
-      this.buttonSelectionElement.textContent = 'Select an area';
-
-      // Itowns control
-      const planarControl = new itowns.PlanarControls(frame3D.getItownsView());
-
-      // Remove pointer lock
+    if (this.view.controls.enabled) {
+      this.buttonSelectionAreaElement.textContent = 'Select an area';
       this.inputManager.setPointerLock(false);
 
-      // Enable itowns rendering
-      frame3D.setIsRendering(true);
-
-      frame3D.getItownsView().notifyChange(this.frame3D.getCamera());
-      this.removeListeners();
+      this.inputManager.dispose();
 
       this.transformCtrls.visible = true;
       this.transformCtrls.attach(this.boxSelector);
       this.transformCtrls.updateMatrixWorld();
     } else {
-      this.buttonSelectionElement.textContent = 'Finish';
+      this.buttonSelectionAreaElement.textContent = 'Finish';
 
-      if (this.transformCtrls) {
-        this.transformCtrls.detach(this.boxSelector);
-        this.transformCtrls.visible = false;
-      }
+      this.transformCtrls.detach(this.boxSelector);
+      this.transformCtrls.visible = false;
 
-      // Remove itowns controls
-      frame3D.getItownsView().controls.dispose();
-      frame3D.getItownsView().controls = null;
-
-      frame3D.setIsRendering(false);
-
-      // Add listeners
-      const rootWelGL = frame3D.getRootWebGL();
+      const rootWelGL = this.view.domElement;
 
       let isDragging = false;
 
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({
+      const geometry = new BoxGeometry(1, 1, 1);
+      const material = new MeshBasicMaterial({
         color: 0x0000ff,
         opacity: 0.5,
         transparent: true,
         alphaTest: 0.5,
       });
-      const selectAreaObject = new THREE.Mesh(geometry, material);
+      const selectAreaObject = new Mesh(geometry, material);
+
       selectAreaObject.name = 'Select Area Menu Object';
 
       // Compute z + height of the box
       let minZ, maxZ;
 
       const mouseCoordToWorldCoord = (event, result) => {
-        frame3D
-          .getItownsView()
-          .getPickingPositionFromDepth(
-            new THREE.Vector2(event.offsetX, event.offsetY),
-            result
-          );
+        this.view.getPickingPositionFromDepth(
+          new Vector2(event.offsetX, event.offsetY),
+          result
+        );
 
         // Compute minZ maxZ according where the mouse is moving TODO check with a step in all over the rect maybe
         minZ = Math.min(minZ, result.z);
@@ -420,12 +368,12 @@ export class Legonizer {
         selectAreaObject.position.z = (minZ + maxZ) * 0.5;
         selectAreaObject.scale.z = 50 + maxZ - minZ; // 50 higher to see it
         selectAreaObject.updateMatrixWorld();
-        frame3D.getItownsView().notifyChange();
+        this.view.notifyChange();
       };
 
-      const worldCoordStart = new THREE.Vector3();
-      const worldCoordCurrent = new THREE.Vector3();
-      const center = new THREE.Vector3();
+      const worldCoordStart = new Vector3();
+      const worldCoordCurrent = new Vector3();
+      const center = new Vector3();
 
       const updateSelectAreaObject = () => {
         center.lerpVectors(worldCoordStart, worldCoordCurrent, 0.5);
@@ -440,7 +388,7 @@ export class Legonizer {
       };
 
       const dragStart = (event) => {
-        if (checkParentChild(event.target, frame3D.ui)) return; // Ui has been clicked
+        if (checkParentChild(event.target, this.planar.domElementUI)) return; // Ui has been clicked
 
         isDragging = true; // Reset
         minZ = Infinity; // Reset
@@ -451,12 +399,16 @@ export class Legonizer {
 
         updateSelectAreaObject();
 
-        frame3D.getScene().add(selectAreaObject);
+        this.view.scene.add(selectAreaObject);
       };
       this.inputManager.addMouseInput(rootWelGL, 'mousedown', dragStart);
 
       const dragging = (event) => {
-        if (checkParentChild(event.target, frame3D.ui) || !isDragging) return; // Ui
+        if (
+          checkParentChild(event.target, this.planar.domElementUI) ||
+          !isDragging
+        )
+          return; // Ui
 
         mouseCoordToWorldCoord(event, worldCoordCurrent);
         updateSelectAreaObject();
@@ -466,7 +418,7 @@ export class Legonizer {
       const dragEnd = () => {
         if (!isDragging) return; // Was not dragging
 
-        frame3D.getScene().remove(selectAreaObject);
+        this.view.scene.remove(selectAreaObject);
         isDragging = false;
 
         if (worldCoordStart.equals(worldCoordCurrent)) return; // It is not an area
@@ -494,23 +446,9 @@ export class Legonizer {
         selectAreaObject.updateMatrixWorld();
         this.boxSelector.updateMatrixWorld();
         this.legoPrevisualisation.updateMatrixWorld();
-        frame3D.getItownsView().notifyChange(this.frame3D.getCamera());
+        this.view.notifyChange(this.view.camera.camera3D);
       };
       this.inputManager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
-
-      // Record for further dispose
-      this.listeners.push(dragStart);
-      this.listeners.push(dragging);
-      this.listeners.push(dragEnd);
     }
-  }
-
-  removeListeners() {
-    // Remove listeners
-    const manager = this.inputManager;
-    this.listeners.forEach((listener) => {
-      manager.removeInputListener(listener);
-    });
-    this.listeners.length = 0;
   }
 }
