@@ -1,21 +1,26 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
-import * as itowns from 'itowns';
 import './LegoVisualizerScene.css';
+import { Planar } from '@ud-viz/frame3d';
 
-/**
- * @param {itowns} view3D
- */
 export class LegoMockupVisualizer {
-  constructor(view3D) {
-    this.view3D = view3D;
+  /**
+   * Initializes properties and sets up the HTML and THREE.js scene.
+   *
+   * @param {Planar} planar - The "planar" parameter is likely a reference to a planar object or a planar
+   * surface. It could be used to define the dimensions, position, or other properties of the planar
+   * object within the constructor.
+   */
+  constructor(planar) {
+    this.planar = planar;
 
-    this.sceneElement;
+    this.sceneElement = null;
 
-    this.scene;
+    this.scene = null;
 
-    this.camera;
+    this.camera = null;
+    this.otbitControls = null;
 
     this.constructHtml();
 
@@ -23,11 +28,11 @@ export class LegoMockupVisualizer {
   }
 
   constructHtml() {
-    // This.view3D.rootHtml
+    // This.planar.rootHtml
     this.sceneElement = document.createElement('div');
     this.sceneElement.id = 'legoVisualizerScene';
 
-    this.view3D.rootHtml.appendChild(this.sceneElement);
+    this.planar.domElement.appendChild(this.sceneElement);
   }
 
   createTHREEScene() {
@@ -58,33 +63,13 @@ export class LegoMockupVisualizer {
     this.scene.add(light);
     this.scene.add(light2);
 
-    const orbit = new OrbitControls(this.camera, renderer.domElement);
-    orbit.update();
-    orbit.addEventListener('change', () => {
+    this.orbit = new OrbitControls(this.camera, renderer.domElement);
+    this.orbit.update();
+    this.orbit.addEventListener('change', () => {
       renderer.render(this.scene, this.camera);
     });
-
-    const geometry = new THREE.BoxGeometry(1, 1, 2);
-    const material = new THREE.MeshPhongMaterial({ color: 'blue' });
-    const terrain = new THREE.Mesh(geometry, material);
-
-    terrain.position.set(0, 10, 0);
-
-    const control = new TransformControls(this.camera, renderer.domElement);
-    control.addEventListener('change', () => {
-      renderer.render(this.scene, this.camera);
-    });
-
-    control.addEventListener('dragging-changed', function (event) {
-      orbit.enabled = !event.value;
-    });
-
-    this.scene.add(terrain);
-    control.attach(terrain);
-    this.scene.add(control);
 
     renderer.render(this.scene, this.camera);
-    // This.camera.lookAt(terrain);
   }
 
   addLegoPlateSimulation(heightMap, xPlates, yPlates) {
@@ -95,6 +80,7 @@ export class LegoMockupVisualizer {
     terrain.position.set(xPlates * 32, -1, yPlates * 32);
     this.scene.add(terrain);
 
+    const mockUpLego = new THREE.Group();
     for (let j = 0; j < heightMap.length; j++) {
       const heightMapX = heightMap[j];
       for (let i = 0; i < heightMapX.length; i++) {
@@ -107,12 +93,21 @@ export class LegoMockupVisualizer {
             cube.position.set(
               i + xPlates * 32,
               h + 0.230769230769231 * h,
-              j + yPlates * 32
+              -j + yPlates * 32
             );
-            this.scene.add(cube);
+            mockUpLego.add(cube);
           }
         }
       }
     }
+
+    const targetPosition = new THREE.Box3()
+      .setFromObject(mockUpLego.clone())
+      .getCenter(mockUpLego.clone().position);
+
+    this.orbit.target.copy(targetPosition);
+    this.orbit.update();
+
+    this.scene.add(mockUpLego);
   }
 }

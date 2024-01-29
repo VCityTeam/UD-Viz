@@ -18,8 +18,12 @@ import {
 } from 'three';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { InputManager } from '@ud-viz/game_browser';
-import { updateMockUpObject } from './MockUpUtils';
+import { createMockUpObject } from './MockUpUtils';
 import { LegoMockupVisualizer } from './LegoMockupVisualizer';
+import {
+  createHeightMapFromBufferGeometry,
+  generateCSVwithHeightMap,
+} from 'legonizer';
 
 export class Legonizer {
   /**
@@ -196,7 +200,7 @@ export class Legonizer {
     this.ratioParameterLabelInput.input.addEventListener('change', (event) => {
       const value = event.target.value;
       if (value) {
-        this.ratio = this.inputRatioElement.value;
+        this.ratio = this.ratioParameterLabelInput.input.value;
         this.boxSelector.updateMatrixWorld();
         this.transformCtrls.updateMatrixWorld();
         this.view.notifyChange();
@@ -301,20 +305,21 @@ export class Legonizer {
     const xPlates = parseInt(this.countLegoVec2Input.x.input.value);
     const yPlates = parseInt(this.countLegoVec2Input.y.input.value);
 
-    const legoVisu = new LegoMockupVisualizer(this.planar);
-
-    const dataSelected = updateMockUpObject(
-      this.view.getLayers().filter((el) => el.isC3DTilesLayer),
-      bufferBoxGeometry.boundingBox,
-      this.boxSelector.quaternion
+    const layers = this.view.getLayers().filter((el) => el.isC3DTilesLayer);
+    const mockUpObject = createMockUpObject(
+      layers,
+      bufferBoxGeometry.boundingBox
     );
+
+    if (!mockUpObject || !mockUpObject.geometry) return;
     const heightmap = createHeightMapFromBufferGeometry(
-      dataSelected.geometry,
+      mockUpObject.geometry,
       32,
       xPlates,
       yPlates
     );
 
+    const legoVisu = new LegoMockupVisualizer(this.planar);
     legoVisu.addLegoPlateSimulation(heightmap, 0, 0);
     generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
   }

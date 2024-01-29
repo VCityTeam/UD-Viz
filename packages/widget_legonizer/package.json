@@ -26,6 +26,7 @@
     "three": "^0.160.1"
   },
   "dependencies": {
-    "@ud-viz/frame3d": "^4.0.3"
+    "@ud-viz/frame3d": "^4.0.3",
+    "legonizer": "^1.0.0"
   }
 }
