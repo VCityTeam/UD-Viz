@@ -14,7 +14,7 @@
         { result: {} }
       ),
       new udviz.itowns.View(crs, document.createElement('div')),
-      'EPSG:3857'
+      crs
     );
 
     console.log(instance);
