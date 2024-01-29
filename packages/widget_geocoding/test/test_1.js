@@ -13,7 +13,8 @@
         new udviz.itowns.Extent(crs, 0, 1, 0, 1),
         { result: {} }
       ),
-      new udviz.itowns.View(crs, document.createElement('div'))
+      new udviz.itowns.View(crs, document.createElement('div')),
+      'EPSG:3857'
     );
 
     console.log(instance);

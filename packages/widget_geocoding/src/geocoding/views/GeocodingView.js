@@ -11,8 +11,9 @@ export class GeocodingView {
    *
    * @param {GeocodingService} geocodingService The geocoding service.
    * @param {import('itowns').PlanarView} planarView The iTowns view.
+   * @param {string} crs CRS of the view
    */
-  constructor(geocodingService, planarView) {
+  constructor(geocodingService, planarView, crs) {
     this.geocodingService = geocodingService;
 
     // create ui
@@ -31,25 +32,13 @@ export class GeocodingView {
     this.form.appendChild(credits);
 
     this.planarView = planarView;
+    this.crs = crs;
     this.meshes = [];
 
     this.form.onsubmit = () => {
       this.doGeocoding();
       return false;
     };
-
-    // https://github.com/VCityTeam/UD-Viz/issues/559
-    // if crs EPSG:3946 has not be defined define it here
-
-    // Define EPSG:3946 projection which is the projection used in the 3D view
-    // (planarView of iTowns). It is indeed needed in getWorldCoordinates()
-    // to convert the coordinates received from the geocoding service (WGS84)
-    // to this coordinate system.
-    proj4.defs(
-      'EPSG:3946',
-      '+proj=lcc +lat_1=45.25 +lat_2=46.75' +
-        ' +lat_0=46 +lon_0=3 +x_0=1700000 +y_0=5200000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs'
-    );
   }
 
   /**
@@ -91,8 +80,8 @@ export class GeocodingView {
    * @returns {THREE.Vector3} World coordinates.
    */
   getWorldCoordinates(lat, lng) {
-    const [targetX, targetY] = proj4('EPSG:3946').forward([lng, lat]);
-    const coords = new itowns.Coordinates('EPSG:3946', targetX, targetY, 0);
+    const [targetX, targetY] = proj4(this.crs).forward([lng, lat]);
+    const coords = new itowns.Coordinates(this.crs, targetX, targetY, 0);
     const elevation = itowns.DEMUtils.getElevationValueAt(
       this.planarView.tileLayer,
       coords
