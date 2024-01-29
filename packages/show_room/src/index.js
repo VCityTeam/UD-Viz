@@ -427,7 +427,8 @@ export class ShowRoom {
   addWidgetGeocoding(configServer, pathIcon) {
     this.geocodingView = new GeocodingView(
       new GeocodingService(this.requestService, this.extent, configServer),
-      this.frame3DPlanar.itownsView
+      this.frame3DPlanar.itownsView,
+      this.extent.crs
     );
 
     const sideBarButton = document.createElement('img');

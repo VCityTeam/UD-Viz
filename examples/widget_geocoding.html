@@ -82,7 +82,8 @@
               extent,
               configs['geocoding_server']
             ),
-            view
+            view,
+            configs['crs'][0].name
           );
           widget.domElement.classList.add('widget_geocoding');
 
