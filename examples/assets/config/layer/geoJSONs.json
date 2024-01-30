@@ -1,7 +1,7 @@
 [
   {
     "id": "bus-lines",
-    "url": "https://download.data.grandlyon.com/wfs/rdata?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=tcl_sytral.tcllignebus_2_0_0&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+    "url": "https://data.grandlyon.com/geoserver/sytral/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=sytral:tcl_sytral.tcllignebus_2_0_0&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "fill": {
         "color": "white",
@@ -14,7 +14,7 @@
   },
   {
     "id": "Zones-Humides",
-    "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=evg_esp_veg.evgmarezonehumide&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+    "url": "https://data.grandlyon.com/geoserver/metropole-de-lyon/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=metropole-de-lyon:evg_esp_veg.evgmarezonehumide&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "fill": {
         "color": "blue",
@@ -27,7 +27,7 @@
   },
   {
     "id": "velo-v",
-    "url": "https://download.data.grandlyon.com/wfs/grandlyon?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json; subtype=geojson&SRSNAME=EPSG:3946",
+    "url": "https://data.grandlyon.com/geoserver/metropole-de-lyon/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=metropole-de-lyon:pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "point": {
         "color": "white",
