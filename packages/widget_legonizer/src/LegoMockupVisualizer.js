@@ -83,13 +83,9 @@ export class LegoMockupVisualizer {
   /**
    * Adds Lego blocks to threejs scene based on a given heightmap.
    *
-   * @param {Array<Array<number>>} heightMap - 2D array of height values of the terrain.
-   * Row of the terrain, and each element within the row
-   * represents the height value at that position.
-   * @param xPlates - The `xPlates` parameter represents the number of plates to be added horizontally in
-   * the Lego plate simulation.
-   * @param yPlates - The `yPlates` parameter represents the number of plates in the y-direction. It is
-   * used to calculate the position of the terrain and the Lego blocks in the simulation.
+   * @param {Array<Array<number>>} heightMap 2D array representing the height values of the terrain.
+   * @param {number} xPlates - The number of Lego plates to be added horizontally in the mockup.
+   * @param {number} yPlates -  The number of Lego plates to be added vertically in the mockup.
    */
   addLegoPlateSimulation(heightMap, xPlates, yPlates) {
     const geometry = new BoxGeometry(32, 1, 32);

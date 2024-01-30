@@ -10,6 +10,7 @@ import {
   BoxGeometry,
   Mesh,
   MeshLambertMaterial,
+  Object3DEventMap,
   Vector2,
   Vector3,
   Vector4,
