@@ -6,20 +6,23 @@ import {
   Matrix3,
   Mesh,
   MeshStandardMaterial,
-  Vector2,
   Vector3,
 } from 'three';
 
 /**
+ * Creates a mock-up object based.
  *
- * @param {Array<C3DTilesLayer>} layers
- * @param {Box3} areaSelected
+ * @param {Array<C3DTilesLayer>} layers Array of layers, contains information about objects in a 3D scene.
+ * @param {Box3} area Box3 the selected area for the mock-up.
+ * @returns {Mesh} mock-up object
  */
-export function createMockUpObject(layers, areaSelected) {
-  const area = areaSelected;
-  console.log('UPDATE MOCK UP => ', area);
-
-  if (layers.length == 0 || !area.min || !area.max) return;
+export function createMockUpObject(layers, area) {
+  if (!area.min || !area.max)
+    throw new Error("area is not a Box3 or hasn't min and max field");
+  if (!layers.length) {
+    console.warn("Can't create mockUp without layers");
+    return null;
+  }
 
   // Parse geometry intersected
   const geometryMockUp = new BufferGeometry();
@@ -59,7 +62,7 @@ export function createMockUpObject(layers, areaSelected) {
         const bbChild = child.geometry.boundingBox
           .clone()
           .applyMatrix4(child.matrixWorld);
-        if (intersectArea(areaSelected, bbChild.min, bbChild.max))
+        if (area.intersectsBox(bbChild))
           potentialObjects.set(child.uuid, child);
       }
     });
@@ -78,8 +81,7 @@ export function createMockUpObject(layers, areaSelected) {
 
         feature.computeWorldBox3(bbBuffer);
 
-        if (intersectArea(areaSelected, bbBuffer.min, bbBuffer.max))
-          gmlIDs.push(gmlId);
+        if (area.intersectsBox(bbBuffer)) gmlIDs.push(gmlId);
       }
     }
   });
@@ -167,33 +169,4 @@ export function createMockUpObject(layers, areaSelected) {
   mockUpObject.name = 'MockUp Object';
 
   return mockUpObject;
-}
-
-/**
- *
- * @param {Box3} areaSelected
- * @param {Vector3} min
- * @param {Vector3} max
- */
-export function intersectArea(areaSelected, min, max) {
-  const area = areaSelected;
-
-  if (!area.min || !area.max) return false;
-
-  // TODO could be optimize if not compute at each intersect
-  const minArea = new Vector2(
-    Math.min(area.min.x, area.max.x),
-    Math.min(area.min.y, area.max.y)
-  );
-  const maxArea = new Vector2(
-    Math.max(area.min.x, area.max.x),
-    Math.max(area.min.y, area.max.y)
-  );
-
-  return (
-    minArea.x <= max.x &&
-    maxArea.x >= min.x &&
-    minArea.y <= max.y &&
-    maxArea.y >= min.y
-  );
 }
