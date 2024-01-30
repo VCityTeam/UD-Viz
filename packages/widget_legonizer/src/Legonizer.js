@@ -6,7 +6,6 @@ import {
   checkParentChild,
 } from '@ud-viz/utils_browser';
 import { PlanarView, MAIN_LOOP_EVENTS } from 'itowns';
-import { Planar } from '@ud-viz/frame3d';
 import {
   BoxGeometry,
   Mesh,
@@ -25,12 +24,18 @@ import {
   generateCSVwithHeightMap,
 } from 'legonizer';
 
+/**
+ * Provides functionality for generating a Lego mockup based on user-defined coordinates and scales.
+ */
 export class Legonizer {
   /**
+   * Init properties and sets up the DOM elements and scene for a planar view.
    *
-   * @param {Planar} planar
+   * @param {PlanarView} view Represents the 3D view or scene. Objects will be displayed and manipulated.
+   * @param {HTMLDivElement} [ui] Optional parameter. Represents the user interface element. If no `ui` parameter is provided, the
+   * `domElement` of widget is used
    */
-  constructor(planar) {
+  constructor(view, ui) {
     /** @type {HTMLElement} */
     this.domElement = null;
     /** @type {Vector3Input} */
@@ -46,10 +51,11 @@ export class Legonizer {
     /** @type {HTMLButtonElement} */
     this.buttonSelectionAreaElement = null;
 
-    /** @type {Planar} */
-    this.planar = planar;
     /** @type {PlanarView} */
-    this.view = planar.itownsView;
+    this.view = view;
+
+    /** @type {HTMLElement} */
+    this.ui = ui || this.domElement;
 
     /** @type {Mesh<BoxGeometry, MeshLambertMaterial, Object3DEventMap>} */
     this.boxSelector = null;
@@ -70,13 +76,17 @@ export class Legonizer {
     });
   }
 
+  /**
+   * Creates, set `domElement` and returns a DOM element.
+   *
+   * @returns {HTMLDivElement} `legonizerDomElement` the newly `<div>` element.
+   */
   initDomElement() {
     const legonizerDomElement = document.createElement('div');
     legonizerDomElement.appendChild(this.createCoordinatesDomEl());
     legonizerDomElement.appendChild(this.createScaleDomEl());
     // Button Generate Lego Mockup
     const buttonGenerateMockupElement = document.createElement('button');
-    buttonGenerateMockupElement.id = 'button_generate_Mockup';
     buttonGenerateMockupElement.textContent = 'Generate Lego Mockup';
     buttonGenerateMockupElement.onclick = () => {
       this.generateMockup();
@@ -87,6 +97,10 @@ export class Legonizer {
     return legonizerDomElement;
   }
 
+  /**
+   * Init the scene by creating a box selector, a Lego previsualization, and adding
+   * transform controls to the scene.
+   */
   initScene() {
     this.createBoxSelector();
     this.createLegoPrevisualisation();
@@ -110,10 +124,14 @@ export class Legonizer {
     this.view.scene.add(this.legoPrevisualisation);
   }
 
+  /**
+   * Creates the DOMElement related to the coordinates.
+   *
+   * @returns {HTMLDivElement} DOM element that contains a set of input fields for position, rotation, and scale, as well as a button for selecting an area.
+   */
   createCoordinatesDomEl() {
     // Coordinates Box DOM
     const coordinatesDomElement = document.createElement('div');
-    coordinatesDomElement.id = 'widget_legonizer_vector_container';
 
     const coordinatesTitle = document.createElement('h3');
     coordinatesTitle.innerText = 'Coordinates';
@@ -175,7 +193,6 @@ export class Legonizer {
 
     // Button Select an area
     this.buttonSelectionAreaElement = document.createElement('button');
-    this.buttonSelectionAreaElement.id = 'button_selection';
     this.buttonSelectionAreaElement.textContent = 'Select an area';
     this.buttonSelectionAreaElement.onclick = () => {
       this.selectArea();
@@ -186,10 +203,16 @@ export class Legonizer {
     return coordinatesDomElement;
   }
 
+  /**
+   * Creates the DOMElement related to the scale.
+   *
+   * @returns {HTMLDivElement} DOM element of Scale Section. **Children:**
+   *- **ratio**: This input number controls the accuracy of the heightmap.
+   *- **countLego**: This vec2Input parameter specifies the number of plates to be used in the mockup.
+   */
   createScaleDomEl() {
     // Scale Box DOM
     const scalesSectionDomElement = document.createElement('div');
-    scalesSectionDomElement.id = 'widget_legonizer_vector_container';
 
     const scaleTitle = document.createElement('h3');
     scaleTitle.innerText = 'Scales Parameters';
@@ -215,8 +238,15 @@ export class Legonizer {
     return scalesSectionDomElement;
   }
 
+  /**
+   * Creates a box selector mesh to be used for selecting tiles.
+   *
+   * @returns {Mesh} The box selector mesh.
+   */
   createBoxSelector() {
+    // create a unit cube geometry.
     const geometry = new BoxGeometry(1, 1, 1);
+
     const boxSelector = new Mesh(
       geometry,
       new MeshLambertMaterial({
@@ -226,21 +256,30 @@ export class Legonizer {
       })
     );
 
+    // position the box selector at the center of the tile layer.
     boxSelector.position.x = this.view.tileLayer.extent.center().x;
     boxSelector.position.y = this.view.tileLayer.extent.center().y;
     boxSelector.position.z = 200;
 
     boxSelector.updateMatrixWorld();
+
     this.boxSelector = boxSelector;
     return boxSelector;
   }
 
+  /**
+   * Creates a Lego previsualization mesh to be used for visualizing the selected area.
+   *
+   * @returns {Mesh} The Lego previsualization mesh.
+   */
   createLegoPrevisualisation() {
+    // calculate the dimensions of the Lego previsualization based on the ratio.
     const geometryLego = new BoxGeometry(
       this.ratio,
       this.ratio,
       (this.ratio * 9.6) / 7.8 // Lego dimension
     );
+
     const objectLego = new Mesh(
       geometryLego,
       new MeshLambertMaterial({
@@ -248,6 +287,7 @@ export class Legonizer {
       })
     );
 
+    // position the Lego previsualization at the same position as the box selector.
     objectLego.position.x = this.boxSelector.position.x;
     objectLego.position.y = this.boxSelector.position.y;
     objectLego.position.z = 300;
@@ -255,12 +295,13 @@ export class Legonizer {
     objectLego.updateMatrixWorld();
 
     this.legoPrevisualisation = objectLego;
-
     return objectLego;
   }
 
   /**
    * Updates the form fields from the box selector position.
+   *
+   * @private
    */
   _updateFieldsFromBoxSelector() {
     /**
@@ -290,28 +331,30 @@ export class Legonizer {
     this.ratioParameterLabelInput.input.value = this.ratio;
   }
 
-  windowDestroyed() {
-    this.boxSelector.visible = false;
-    this.transformCtrls.attach(this.boxSelector);
-    this.transformCtrls.visible = false;
-    this.legoPrevisualisation.visible = false;
-  }
-
+  /**
+   * Generates a mockup of the selected area using the specified number of Lego plates.
+   */
   generateMockup() {
     const bufferBoxGeometry = this.boxSelector.geometry.clone();
     bufferBoxGeometry.applyMatrix4(this.boxSelector.matrixWorld);
+
     bufferBoxGeometry.computeBoundingBox();
 
+    // Get the number of plates in the x and y directions.
     const xPlates = parseInt(this.countLegoVec2Input.x.input.value);
     const yPlates = parseInt(this.countLegoVec2Input.y.input.value);
 
+    // Get the C3DTiles layers from the view.
     const layers = this.view.getLayers().filter((el) => el.isC3DTilesLayer);
+
     const mockUpObject = createMockUpObject(
       layers,
       bufferBoxGeometry.boundingBox
     );
 
     if (!mockUpObject || !mockUpObject.geometry) return;
+
+    // Create a heightmap from the buffer geometry.
     const heightmap = createHeightMapFromBufferGeometry(
       mockUpObject.geometry,
       32,
@@ -319,12 +362,17 @@ export class Legonizer {
       yPlates
     );
 
-    const legoVisu = new LegoMockupVisualizer(this.planar);
+    // Create a Lego mockup visualizer and add the Lego plate simulation.
+    const legoVisu = new LegoMockupVisualizer(this.view);
     legoVisu.addLegoPlateSimulation(heightmap, 0, 0);
+
+    // Generate a CSV file with the heightmap.
     generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
   }
 
-  // Select Area from 3DTiles
+  /**
+   * Toggle the selection area for a Lego model. When is enabled, you can drag the mouse to define a rectangular area in the 3D view.
+   */
   selectArea() {
     this.view.controls.enabled = !this.view.controls.enabled;
 
@@ -342,8 +390,6 @@ export class Legonizer {
 
       this.transformCtrls.detach(this.boxSelector);
       this.transformCtrls.visible = false;
-
-      const rootWelGL = this.view.domElement;
 
       let isDragging = false;
 
@@ -393,7 +439,7 @@ export class Legonizer {
       };
 
       const dragStart = (event) => {
-        if (checkParentChild(event.target, this.planar.domElementUI)) return; // Ui has been clicked
+        if (checkParentChild(event.target, this.ui)) return; // Ui has been clicked
 
         isDragging = true; // Reset
         minZ = Infinity; // Reset
@@ -406,19 +452,23 @@ export class Legonizer {
 
         this.view.scene.add(selectAreaObject);
       };
-      this.inputManager.addMouseInput(rootWelGL, 'mousedown', dragStart);
+      this.inputManager.addMouseInput(
+        this.view.domElement,
+        'mousedown',
+        dragStart
+      );
 
       const dragging = (event) => {
-        if (
-          checkParentChild(event.target, this.planar.domElementUI) ||
-          !isDragging
-        )
-          return; // Ui
+        if (checkParentChild(event.target, this.ui) || !isDragging) return; // Ui
 
         mouseCoordToWorldCoord(event, worldCoordCurrent);
         updateSelectAreaObject();
       };
-      this.inputManager.addMouseInput(rootWelGL, 'mousemove', dragging);
+      this.inputManager.addMouseInput(
+        this.view.domElement,
+        'mousemove',
+        dragging
+      );
 
       const dragEnd = () => {
         if (!isDragging) return; // Was not dragging
@@ -432,7 +482,7 @@ export class Legonizer {
         this.boxSelector.position.y = selectAreaObject.position.y;
         this.boxSelector.position.z = selectAreaObject.position.z;
 
-        // Update scales with the size of a lego plates and teh ratio chosen
+        // Update scales with the size of a lego plates and the ratio chosen
         const nbPlatesX = Math.abs(
           Math.trunc(selectAreaObject.scale.x / this.ratio / 32)
         );
@@ -443,17 +493,15 @@ export class Legonizer {
         this.boxSelector.scale.x = nbPlatesX * this.ratio * 32;
         this.boxSelector.scale.y = nbPlatesY * this.ratio * 32;
         this.boxSelector.scale.z = Math.trunc(selectAreaObject.scale.z);
-
         this.legoPrevisualisation.position.x = selectAreaObject.position.x;
         this.legoPrevisualisation.position.y = selectAreaObject.position.y;
         this.legoPrevisualisation.position.z = selectAreaObject.position.z + 50;
-
         selectAreaObject.updateMatrixWorld();
         this.boxSelector.updateMatrixWorld();
         this.legoPrevisualisation.updateMatrixWorld();
         this.view.notifyChange(this.view.camera.camera3D);
       };
-      this.inputManager.addMouseInput(rootWelGL, 'mouseup', dragEnd);
+      this.inputManager.addMouseInput(this.view.domElement, 'mouseup', dragEnd);
     }
   }
 }

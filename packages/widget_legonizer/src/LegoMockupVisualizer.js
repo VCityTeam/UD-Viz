@@ -1,62 +1,70 @@
-import * as THREE from 'three';
+import {
+  DirectionalLight,
+  Color,
+  PerspectiveCamera,
+  Scene,
+  WebGLRenderer,
+  BoxGeometry,
+  MeshPhongMaterial,
+  Mesh,
+  Group,
+  Box3,
+} from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
-import './LegoVisualizerScene.css';
-import { Planar } from '@ud-viz/frame3d';
+import { PlanarView } from 'itowns';
 
+/** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
   /**
-   * Initializes properties and sets up the HTML and THREE.js scene.
-   *
-   * @param {Planar} planar - The "planar" parameter is likely a reference to a planar object or a planar
-   * surface. It could be used to define the dimensions, position, or other properties of the planar
-   * object within the constructor.
+   * @param {PlanarView} view - Object that represents a planar view in a 3D scene.
    */
-  constructor(planar) {
-    this.planar = planar;
-
-    this.sceneElement = null;
-
+  constructor(view) {
+    /** @type {PlanarView} */
+    this.view = view;
+    /** @type {HTMLDivElement} */
+    this.domElement = null;
+    /** @type {Scene} */
     this.scene = null;
-
+    /** @type {PerspectiveCamera} */
     this.camera = null;
+    /** @type {OrbitControls} */
     this.otbitControls = null;
 
     this.constructHtml();
-
     this.createTHREEScene();
   }
 
+  /**
+   * Constructs an HTML element. Append to `view.domElement`.
+   */
   constructHtml() {
-    // This.planar.rootHtml
-    this.sceneElement = document.createElement('div');
-    this.sceneElement.id = 'legoVisualizerScene';
-
-    this.planar.domElement.appendChild(this.sceneElement);
+    this.domElement = document.createElement('div');
+    this.domElement.id = 'widget_legonizer_lego_visualizer';
+    this.view.domElement.appendChild(this.domElement);
   }
 
+  /**
+   * Creates a three.js scene with a camera, renderer, lights, and orbit controls.
+   */
   createTHREEScene() {
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
+    this.scene = new Scene();
+    this.camera = new PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
 
-    this.scene.background = new THREE.Color('lightblue');
+    this.scene.background = new Color('lightblue');
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(
-      this.sceneElement.clientWidth,
-      this.sceneElement.clientHeight
-    );
-    this.sceneElement.appendChild(renderer.domElement);
+    const renderer = new WebGLRenderer({ antialias: true });
+    renderer.setSize(this.domElement.clientWidth, this.domElement.clientHeight);
+    this.domElement.appendChild(renderer.domElement);
 
     this.camera.position.set(20, 10, 20);
     this.camera.lookAt(0, 2, 0);
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
+    const light = new DirectionalLight(0xffffff, 1);
     light.position.set(-20, 20, 20);
     const light2 = light.clone();
     light2.position.set(20, 20, -20);
@@ -72,24 +80,35 @@ export class LegoMockupVisualizer {
     renderer.render(this.scene, this.camera);
   }
 
+  /**
+   * Adds Lego blocks to threejs scene based on a given heightmap.
+   *
+   * @param {Array<Array<number>>} heightMap - 2D array of height values of the terrain.
+   * Row of the terrain, and each element within the row
+   * represents the height value at that position.
+   * @param xPlates - The `xPlates` parameter represents the number of plates to be added horizontally in
+   * the Lego plate simulation.
+   * @param yPlates - The `yPlates` parameter represents the number of plates in the y-direction. It is
+   * used to calculate the position of the terrain and the Lego blocks in the simulation.
+   */
   addLegoPlateSimulation(heightMap, xPlates, yPlates) {
-    const geometry = new THREE.BoxGeometry(32, 1, 32);
-    const material = new THREE.MeshPhongMaterial({ color: 'brown' });
-    const terrain = new THREE.Mesh(geometry, material);
+    const geometry = new BoxGeometry(32, 1, 32);
+    const material = new MeshPhongMaterial({ color: 'brown' });
+    const terrain = new Mesh(geometry, material);
 
     terrain.position.set(xPlates * 32, -1, yPlates * 32);
     this.scene.add(terrain);
 
-    const mockUpLego = new THREE.Group();
+    const mockUpLego = new Group();
     for (let j = 0; j < heightMap.length; j++) {
       const heightMapX = heightMap[j];
       for (let i = 0; i < heightMapX.length; i++) {
         const value = heightMapX[i];
         if (value != 0) {
           for (let h = 0; h < value; h++) {
-            const geometry = new THREE.BoxGeometry(1, 1.230769230769231, 1);
-            const material = new THREE.MeshPhongMaterial({ color: 'green' });
-            const cube = new THREE.Mesh(geometry, material);
+            const geometry = new BoxGeometry(1, 1.230769230769231, 1);
+            const material = new MeshPhongMaterial({ color: 'green' });
+            const cube = new Mesh(geometry, material);
             cube.position.set(
               i + xPlates * 32,
               h + 0.230769230769231 * h,
@@ -101,7 +120,7 @@ export class LegoMockupVisualizer {
       }
     }
 
-    const targetPosition = new THREE.Box3()
+    const targetPosition = new Box3()
       .setFromObject(mockUpLego.clone())
       .getCenter(mockUpLego.clone().position);
 

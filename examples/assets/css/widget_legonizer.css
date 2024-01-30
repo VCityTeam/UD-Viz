@@ -1,4 +1,4 @@
-.widget_legonizer {
+#widget_legonizer {
   position: absolute;
   resize: both;
   z-index: 2;
@@ -6,12 +6,12 @@
   color: white;
 }
 
-.widget_legonizer_vector_container {
-  display: inline-flex;
-}
-
-.widget_legonizer_grid {
-  display: 'grid';
-  width: '100%';
-  height: 'auto';
+#widget_legonizer_lego_visualizer {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  z-index: 101;
+  right: 0%;
+  top: 10%;
+  resize: both;
 }
