@@ -1,28 +1,46 @@
 # Developers
 
+<!-- TOC -->
+
+- [Pre-requisites](#pre-requisites)
+- [Development Tips](#development-tips)
+  - [Use nvm to manage the npm versions](#use-nvm-to-manage-the-npm-versions)
+  - [Tips for the VisualStudio Code IDE](#tips-for-the-visualstudio-code-ide)
+  - [Tips for Windows developers](#tips-for-windows-developers)
+- [Npm Scripts](#npm-scripts)
+  - [Some comments about selected package.json scripts](#some-comments-about-selected-packagejson-scripts)
+- [Debugging the examples](#debugging-the-examples)
+  - [Develop with modified ud-viz library in your demo](#develop-with-modified-ud-viz-library-in-your-demo)
+- [Continuous Integration Travis CI](#continuous-integration-travis-ci)
+- [Contributing](#contributing)
+- [Publishing](#publishing)
+- [Generating the documentation](#generating-the-documentation)
+
+<!-- /TOC -->
+
 ## Pre-requisites
 
-Developing UD-Viz applications requires knowledge about :
+Developing UD-Viz applications requires some knowledge about :
 
-- [JavaScript](https://developer.mozilla.org/en-US/docs/Web/javascript)
-- [node.js](https://en.wikipedia.org/wiki/Node.js)
+- `git` (repository, branches, fork): refer e.g. to [this git gateway](https://github.com/VCityTeam/UD-SV/blob/master/Tools/ToolGit.md)
+- the [JavaScript](https://developer.mozilla.org/en-US/docs/Web/javascript) programming language: refer e.g. to [MDN docs](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics)
+- [node.js](https://en.wikipedia.org/wiki/Node.js): refer e.g. to [W3School tutorial](https://www.w3schools.com/nodejs/nodejs_get_started.asp)
 - [npm](https://en.wikipedia.org/wiki/Npm_(software))
-- [three.js](https://threejs.org/)
+- [three.js](https://threejs.org/) library
 - [iTowns](http://www.itowns-project.org)
+- [the UD-Viz framework](https://github.com/VCityTeam/UD-Viz).
 
-## NVM
 
-Developpers are advised to use node version manager (nvm). nvm allows you to quickly install and use different versions of node via the command line.
+
+## Development Tips
+
+### Use nvm to manage the npm versions
+
+Developers are advised to use node version manager (nvm). nvm allows you to quickly install and use different versions of node via the command line.
 
 To download and install follow this link: https://github.com/nvm-sh/nvm#installing-and-updating
 
-## Environment Tips
-
-### IDE
-
-> VSCode is recommended.
-
-#### VisualStudio Code
+### Tips for the VisualStudio Code IDE
 
 When using [Visual Studio Code](https://code.visualstudio.com/), you can install the following extentions to make your life easier:
 
@@ -43,6 +61,9 @@ consists in
 3. In order to use scripts that launch a shell script with Powershell: `npm config set script-shell "C:\\Program Files\\git\\bin\\bash.exe"`
 
 ## Npm Scripts
+
+The npm [`package.json`](../../package.json) file defines a set of scripts
+whose respective purpose are quickly documented here
 
 | Script                       | Description                                                                                                                                                                                                                                                                             |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -65,7 +86,35 @@ consists in
 | `npm run back-end`           | run an http server (with some [string-replace](https://www.npmjs.com/package/string-replace-middleware))  + a game socket service. <br>http://locahost:8000/                                                                                                                            |
 | `npm run analyze-bundle`     | Use [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) to see what's inside the examples bundle                                                                                                                                                           |
 | `npm run analyze-dev-bundle` | Use [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) to see what's inside the examples dev bundle                                                                                                                                                       |
-| `npm run start`              | Run `npm run build-examples` and `npm run back-end`                                                                                                                                                                                                                                     |
+| `npm run start`              | Run `npm run build-examples` and `npm run back-end`    |
+
+### Some comments about selected `package.json` scripts
+
+Consider the `dev-examples` script
+
+```bash
+dotenv -e .env -- cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/browser/style.css --watch ./packages/node/src  --delay 2500ms -e js,css,html ./bin/debug.js
+```
+
+This script builds on
+
+- **`dotenv -e .env`**: *dotenv* package will allows to add the content in a [.env](./.env) into the *process.env* of node. See [dotenv](https://www.npmjs.com/package/dotenv), [dotenv-cli](https://www.npmjs.com/package/dotenv-cli), [process.env](https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env).
+- **`--`**: We add the command finisher --, which tells npm that anything added after this finisher should be added directly to the command. See [npm-tips](https://corgibytes.com/blog/2017/04/18/npm-tips/).
+- **`cross-env NODE_ENV=development`**: *cross-env* package will allows to add variable in command line (*here NODE_ENV*) to *process.env*. See [cross-env](https://www.npmjs.com/package/cross-env), [process.env](https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env).
+- **`nodemon [--options] ./bin/devExamples.js`**:
+  [nodemon](https://www.npmjs.com/package/nodemon) is a node provided 
+  development oriented tool. Its purpose is to automatically restart the
+  interpretation of a set of javascript files 
+  (*here [./bin/devExamples.js](./bin/devExamples.js)*) when one those files
+  changes (e.g. was edited). 
+
+We can now **dive into [./bin/devExamples.js](./bin/devExamples.js)** where
+
+- exec and spawn are two functions from [*child-process-promise*](https://www.npmjs.com/package/child-process-promise) which allows to execute node script. See [Promise doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+- **`exec('npm run build-debug --prefix ./packages/browser')`**: It calls *npm run build-debug* defined in ./packages/browser/.package.json :
+  - **`cross-env NODE_ENV=development webpack`**: webpack is the tool it permits to create a bundle of your code. The config is defined in *./packages/browser/webpack.config.json*. See doc [here](https://webpack.js.org/concepts/).
+  - **`const child = spawn('node', ['./bin/host.js', process.env.PORT || 8000], { shell: true, });`**: Interprets [./bin/host.js](./bin/host.js) that launches
+  an [express](https://www.npmjs.com/package/express) server.
 
 ## Debugging the examples
 
