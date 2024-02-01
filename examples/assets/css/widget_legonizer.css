@@ -8,10 +8,15 @@
 
 #widget_legonizer_lego_visualizer {
   position: absolute;
-  width: 30%;
-  height: 30%;
-  z-index: 101;
-  right: 0%;
-  top: 10%;
-  resize: both;
+  width: 100%;
+  aspect-ratio: 16/9;
+  cursor: pointer;
+}
+
+#widget_legonizer .modal {
+  position: fixed;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

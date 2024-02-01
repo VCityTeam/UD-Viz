@@ -11,18 +11,16 @@ import {
   Box3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { PlanarView } from 'itowns';
 
 /** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
-  /**
-   * @param {PlanarView} view - Object that represents a planar view in a 3D scene.
-   */
-  constructor(view) {
-    /** @type {PlanarView} */
-    this.view = view;
+  constructor(parentHtml) {
     /** @type {HTMLDivElement} */
     this.domElement = null;
+
+    /** @type {HTMLDivElement} */
+    this.parentHtml = parentHtml;
+
     /** @type {Scene} */
     this.scene = null;
     /** @type {PerspectiveCamera} */
@@ -40,7 +38,19 @@ export class LegoMockupVisualizer {
   constructHtml() {
     this.domElement = document.createElement('div');
     this.domElement.id = 'widget_legonizer_lego_visualizer';
-    this.view.domElement.appendChild(this.domElement);
+    this.domElement.title = 'double click to zoom';
+    let zoom = false;
+    this.domElement.addEventListener('dblclick', () => {
+      zoom = !zoom;
+      if (zoom) {
+        this.domElement.title = 'double click to unzoom';
+        this.domElement.classList.add('modal');
+      } else {
+        this.domElement.title = 'double click to zoom';
+        this.domElement.classList.remove('modal');
+      }
+    });
+    this.parentHtml.appendChild(this.domElement);
   }
 
   /**
@@ -50,16 +60,12 @@ export class LegoMockupVisualizer {
     this.scene = new Scene();
     this.camera = new PerspectiveCamera(
       75,
-      window.innerWidth / window.innerHeight,
+      this.domElement.clientWidth / this.domElement.clientHeight,
       0.1,
       1000
     );
 
     this.scene.background = new Color('lightblue');
-
-    const renderer = new WebGLRenderer({ antialias: true });
-    renderer.setSize(this.domElement.clientWidth, this.domElement.clientHeight);
-    this.domElement.appendChild(renderer.domElement);
 
     this.camera.position.set(20, 10, 20);
     this.camera.lookAt(0, 2, 0);
@@ -70,6 +76,24 @@ export class LegoMockupVisualizer {
     light2.position.set(20, 20, -20);
     this.scene.add(light);
     this.scene.add(light2);
+
+    const renderer = new WebGLRenderer({ antialias: true });
+    renderer.setSize(
+      this.domElement.clientWidth,
+      this.domElement.clientHeight,
+      false
+    );
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.width = '100%';
+    this.domElement.appendChild(renderer.domElement);
+    new ResizeObserver(() => {
+      renderer.setSize(
+        this.domElement.clientWidth,
+        this.domElement.clientHeight,
+        false
+      );
+      renderer.render(this.scene, this.camera);
+    }).observe(this.domElement);
 
     this.orbit = new OrbitControls(this.camera, renderer.domElement);
     this.orbit.update();
@@ -124,5 +148,10 @@ export class LegoMockupVisualizer {
     this.orbit.update();
 
     this.scene.add(mockUpLego);
+  }
+
+  dispose() {
+    this.domElement.remove();
+    this.orbit.dispose();
   }
 }

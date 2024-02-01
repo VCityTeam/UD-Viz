@@ -51,6 +51,8 @@ export class Legonizer {
     this.ratioParameterLabelInput = null;
     /** @type {HTMLButtonElement} */
     this.buttonSelectionAreaElement = null;
+    /** @type {LegoMockupVisualizer} */
+    this.legoMockupVisualizer = null;
 
     /** @type {PlanarView} */
     this.view = view;
@@ -364,11 +366,13 @@ export class Legonizer {
     );
 
     // Create a Lego mockup visualizer and add the Lego plate simulation.
-    const legoVisu = new LegoMockupVisualizer(this.view);
-    legoVisu.addLegoPlateSimulation(heightmap, 0, 0);
+    if (this.legoMockupVisualizer) this.legoMockupVisualizer.dispose();
+
+    this.legoMockupVisualizer = new LegoMockupVisualizer(this.domElement);
+    this.legoMockupVisualizer.addLegoPlateSimulation(heightmap, 0, 0);
 
     // Generate a CSV file with the heightmap.
-    generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
+    // generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
   }
 
   /**
