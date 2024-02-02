@@ -131,10 +131,27 @@
           // uiDomElement.appendChild(layerChoice.domElement);
 
           // //// LEGONIZER MODULE
-          const legonizer = new udviz.widgetLegonizer.Legonizer(
-            view,
-            uiDomElement
-          );
+
+          const domMockUpVisualizer = document.createElement('div');
+          domMockUpVisualizer.id = 'widget_legonizer_lego_visualizer';
+          domMockUpVisualizer.title = 'double click to zoom';
+          let zoom = false;
+          domMockUpVisualizer.addEventListener('dblclick', () => {
+            zoom = !zoom;
+            if (zoom) {
+              domMockUpVisualizer.title = 'double click to unzoom';
+              domMockUpVisualizer.classList.add('modal');
+            } else {
+              domMockUpVisualizer.title = 'double click to zoom';
+              domMockUpVisualizer.classList.remove('modal');
+            }
+          });
+
+          const legonizer = new udviz.widgetLegonizer.Legonizer(view, {
+            parentDomElement: uiDomElement,
+            domMockUpVisualizer: domMockUpVisualizer,
+          });
+
           legonizer.domElement.id = 'widget_legonizer';
           uiDomElement.appendChild(legonizer.domElement);
         });

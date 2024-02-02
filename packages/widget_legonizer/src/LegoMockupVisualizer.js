@@ -14,12 +14,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
-  constructor(parentHtml) {
+  constructor(domElement) {
     /** @type {HTMLDivElement} */
-    this.domElement = null;
-
-    /** @type {HTMLDivElement} */
-    this.parentHtml = parentHtml;
+    this.domElement = domElement;
 
     /** @type {Scene} */
     this.scene = null;
@@ -28,29 +25,7 @@ export class LegoMockupVisualizer {
     /** @type {OrbitControls} */
     this.otbitControls = null;
 
-    this.constructHtml();
     this.createTHREEScene();
-  }
-
-  /**
-   * Constructs an HTML element. Append to `view.domElement`.
-   */
-  constructHtml() {
-    this.domElement = document.createElement('div');
-    this.domElement.id = 'widget_legonizer_lego_visualizer';
-    this.domElement.title = 'double click to zoom';
-    let zoom = false;
-    this.domElement.addEventListener('dblclick', () => {
-      zoom = !zoom;
-      if (zoom) {
-        this.domElement.title = 'double click to unzoom';
-        this.domElement.classList.add('modal');
-      } else {
-        this.domElement.title = 'double click to zoom';
-        this.domElement.classList.remove('modal');
-      }
-    });
-    this.parentHtml.appendChild(this.domElement);
   }
 
   /**
@@ -151,7 +126,7 @@ export class LegoMockupVisualizer {
   }
 
   dispose() {
-    this.domElement.remove();
+    this.domElement.innerHTML = null;
     this.orbit.dispose();
   }
 }

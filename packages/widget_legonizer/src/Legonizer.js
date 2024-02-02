@@ -33,12 +33,16 @@ export class Legonizer {
    * Init properties and sets up the DOM elements and scene for a planar view.
    *
    * @param {PlanarView} view Represents the 3D view or scene. Objects will be displayed and manipulated.
-   * @param {HTMLDivElement} [ui] Optional parameter. Represents the user interface element. If no `ui` parameter is provided, the
-   * `domElement` of widget is used
+   * @param {{parentDomElement:HTMLElement,domMockUpVisualizer:HTMLElement}} [options] Optionals parameter. Represents the user interface element. If no `parentDomElement` parameter is provided, the
+   * `domElement` of widget is used. If no `domMockUpVisualizer` a default one is created
    */
-  constructor(view, ui) {
+  constructor(view, options) {
     /** @type {HTMLElement} */
     this.domElement = null;
+    /** @type {HTMLElement} */
+    this.domMockUpVisualizer = options.domMockUpVisualizer || null;
+    /** @type {HTMLElement} */
+    this.parentDomElement = options.parentDomElement || this.domElement;
     /** @type {Vector3Input} */
     this.positionVec3Input = null;
     /** @type {Vector3Input} */
@@ -56,9 +60,6 @@ export class Legonizer {
 
     /** @type {PlanarView} */
     this.view = view;
-
-    /** @type {HTMLElement} */
-    this.ui = ui || this.domElement;
 
     /** @type {Mesh<BoxGeometry, MeshLambertMaterial, Object3DEventMap>} */
     this.boxSelector = null;
@@ -97,6 +98,16 @@ export class Legonizer {
     legonizerDomElement.appendChild(buttonGenerateMockupElement);
 
     this.domElement = legonizerDomElement;
+
+    if (!this.domMockUpVisualizer) {
+      const domMockUpVisualizer = document.createElement('div');
+      domMockUpVisualizer.style.position = 'relative';
+      domMockUpVisualizer.style.width = '100%';
+      domMockUpVisualizer.style.aspectRatio = '16/9';
+      domMockUpVisualizer.style.cursor = 'pointer';
+      this.domMockUpVisualizer = domMockUpVisualizer;
+    }
+    this.domElement.appendChild(this.domMockUpVisualizer);
     return legonizerDomElement;
   }
 
@@ -368,7 +379,9 @@ export class Legonizer {
     // Create a Lego mockup visualizer and add the Lego plate simulation.
     if (this.legoMockupVisualizer) this.legoMockupVisualizer.dispose();
 
-    this.legoMockupVisualizer = new LegoMockupVisualizer(this.domElement);
+    this.legoMockupVisualizer = new LegoMockupVisualizer(
+      this.domMockUpVisualizer
+    );
     this.legoMockupVisualizer.addLegoPlateSimulation(heightmap, 0, 0);
 
     // Generate a CSV file with the heightmap.
@@ -444,7 +457,7 @@ export class Legonizer {
       };
 
       const dragStart = (event) => {
-        if (checkParentChild(event.target, this.ui)) return; // Ui has been clicked
+        if (checkParentChild(event.target, this.parentDomElement)) return; // Ui has been clicked
 
         isDragging = true; // Reset
         minZ = Infinity; // Reset
@@ -464,7 +477,11 @@ export class Legonizer {
       );
 
       const dragging = (event) => {
-        if (checkParentChild(event.target, this.ui) || !isDragging) return; // Ui
+        if (
+          checkParentChild(event.target, this.parentDomElement) ||
+          !isDragging
+        )
+          return; // Ui
 
         mouseCoordToWorldCoord(event, worldCoordCurrent);
         updateSelectAreaObject();

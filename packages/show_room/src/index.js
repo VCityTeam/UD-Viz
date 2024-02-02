@@ -845,10 +845,9 @@ export class ShowRoom {
   }
 
   addWidgetLegonizer(pathIcon) {
-    this.widgetLegonizer = new Legonizer(
-      this.frame3DPlanar.itownsView,
-      this.frame3DPlanar.domElementUI
-    );
+    this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
+      parentDomElement: this.frame3DPlanar.domElementUI,
+    });
 
     this.widgetLegonizer.domElement.remove();
 
