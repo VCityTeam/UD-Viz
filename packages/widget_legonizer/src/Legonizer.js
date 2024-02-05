@@ -36,7 +36,7 @@ export class Legonizer {
    * @param {{parentDomElement:HTMLElement,domMockUpVisualizer:HTMLElement}} [options] Optionals parameter. Represents the user interface element. If no `parentDomElement` parameter is provided, the
    * `domElement` of widget is used. If no `domMockUpVisualizer` a default one is created
    */
-  constructor(view, options) {
+  constructor(view, options = {}) {
     /** @type {HTMLElement} */
     this.domElement = null;
     /** @type {HTMLElement} */
