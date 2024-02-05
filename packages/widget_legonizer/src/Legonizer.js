@@ -385,7 +385,7 @@ export class Legonizer {
     this.legoMockupVisualizer.addLegoPlateSimulation(heightmap, 0, 0);
 
     // Generate a CSV file with the heightmap.
-    // generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
+    generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
   }
 
   /**
