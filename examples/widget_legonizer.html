@@ -125,11 +125,6 @@
           uiDomElement.classList.add('full_screen');
           document.body.appendChild(uiDomElement);
 
-          // //// LAYER CHOICE MODULE
-          const layerChoice = new udviz.widgetLayerChoice.LayerChoice(view);
-          layerChoice.domElement.classList.add('widget_layer_choice');
-          // uiDomElement.appendChild(layerChoice.domElement);
-
           // //// LEGONIZER MODULE
 
           const domMockUpVisualizer = document.createElement('div');
@@ -137,6 +132,7 @@
           domMockUpVisualizer.title = 'double click to zoom';
           let zoom = false;
           domMockUpVisualizer.addEventListener('dblclick', () => {
+            if (!domMockUpVisualizer.querySelector('canvas')) return;
             zoom = !zoom;
             if (zoom) {
               domMockUpVisualizer.title = 'double click to unzoom';

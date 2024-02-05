@@ -10,7 +10,7 @@ import {
 } from 'three';
 
 /**
- * Creates a mock-up object based.
+ * Creates a mock-up object.
  *
  * @param {Array<C3DTilesLayer>} layers Array of layers, contains information about objects in a 3D scene.
  * @param {Box3} area Box3 the selected area for the mock-up.

@@ -14,6 +14,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
+  /**
+   * Sets up a Three.js scene to visualize the lego mock up.
+   *
+   * @param {HTMLElement} domElement - HTML element that will be used as the container for the Three.js scene.
+   */
   constructor(domElement) {
     /** @type {HTMLDivElement} */
     this.domElement = domElement;
@@ -125,6 +130,9 @@ export class LegoMockupVisualizer {
     this.scene.add(mockUpLego);
   }
 
+  /**
+   * Clears the inner HTML of a DOM element and disposes of an orbit object.
+   */
   dispose() {
     this.domElement.innerHTML = null;
     this.orbit.dispose();
