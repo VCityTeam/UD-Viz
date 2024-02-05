@@ -2,19 +2,20 @@
 
 <!-- TOC -->
 
-- [Pre-requisites](#pre-requisites)
-- [Development Tips](#development-tips)
-  - [Use nvm to manage the npm versions](#use-nvm-to-manage-the-npm-versions)
-  - [Tips for the VisualStudio Code IDE](#tips-for-the-visualstudio-code-ide)
-  - [Tips for Windows developers](#tips-for-windows-developers)
-- [Npm Scripts](#npm-scripts)
-  - [Some comments about selected package.json scripts](#some-comments-about-selected-packagejson-scripts)
-- [Debugging the examples](#debugging-the-examples)
-  - [Develop with modified ud-viz library in your demo](#develop-with-modified-ud-viz-library-in-your-demo)
-- [Continuous Integration Travis CI](#continuous-integration-travis-ci)
-- [Contributing](#contributing)
-- [Publishing](#publishing)
-- [Generating the documentation](#generating-the-documentation)
+- [Developers](#developers)
+  - [Pre-requisites](#pre-requisites)
+  - [Development Tips](#development-tips)
+    - [Use nvm to manage the npm versions](#use-nvm-to-manage-the-npm-versions)
+    - [Tips for the VisualStudio Code IDE](#tips-for-the-visualstudio-code-ide)
+    - [Tips for Windows developers](#tips-for-windows-developers)
+  - [Npm Scripts](#npm-scripts)
+    - [Some comments about selected `package.json` scripts](#some-comments-about-selected-packagejson-scripts)
+  - [Debugging the examples](#debugging-the-examples)
+    - [Develop with modified ud-viz library in your demo](#develop-with-modified-ud-viz-library-in-your-demo)
+  - [Continuous Integration (Travis CI)](#continuous-integration-travis-ci)
+  - [Contributing](#contributing)
+  - [Publishing](#publishing)
+  - [Generating the documentation](#generating-the-documentation)
 
 <!-- /TOC -->
 
@@ -86,35 +87,32 @@ whose respective purpose are quickly documented here
 | `npm run back-end`           | run an http server (with some [string-replace](https://www.npmjs.com/package/string-replace-middleware))  + a game socket service. <br>http://locahost:8000/                                                                                                                            |
 | `npm run analyze-bundle`     | Use [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) to see what's inside the examples bundle                                                                                                                                                           |
 | `npm run analyze-dev-bundle` | Use [webpack-bundle-analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer) to see what's inside the examples dev bundle                                                                                                                                                       |
-| `npm run start`              | Run `npm run build-examples` and `npm run back-end`    |
+| `npm run start`              | Run `npm run build-examples` and `npm run back-end`                                                                                                                                                                                                                                     |
 
 ### Some comments about selected `package.json` scripts
 
 Consider the `dev-examples` script
 
 ```bash
-dotenv -e .env -- cross-env NODE_ENV=development nodemon --trace-warnings --verbose --watch ./packages/shared/src --watch ./packages/browser/src --watch ./packages/browser/style.css --watch ./packages/node/src  --delay 2500ms -e js,css,html ./bin/debug.js
+cross-env NODE_ENV=development nodemon --signal SIGKILL --trace-warnings --verbose [--watch ./packages/PACKAGE_NAME]  --delay 2500ms ./bin/devExamples.js -e js,css
 ```
 
 This script builds on
 
-- **`dotenv -e .env`**: *dotenv* package will allows to add the content in a [.env](./.env) into the *process.env* of node. See [dotenv](https://www.npmjs.com/package/dotenv), [dotenv-cli](https://www.npmjs.com/package/dotenv-cli), [process.env](https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env).
-- **`--`**: We add the command finisher --, which tells npm that anything added after this finisher should be added directly to the command. See [npm-tips](https://corgibytes.com/blog/2017/04/18/npm-tips/).
 - **`cross-env NODE_ENV=development`**: *cross-env* package will allows to add variable in command line (*here NODE_ENV*) to *process.env*. See [cross-env](https://www.npmjs.com/package/cross-env), [process.env](https://nodejs.org/dist/latest-v8.x/docs/api/process.html#process_process_env).
 - **`nodemon [--options] ./bin/devExamples.js`**:
   [nodemon](https://www.npmjs.com/package/nodemon) is a node provided 
   development oriented tool. Its purpose is to automatically restart the
   interpretation of a set of javascript files 
-  (*here [./bin/devExamples.js](./bin/devExamples.js)*) when one those files
+  (*here [bin/devExamples.js](../../bin/devExamples.js)*) when one those files
   changes (e.g. was edited). 
 
-We can now **dive into [./bin/devExamples.js](./bin/devExamples.js)** where
+We can now **dive into [bin/devExamples.js](../../bin/devExamples.js)** where
 
 - exec and spawn are two functions from [*child-process-promise*](https://www.npmjs.com/package/child-process-promise) which allows to execute node script. See [Promise doc](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-- **`exec('npm run build-debug --prefix ./packages/browser')`**: It calls *npm run build-debug* defined in ./packages/browser/.package.json :
-  - **`cross-env NODE_ENV=development webpack`**: webpack is the tool it permits to create a bundle of your code. The config is defined in *./packages/browser/webpack.config.json*. See doc [here](https://webpack.js.org/concepts/).
-  - **`const child = spawn('node', ['./bin/host.js', process.env.PORT || 8000], { shell: true, });`**: Interprets [./bin/host.js](./bin/host.js) that launches
-  an [express](https://www.npmjs.com/package/express) server.
+- **`exec('npm run build-dev-examples')`**:
+  - **`cross-env NODE_ENV=development webpack --config=./webpack.config.js`**: webpack is the tool it permits to create a bundle of your code. The config is defined in *./webpack.config.json*. See doc [here](https://webpack.js.org/concepts/).
+- **`const child = spawn('cross-env NODE_ENV=development node', ['./bin/backEnd.js'], { shell: true, });`**: Interprets [bin/backEnd.js](../../bin/backEnd.js) that launches an [express](https://www.npmjs.com/package/express) server.
 
 ## Debugging the examples
 
