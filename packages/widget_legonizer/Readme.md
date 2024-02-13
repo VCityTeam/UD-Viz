@@ -32,6 +32,8 @@ const legonizer = new Legonizer(view);
 
 - **Coordinates Input**: Allows users to specify the position, rotation, and scale of the Lego model.
 - **Scale Parameters**: Provides options to adjust the accuracy of the heightmap and specify the number of Lego plates to be used in the mockup.
+    - **Ratio:** Scale of the mockup (WIP)
+    - **Count Lego**: Size of the lego model required in plate, based on 32x32 stud baseplate.
 - **Area Selection**: Enables users to define a rectangular area in the 3D view for generating Lego mockups.
 - **Generate Mockup**: Generates a Lego mockup based on the selected area and parameters provided by the user.
 - **Visualize Mockup**: Provides a visual representation of the generated Lego mockup.
