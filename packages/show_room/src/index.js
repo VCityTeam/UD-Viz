@@ -36,6 +36,7 @@ import {
   NativeCommandManager,
   DragAndDropAvatar,
 } from '@ud-viz/game_shared_template';
+import { Legonizer } from '@ud-viz/widget_legonizer';
 import * as itowns from 'itowns';
 import * as THREE from 'three';
 import { version } from '../package.json';
@@ -146,6 +147,9 @@ export class ShowRoom {
 
     /** @type {Bookmark|null} */
     this.widgetBookmark = null;
+
+    /** @type {Legonizer|null} */
+    this.widgetLegonizer = null;
 
     // INTIALIZE
     this.initUI(version);
@@ -839,6 +843,16 @@ export class ShowRoom {
     this.widgetBookmark.domElement.remove();
 
     this.addCustomHtml(pathIcon, this.widgetBookmark.domElement, 'Bookmark');
+  }
+
+  addWidgetLegonizer(pathIcon) {
+    this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
+      parentDomElement: this.frame3DPlanar.domElementUI,
+    });
+
+    this.widgetLegonizer.domElement.remove();
+
+    this.addCustomHtml(pathIcon, this.widgetLegonizer.domElement, 'Legonizer');
   }
 }
 

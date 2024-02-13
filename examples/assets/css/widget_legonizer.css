@@ -1,0 +1,22 @@
+#widget_legonizer {
+  position: absolute;
+  resize: both;
+  z-index: 2;
+  background-color: #313336bb;
+  color: white;
+}
+
+#widget_legonizer_lego_visualizer {
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 16/9;
+  cursor: pointer;
+}
+
+#widget_legonizer .modal {
+  position: fixed;
+  width: 80%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

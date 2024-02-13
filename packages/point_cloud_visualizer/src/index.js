@@ -65,8 +65,8 @@ export class PointCloudVisualizer {
    * @param {string} options.domElementClass - css class to apply to this.domElement
    * @param {Array<string>} options.c3DTilesLoadingDomElementClasses - css classes to apply to c3DTilesLoadingDomElement
    * @param {object} options.camera - options camera
-   * @param {object} options.default - options camera default
-   * @param {object} options.default.position - options camera default position
+   * @param {object} options.camera.default - options camera default
+   * @param {object} options.camera.default.position - options camera default position
    * @param {number} options.maxSubdivisionLevel - default points cloud size
    * @param {number} options.defaultPointCloudSize - default points cloud size
    * @param {number} [options.raycasterPointsThreshold=PointCloudVisualizer.RAYCASTER_POINTS_THRESHOLD] - raycaster points treshold

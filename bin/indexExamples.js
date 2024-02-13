@@ -39,6 +39,7 @@ export * as widgetSlideShow from '@ud-viz/widget_slide_show';
 export * as widgetSPARQL from '@ud-viz/widget_sparql';
 export * as widgetWorkspace from '@ud-viz/widget_workspace';
 export * as widgetGuidedTour from '@ud-viz/widget_guided_tour';
+export * as widgetLegonizer from '@ud-viz/widget_legonizer';
 
 // peerDep
 import * as THREE from 'three';
