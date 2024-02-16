@@ -76,6 +76,10 @@
 
           app.addURLButton('./assets/img/icons/link.png');
 
+          const infoUI = document.createElement('div');
+          infoUI.id = 'root_InfoUI';
+          document.body.appendChild(infoUI);
+
           // HELP HTLM
           const xhrHelpMarkdown = new XMLHttpRequest();
           xhrHelpMarkdown.open('GET', './assets/md/help.md');
@@ -85,11 +89,26 @@
               xhrHelpMarkdown.status >= 200 &&
               xhrHelpMarkdown.status < 300
             ) {
-              const docHtml = document.createElement('div');
-              docHtml.innerHTML = new showdown.Converter()
+              const docHelpHtml = document.createElement('div');
+
+              docHelpHtml.innerHTML = new showdown.Converter()
                 .makeHtml(xhrHelpMarkdown.responseText)
                 .replace(/..\/img\//g, './assets/img/');
-              app.addCustomHtml('./assets/svg/help.svg', docHtml, 'Help');
+              docHelpHtml.hidden = true;
+              docHelpHtml.title = 'Help';
+              docHelpHtml.classList.add('container');
+              docHelpHtml.style.width = '50%';
+              infoUI.appendChild(docHelpHtml);
+
+              const buttonHelp = document.createElement('a');
+              const iconHelp = document.createElement('img');
+              iconHelp.src = './assets/svg/help.svg';
+              buttonHelp.appendChild(iconHelp);
+
+              buttonHelp.addEventListener('click', () => {
+                docHelpHtml.hidden = !docHelpHtml.hidden;
+              });
+              infoUI.appendChild(buttonHelp);
             }
           };
           xhrHelpMarkdown.send();
@@ -103,15 +122,41 @@
               xhrAboutMarkdown.status >= 200 &&
               xhrAboutMarkdown.status < 300
             ) {
-              const docHtml = document.createElement('div');
-              docHtml.innerHTML = new showdown.Converter()
+              const docAboutHtml = document.createElement('div');
+              docAboutHtml.innerHTML = new showdown.Converter()
                 .makeHtml(xhrAboutMarkdown.responseText)
                 .replace(/..\/img\//g, './assets/img/');
-              app.addCustomHtml('./assets/svg/about.svg', docHtml, 'About');
+              docAboutHtml.hidden = true;
+              docAboutHtml.title = 'About';
+              docAboutHtml.style.width = '50%';
+              docAboutHtml.style.transform = 'translate(100%)';
+              docAboutHtml.classList.add('container');
+
+              infoUI.appendChild(docAboutHtml);
+
+              const buttonAbout = document.createElement('a');
+              const iconAbout = document.createElement('img');
+              iconAbout.src = './assets/svg/about.svg';
+              buttonAbout.appendChild(iconAbout);
+              buttonAbout.addEventListener('click', () => {
+                docAboutHtml.hidden = !docAboutHtml.hidden;
+              });
+              infoUI.appendChild(buttonAbout);
             }
           };
           xhrAboutMarkdown.send();
 
+          // CODE
+          const buttonCode = document.createElement('a');
+          const iconCode = document.createElement('img');
+          iconCode.src = './assets/img/icons/code.png';
+          buttonCode.appendChild(iconCode);
+          buttonCode.href =
+            'https://github.com/VCityTeam/UD-Viz/blob/master/examples/show_room.html';
+          buttonCode.target = '_blank';
+          infoUI.appendChild(buttonCode);
+
+          // WIDGETS
           app.addWidgetGeocoding(
             configs['geocoding_server'],
             './assets/svg/geocoding.svg'

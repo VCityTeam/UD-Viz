@@ -101,6 +101,43 @@
   margin: 5px 10px 5px 5px;
 }
 
+
+/*********************************** Info UI */
+
+#root_InfoUI {
+  position: fixed;
+  left: var(--sidebar-widget-sidebar-width);
+  bottom: 0px;
+  z-index: 3;
+  display: flex;
+  margin-left: 10px;
+}
+
+#root_InfoUI > a {
+  display: block;
+  background-color: #aebbc2;
+  border-radius: 20px;
+  width: 40px;
+  height: 40px;
+  margin: 2px;
+}
+
+#root_InfoUI > a:hover {
+  background-color: #000000;
+  cursor: pointer;
+}
+
+.container  {
+  position: fixed;
+  top: 0;
+  height: 80%;
+  overflow: scroll;
+  background: whitesmoke;
+}
+
+.container  img{
+  width: 100%;
+}
 /*********************************** AUTHENTIFICATION */
 
 #_sidebar_widget_profile {
@@ -171,3 +208,5 @@
 .context-menu button {
   cursor: pointer;
 }
+
+

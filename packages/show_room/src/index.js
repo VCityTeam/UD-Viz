@@ -277,6 +277,8 @@ export class ShowRoom {
       );
     }
     if (configs.baseMap) {
+      // Add a WMS imagery layer
+
       this.frame3DPlanar.itownsView.addLayer(
         new itowns.ColorLayer(configs.baseMap['name'], {
           updateStrategy: {
@@ -412,7 +414,7 @@ export class ShowRoom {
     // url camera matrix button
     const urlCameraMatrixButton = document.createElement('img');
     urlCameraMatrixButton.src = pathIcon;
-    urlCameraMatrixButton.title = 'Camera Position Url';
+    urlCameraMatrixButton.title = 'Copy Camera Position Url';
     this.menuSideBar.appendChild(urlCameraMatrixButton);
 
     urlCameraMatrixButton.onclick = () => {
@@ -437,6 +439,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget Geocoding';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -581,6 +584,7 @@ export class ShowRoom {
     // PLUG WITH SIDEBAR BUTTON
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget SMDB';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -629,6 +633,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget Guided Tour';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -657,6 +662,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget Camera Positioner';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -683,6 +689,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget LayerChoice';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -710,6 +717,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget SlideShow';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -739,6 +747,7 @@ export class ShowRoom {
 
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = 'Widget Sparql';
     this.menuSideBar.appendChild(sideBarButton);
 
     sideBarButton.onclick = () => {
@@ -760,6 +769,7 @@ export class ShowRoom {
   addCustomHtml(pathIcon, customHtml, label) {
     const sideBarButton = document.createElement('img');
     sideBarButton.src = pathIcon;
+    sideBarButton.title = label;
     this.menuSideBar.appendChild(sideBarButton);
     sideBarButton.onclick = () => {
       if (customHtml.parentElement) {
