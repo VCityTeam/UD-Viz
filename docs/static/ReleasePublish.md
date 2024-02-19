@@ -21,7 +21,7 @@
     ....
     
     ```
-4. Run `npm run docs`.  Generate the documentation with [JSDoc](https://jsdoc.app/).
+4. Run `npm run architecture`.  Generate the architecture with [js script](../../bin/generateArchitecture.js).
    
 5. Follow the [prior PR submission](./Contributing.md#prior-to-pr-submission)
 

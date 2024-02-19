@@ -27,6 +27,7 @@ widget_extensions_3d_tiles_temporal
 widget_geocoding
 widget_guided_tour
 widget_layer_choice
+widget_legonizer
 widget_planar_controls
 widget_slide_show
 widget_sparql
@@ -73,6 +74,7 @@ show_room-->game_browser
 show_room-->game_browser_template
 show_room-->game_shared
 show_room-->game_shared_template
+show_room-->widget_legonizer
 smdb-->utils_browser
 smdb-->utils_shared
 smdb-->widget_camera_positioner
@@ -83,6 +85,8 @@ widget_extensions_3d_tiles_temporal-->extensions_3d_tiles_temporal
 widget_geocoding-->utils_browser
 widget_geocoding-->utils_shared
 widget_layer_choice-->utils_browser
+widget_legonizer-->game_browser
+widget_legonizer-->utils_browser
 widget_planar_controls-->utils_browser
 widget_slide_show-->utils_browser
 widget_sparql-->utils_browser
