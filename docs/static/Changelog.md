@@ -1,3 +1,22 @@
+# 4.1.0
+
+## @ud-viz
+    - Created Documentation Github Action
+    - Generated documentation with Github Actions
+    - Improved the documentation
+
+## @ud-viz/legonizer
+    - Created the package and its widget
+
+## @ud-viz/game_shared
+    - update(NativeCommandManager.js): checkMaxAltitude and checkMinAltitude now use worldposition of object3D
+    - update(ControllerNativeCommandManager.js):stop using mode.type in controls function
+    - update(NativeCommandManager):add max and min altitude when move and move down
+    - update(ControllerNativeCommandManager):add new mode with up and down
+
+## @ud-viz/widget_layer_choice
+    - feat(LayerChoice):Add focus button in layerchoice widget
+
 # v4.0.3
 
 ## @ud-viz

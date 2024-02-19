@@ -1,7 +1,7 @@
 {
   "name": "ud-viz",
   "private": true,
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "Urban Data VIsualiZation framework",
   "scripts": {
     "clean": "rm -f -r node_modules && rm -f package-lock.json && rm -f -r ./dist  && rm -f  -r ./packages/**/node_modules",
@@ -19,6 +19,7 @@
     "local-ci": "rm -f -r ./dist && npm run eslint && npm run test-unit && npm run test-functional && npm audit --audit-level=low && npm run test-links",
     "pre-publish": "node ./bin/prePublish.js",
     "docs": "rm -rf ./docs/html && node ./bin/generateJsDoc.js ",
+    "architecture": "node ./bin/generateArchitecture.js ",
     "dev-docs": "nodemon --signal SIGKILL --trace-warnings --verbose --watch ./packages/game_editor --watch ./packages/point_cloud_visualizer --watch ./packages/widget_guided_tour --watch ./packages/show_room/src --watch ./packages/extensions_3d_tiles_temporal/src  --watch ./packages/frame3d/src  --watch ./packages/game_browser/src  --watch ./packages/game_browser_template/src  --watch ./packages/game_node/src  --watch ./packages/game_node_template/src  --watch ./packages/game_shared/src  --watch ./packages/game_shared_template/src  --watch ./packages/smdb/src  --watch ./packages/utils_browser/src  --watch ./packages/utils_node/src  --watch ./packages/utils_shared/src  --watch ./packages/widget_3d_tiles/src  --watch ./packages/widget_base_map/src  --watch ./packages/widget_bookmark/src  --watch ./packages/widget_camera_positioner/src  --watch ./packages/widget_extensions_3d_tiles_temporal/src  --watch ./packages/widget_geocoding/src  --watch ./packages/widget_layer_choice/src  --watch ./packages/widget_planar_controls/src  --watch ./packages/widget_slide_show/src  --watch ./packages/widget_sparql/src  --watch ./packages/widget_workspace/src --watch ./packages/widget_legonizer/src --delay 2500ms --exec npm run docs -e js,css",
     "back-end": "cross-env NODE_ENV=production node ./bin/backEnd.js",
     "analyze-bundle": "cross-env ANALYZE=analyze npm run build-examples",

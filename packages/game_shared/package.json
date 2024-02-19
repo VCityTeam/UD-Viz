@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_shared",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "Game library interpretable in a nodejs and in a browser environment based on THREE.js",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_shared",
   "peerDependencies": {
-    "@ud-viz/utils_shared": "4.0.3",
+    "@ud-viz/utils_shared": "4.1.0",
     "detect-collisions": "2.5.2",
     "three": "0.154.0"
   }
