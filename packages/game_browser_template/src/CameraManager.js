@@ -9,6 +9,9 @@ import { throttle } from '@ud-viz/utils_shared';
  * @param {number} dt - delta time movement
  */
 
+/**
+ @class Manages the camera in a game, including handling movements, targeting objects, and avoiding obstacles using a raycaster.
+ */
 export class CameraManager extends ScriptBase {
   /**
    *

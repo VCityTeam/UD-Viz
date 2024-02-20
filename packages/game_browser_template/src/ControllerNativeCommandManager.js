@@ -3,6 +3,9 @@ import { constant } from '@ud-viz/game_shared_template';
 import { Command } from '@ud-viz/game_shared';
 import { Vector3 } from 'three';
 
+/**
+ * @class Manages native commands for controlling object3D with different modes and options.
+ */
 export class ControllerNativeCommandManager extends ScriptBase {
   constructor(context, object3D, variables) {
     super(context, object3D, variables);
