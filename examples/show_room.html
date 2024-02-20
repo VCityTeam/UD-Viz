@@ -101,6 +101,7 @@
               infoUI.appendChild(docHelpHtml);
 
               const buttonHelp = document.createElement('a');
+              buttonHelp.title = 'help';
               const iconHelp = document.createElement('img');
               iconHelp.src = './assets/svg/help.svg';
               buttonHelp.appendChild(iconHelp);
@@ -135,6 +136,7 @@
               infoUI.appendChild(docAboutHtml);
 
               const buttonAbout = document.createElement('a');
+              buttonAbout.title = 'about';
               const iconAbout = document.createElement('img');
               iconAbout.src = './assets/svg/about.svg';
               buttonAbout.appendChild(iconAbout);
@@ -148,6 +150,7 @@
 
           // CODE
           const buttonCode = document.createElement('a');
+          buttonCode.title = 'Access to code';
           const iconCode = document.createElement('img');
           iconCode.src = './assets/img/icons/code.png';
           buttonCode.appendChild(iconCode);
