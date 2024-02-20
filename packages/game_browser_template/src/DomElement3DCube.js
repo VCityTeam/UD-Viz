@@ -7,6 +7,10 @@ import {
 import { Command, RenderComponent } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
 
+/**
+ @class The DomElement3DCube class creates a 3D cube with a DOM element iframe instead of a face and updates
+its position based on the game context.
+ */
 export class DomElement3DCube extends ScriptBase {
   init() {
     // add a domElement3D iframe instead of the face

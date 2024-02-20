@@ -8,7 +8,10 @@ import { Command, Object3D } from '@ud-viz/game_shared';
 import { constant } from '@ud-viz/game_shared_template';
 import { ControllerNativeCommandManager } from '../ControllerNativeCommandManager';
 
-/** @class */
+/**
+ @class Alows users to drag and drop an avatar in a 3D
+environment and control its position and camera view.
+ */
 export class DragAndDropAvatar extends ScriptBase {
   init() {
     /** @type {ControllerNativeCommandManager} */
