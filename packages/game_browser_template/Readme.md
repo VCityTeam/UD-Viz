@@ -38,7 +38,8 @@ Contributions are welcome! Feel free to submit bug reports, feature requests, or
 
 ## License
 
-This package is licensed under the [MIT License](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md). Feel free to use and modify it according to your needs.
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
 
 ## Credits
 
