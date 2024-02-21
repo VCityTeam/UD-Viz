@@ -101,7 +101,6 @@
   margin: 5px 10px 5px 5px;
 }
 
-
 /*********************************** Info UI */
 
 #root_InfoUI {
@@ -127,7 +126,7 @@
   cursor: pointer;
 }
 
-.container  {
+.container {
   position: fixed;
   top: 0;
   height: 80%;
@@ -135,7 +134,7 @@
   background: whitesmoke;
 }
 
-.container  img{
+.container img {
   width: 100%;
 }
 /*********************************** AUTHENTIFICATION */
@@ -208,5 +207,3 @@
 .context-menu button {
   cursor: pointer;
 }
-
-
