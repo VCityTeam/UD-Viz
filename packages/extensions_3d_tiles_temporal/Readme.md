@@ -2,27 +2,41 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/extensions_3d_tiles_temporal)](https://npmjs.com/package/@ud-viz/extensions_3d_tiles_temporal)
 
-An itowns C3DTExtensions to manage temporal evolution of 3DTiles.
+## Overview
+
+`@ud-viz/extensions_3d_tiles_temporal` is your gateway to managing the temporal evolution of 3D Tiles within Itowns.
 
 ## Model
 
-You can find the jsonSchemas of the extensions [here](./src/model/jsonSchemas/) and the javascript class associated [there](./src/model/)
+Explore the jsonSchemas of the extensions [here](./src/model/jsonSchemas/) and discover the associated JavaScript classes [here](./src/model/).
 
-Transactions are stored in `C3DTilesLayer` in `tileset.extensions` and record all type of transaction between `C3DTFeature` which allow to assume `C3DTFeature` evolution over time .
+Transactions are stored within `C3DTilesLayer` in `tileset.extensions`, and record all type of transaction between `C3DTFeature` which allow to assume `C3DTFeature` evolution over time.
 
 ## Temporal3DTilesLayerWrapper
 
-This class apply a itowns `Style` to a `C3DTilesLayer` with the following rule:
+This class seamlessly applies an Itowns `Style` to a `C3DTilesLayer`, depicting the progression between states and enhancing understanding of temporal data transitions.
 
-![visu transactions](./img/visu-transactions.png)
+![Visualization of Transactions](./img/visu-transactions.png)
 
-> State i and State i+1 are the actual 3DTiles when they have been acquired at a date given. Transaction first half and Transaction second half are intermediary visualization state not corresponding to real date (the code are handling them like they were though)
+> Note: "State i" and "State i+1" represent actual 3D Tiles acquired at specific dates. "Transaction first half" and "Transaction second half" denote intermediary visualization states, enhancing comprehension despite not corresponding to real dates.
 
-Here you can see difference between two date.
+Witness the difference between two dates in the example below.
 
-![visu 2013 2014](./img/visu-2013-2014.png)
+![Visualization 2013-2014](./img/visu-2013-2014.png)
 
-### Example
+
+### Installation
+
+You can install `@ud-viz/extensions_3d_tiles_temporal` via npm:
+
+```bash
+npm install @ud-viz/extensions_3d_tiles_temporal
+```
+
+### Usage
+
+
+#### Example
 
 ```js
 import * as itowns from 'itowns';
@@ -63,10 +77,24 @@ const temporal3DTilesLayerWrapper = new Temporal3DTilesLayerWrapper(
 );
 
 // Select the date you want to visualize
-temporal3DTilesLayerWrapper.styleDate = date; // note that if the date does not exists in 3DTiles it will select the closer one
+temporal3DTilesLayerWrapper.styleDate = date; // note that if the date does not exist in 3DTiles, it will select the closest one
 view.notifyChange(); // refresh view
 ```
 
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/extensions_3d_tiles_temporal.html)
+> You can also see an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/extensions_3d_tiles_temporal.html)
 
-> [Documentation](https://vcityteam.github.io/UD-Viz/html/extensions_3d_tiles_temporal/)
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/extensions_3d_tiles_temporal/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/extensions_3d_tiles_temporal` is developed and maintained by [VCityTeam](https://github.com/VCityTeam).
