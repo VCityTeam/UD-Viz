@@ -34,7 +34,7 @@ Infuse these modules into your existing application logic, and watch as your pro
 
 ## Contributing
 
-Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the [GitHub repository](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
 
 ## License
 
