@@ -78,7 +78,7 @@
 
           const infoUI = document.createElement('div');
           infoUI.id = 'root_InfoUI';
-          document.body.appendChild(infoUI);
+          app.frame3DPlanar.domElementUI.appendChild(infoUI);
 
           // HELP HTLM
           const xhrHelpMarkdown = new XMLHttpRequest();
@@ -89,16 +89,25 @@
               xhrHelpMarkdown.status >= 200 &&
               xhrHelpMarkdown.status < 300
             ) {
-              const docHelpHtml = document.createElement('div');
+              const modal = document.createElement('div');
+              modal.classList.add('modal');
+              modal.hidden = true;
+              app.frame3DPlanar.domElementUI.appendChild(modal);
 
+              const container = document.createElement('div');
+              container.classList.add('container');
+              modal.appendChild(container);
+
+              const buttonClose = document.createElement('button');
+              buttonClose.innerText = 'Close';
+              container.appendChild(buttonClose);
+
+              const docHelpHtml = document.createElement('div');
               docHelpHtml.innerHTML = new showdown.Converter()
                 .makeHtml(xhrHelpMarkdown.responseText)
                 .replace(/..\/img\//g, './assets/img/');
-              docHelpHtml.hidden = true;
               docHelpHtml.title = 'Help';
-              docHelpHtml.classList.add('container');
-              docHelpHtml.style.width = '50%';
-              infoUI.appendChild(docHelpHtml);
+              container.appendChild(docHelpHtml);
 
               const buttonHelp = document.createElement('a');
               buttonHelp.title = 'help';
@@ -106,8 +115,14 @@
               iconHelp.src = './assets/svg/help.svg';
               buttonHelp.appendChild(iconHelp);
 
+              buttonClose.onclick = () => {
+                modal.hidden = true;
+              };
+              modal.addEventListener('click', (event) => {
+                if (event.target == modal) modal.hidden = true;
+              });
               buttonHelp.addEventListener('click', () => {
-                docHelpHtml.hidden = !docHelpHtml.hidden;
+                modal.hidden = false;
               });
               infoUI.appendChild(buttonHelp);
             }
@@ -123,25 +138,40 @@
               xhrAboutMarkdown.status >= 200 &&
               xhrAboutMarkdown.status < 300
             ) {
+              const modal = document.createElement('div');
+              modal.classList.add('modal');
+              modal.hidden = true;
+              app.frame3DPlanar.domElementUI.appendChild(modal);
+
+              const container = document.createElement('div');
+              container.classList.add('container');
+              modal.appendChild(container);
+
+              const buttonClose = document.createElement('button');
+              buttonClose.innerText = 'Close';
+              container.appendChild(buttonClose);
+
               const docAboutHtml = document.createElement('div');
               docAboutHtml.innerHTML = new showdown.Converter()
                 .makeHtml(xhrAboutMarkdown.responseText)
                 .replace(/..\/img\//g, './assets/img/');
-              docAboutHtml.hidden = true;
               docAboutHtml.title = 'About';
-              docAboutHtml.style.width = '50%';
-              docAboutHtml.style.transform = 'translate(100%)';
-              docAboutHtml.classList.add('container');
-
-              infoUI.appendChild(docAboutHtml);
+              container.appendChild(docAboutHtml);
 
               const buttonAbout = document.createElement('a');
               buttonAbout.title = 'about';
               const iconAbout = document.createElement('img');
               iconAbout.src = './assets/svg/about.svg';
               buttonAbout.appendChild(iconAbout);
+
+              buttonClose.onclick = () => {
+                modal.hidden = true;
+              };
+              modal.addEventListener('click', (event) => {
+                if (event.target == modal) modal.hidden = true;
+              });
               buttonAbout.addEventListener('click', () => {
-                docAboutHtml.hidden = !docAboutHtml.hidden;
+                modal.hidden = false;
               });
               infoUI.appendChild(buttonAbout);
             }

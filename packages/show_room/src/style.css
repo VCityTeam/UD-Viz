@@ -127,16 +127,39 @@
 }
 
 .container {
-  position: fixed;
-  top: 0;
-  height: 80%;
+  margin: 9rem;
+  max-width: 100vw;
   overflow: scroll;
   background: whitesmoke;
+  padding: 2rem;
 }
 
 .container img {
-  width: 100%;
+  max-height: 50vh;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
+
+.container > button {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+  background-color: #83838379;
+}
+
 /*********************************** AUTHENTIFICATION */
 
 #_sidebar_widget_profile {

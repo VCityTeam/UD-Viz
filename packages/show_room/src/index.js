@@ -73,6 +73,9 @@ export class ShowRoom {
       layer: null,
     };
     this.frame3DPlanar.domElement.onclick = (event) => {
+      if (checkParentChild(event.target, this.frame3DPlanar.domElementUI)) {
+        return;
+      }
       if (contextSelection.feature) {
         contextSelection.feature.userData.selectedColor = null;
         contextSelection.layer.updateStyle();
