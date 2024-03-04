@@ -97,4 +97,4 @@ This package is licensed under the [GNU Lesser General Public License Version 2.
 
 ## Credits
 
-`@ud-viz/extensions_3d_tiles_temporal` is developed and maintained by [VCityTeam](https://github.com/VCityTeam).
+`@ud-viz/extensions_3d_tiles_temporal` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
