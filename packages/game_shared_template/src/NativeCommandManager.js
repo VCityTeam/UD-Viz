@@ -10,6 +10,7 @@ const {
 
 /**
  * @classdesc - Manage native command
+ * @augments ScriptBase
  */
 const NativeCommandManager = class extends ScriptBase {
   init() {
@@ -27,6 +28,13 @@ const NativeCommandManager = class extends ScriptBase {
     this.map = this.context.findGameScriptWithID(AbstractMap.ID_SCRIPT);
   }
 
+  /**
+   * Removes an object from the list of objects moving.
+   *
+   * @param {string} type - The type of movement command.
+   * @param {string} uuid - The UUID of the object to remove.
+   * @private
+   */
   _removeObjectMoving(type, uuid) {
     for (let index = 0; index < this.objectsMoving[type].length; index++) {
       const element = this.objectsMoving[type][index];
@@ -37,6 +45,9 @@ const NativeCommandManager = class extends ScriptBase {
     }
   }
 
+  /**
+   * Handles the tick event.
+   */
   tick() {
     // apply commands callback
     this.applyCommandCallbackOf(COMMAND.MOVE_FORWARD, (data) => {
@@ -450,6 +461,12 @@ const NativeCommandManager = class extends ScriptBase {
     );
   }
 
+  /**
+   * Gets the script ID.
+   *
+   * @returns {string} The ID of the NativeCommandManager script.
+   * @static
+   */
   static get ID_SCRIPT() {
     return 'native_command_manager_id';
   }

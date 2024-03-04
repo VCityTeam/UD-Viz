@@ -5,7 +5,7 @@
 
 ## Overview
 
-`@ud-viz/game_node_template` provides a collection of script base on [@ud-viz/game_node](../game_node/Readme.md) designed to facilitate various aspects of application development, including map management, note handling, and dynamic 3D object associated to DOM Element.
+`@ud-viz/game_node_template` provides a collection of script base on [@ud-viz/game_node](https://github.com/VCityTeam/UD-Viz/blob/master/packages/game_node/Readme.md) designed to facilitate various aspects of application development, including map management, note handling, and dynamic 3D object associated to DOM Element.
 
 
 ## Installation
@@ -19,7 +19,7 @@ npm install @ud-viz/game_node_template
 ## Usage 
 
 ### Example
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html)
 
 
 
