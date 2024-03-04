@@ -66,7 +66,7 @@ const process = new MultiPlanarProcess(new SocketIOWrapper(), extent);
 process.start();
 ```
 
-> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html) working with [this backend](../../bin/backEnd.js)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html) working with [this backend](https://github.com/VCityTeam/UD-Viz/blob/master/bin/backEnd.js)
 
 
 ## Documentation
