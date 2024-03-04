@@ -5,7 +5,7 @@
 
 ## Overview
 
-`@ud-viz/game_browser_template` is a collection of scripts built upon `@ud-viz/game_browser`, designed to enhance and extend functionalities for creating interactive 3D environments within web applications. This package offers a set of versatile tools to facilitate various aspects of game development and interaction within a 3D environment.
+`@ud-viz/game_browser_template` is a collection of scripts built upon [`@ud-viz/game_browser`](../game_browser/Readme.md), designed to enhance and extend functionalities for creating interactive 3D environments within web applications. This package offers a set of versatile tools to facilitate various aspects of game development and interaction within a 3D environment.
 
 ## Installation
 
@@ -38,9 +38,8 @@ Contributions are welcome! Feel free to submit bug reports, feature requests, or
 
 ## License
 
-
 This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
 
 ## Credits
 
-`@ud-viz/game_browser_template` is developed and maintained by [VCityTeam](https://github.com/VCityTeam).
+`@ud-viz/game_browser_template` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).

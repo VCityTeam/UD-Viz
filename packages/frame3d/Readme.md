@@ -93,4 +93,4 @@ This package is licensed under the [GNU Lesser General Public License Version 2.
 
 ## Credits
 
-`@ud-viz/frame3d` is developed and maintained by [VCityTeam](https://github.com/VCityTeam).
+`@ud-viz/frame3d` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
