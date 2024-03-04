@@ -2,7 +2,9 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/game_browser)](https://npmjs.com/package/@ud-viz/game_browser)
 
-Game library interpretable in a browser environment based on itowns. Before to start you should read [@ud-viz/game_shared](../game_shared/Readme.md).
+## Context
+
+`@ud-viz/game_browser` is a library interpretable in a browser environment based on itowns. Before to start you should read [`@ud-viz/game_shared`](../game_shared/Readme.md).
 
 There is two `Context` in @ud-viz/game_xxx, one is in `@ud-viz/game_shared` let's call it GameContext and the other is in `@ud-viz/game_browser` let's call it ExternalContext.
 
@@ -23,9 +25,18 @@ sequenceDiagram
 
 There is two type of `@ud-viz/game_browser` process, one can be running exclusively in the browser `SinglePlanarProcess` (GameContext and ExternalContext are in the same process), whereas in the other one `MultiPlanarProcess` GameContext is running on a backend with [@ud-viz/game_node](../game_node/Readme.md) and ExternalContext is running in the browser (communication is made with [socket.io](https://socket.io/)).
 
-## Example
+## Installation
 
-### `SinglePlanarProcess`
+- You can install @ud-viz/game_browser via npm:
+
+```bash
+npm install @ud-viz/game_browser
+```
+## Usage
+
+### Example
+
+- ### `SinglePlanarProcess`
 
 ```js
 import { SinglePlanarProcess } from '@ud-viz/game_browser';
@@ -40,9 +51,9 @@ const process = new SinglePlanarProcess(new Object3D({}), new Planar(extent));
 process.start();
 ```
 
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_zeppelin.html)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_zeppelin.html)
 
-### `MultiPlanarProcess`
+- ### `MultiPlanarProcess`
 
 ```js
 import { MultiPlanarProcess, SocketIOWrapper } from '@ud-viz/game_browser';
@@ -55,6 +66,21 @@ const process = new MultiPlanarProcess(new SocketIOWrapper(), extent);
 process.start();
 ```
 
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html) working with [this backend](../../bin/backEnd.js)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/game_note.html) working with [this backend](../../bin/backEnd.js)
 
-> [Documentation](https://vcityteam.github.io/UD-Viz/html/game_browser/)
+
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/game_browser/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/game_browser` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
