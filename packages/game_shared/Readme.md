@@ -2,9 +2,9 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/game_shared)](https://npmjs.com/package/@ud-viz/game_shared)
 
-Game library interpretable in a nodejs and in a browser environment based on THREE.js.
+Game library interpretable in a nodejs and in a browser environment based on [THREE.js](https://github.com/mrdoob/three.js/releases).
 
-Since the library is interpretable in a nodejs environment there is no output (audio, graphic) and input. In that case you need to use [@ud-viz/game_browser](../game_browser/Readme.md)
+Since the library is interpretable in a nodejs environment there is no output (audio, graphic) and input. In that case you need to use [@ud-viz/game_browser](https://github.com/VCityTeam/UD-Viz/blob/master/packages/game_browser/Readme.md)
 
 ## Overview
 
@@ -49,6 +49,16 @@ Context-->|create|state
 ```
 
 > Some component (ones needing the web api to works) don't have `Controller` meaning these component are not controlled by `Context`. Only `Model` is manipulated.
+
+
+### Installation
+
+You can install `@ud-viz/game_shared` via npm:
+
+```bash
+npm install @ud-viz/game_shared
+```
+
 
 ## Example
 
@@ -109,4 +119,19 @@ context.load().then(() => {
 });
 ```
 
-> [Documentation](https://vcityteam.github.io/UD-Viz/html/game_shared/)
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/game_shared/)
+
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/game_shared` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
