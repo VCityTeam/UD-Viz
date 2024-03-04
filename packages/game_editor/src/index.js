@@ -68,6 +68,7 @@ export { nativeExternalScriptVariablesInputs };
 export { nativeGameScriptVariablesInput };
 export * from './DebugCollision';
 
+/** @class Provides functionality for editing and manipulating 3D objects in a web-based environment.*/
 export class Editor {
   /**
    *
@@ -1155,6 +1156,7 @@ export class Editor {
   }
 }
 
+/** @class Custom HTML element that provides a user interface for editing various components and properties of a 3D game object.*/
 class GameObject3DInput extends HTMLElement {
   /**
    *
