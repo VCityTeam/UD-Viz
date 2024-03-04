@@ -1,3 +1,4 @@
+/** @class Used for creating object inputs in an editor*/
 export class ObjectInput {
   /**
    * private constructor user should not override it !!
