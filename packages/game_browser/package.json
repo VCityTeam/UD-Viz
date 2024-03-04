@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_browser",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/game_browser",
   "peerDependencies": {
     "@ud-viz/frame3d": "4.2.0",
     "@ud-viz/game_shared": "4.2.0",

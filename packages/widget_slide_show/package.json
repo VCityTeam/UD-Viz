@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_slide_show",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_slide_show",
   "peerDependencies": {
     "@ud-viz/utils_browser": "4.2.0",
     "itowns": "2.41.1-next.9",

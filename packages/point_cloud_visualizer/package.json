@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/point_cloud_visualizer",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/point_cloud_visualizer",
   "peerDependencies": {
     "@ud-viz/utils_browser": "4.2.0",
     "@ud-viz/utils_shared": "4.2.0",
