@@ -2,30 +2,49 @@ const { ScriptBase, Object3D } = require('@ud-viz/game_shared');
 
 const OFFSET_ELEVATION = 0.2;
 
+/**
+ * @class Providing methods for loading maps, retrieving elevation values, updating
+ * object elevations, and obtaining the script ID.
+ * @augments ScriptBase
+ */
 module.exports = class AbstractMap extends ScriptBase {
+  /**
+   * Constructs an instance of AbstractMap.
+   *
+   * @param {any} context - The context of the script.
+   * @param {Object3D} object3D - The Object3D associated with the map.
+   * @param {any} variables - Additional variables for the map.
+   */
   constructor(context, object3D, variables) {
     super(context, object3D, variables);
 
+    // Initialize map properties
     this.heightmapSize = 0; // size of the heightmap
-    this.heightValues = []; // values extract from heightmap
+    this.heightValues = []; // values extracted from the heightmap
   }
 
+  /**
+   * Loads the map.
+   *
+   * @abstract
+   */
   load() {
-    // heightmap loading is secific at browser/node
+    // heightmap loading is specific to browser/node
     console.error('abstract method');
   }
 
   /**
+   * Gets the height value at the specified coordinates.
    *
-   * @param {number} x - x coord game ref position
-   * @param {number} y - y coord game ref position
-   * @returns {number|NaN} - return elevation or NaN is x,y is out of map heightmap image
+   * @param {number} x - The x coordinate of the game reference position.
+   * @param {number} y - The y coordinate of the game reference position.
+   * @returns {number|NaN} The elevation value at the specified coordinates, or NaN if out of map heightmap image.
    */
   getHeightValue(x, y) {
     const size = this.heightmapSize;
     const values = this.heightValues;
 
-    // TODO heightmap are square
+    // TODO heightmaps are square
     const pixelWorldUnit = {
       width: this.variables.heightmap_geometry.size / size,
       height: this.variables.heightmap_geometry.size / size,
@@ -38,8 +57,6 @@ module.exports = class AbstractMap extends ScriptBase {
       y: -y / pixelWorldUnit.height + center,
     };
 
-    // console.log(coordHeightmap);
-
     const indexMin = {
       i: Math.floor(coordHeightmap.x),
       j: Math.floor(coordHeightmap.y),
@@ -48,19 +65,14 @@ module.exports = class AbstractMap extends ScriptBase {
     const hMin = this.variables.heightmap_geometry.min;
 
     const getPixelHeight = function (i, j, weight) {
-      // clamp
       let out = false;
       if (i >= size) {
-        // console.log('out of bound X >');
         out = true;
       } else if (i < 0) {
-        // console.log('out of bound X <');
         out = true;
       } else if (j >= size) {
-        // console.log('out of bound Y >');
         out = true;
       } else if (j < 0) {
-        // console.log('out of bound Y <');
         out = true;
       }
 
@@ -78,9 +90,10 @@ module.exports = class AbstractMap extends ScriptBase {
   }
 
   /**
+   * Updates the elevation of the given game object.
    *
-   * @param {Object3D} gameObject - object to update elevation
-   * @returns {boolean} - true if elevation has been updated false if object is out of map
+   * @param {Object3D} gameObject - The object to update elevation.
+   * @returns {boolean} True if elevation has been updated, false if object is out of map.
    */
   updateElevation(gameObject) {
     const elevation = this.getHeightValue(
@@ -95,6 +108,11 @@ module.exports = class AbstractMap extends ScriptBase {
     return false;
   }
 
+  /**
+   * Gets the script ID.
+   *
+   * @returns {string} The ID of the AbstractMap script.
+   */
   static get ID_SCRIPT() {
     return 'map_id';
   }
