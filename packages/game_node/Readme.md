@@ -6,7 +6,7 @@ Game library interpretable in a nodejs environment. Before to start you should r
 
 ## Overview
 
-`@ud-viz/game_node` package allows to create a backend `SocketService` working with [socket.io](https://socket.io/) to communicate with clients implement with `@ud-viz/game_browser`. `SocketService` takes an array of `Object3D` and will instanciated a thread for each of them with [worker_threads](https://nodejs.org/api/worker_threads.html) where `Object3D` is running. Then it handles websocket communication with threads.
+`@ud-viz/game_node` package allows to create a backend `SocketService` working with [socket.io](https://socket.io/) to communicate with clients implement with [`@ud-viz/game_browser`](https://github.com/VCityTeam/UD-Viz/blob/master/packages/game_browser/Readme.md). `SocketService` takes an array of `Object3D` and will instanciated a thread for each of them with [worker_threads](https://nodejs.org/api/worker_threads.html) where `Object3D` is running. Then it handles websocket communication with threads.
 
 ```mermaid
 flowchart TB
@@ -42,6 +42,15 @@ thread_Parent_m-->|message|thread_Child_m
 thread_Child_m-->|State|thread_Parent_m
 ```
 
+## Installation
+
+- You can install @ud-viz/game_node via npm:
+
+```bash
+npm install @ud-viz/game_node
+```
+
+
 ##  Example
 
 ### Parent entry
@@ -57,7 +66,7 @@ socketService.loadGameThreads(
 );
 ```
 
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/bin/backEnd.js)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/bin/backEnd.js)
 
 ### Child entry
 
@@ -68,6 +77,20 @@ const child = new thread.Child();
 child.start([scriptsOfYourGames]);
 ```
 
-> you can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/bin/gameThreadChild.js)
+> You can find an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/bin/gameThreadChild.js)
 
-> [Documentation](https://vcityteam.github.io/UD-Viz/html/game_node/)
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/game_node/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/game_node` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
