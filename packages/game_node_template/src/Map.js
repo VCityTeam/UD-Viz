@@ -3,7 +3,17 @@ const gm = require('gm');
 const { PNG } = require('pngjs');
 const path = require('path');
 
+/**
+ * @class Represents a map object. Central component for managing map-related data
+ * @augments AbstractMap
+ */
 module.exports = class Map extends AbstractMap {
+  /**
+   * Loads the map.
+   *
+   * @returns {Promise<void>} Resolves when the map is loaded.
+   * @throws {Error} If there is an issue with gm installation or loading the map.
+   */
   load() {
     return new Promise((resolve) => {
       const clientHeightmapPath = this.variables.heightmap_path;
