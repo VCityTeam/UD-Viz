@@ -2,6 +2,7 @@ import { ColliderComponent } from '@ud-viz/game_shared/src';
 import { throttle } from '@ud-viz/utils_shared/src';
 import { Box3, Vector3 } from 'three';
 
+/** @class Canvas to visualize collision boundaries in a game context. */
 export class DebugCollision {
   constructor(gameContext) {
     /** @type {import("@ud-viz/game_shared").Context} */
