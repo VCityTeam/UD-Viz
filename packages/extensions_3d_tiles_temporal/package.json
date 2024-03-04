@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/extensions_3d_tiles_temporal",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/extensions_3d_tiles_temporal",
   "peerDependencies": {
     "itowns": "2.41.1-next.9",
     "@ud-viz/utils_shared": "4.2.0"
