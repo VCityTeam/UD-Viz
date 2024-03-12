@@ -1,33 +1,37 @@
 /**
+ * Callback function for ProcessInterval to execute on each tick.
+ *
  * @callback ProcessIntervalTickRequester
- * @param {number} dt
+ * @param {number} dt - The time elapsed since the last tick in milliseconds.
  */
 
-/** @class */
-const ProcessInterval = class {
+/**
+ * @class Representing a loop process based on the setInterval (native JS method).
+ */
+class ProcessInterval {
   /**
-   * Create a loop process based on the setInterval native js method
+   * Create a new ProcessInterval.
    *
-   * @param {object} [options={}] - options of the process
-   * @param {number} [options.fps=60] - frame rate per second of the process
+   * @param {object} [options={}] - Options of the process.
+   * @param {number} [options.fps=60] - Frame rate per second of the process.
    */
   constructor(options = {}) {
     /**
-     * frame rate per second of the process
+     * Frame rate per second of the process.
      *
      * @type {number}
      */
     this.fps = options.fps || 60;
 
     /**
-     * buffer of the ProcessIntervalTickRequester
+     * Buffer of ProcessIntervalTickRequesters.
      *
      * @type {ProcessIntervalTickRequester[]}
      */
     this.tickRequesters = [];
 
     /**
-     * if true the process is not going to call ProcessIntervalTickRequester
+     * If true, the process is paused and ProcessIntervalTickRequesters are not called.
      *
      * @type {boolean}
      */
@@ -35,44 +39,46 @@ const ProcessInterval = class {
   }
 
   /**
-   * Stop the process
+   * Stop the process and clear all tick requesters.
    */
   stop() {
-    // clear interval
-    if (this.interval) clearInterval(this.interval);
     // reset requesters
+    clearInterval(this.interval);
     this.tickRequesters.length = 0;
-
     this.pause = false;
   }
 
   /**
-   * Pause the process (ProcessIntervalTickRequester are not going to be called)
+   * Pause or resume the process.
    *
-   * @param {boolean} value - new pause value
+   * @param {boolean} value - The new pause state of the process.
    */
   setPause(value) {
     this.pause = value;
   }
 
   /**
-   * Add a ProcessIntervalTickRequester
+   * Add a new ProcessIntervalTickRequester to the list.
    *
-   * @param {ProcessIntervalTickRequester} cb - ProcessIntervalTickRequester to call
+   * @param {ProcessIntervalTickRequester} cb - The ProcessIntervalTickRequester to add.
    */
   addtickRequester(cb) {
     this.tickRequesters.push(cb);
   }
 
   /**
-   * Start the process (First call of the setInterval)
+   * Start the process and call the tick function on each interval.
    *
-   * @param {ProcessIntervalTickRequester=} requester - add a default ProcessIntervalTickRequester
+   * @param {ProcessIntervalTickRequester=} requester - Optional default ProcessIntervalTickRequester.
    */
   start(requester) {
     if (requester) this.addtickRequester(requester);
 
     let lastTimeTick = 0;
+
+    /**
+     * The tick function called on each interval.
+     */
     const tick = () => {
       const now = Date.now();
       let dt = 0;
@@ -88,6 +94,6 @@ const ProcessInterval = class {
 
     this.interval = setInterval(tick, 1000 / this.fps);
   }
-};
+}
 
 module.exports = ProcessInterval;
