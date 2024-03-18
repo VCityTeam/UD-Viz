@@ -84,11 +84,11 @@ The two other fields, `lat` and `lng`, specify the path of the coordinates in ea
 
 The `parameters` dictionary represents query parameters that will be added to the URL to perform the appropriate geocoding request. Each parameter is described as a `"name": descriptor` pair, where `name` will be the name of the parameter in the request and `descriptor` describes how the value will be filled. To do that, the descriptor must contain a field named `fill` which can take 3 different values :
 
-|Fill value|Description|
-|----------|------|
-|`"value"`|Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.|
-|`"query"`|Fills the parameter with the query string, formatted as a URI component.|
-|`"extent"`|Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string in which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates.|
+| Fill value | Description                                                                                                                                                                                                                                                                        |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `"value"`  | Fills the parameter with a given value. The value is specified in the `value` field of the descriptor.                                                                                                                                                                             |
+| `"query"`  | Fills the parameter with the query string, formatted as a URI component.                                                                                                                                                                                                           |
+| `"extent"` | Fills the parameter with the extent bounds, with EPSG:4326 coordinates. The string format is specified by the `format` field of the descriptor, which is a string in which the substrings `SOUTH`, `WEST`, `NORTH` and `EAST` will be replaced with the corresponding coordinates. |
 
 ### Example configuration
 
@@ -147,3 +147,19 @@ Here is a sample result of a request for the query "charpennes" (some fields are
 ```
 
 As you can see, the response is a JSON array containing the results, hence the `"basePath": ""` configuration. In each query result, the latitude is stored unter a `lat` field, and the longitude under `lon`. We specify that in our configuration file with `"lat": "lat"` and `"lng": "lon"`.
+
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_geocoding/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/widget_geocoding` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
