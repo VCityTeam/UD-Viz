@@ -37,6 +37,9 @@ const dateSelector = new DateSelector(view, options);
 document.getElementById('parentElementId').appendChild(dateSelector.domElement);
 ```
 
+> You can see an implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/widget_extensions_3d_tiles_temporal.html)
+
+
 ## Documentation
 
 > [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_extensions_3d_tiles_temporal/)
