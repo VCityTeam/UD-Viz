@@ -22,7 +22,7 @@ npm install @ud-viz/widget_base_map
 
 **Implementation**:
 
-```javascript
+```js
 import * as itowns from 'itowns';
 import { BaseMap } from '@ud-viz/widget_base_map';
 
