@@ -27,10 +27,17 @@ npm install @ud-viz/widget_guided_tour
 import * as itowns from 'itowns';
 import { GuidedTour } from '@ud-viz/widget_guided_tour';
 
+// Create extent
+const extent = new itowns.Extent(
+... // name,
+... // west),
+... // east),
+... // south),
+... // north)
+);
+
 // Create an iTowns view
-const view = new itowns.PlanarView(document.getElementById('viewerDiv'), {
-  ... // view configuration
-});
+const view = new itowns.PlanarView(document.getElementById('viewerDiv'), extent);
 
 // Define the configuration of the guided tour
 const tourConfig = {

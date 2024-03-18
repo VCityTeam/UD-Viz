@@ -25,10 +25,17 @@ npm install @ud-viz/widget_extenstions_3d_tiles_temporal
 import * as itowns from 'itowns';
 import { DateSelector } from '@ud-viz/widget_extenstions_3d_tiles_temporal';
 
+// Create extent
+const extent = new itowns.Extent(
+... // name,
+... // west),
+... // east),
+... // south),
+... // north)
+);
+
 // Create an iTowns view
-const view = new itowns.PlanarView(document.getElementById('viewerDiv'), {
-  ... // view configuration
-});
+const view = new itowns.PlanarView(document.getElementById('viewerDiv'), extent);
 
 // Initialize the DateSelector widget
 const dateSelector = new DateSelector(view, options);
