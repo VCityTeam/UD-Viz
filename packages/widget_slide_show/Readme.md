@@ -61,6 +61,8 @@ const slideShow = new SlideShow(view, {
 document.getElementById('parentElementId').appendChild(slideShow.domElement);
 ```
 
+> You can see implementation [here](https://github.com/VCityTeam/UD-Viz/blob/master/examples/widget_slide_show.html)
+
 ## Documentation
 
 > [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_slide_show/)
