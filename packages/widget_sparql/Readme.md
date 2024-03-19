@@ -14,9 +14,17 @@ The basic functionalities of the SPARQL module include:
 - Data is returned in the form of RDF and vizualised with [D3.js](https://d3js.org/) as a graph.
 - The vizualised graph data can be used to select, focus on, and highlight corresponding to city objects.
 
+## Installation
+
+You can install the package via npm:
+
+```bash
+npm install @ud-viz/widget_sparql
+```
+
 ## Usage
 
-For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](../../examples/widget_sparql.html)
+For an example of how to the SPARQL Widget to a UD-Viz web application see the [SPARQLWidget example](https://github.com/VCityTeam/UD-Viz/blob/master/examples/widget_sparql.html)
 
 ### User Interface
 
@@ -152,3 +160,20 @@ The minimal configuration required to make a SPARQL Widget class work is the fol
 - `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
 
 Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [graph](https://vcityteam.github.io/UD-Viz/html/browser/Graph_Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/browser/SparqlQueryWindow.html) documentation for more information
+
+
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_sparql/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/widget_sparql` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).
