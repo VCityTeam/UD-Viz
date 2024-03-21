@@ -627,12 +627,14 @@ NativeCommandManager.moveUp = function (object3D, value, map, withMap = true) {
  * @param {boolean} [withMap=true] - map should be consider
  * @returns {boolean} - the movement make the object3D leaves the map
  */
-NativeCommandManager.moveDown = function (object3D, value) {
+NativeCommandManager.moveDown = function (object3D, value, map, withMap) {
   return NativeCommandManager.move(
     object3D,
     Object3D.computeDown(object3D)
       .applyAxisAngle(new Vector3(0, 0, 1), -Math.PI * 0.5)
-      .setLength(value)
+      .setLength(value),
+    map,
+    withMap
   );
 };
 
