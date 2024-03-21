@@ -2,6 +2,8 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/widget_workspace)](https://npmjs.com/package/@ud-viz/widget_workspace)
 
+The `@ud-viz/widget_workspace` package provides a versatile workspace widget for managing and organizing various visualization components within a web application.
+
 # Workspace Module
 
 The Workspace Module is an extension of the SPARQL Module that adds functionality to query and visualize Workspace, and CityGML Versioning data stored in an RDF Triple-store from a UD-Viz interface.
@@ -28,3 +30,61 @@ To configure the SPARQL workspace module extension
 
 ## Usage
 Clicking on a **Version** or **VersionTransition** will adjust the 3D scene to display the appropriate 3D city model.
+
+## Installation
+
+You can install the package via npm:
+
+```bash
+npm install @ud-viz/widget_workspace
+```
+
+## Usage
+
+**Features**:
+
+- Customizable Layouts: Arrange visualization components in flexible layouts.
+- Component Management: Add, remove, and reposition components within the workspace.
+- Interactivity: Configure components to respond to user interactions.
+- Persistence: Save and load workspace configurations.
+
+**Implementation**:
+
+```javascript
+import { Workspace } from '@ud-viz/widget_workspace';
+
+// Initialize the Workspace widget
+const workspace = new Workspace();
+
+// Add visualization components to the workspace
+workspace.addComponent(component1);
+workspace.addComponent(component2);
+
+// Customize the layout of components
+workspace.setLayout('grid');
+
+// Save the current workspace configuration
+const savedConfig = workspace.saveConfiguration();
+
+// Load a saved workspace configuration
+workspace.loadConfiguration(savedConfig);
+
+// Add the Workspace widget to a parent element
+document.getElementById('parentElementId').appendChild(workspace.domElement);
+```
+
+## Documentation
+
+> [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_workspace/)
+
+## Contributing
+
+Contributions are welcome! Feel free to submit bug reports, feature requests, or pull requests on the GitHub repository. See [Contributing.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributing.md).
+
+## License
+
+This package is licensed under the [GNU Lesser General Public License Version 2.1](https://github.com/VCityTeam/UD-Viz/blob/master/LICENSE.md), with copyright attributed to the University of Lyon.
+
+## Credits
+
+`@ud-viz/widget_workspace` is developed and maintained by [VCityTeam](https://github.com/VCityTeam). See [Contributors.md](https://github.com/VCityTeam/UD-Viz/blob/master/docs/static/Contributors.md).

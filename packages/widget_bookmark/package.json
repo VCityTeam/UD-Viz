@@ -18,7 +18,7 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/packages/widget_bookmark",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_bookmark",
   "peerDependencies": {
     "itowns": "2.41.1-next.9",
     "three": "0.154.0"

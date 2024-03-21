@@ -1,5 +1,8 @@
 import { AbstractMap } from '@ud-viz/game_shared_template';
 
+/**
+ * @class Loads a heightmap image, extracts height values, and ensures the heightmap is a square image.
+ */
 export class Map extends AbstractMap {
   load() {
     return new Promise((resolve, reject) => {
