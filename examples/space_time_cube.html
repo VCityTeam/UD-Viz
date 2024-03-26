@@ -20,7 +20,6 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/layer/3DTiles_temporal.json',
-          './assets/config/layer/3DTiles_Gratte_Ciel.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
         ])
@@ -37,6 +36,7 @@
             parseInt(configs['extents'][0].south),
             parseInt(configs['extents'][0].north)
           );
+
           // create a itowns planar view
           const viewDomElement = document.createElement('div');
           viewDomElement.classList.add('full_screen');
@@ -138,16 +138,12 @@
 
           udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
 
-          const versionsDated = new Map();
-          versionsDated.set(2018, c3DTilesLayer);
-          versionsDated.set(2015, c3DTilesLayer);
-          versionsDated.set(2012, c3DTilesLayer);
-          versionsDated.set(2009, c3DTilesLayer);
+          const dates = [2018, 2015, 2012, 2009];
 
           const stc = new udviz.extensions3DTilesTemporal.SpaceTimeCube(
             view,
             100,
-            versionsDated
+            dates
           );
 
           // Html
@@ -196,6 +192,12 @@
           elementHeightParameter.addEventListener('change', (event) => {
             stc.height = Number(event.target.value);
             stc.updateParameters();
+          });
+
+          window.addEventListener('keydown', (event) => {
+            if (event.key == 'l') {
+              console.log(stc.versions);
+            }
           });
 
           // DEBUG
