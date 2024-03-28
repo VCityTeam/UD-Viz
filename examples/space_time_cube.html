@@ -198,6 +198,13 @@
             if (event.key == 'l') {
               console.log(stc.versions);
             }
+
+            if (event.key == 'ArrowRight') {
+              stc.rotateCircleDisplayed(-1);
+            }
+            if (event.key == 'ArrowLeft') {
+              stc.rotateCircleDisplayed(1);
+            }
           });
 
           // DEBUG
