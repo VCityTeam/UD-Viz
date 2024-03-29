@@ -308,7 +308,7 @@ function getCenterFromObject3D(object3D) {
  *
  * @param {THREE.Object3D} object3DWhereAdd - The object3D to which the cube will be added.
  * @param {THREE.Vector3} pos - Cube position in 3D space (local to the parent).
- * @param [color=0x00ff00] - The color of the cube's material.
+ * @param {THREE.Color} [color=0x00ff00] - The color of the cube's material.
  */
 function debugCubeAtPos(object3DWhereAdd, pos, color = 0x00ff00) {
   const geometryBox = new THREE.BoxGeometry(50, 50, 50);
