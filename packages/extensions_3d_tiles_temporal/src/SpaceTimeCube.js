@@ -293,8 +293,10 @@ export class Version {
 }
 
 /**
+ * Computes and returns the center point of a 3D object.
  *
- * @param {THREE.Object3D} object3D
+ * @param {THREE.Object3D} object3D - Represents a 3D object in the scene.
+ * @returns {THREE.Vector3}  returns the center point of the bounding box of the given `object3D`.
  */
 function getCenterFromObject3D(object3D) {
   const box = new THREE.Box3().setFromObject(object3D);
@@ -302,12 +304,13 @@ function getCenterFromObject3D(object3D) {
 }
 
 /**
+ * Creates a colored cube as a child of an THREE.Object3D at a specified position.
  *
- * @param object3DWhereAdd
- * @param vec3
- * @param color
+ * @param {THREE.Object3D} object3DWhereAdd - The object3D to which the cube will be added.
+ * @param {THREE.Vector3} pos - Cube position in 3D space (local to the parent).
+ * @param [color=0x00ff00] - The color of the cube's material.
  */
-function debugCubeAtPos(object3DWhereAdd, vec3, color = 0x00ff00) {
+function debugCubeAtPos(object3DWhereAdd, pos, color = 0x00ff00) {
   const geometryBox = new THREE.BoxGeometry(50, 50, 50);
   const materialBox = new THREE.MeshBasicMaterial({
     color: color,
@@ -316,16 +319,17 @@ function debugCubeAtPos(object3DWhereAdd, vec3, color = 0x00ff00) {
   });
   const cubeDebug = new THREE.Mesh(geometryBox, materialBox);
   object3DWhereAdd.add(cubeDebug);
-  cubeDebug.position.copy(vec3);
+  cubeDebug.position.copy(pos);
   cubeDebug.updateMatrixWorld();
 }
 
 export class SpaceTimeCube {
   /**
+   * Init properties and layers for displaying temporal 3D tiles.
    *
-   * @param {itowns.PlanarView} view
-   * @param delta
-   * @param {Array<number>} datesC3DT
+   * @param {itowns.PlanarView} view - iTowns view which contains notably the threejs scene and render's events.
+   * @param {any} delta - ... TODO
+   * @param {Array<number>} datesC3DT - Array of differents c3dtileslayer's dates.
    */
   constructor(view, delta, datesC3DT) {
     this.view = view;
@@ -403,6 +407,11 @@ export class SpaceTimeCube {
   }
 
   // Debug
+  /**
+   * Rotates the rootObject3D in a specified direction in z axis
+   *
+   * @param {number} direction - The angle by which the circle should be rotated.
+   */
   rotateCircleDisplayed(direction) {
     if (!this.rootObject3D) return;
     console.log('rotate circle with', direction);
@@ -793,7 +802,8 @@ export class SpaceTimeCube {
   }
 
   /**
-   * Display a circle above the 3Dtiles layer 2012
+   * Creates a circle with points displayed at specific angles, places versions on the circle, and adds date labels for each version.
+   * Then add all this object in the rootObject3D
    */
   displayVersionsCircle() {
     const view = this.view;
@@ -880,6 +890,9 @@ export class SpaceTimeCube {
     this.displayVersionsCircle();
   }
 
+  /**
+   * Calculates the angle between the camera and a base layer, updates the rootObject3D on this angle.
+   */
   updateCircle() {
     // Compute the angle between camera and the base layer.
     if (!this.circleDisplayed) return;
