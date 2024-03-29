@@ -301,6 +301,25 @@ function getCenterFromObject3D(object3D) {
   return box.getCenter(new THREE.Vector3());
 }
 
+/**
+ *
+ * @param object3DWhereAdd
+ * @param vec3
+ * @param color
+ */
+function debugCubeAtPos(object3DWhereAdd, vec3, color = 0x00ff00) {
+  const geometryBox = new THREE.BoxGeometry(50, 50, 50);
+  const materialBox = new THREE.MeshBasicMaterial({
+    color: color,
+    transparent: true,
+    opacity: 0.5,
+  });
+  const cubeDebug = new THREE.Mesh(geometryBox, materialBox);
+  object3DWhereAdd.add(cubeDebug);
+  cubeDebug.position.copy(vec3);
+  cubeDebug.updateMatrixWorld();
+}
+
 export class SpaceTimeCube {
   /**
    *
@@ -773,29 +792,20 @@ export class SpaceTimeCube {
     });
   }
 
-  debugCubeAtPos(vec3, color = 0x00ff00) {
-    const geometryBox = new THREE.BoxGeometry(50, 50, 50);
-    const materialBox = new THREE.MeshBasicMaterial({
-      color: color,
-      transparent: true,
-      opacity: 0.5,
-    });
-    const cubeDebug = new THREE.Mesh(geometryBox, materialBox);
-    this.view.scene.add(cubeDebug);
-    cubeDebug.position.copy(vec3);
-    cubeDebug.updateMatrixWorld();
-  }
-
   /**
    * Display a circle above the 3Dtiles layer 2012
    */
   displayVersionsCircle() {
     const view = this.view;
 
+    this.rootObject3D.clear();
+
     this.centroidFirstTL = getCenterFromObject3D(this.firstTemporalLayer.root);
     this.rootObject3D.position.copy(this.centroidFirstTL);
     this.rootObject3D.position.z += this.height;
-    view.scene.add(this.rootObject3D);
+    if (!view.scene.children.includes(this.rootObject3D)) {
+      view.scene.add(this.rootObject3D);
+    }
 
     // Init circle line
     const pointsDisplayed = [];
@@ -840,7 +850,7 @@ export class SpaceTimeCube {
         this.circleDisplayed.position.y + point.y,
         this.circleDisplayed.position.z
       );
-      // this.debugCubeAtPos(positionInCircle);
+      // debugCubeAtPos(this.rootObject3D, positionInCircle);
 
       version.c3DTLayer.visible = false;
 
@@ -867,9 +877,7 @@ export class SpaceTimeCube {
   }
 
   updateParameters() {
-    this.rootObject3D.clear();
     this.displayVersionsCircle();
-    this.view.notifyChange();
   }
 
   updateCircle() {
