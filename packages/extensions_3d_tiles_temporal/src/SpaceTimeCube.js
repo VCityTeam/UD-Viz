@@ -330,7 +330,7 @@ export class SpaceTimeCube {
     /** @type {number} */
     this.RAYON = 1000;
 
-    this.rootObject = new THREE.Object3D();
+    this.rootObject3D = new THREE.Object3D();
     this.circleDisplayed = null;
 
     /** @type {Map<number, itowns.C3DTileset>} */
@@ -385,10 +385,10 @@ export class SpaceTimeCube {
 
   // Debug
   rotateCircleDisplayed(direction) {
-    if (!this.rootObject) return;
+    if (!this.rootObject3D) return;
     console.log('rotate circle with', direction);
-    this.rootObject.rotateZ(direction);
-    this.rootObject.updateMatrixWorld();
+    this.rootObject3D.rotateZ(direction);
+    this.rootObject3D.updateMatrixWorld();
     this.view.notifyChange();
   }
 
@@ -793,9 +793,9 @@ export class SpaceTimeCube {
     const view = this.view;
 
     this.centroidFirstTL = getCenterFromObject3D(this.firstTemporalLayer.root);
-    this.rootObject.position.copy(this.centroidFirstTL);
-    this.rootObject.position.z += this.height;
-    view.scene.add(this.rootObject);
+    this.rootObject3D.position.copy(this.centroidFirstTL);
+    this.rootObject3D.position.z += this.height;
+    view.scene.add(this.rootObject3D);
 
     // Init circle line
     const pointsDisplayed = [];
@@ -815,7 +815,7 @@ export class SpaceTimeCube {
     const materialDisplayed = new THREE.LineBasicMaterial({ color: 0x0000ff });
     this.circleDisplayed = new THREE.Line(geometryDisplayed, materialDisplayed);
 
-    this.rootObject.add(this.circleDisplayed);
+    this.rootObject3D.add(this.circleDisplayed);
     this.circleDisplayed.position.y += this.RAYON;
     this.circleDisplayed.updateMatrixWorld();
 
@@ -826,7 +826,7 @@ export class SpaceTimeCube {
         version.c3DTLayer.root,
         true
       );
-      this.rootObject.add(copyObject);
+      this.rootObject3D.add(copyObject);
       const angleRad = (angleDeg * Math.PI) / 180;
       angleDeg = 360 / this.versions.length + angleDeg;
       const point = new THREE.Vector3(
@@ -843,84 +843,32 @@ export class SpaceTimeCube {
       // this.debugCubeAtPos(positionInCircle);
 
       version.c3DTLayer.visible = false;
+
+      const dateSprite = version.createSpriteDate();
       if (version.date != 2012) {
         // position C3DTLayer
         copyObject.children.forEach((object) => {
           object.position.copy(positionInCircle);
           object.updateMatrixWorld();
         });
+        dateSprite.position.copy(positionInCircle);
+      } else {
+        dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
       }
-
       // Date label sprite
-      const dateSprite = version.createSpriteDate();
-      dateSprite.position.copy(positionInCircle);
       dateSprite.position.z += 40;
       dateSprite.scale.multiplyScalar(0.02);
       dateSprite.updateMatrixWorld();
-      this.rootObject.add(dateSprite);
+      this.rootObject3D.add(dateSprite);
     });
-    this.rootObject.updateMatrixWorld();
+    this.rootObject3D.updateMatrixWorld();
 
     this.view.notifyChange();
   }
 
   updateParameters() {
-    const points = [];
-    for (let i = 90; i < 360; i += 10) {
-      const angle = (i * Math.PI) / 180;
-      points.push(
-        new THREE.Vector3(
-          this.RAYON * Math.cos(angle),
-          this.RAYON * Math.sin(angle),
-          0
-        )
-      );
-    }
-    this.circleDisplayed.geometry = new THREE.BufferGeometry().setFromPoints(
-      points
-    );
-    this.circleDisplayed.position.set(
-      this.circleDisplayed.position.x,
-      this.circleDisplayed.position.y,
-      this.centroidFirstTL.z + this.height
-    );
-    this.circleDisplayed.updateMatrixWorld();
-
-    const a = new THREE.Euler().setFromQuaternion(
-      this.circleDisplayed.quaternion
-    );
-
-    let angleDeg = (a.z * 180) / Math.PI;
-    this.versions.forEach((version) => {
-      const angle = (angleDeg * Math.PI) / 180;
-      angleDeg = 360 / this.versions.length + angleDeg;
-      const pos = new THREE.Vector2(
-        this.RAYON * Math.cos(angle),
-        this.RAYON * Math.sin(angle)
-      );
-
-      if (version.date != 2012) {
-        version.c3DTLayer.root.children.forEach((obj) => {
-          obj.position.set(pos.x, pos.y, 0);
-          obj.updateMatrix();
-        });
-
-        version.c3DTLayer.object3d.position.copy(this.circleDisplayed.position);
-
-        version.c3DTLayer.object3d.updateMatrixWorld();
-        version.dateSprite.position.set(
-          version.c3DTLayer.object3d.position.x +
-            version.c3DTLayer.root.children[0].position.x,
-          version.c3DTLayer.object3d.position.y +
-            version.c3DTLayer.root.children[0].position.y,
-          version.c3DTLayer.object3d.position.z +
-            version.c3DTLayer.root.children[0].position.z +
-            150
-        );
-        version.dateSprite.updateMatrixWorld();
-      }
-    });
-
+    this.rootObject3D.clear();
+    this.displayVersionsCircle();
     this.view.notifyChange();
   }
 
@@ -940,10 +888,13 @@ export class SpaceTimeCube {
     if (orientation > 0) angle = 2 * Math.PI - angle;
 
     // Update position of the circle
-    if (!this.rootObject) return;
+    if (!this.rootObject3D) return;
 
-    this.rootObject.setRotationFromAxisAngle(new THREE.Vector3(0, 0, 1), angle);
-    this.rootObject.updateMatrixWorld();
+    this.rootObject3D.setRotationFromAxisAngle(
+      new THREE.Vector3(0, 0, 1),
+      angle
+    );
+    this.rootObject3D.updateMatrixWorld();
 
     // Update transactions
     // this.versions.forEach((version, index) => {
