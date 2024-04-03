@@ -100,4 +100,29 @@ export class STSCircle extends STShape {
 
     view.notifyChange();
   }
+
+  update() {
+    // Compute the angle between camera and the base layer.
+    if (!this.stLayer.rootObject3D.children.length) return;
+
+    const dirToCamera = new THREE.Vector2(
+      this.layerCentroid.x - this.stLayer.view.camera.camera3D.position.x,
+      this.layerCentroid.y - this.stLayer.view.camera.camera3D.position.y
+    ).normalize();
+    const dirObject = new THREE.Vector2(0, 1);
+
+    let angle = dirObject.angleTo(dirToCamera);
+    const orientation =
+      dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
+    if (orientation > 0) angle = 2 * Math.PI - angle;
+
+    // Update position of the circle
+    if (!this.stLayer.rootObject3D) return;
+
+    this.stLayer.rootObject3D.setRotationFromAxisAngle(
+      new THREE.Vector3(0, 0, 1),
+      angle
+    );
+    this.stLayer.rootObject3D.updateMatrixWorld();
+  }
 }
