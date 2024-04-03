@@ -12,6 +12,8 @@ export {
 
 export * from './SpaceTimeCube';
 
+export { STSCircle } from './STSCircle';
+
 export const ID = '3DTILES_temporal';
 
 const TEMPORAL_COLOR_OPACITY = {
