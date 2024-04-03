@@ -391,23 +391,33 @@ export function appendWireframeByGeometryAttributeToObject3D(
 
 /**
  *
+ * @typedef {object} SpriteStringOptions
+ * @property {number} baseHeight height of the canvas and the the font size
+ * @property {number} baseWidth width of the canvas
+ * @property {number} borderSize border size of the canvas
+ * @property {string} font string of font description css style-like
+ */
+
+/**
+ * Generates a sprite with text from a given string
+ *
  * @param {string} string The string displayed in the sprite
- * @param {object} [options] Options
- * @
+ * @param {SpriteStringOptions} [options] Options of generation
+ * @returns {THREE.Sprite} three's Sprite
  */
 export function createSpriteFromString(string, options = {}) {
-  const size = options.size || 64;
+  const baseHeight = options.baseHeight || 64;
   const baseWidth = options.baseWidth || 150;
   const borderSize = !!options.borderSize || 2;
   const ctx = document.createElement('canvas').getContext('2d');
-  const font = options.font || `${size}px bold sans-serif`;
+  const font = options.font || `${baseHeight}px bold sans-serif`;
   ctx.font = font;
   // measure how long the name will be
   const textWidth = ctx.measureText(string).width;
 
   const doubleBorderSize = borderSize * 2;
   const width = baseWidth + doubleBorderSize;
-  const height = size + doubleBorderSize;
+  const height = baseHeight + doubleBorderSize;
   ctx.canvas.width = width;
   ctx.canvas.height = height;
 
