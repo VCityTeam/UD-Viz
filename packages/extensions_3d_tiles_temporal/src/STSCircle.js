@@ -54,10 +54,6 @@ export class STSCircle extends STShape {
     circleLine.position.y += this.radius;
     circleLine.updateMatrixWorld();
 
-    rootObject3D.updateMatrixWorld();
-    view.notifyChange();
-
-    return;
     // Place versions cdtlayers + labels on the circle
     let angleDeg = 0;
     this.versions.forEach((version) => {
@@ -69,8 +65,8 @@ export class STSCircle extends STShape {
       const angleRad = (angleDeg * Math.PI) / 180;
       angleDeg = 360 / this.versions.length + angleDeg;
       const point = new THREE.Vector3(
-        this.RAYON * Math.cos(angleRad),
-        this.RAYON * Math.sin(angleRad),
+        this.radius * Math.cos(angleRad),
+        this.radius * Math.sin(angleRad),
         0
       );
 
@@ -79,29 +75,28 @@ export class STSCircle extends STShape {
         circleLine.position.y + point.y,
         circleLine.position.z
       );
-      // debugCubeAtPos(rootObject3D, positionInCircle);
 
       version.c3DTLayer.visible = false;
 
-      const dateSprite = version.createSpriteDate();
+      // const dateSprite = version.createSpriteDate();
       if (version.date != 2012) {
         // position C3DTLayer
         copyObject.children.forEach((object) => {
           object.position.copy(positionInCircle);
           object.updateMatrixWorld();
         });
-        dateSprite.position.copy(positionInCircle);
+        // dateSprite.position.copy(positionInCircle);
       } else {
-        dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
+        // dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
       }
       // Date label sprite
-      dateSprite.position.z += 40;
-      dateSprite.scale.multiplyScalar(0.02);
-      dateSprite.updateMatrixWorld();
-      rootObject3D.add(dateSprite);
+      // dateSprite.position.z += 40;
+      // dateSprite.scale.multiplyScalar(0.02);
+      // dateSprite.updateMatrixWorld();
+      // rootObject3D.add(dateSprite);
     });
     rootObject3D.updateMatrixWorld();
 
-    this.view.notifyChange();
+    view.notifyChange();
   }
 }
