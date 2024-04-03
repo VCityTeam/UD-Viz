@@ -1,6 +1,7 @@
 import { STShape } from './STShape';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
+import { createSpriteFromString } from '../../utils_browser/src/THREEUtil';
 
 export class STSCircle extends STShape {
   constructor(stLayer, options = {}) {
@@ -78,22 +79,22 @@ export class STSCircle extends STShape {
 
       version.c3DTLayer.visible = false;
 
-      // const dateSprite = version.createSpriteDate();
+      const dateSprite = createSpriteFromString(version.date.toString());
       if (version.date != 2012) {
         // position C3DTLayer
         copyObject.children.forEach((object) => {
           object.position.copy(positionInCircle);
           object.updateMatrixWorld();
         });
-        // dateSprite.position.copy(positionInCircle);
+        dateSprite.position.copy(positionInCircle);
       } else {
-        // dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
+        dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
       }
       // Date label sprite
-      // dateSprite.position.z += 40;
-      // dateSprite.scale.multiplyScalar(0.02);
-      // dateSprite.updateMatrixWorld();
-      // rootObject3D.add(dateSprite);
+      dateSprite.position.z += 40;
+      dateSprite.scale.multiplyScalar(0.02);
+      dateSprite.updateMatrixWorld();
+      rootObject3D.add(dateSprite);
     });
     rootObject3D.updateMatrixWorld();
 

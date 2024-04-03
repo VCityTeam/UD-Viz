@@ -388,3 +388,49 @@ export function appendWireframeByGeometryAttributeToObject3D(
     }
   });
 }
+
+/**
+ *
+ * @param {string} string The string displayed in the sprite
+ * @param {object} [options] Options
+ * @
+ */
+export function createSpriteFromString(string, options = {}) {
+  const size = options.size || 64;
+  const baseWidth = options.baseWidth || 150;
+  const borderSize = !!options.borderSize || 2;
+  const ctx = document.createElement('canvas').getContext('2d');
+  const font = options.font || `${size}px bold sans-serif`;
+  ctx.font = font;
+  // measure how long the name will be
+  const textWidth = ctx.measureText(string).width;
+
+  const doubleBorderSize = borderSize * 2;
+  const width = baseWidth + doubleBorderSize;
+  const height = size + doubleBorderSize;
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
+
+  // need to set font again after resizing canvas
+  ctx.font = font;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, width, height);
+
+  // scale to fit but don't stretch
+  const scaleFactor = Math.min(1, baseWidth / textWidth);
+  ctx.translate(width / 2, height / 2);
+  ctx.scale(scaleFactor, 1);
+  ctx.fillStyle = 'white';
+  ctx.fillText(string, 0, 0);
+
+  const canvasTexture = new THREE.CanvasTexture(ctx.canvas);
+  // canvasTexture.magFilter = THREE.NearestFilter;
+  const label = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: canvasTexture })
+  );
+  label.material.sizeAttenuation = false;
+  return label;
+}
