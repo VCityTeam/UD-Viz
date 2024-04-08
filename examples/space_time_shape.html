@@ -160,11 +160,17 @@
 
           // Events
           buttonCircleRepresentation.onclick = () => {
-            stsCircle.display();
-            elementRadiusParameter.hidden = false;
-            elementRadiusParameter.value = stsCircle.radius;
-            elementHeightParameter.value = stsCircle.height;
-            elementHeightParameter.hidden = false;
+            if (!stsCircle.displayed) {
+              stsCircle.display();
+              elementRadiusParameter.hidden = false;
+              elementHeightParameter.hidden = false;
+              elementRadiusParameter.value = stsCircle.radius;
+              elementHeightParameter.value = stsCircle.height;
+            } else {
+              stsCircle.dispose();
+              elementRadiusParameter.hidden = true;
+              elementHeightParameter.hidden = true;
+            }
           };
           // elementVectorRepresentation.onclick = () => {
 

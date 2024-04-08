@@ -11,15 +11,17 @@ export class STSCircle extends STShape {
 
     this.layerCentroid = null;
 
-    this.stLayer.view.addFrameRequester(
-      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      () => {
-        this.update();
-      }
-    );
+    this.frameRequester = this.update.bind(this);
   }
 
   display() {
+    if (!this.displayed) {
+      this.stLayer.view.addFrameRequester(
+        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+        this.frameRequester
+      );
+    }
+    super.display();
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.clear();
@@ -124,5 +126,13 @@ export class STSCircle extends STShape {
       angle
     );
     this.stLayer.rootObject3D.updateMatrixWorld();
+  }
+
+  dispose() {
+    super.dispose();
+    this.stLayer.view.removeFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      this.frameRequester
+    );
   }
 }

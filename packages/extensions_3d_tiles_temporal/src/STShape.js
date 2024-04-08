@@ -1,6 +1,7 @@
 import { C3DTilesLayer, C3DTilesSource, View } from 'itowns';
 import { Object3D } from 'three';
 import { Temporal3DTilesLayerWrapper } from './index';
+
 /**
  * @typedef {object} STLayer
  * @property {View} view
@@ -25,8 +26,11 @@ export class STShape {
     /** @type {Array<Temporal3DTilesLayerWrapper>} */
     this.temporalsWrappers = [];
 
-    /** @type {Array<{C3DTilesLayer, Number}>} */
+    /** @type {Array<{c3DTLayer: C3DTilesLayer, date: number}>} */
     this.versions = [];
+
+    /** @type {boolean} */
+    this.displayed = false;
 
     this.stLayer.datesC3DT.forEach((date) => {
       const c3DTLayer = new C3DTilesLayer(
@@ -57,9 +61,19 @@ export class STShape {
     });
   }
 
-  display() {}
+  display() {
+    this.displayed = true;
+  }
 
   update() {}
 
-  dispose() {}
+  dispose() {
+    this.displayed = false;
+    this.stLayer.rootObject3D.clear();
+    this.stLayer.rootObject3D = new Object3D();
+    this.versions.forEach((version) => {
+      version.c3DTLayer.visible = true;
+    });
+    this.stLayer.view.notifyChange();
+  }
 }
