@@ -131,50 +131,74 @@
             datesC3DT: dates,
           };
 
+          const oSTShapeUI = [];
           const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
             stLayer
           );
 
-          // Circle
-          const elementCircleRepresentation = document.createElement('div');
-          elementCircleRepresentation.style =
+          const ui = document.createElement('div');
+          ui.style =
             'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
 
-          const buttonCircleRepresentation = document.createElement('button');
-          buttonCircleRepresentation.textContent = 'Circle';
-          elementCircleRepresentation.appendChild(buttonCircleRepresentation);
+          const selectSTShape = document.createElement('select');
+          ui.appendChild(selectSTShape);
+          const optionDefault = document.createElement('option');
+          optionDefault.innerText = 'Choose a Shape';
+          optionDefault.selected = true;
+          optionDefault.disabled = true;
+          optionDefault.hidden = true;
+          selectSTShape.appendChild(optionDefault);
+
+          const optionCircle = document.createElement('option');
+          optionCircle.value = 'circle';
+          optionCircle.innerText = 'Circle';
+          selectSTShape.appendChild(optionCircle);
+
+          const optionVector = document.createElement('option');
+          optionVector.value = 'vector';
+          optionVector.innerText = 'Vector';
+          selectSTShape.appendChild(optionVector);
+
+          // Circle
+          const elementCircleRepresentation = document.createElement('div');
+          elementCircleRepresentation.hidden = true;
+          ui.appendChild(elementCircleRepresentation);
 
           const elementRadiusParameter = document.createElement('input');
           elementRadiusParameter.type = 'number';
           elementRadiusParameter.name = 'rayon';
-          elementRadiusParameter.hidden = true;
           elementCircleRepresentation.appendChild(elementRadiusParameter);
 
           const elementHeightParameter = document.createElement('input');
           elementHeightParameter.type = 'number';
           elementHeightParameter.name = 'height';
-          elementHeightParameter.hidden = true;
           elementCircleRepresentation.appendChild(elementHeightParameter);
 
-          document.body.appendChild(elementCircleRepresentation);
+          oSTShapeUI.push({
+            stShape: stsCircle,
+            ui: elementCircleRepresentation,
+          });
+
+          document.body.appendChild(ui);
 
           // Events
-          buttonCircleRepresentation.onclick = () => {
-            if (!stsCircle.displayed) {
-              stsCircle.display();
-              elementRadiusParameter.hidden = false;
-              elementHeightParameter.hidden = false;
-              elementRadiusParameter.value = stsCircle.radius;
-              elementHeightParameter.value = stsCircle.height;
-            } else {
-              stsCircle.dispose();
-              elementRadiusParameter.hidden = true;
-              elementHeightParameter.hidden = true;
+          selectSTShape.onchange = (event) => {
+            console.log(selectSTShape.selectedOptions[0].value);
+            oSTShapeUI.forEach((element) => {
+              element.stShape.dispose();
+              element.ui.hidden = true;
+            });
+            switch (selectSTShape.selectedOptions[0].value) {
+              case 'circle':
+                stsCircle.display();
+                elementCircleRepresentation.hidden = false;
+                elementRadiusParameter.value = stsCircle.radius;
+                elementHeightParameter.value = stsCircle.height;
+                break;
+              case 'vector':
+                break;
             }
           };
-          // elementVectorRepresentation.onclick = () => {
-
-          // };
           elementRadiusParameter.addEventListener('change', (event) => {
             stsCircle.radius = Number(event.target.value);
             stsCircle.display();
