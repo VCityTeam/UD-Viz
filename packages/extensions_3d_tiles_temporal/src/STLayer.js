@@ -1,5 +1,10 @@
 import { Temporal3DTilesLayerWrapper } from './index';
-import { C3DTilesLayer, C3DTilesSource, View } from 'itowns';
+import {
+  C3DTILES_LAYER_EVENTS,
+  C3DTilesLayer,
+  C3DTilesSource,
+  View,
+} from 'itowns';
 
 export class STLayer {
   /**
@@ -20,6 +25,8 @@ export class STLayer {
     /** @type {Array<{c3DTLayer: C3DTilesLayer, date: number}>} */
     this.versions = [];
 
+    this.promisesTileContentLoaded = [];
+
     this.datesC3DT.forEach((date) => {
       const c3DTLayer = new C3DTilesLayer(
         this.c3DTLTemporal.id + '_' + date.toString(),
@@ -33,6 +40,17 @@ export class STLayer {
         this.view
       );
       View.prototype.addLayer.call(this.view, c3DTLayer);
+
+      this.promisesTileContentLoaded.push(
+        new Promise((resolve) => {
+          c3DTLTemporal.addEventListener(
+            C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+            () => {
+              resolve();
+            }
+          );
+        })
+      );
       this.temporalsWrappers.push(new Temporal3DTilesLayerWrapper(c3DTLayer));
 
       // Between two dates there are two intermediate dates like this: 2009 -> firstHalfDate -> secondHalfDate 2012. We want always display firstHlafDate.

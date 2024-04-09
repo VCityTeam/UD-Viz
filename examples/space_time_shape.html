@@ -121,6 +121,14 @@
           );
 
           udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+          const promise = new Promise((resolve) => {
+            c3DTilesLayer.addEventListener(
+              udviz.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+              () => {
+                resolve();
+              }
+            );
+          });
 
           const dates = [2018, 2015, 2012, 2009];
 
@@ -131,99 +139,103 @@
             dates
           );
 
-          const ui = document.createElement('div');
-          ui.style =
-            'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
+          Promise.all([promise].concat(stLayer.promisesTileContentLoaded)).then(
+            () => {
+              const ui = document.createElement('div');
+              ui.style =
+                'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
 
-          const selectSTShape = document.createElement('select');
-          ui.appendChild(selectSTShape);
-          const optionDefault = document.createElement('option');
-          optionDefault.innerText = 'Choose a Shape';
-          optionDefault.selected = true;
-          optionDefault.disabled = true;
-          optionDefault.hidden = true;
-          selectSTShape.appendChild(optionDefault);
+              const selectSTShape = document.createElement('select');
+              ui.appendChild(selectSTShape);
+              const optionDefault = document.createElement('option');
+              optionDefault.innerText = 'Choose a Shape';
+              optionDefault.selected = true;
+              optionDefault.disabled = true;
+              optionDefault.hidden = true;
+              selectSTShape.appendChild(optionDefault);
 
-          // CIRCLE
-          // STSCircle
-          const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
-            stLayer
-          );
+              // CIRCLE
+              // STSCircle
+              const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
+                stLayer
+              );
 
-          // HTML
-          const optionCircle = document.createElement('option');
-          optionCircle.value = 'circle';
-          optionCircle.innerText = 'Circle';
-          selectSTShape.appendChild(optionCircle);
+              // HTML
+              const optionCircle = document.createElement('option');
+              optionCircle.value = 'circle';
+              optionCircle.innerText = 'Circle';
+              selectSTShape.appendChild(optionCircle);
 
-          const uiCircle = document.createElement('div');
-          uiCircle.hidden = true;
-          ui.appendChild(uiCircle);
+              const uiCircle = document.createElement('div');
+              uiCircle.hidden = true;
+              ui.appendChild(uiCircle);
 
-          const radiusParameter = document.createElement('input');
-          radiusParameter.type = 'number';
-          radiusParameter.name = 'rayon';
-          uiCircle.appendChild(radiusParameter);
+              const radiusParameter = document.createElement('input');
+              radiusParameter.type = 'number';
+              radiusParameter.name = 'rayon';
+              uiCircle.appendChild(radiusParameter);
 
-          const heightParameter = document.createElement('input');
-          heightParameter.type = 'number';
-          heightParameter.name = 'height';
-          uiCircle.appendChild(heightParameter);
+              const heightParameter = document.createElement('input');
+              heightParameter.type = 'number';
+              heightParameter.name = 'height';
+              uiCircle.appendChild(heightParameter);
 
-          // VECTOR
-          // STSVector
-          const stsVector = new udviz.extensions3DTilesTemporal.STSVector(
-            stLayer
-          );
+              // VECTOR
+              // STSVector
+              const stsVector = new udviz.extensions3DTilesTemporal.STSVector(
+                stLayer
+              );
 
-          // HTML
-          const optionVector = document.createElement('option');
-          optionVector.value = 'vector';
-          optionVector.innerText = 'Vector';
-          selectSTShape.appendChild(optionVector);
+              // HTML
+              const optionVector = document.createElement('option');
+              optionVector.value = 'vector';
+              optionVector.innerText = 'Vector';
+              selectSTShape.appendChild(optionVector);
 
-          const uiVector = document.createElement('div');
-          uiVector.hidden = true;
-          ui.appendChild(uiVector);
+              const uiVector = document.createElement('div');
+              uiVector.hidden = true;
+              ui.appendChild(uiVector);
 
-          document.body.appendChild(ui);
+              document.body.appendChild(ui);
 
-          const oSTShapeUI = [
-            {
-              stShape: stsCircle,
-              ui: uiCircle,
-            },
-            { stShape: stsVector, ui: uiVector },
-          ];
-          // Events
-          selectSTShape.onchange = (event) => {
-            console.log(selectSTShape.selectedOptions[0].value);
-            oSTShapeUI.forEach((element) => {
-              if (element.stShape.displayed) {
-                element.stShape.dispose();
-                element.ui.hidden = true;
-              }
-            });
-            switch (selectSTShape.selectedOptions[0].value) {
-              case 'circle':
+              const oSTShapeUI = [
+                {
+                  stShape: stsCircle,
+                  ui: uiCircle,
+                },
+                { stShape: stsVector, ui: uiVector },
+              ];
+              // Events
+              selectSTShape.onchange = (event) => {
+                console.log(selectSTShape.selectedOptions[0].value);
+                oSTShapeUI.forEach((element) => {
+                  if (element.stShape.displayed) {
+                    element.stShape.dispose();
+                    element.ui.hidden = true;
+                  }
+                });
+                switch (selectSTShape.selectedOptions[0].value) {
+                  case 'circle':
+                    stsCircle.display();
+                    uiCircle.hidden = false;
+                    radiusParameter.value = stsCircle.radius;
+                    heightParameter.value = stsCircle.height;
+                    break;
+                  case 'vector':
+                    break;
+                }
+              };
+              radiusParameter.addEventListener('change', (event) => {
+                stsCircle.radius = Number(event.target.value);
                 stsCircle.display();
-                uiCircle.hidden = false;
-                radiusParameter.value = stsCircle.radius;
-                heightParameter.value = stsCircle.height;
-                break;
-              case 'vector':
-                break;
-            }
-          };
-          radiusParameter.addEventListener('change', (event) => {
-            stsCircle.radius = Number(event.target.value);
-            stsCircle.display();
-          });
+              });
 
-          heightParameter.addEventListener('change', (event) => {
-            stsCircle.height = Number(event.target.value);
-            stsCircle.display();
-          });
+              heightParameter.addEventListener('change', (event) => {
+                stsCircle.height = Number(event.target.value);
+                stsCircle.display();
+              });
+            }
+          );
 
           // DEBUG
           //   window.addEventListener('keydown', (event) => {
