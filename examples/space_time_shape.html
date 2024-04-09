@@ -124,16 +124,11 @@
 
           const dates = [2018, 2015, 2012, 2009];
 
-          const stLayer = {
-            view: view,
-            rootObject3D: new udviz.THREE.Object3D(),
-            c3DTLTemporal: c3DTilesLayer,
-            datesC3DT: dates,
-          };
-
-          const oSTShapeUI = [];
-          const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
-            stLayer
+          const stLayer = new udviz.extensions3DTilesTemporal.STLayer(
+            view,
+            new udviz.THREE.Object3D(),
+            c3DTilesLayer,
+            dates
           );
 
           const ui = document.createElement('div');
@@ -149,38 +144,57 @@
           optionDefault.hidden = true;
           selectSTShape.appendChild(optionDefault);
 
+          // CIRCLE
+          // STSCircle
+          const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
+            stLayer
+          );
+
+          // HTML
           const optionCircle = document.createElement('option');
           optionCircle.value = 'circle';
           optionCircle.innerText = 'Circle';
           selectSTShape.appendChild(optionCircle);
 
+          const uiCircle = document.createElement('div');
+          uiCircle.hidden = true;
+          ui.appendChild(uiCircle);
+
+          const radiusParameter = document.createElement('input');
+          radiusParameter.type = 'number';
+          radiusParameter.name = 'rayon';
+          uiCircle.appendChild(radiusParameter);
+
+          const heightParameter = document.createElement('input');
+          heightParameter.type = 'number';
+          heightParameter.name = 'height';
+          uiCircle.appendChild(heightParameter);
+
+          // VECTOR
+          // STSVector
+          const stsVector = new udviz.extensions3DTilesTemporal.STSVector(
+            stLayer
+          );
+
+          // HTML
           const optionVector = document.createElement('option');
           optionVector.value = 'vector';
           optionVector.innerText = 'Vector';
           selectSTShape.appendChild(optionVector);
 
-          // Circle
-          const elementCircleRepresentation = document.createElement('div');
-          elementCircleRepresentation.hidden = true;
-          ui.appendChild(elementCircleRepresentation);
-
-          const elementRadiusParameter = document.createElement('input');
-          elementRadiusParameter.type = 'number';
-          elementRadiusParameter.name = 'rayon';
-          elementCircleRepresentation.appendChild(elementRadiusParameter);
-
-          const elementHeightParameter = document.createElement('input');
-          elementHeightParameter.type = 'number';
-          elementHeightParameter.name = 'height';
-          elementCircleRepresentation.appendChild(elementHeightParameter);
-
-          oSTShapeUI.push({
-            stShape: stsCircle,
-            ui: elementCircleRepresentation,
-          });
+          const uiVector = document.createElement('div');
+          uiVector.hidden = true;
+          ui.appendChild(uiVector);
 
           document.body.appendChild(ui);
 
+          const oSTShapeUI = [
+            {
+              stShape: stsCircle,
+              ui: uiCircle,
+            },
+            { stShape: stsVector, ui: uiVector },
+          ];
           // Events
           selectSTShape.onchange = (event) => {
             console.log(selectSTShape.selectedOptions[0].value);
@@ -193,20 +207,20 @@
             switch (selectSTShape.selectedOptions[0].value) {
               case 'circle':
                 stsCircle.display();
-                elementCircleRepresentation.hidden = false;
-                elementRadiusParameter.value = stsCircle.radius;
-                elementHeightParameter.value = stsCircle.height;
+                uiCircle.hidden = false;
+                radiusParameter.value = stsCircle.radius;
+                heightParameter.value = stsCircle.height;
                 break;
               case 'vector':
                 break;
             }
           };
-          elementRadiusParameter.addEventListener('change', (event) => {
+          radiusParameter.addEventListener('change', (event) => {
             stsCircle.radius = Number(event.target.value);
             stsCircle.display();
           });
 
-          elementHeightParameter.addEventListener('change', (event) => {
+          heightParameter.addEventListener('change', (event) => {
             stsCircle.height = Number(event.target.value);
             stsCircle.display();
           });

@@ -12,7 +12,9 @@ export {
 
 export * from './SpaceTimeCube';
 
+export { STLayer } from './STLayer';
 export { STSCircle } from './STSCircle';
+export { STSVector } from './STSVector';
 
 export const ID = '3DTILES_temporal';
 
