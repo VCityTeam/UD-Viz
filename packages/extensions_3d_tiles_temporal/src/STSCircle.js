@@ -6,8 +6,8 @@ import { createSpriteFromString } from '../../utils_browser/src/THREEUtil';
 export class STSCircle extends STShape {
   constructor(stLayer, options = {}) {
     super(stLayer, options);
-    this.radius = options.radius || 1000;
-    this.height = options.height || 550;
+    this.radius = isNaN(options.radius) ? 1000 : options.radius;
+    this.height = isNaN(options.height) ? 550 : options.height;
 
     this.layerCentroid = null;
 
@@ -15,13 +15,8 @@ export class STSCircle extends STShape {
   }
 
   display() {
-    if (!this.displayed) {
-      this.stLayer.view.addFrameRequester(
-        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-        this.frameRequester
-      );
-    }
     super.display();
+
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.clear();
@@ -101,6 +96,11 @@ export class STSCircle extends STShape {
     rootObject3D.updateMatrixWorld();
 
     view.notifyChange();
+
+    view.addFrameRequester(
+      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+      this.frameRequester
+    );
   }
 
   update() {

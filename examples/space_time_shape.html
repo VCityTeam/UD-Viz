@@ -185,8 +185,10 @@
           selectSTShape.onchange = (event) => {
             console.log(selectSTShape.selectedOptions[0].value);
             oSTShapeUI.forEach((element) => {
-              element.stShape.dispose();
-              element.ui.hidden = true;
+              if (element.stShape.displayed) {
+                element.stShape.dispose();
+                element.ui.hidden = true;
+              }
             });
             switch (selectSTShape.selectedOptions[0].value) {
               case 'circle':
