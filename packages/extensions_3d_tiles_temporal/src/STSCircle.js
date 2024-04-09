@@ -5,7 +5,7 @@ import { createSpriteFromString } from '../../utils_browser/src/THREEUtil';
 
 export class STSCircle extends STShape {
   constructor(stLayer, options = {}) {
-    super(stLayer, options);
+    super(stLayer);
     this.radius = isNaN(options.radius) ? 1000 : options.radius;
     this.height = isNaN(options.height) ? 550 : options.height;
 
@@ -54,14 +54,14 @@ export class STSCircle extends STShape {
 
     // Place versions cdtlayers + labels on the circle
     let angleDeg = 0;
-    this.versions.forEach((version) => {
+    this.stLayer.versions.forEach((version) => {
       const copyObject = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
       rootObject3D.add(copyObject);
       const angleRad = (angleDeg * Math.PI) / 180;
-      angleDeg = 360 / this.versions.length + angleDeg;
+      angleDeg = 360 / this.stLayer.versions.length + angleDeg;
       const point = new THREE.Vector3(
         this.radius * Math.cos(angleRad),
         this.radius * Math.sin(angleRad),
