@@ -19,17 +19,8 @@ export class STSCircle extends STShape {
 
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
-    rootObject3D.clear();
-    const box = new THREE.Box3().setFromObject(this.stLayer.c3DTLTemporal.root);
-    this.layerCentroid = box.getCenter(new THREE.Vector3());
 
-    rootObject3D.position.copy(this.layerCentroid);
     rootObject3D.position.z += this.height;
-
-    if (!view.scene.children.includes(rootObject3D)) {
-      view.scene.add(rootObject3D);
-    }
-
     // Init circle line
     const pointsDisplayed = [];
     for (let i = 90; i < 360; i += 10) {

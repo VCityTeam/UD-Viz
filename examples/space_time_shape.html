@@ -120,16 +120,6 @@
             view
           );
 
-          udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
-          const promise = new Promise((resolve) => {
-            c3DTilesLayer.addEventListener(
-              udviz.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
-              () => {
-                resolve();
-              }
-            );
-          });
-
           const dates = [2018, 2015, 2012, 2009];
 
           const stLayer = new udviz.extensions3DTilesTemporal.STLayer(
@@ -139,7 +129,7 @@
             dates
           );
 
-          Promise.all([promise].concat(stLayer.promisesTileContentLoaded)).then(
+          Promise.all(stLayer.promisesTileContentLoaded).then(
             () => {
               const ui = document.createElement('div');
               ui.style =
