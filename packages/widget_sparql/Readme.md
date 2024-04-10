@@ -82,13 +82,14 @@ WHERE {
 }
 ```
 
-If the URIs of nodes in the graph correspond with identifiers of objects in the tileset batch table, they can be selected as shown below.
+An example of the visualization of this query:
 
 ![Pick City Object from Graph](./img/pickcityobjectfromgraph.gif)
 
 #### Table
 
 The table view features a filter for searching for data within a column. In addition rows can be sorted in ascending or descending order by column.
+The table also provides features for filtering and ordering the table contents. 
 
 ![Table view demonstraction](./img/sparql-widget-table-demo.gif)
 
@@ -97,6 +98,20 @@ The table view features a filter for searching for data within a column. In addi
 The JSON view returns a collapsible representation of the query reponse.
 
 ![JSON view demonstraction](./img/sparql-widget-json-demo.gif)
+
+
+#### Customizing events with D3
+
+D3 provides event handlers for when users interact with elements of the visualized data.
+These events can be used to add functionality to the interface depending on the needs of an application.
+
+In the example below, the URIs of nodes in the graph correspond with identifiers of objects in the tileset batch table.
+- *mouseover* and *mouseout* events are used to highlight the corresponding geometry of the object in the 3D scene.
+- A *click* event is used to zoom in on the corresponding geometry.
+
+![an example of customized D3 mouse events](./img/node-event-example.gif)
+
+To see how this can be done check out the [SPARQL module example](./../../examples/widget_sparql.html) 
 
 ## Code architecture
 

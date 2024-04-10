@@ -10,10 +10,28 @@ The Workspace Module is an extension of the SPARQL Module that adds functionalit
 
 See the [SPARQL module](../widget_sparql/Readme.md) for more documentation on generic SPARQL functions.
 
-## Workspace functionalities
-This module extends the functionality of the [SPARQL module](../widget_sparql/Readme.md) with the ability to update the displayed 3D model by clicking on **Version** and **VersionTransition**. These nodes are displayed in a D3 graph created from Workspace and Versioning graph data from a SPARQL backend service.
+Also check out the [WorkspaceWidget example](../../examples/widget_workspace.html) to see how this module can be implemented.
 
-If a **VersionTransition** is selected and highlight changes between the related versions of the 3D city model will be highlighted.
+## Workspace functionalities
+This module extends the functionality of the [SPARQL module](../widget_sparql/Readme.md) with the ability to search for nodes corresponding to **Versions**, **VersionTransitions**, and **Scenarios** based on different criteria.
+The following functions are proposed (please read the [Workspace widget JSDOC](./src/index.js) comments for more information):
+- getVersionScenarioByIndex
+- getVersionTransitionScenarioByIndex
+- getVersionScenarioByUri
+- getVersionTransitionScenarioByUri
+- getScenarioLayerNameByIndex
+- getScenarioLayerNameByUri
+- getBitemporalTimestampsByIndex
+
+### D3 event customization
+The intended use of the workspace module is to allow an application to update the 3D scene using information from a workspace dataset.
+
+For example, the displayed 3D model can be updated by clicking on **Version** and **VersionTransition** nodes in the D3 graph. These nodes are created from Workspace and Versioning graph data from a SPARQL backend service.
+If a **VersionTransition** is selected and highlight changes between the related versions of the 3D city model will be highlighted using the Temporal module (see the following section for more information on how this data is structured).
+
+![an example of an application updating the 3D scene using information from a workspace graph](./img/workspace-demo-example.gif)
+
+Check out the [WorkspaceWidget example](../../examples/widget_workspace.html) to see how these events can be customized.
 
 ## Data requirements
 Note that for this functionality to work RDF data in the SPARQL endpoint must be conformant to the ontologies proposed here:
