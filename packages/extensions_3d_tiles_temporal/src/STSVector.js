@@ -31,7 +31,7 @@ export class STSVector extends STShape {
       const newPosition = new THREE.Vector3(
         0,
         0,
-        this.delta * (this.stLayer.versions.indexOf(version) + 1)
+        this.delta * this.stLayer.versions.indexOf(version)
       );
 
       version.c3DTLayer.visible = false;
