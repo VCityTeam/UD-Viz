@@ -1,42 +1,12 @@
-import { arrayPushOnce } from '@ud-viz/utils_shared';
 import { STShape } from './STShape';
-
-const TEMPORAL_COLOR_OPACITY = {
-  noTransaction: {
-    color: 'white',
-    opacity: 1,
-    priority: 0.5,
-  },
-  invisible: {
-    color: 'blue',
-    opacity: 0,
-    priority: 0,
-  },
-  debug: {
-    color: 'brown',
-    opacity: 0.2,
-    priority: 1,
-  },
-  creation: {
-    color: 'green',
-    opacity: 0.6,
-    priority: 1,
-  },
-  demolition: {
-    color: 'red',
-    opacity: 0.6,
-    priority: 1,
-  },
-  modification: {
-    color: 'yellow',
-    opacity: 0.6,
-    priority: 1,
-  },
-};
+import * as THREE from 'three';
+import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
 
 export class STSVector extends STShape {
   constructor(stLayer, options = {}) {
     super(stLayer);
+
+    this.delta = isNaN(options.delta) ? 1000 : options.delta;
 
     /** @type {Map<string,object>} */
     this.featureDateID2ColorOpacity = new Map();
@@ -47,66 +17,51 @@ export class STSVector extends STShape {
 
   display() {
     super.display();
+
+    const view = this.stLayer.view;
+    const rootObject3D = this.stLayer.rootObject3D;
+    rootObject3D.clear();
+    const box = new THREE.Box3().setFromObject(this.stLayer.c3DTLTemporal.root);
+    this.layerCentroid = box.getCenter(new THREE.Vector3());
+
+    rootObject3D.position.copy(this.layerCentroid);
+
+    if (!view.scene.children.includes(rootObject3D)) {
+      view.scene.add(rootObject3D);
+    }
+
     this.stLayer.versions.forEach((version) => {
-      version.c3DTLayer.tileset.extensions[
-        '3DTILES_temporal'
-      ].transactions.forEach((transaction) => {
-        const transactionDuration = transaction.endDate - transaction.startDate;
+      const copyObject = new THREE.Object3D().copy(
+        version.c3DTLayer.root,
+        true
+      );
+      rootObject3D.add(copyObject);
 
-        const firstHalfDate = transaction.startDate + transactionDuration / 3;
-        const secondHalfDate = transaction.endDate - transactionDuration / 3;
-        arrayPushOnce(this.possibleDates, transaction.startDate);
-        arrayPushOnce(this.possibleDates, transaction.endDate);
+      const newPosition = new THREE.Vector3(
+        0,
+        0,
+        this.delta * (this.stLayer.versions.indexOf(version) + 1)
+      );
 
-        arrayPushOnce(this.possibleDates, firstHalfDate);
-        arrayPushOnce(this.possibleDates, secondHalfDate);
+      version.c3DTLayer.visible = false;
 
-        transaction.source.forEach((fId) => {
-          if (transaction.type == 'modification') {
-            this.featureDateID2ColorOpacity.set(
-              fId + firstHalfDate,
-              TEMPORAL_COLOR_OPACITY.modification
-            );
-            this.featureDateID2ColorOpacity.set(
-              fId + secondHalfDate,
-              TEMPORAL_COLOR_OPACITY.invisible
-            );
-          } else {
-            // all other transaction
-            this.featureDateID2ColorOpacity.set(
-              fId + firstHalfDate,
-              TEMPORAL_COLOR_OPACITY.noTransaction
-            );
-            this.featureDateID2ColorOpacity.set(
-              fId + secondHalfDate,
-              TEMPORAL_COLOR_OPACITY.noTransaction
-            );
-          }
-        });
-        transaction.destination.forEach((fId) => {
-          if (transaction.type == 'modification') {
-            this.featureDateID2ColorOpacity.set(
-              fId + firstHalfDate,
-              TEMPORAL_COLOR_OPACITY.invisible
-            );
-            this.featureDateID2ColorOpacity.set(
-              fId + secondHalfDate,
-              TEMPORAL_COLOR_OPACITY.modification
-            );
-          } else {
-            // all other transaction
-            this.featureDateID2ColorOpacity.set(
-              fId + firstHalfDate,
-              TEMPORAL_COLOR_OPACITY.noTransaction
-            );
-            this.featureDateID2ColorOpacity.set(
-              fId + secondHalfDate,
-              TEMPORAL_COLOR_OPACITY.noTransaction
-            );
-          }
-        });
+      const dateSprite = createSpriteFromString(version.date.toString());
+      copyObject.children.forEach((object) => {
+        object.position.copy(newPosition);
+        object.updateMatrixWorld();
       });
+
+      dateSprite.position.copy(newPosition);
+
+      // Date label sprite
+      dateSprite.position.z += 40;
+      dateSprite.scale.multiplyScalar(0.02);
+      dateSprite.updateMatrixWorld();
+      rootObject3D.add(dateSprite);
     });
+    rootObject3D.updateMatrixWorld();
+
+    view.notifyChange();
   }
 
   update() {}
