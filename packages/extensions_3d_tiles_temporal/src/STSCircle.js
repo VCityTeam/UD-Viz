@@ -59,25 +59,25 @@ export class STSCircle extends STShape {
         0
       );
 
-      const positionInCircle = new THREE.Vector3(
-        circleLine.position.x + point.x,
-        circleLine.position.y + point.y,
-        circleLine.position.z
-      );
-
       version.c3DTLayer.visible = false;
 
       const dateSprite = createSpriteFromString(version.date.toString());
+
+      let newPosition = new THREE.Vector3(0, 0, -this.height);
       if (version.date != 2012) {
-        // position C3DTLayer
-        copyObject.children.forEach((object) => {
-          object.position.copy(positionInCircle);
-          object.updateMatrixWorld();
-        });
-        dateSprite.position.copy(positionInCircle);
-      } else {
-        dateSprite.position.copy(new THREE.Vector3(0, 0, 0 - this.height));
+        newPosition = new THREE.Vector3(
+          circleLine.position.x + point.x,
+          circleLine.position.y + point.y,
+          circleLine.position.z
+        );
       }
+      // position C3DTLayer
+      copyObject.children.forEach((object) => {
+        object.position.copy(newPosition);
+        object.updateMatrixWorld();
+      });
+      dateSprite.position.copy(newPosition);
+
       // Date label sprite
       dateSprite.position.z += 40;
       dateSprite.scale.multiplyScalar(0.02);
