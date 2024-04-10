@@ -52,7 +52,7 @@ export class STSCircle extends STShape {
       );
       rootObject3D.add(copyObject);
       const angleRad = (angleDeg * Math.PI) / 180;
-      angleDeg = 360 / this.stLayer.versions.length + angleDeg;
+      angleDeg -= 360 / this.stLayer.versions.length;
       const point = new THREE.Vector3(
         this.radius * Math.cos(angleRad),
         this.radius * Math.sin(angleRad),
