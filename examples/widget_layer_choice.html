@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="./assets/css/widget_layer_choice.css" />
   </head>
   <body>
+    <style>
+      details {
+        max-width: 500px;
+        box-sizing: border-box;
+        margin-top: 5px;
+      }
+
+      details[open] > summary {
+        border-bottom: 1px solid whitesmoke;
+      }
+
+      details > :not(summary) {
+        padding: 10px;
+        border: none;
+        border-left: 1px solid whitesmoke;
+      }
+
+      .widget_layer_choice {
+        overflow: scroll;
+        max-height: 100%;
+      }
+    </style>
+
     <script src="../dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/loadingScreen.js"></script>
 

@@ -206,6 +206,17 @@ export class LayerChoice {
       pointCloudSize.oninput = updatePointsSize;
     }
 
+    if (!param.layer.isTiledGeometryLayer) {
+      // remove button
+      const removeButton = document.createElement('button');
+      removeButton.innerText = 'Remove';
+      layerContainerDomElement.appendChild(removeButton);
+      removeButton.onclick = () => {
+        this.view.removeLayer(param.layer.id, true);
+        layerContainerDomElement.remove();
+      };
+    }
+
     this.view.notifyChange(this.view.camera.camera3D);
   }
 }
