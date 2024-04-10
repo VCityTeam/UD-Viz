@@ -1,7 +1,7 @@
 import { STShape } from './STShape';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
-import { createSpriteFromString } from '../../utils_browser/src/THREEUtil';
+import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
 
 export class STSCircle extends STShape {
   constructor(stLayer, options = {}) {
