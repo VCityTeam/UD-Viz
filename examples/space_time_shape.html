@@ -196,6 +196,11 @@
               uiVector.hidden = true;
               ui.appendChild(uiVector);
 
+              const deltaParameter = document.createElement('input');
+              deltaParameter.type = 'number';
+              deltaParameter.name = 'delta';
+              uiVector.appendChild(deltaParameter);
+
               document.body.appendChild(ui);
 
               const oSTShapeUI = [
@@ -206,7 +211,7 @@
                 { stShape: stsVector, ui: uiVector },
               ];
               // Events
-              selectSTShape.onchange = (event) => {
+              selectSTShape.onchange = () => {
                 console.log(selectSTShape.selectedOptions[0].value);
                 oSTShapeUI.forEach((element) => {
                   if (element.stShape.displayed) {
@@ -224,17 +229,23 @@
                   case 'vector':
                     stsVector.display();
                     uiVector.hidden = false;
+                    deltaParameter.value = stsVector.delta;
                     break;
                 }
               };
-              radiusParameter.addEventListener('change', (event) => {
+              radiusParameter.addEventListener('input', (event) => {
                 stsCircle.radius = Number(event.target.value);
                 stsCircle.display();
               });
 
-              heightParameter.addEventListener('change', (event) => {
+              heightParameter.addEventListener('input', (event) => {
                 stsCircle.height = Number(event.target.value);
                 stsCircle.display();
+              });
+
+              deltaParameter.addEventListener('input', (event) => {
+                stsVector.delta = Number(event.target.value);
+                stsVector.display();
               });
             }
           );
