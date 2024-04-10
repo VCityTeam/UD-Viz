@@ -7,6 +7,47 @@ const DEFAULT_OPTIONS = {
   position: 'top-right', // should be deprecated https://github.com/iTowns/itowns/issues/2005
 };
 
+/**
+ * Within a list of already existing layers, add a UI entry for a newly
+ * appended layer (together with a button for its removal).
+ *
+ * @param {itowns.View} view - The view to which the layer will be added
+ * @param {itowns.C3DTilesLayer} layer - layer to be added to dom element
+ * @param {HTMLDivElement} layersContainer - HTML division holding the listed layers
+ * @param {string} layerContainerClassName - Class name of the layer container
+ */
+function addLayerToDomElement(
+  view,
+  layer,
+  layersContainer,
+  layerContainerClassName
+) {
+  const layerContainerDomElement = document.createElement('div');
+  if (layerContainerClassName)
+    layerContainerDomElement.classList.add(layerContainerClassName);
+  layersContainer.appendChild(layerContainerDomElement);
+
+  // visibility checkbox
+  const { input, parent } = createLabelInput(layer.name, 'checkbox');
+  layerContainerDomElement.appendChild(parent);
+
+  input.checked = layer.visible;
+  input.onchange = () => {
+    layer.visible = input.checked;
+    view.notifyChange();
+  };
+
+  // remove button
+  const removeButton = document.createElement('button');
+  removeButton.innerText = 'Remove';
+  layerContainerDomElement.appendChild(removeButton);
+
+  removeButton.onclick = () => {
+    view.removeLayer(layer.id, true); // clear cache
+    layerContainerDomElement.remove();
+  };
+}
+
 export class C3DTiles extends itownsWidget.Widget {
   /**
    *
@@ -17,19 +58,27 @@ export class C3DTiles extends itownsWidget.Widget {
    * @param {string} options.layerContainerClassName - class name of the layer container div
    * @param {string} options.urlContainerClassName - class name of the layer container div
    * @param {string} options.c3DTFeatureInfoContainerClassName - class name of the c3DTFeatureInfo container div
+   * @param {boolean} options.displayExistingLayers - whether the existing layers should be listed in the UI or not (default is True)
    */
   constructor(view, options = {}) {
     super(view, options, DEFAULT_OPTIONS);
+    // Available layers are optionnaly listed in the UI. Inhibiting this display
+    // allows for an alternative usage of other widgets with a similar purpose
+    // but different feature e.g. @ud-viz/widget_layer_choice.
+    if (typeof options.displayExistingLayers == 'undefined') {
+      options.displayExistingLayers = true;
+    }
 
     /** @type {THREE.Box3Helper} */
     this.displayedBBFeature = new THREE.Box3Helper(new THREE.Box3());
     this.displayedBBFeature.visible = false;
     view.scene.add(this.displayedBBFeature);
 
-    // cant click through the widget
+    // Inhibit click selection "through" the widget
     this.domElement.onclick = (event) => event.stopImmediatePropagation();
 
-    // add C3DTilesLayer from url
+    // Display a UI section allowing the addition of a C3DTilesLayer out of
+    // an url and a (local) tagname.
     const urlObject = createLabelInput('url', 'text');
     if (options.urlContainerClassName)
       urlObject.parent.classList.add(options.urlContainerClassName);
@@ -43,42 +92,6 @@ export class C3DTiles extends itownsWidget.Widget {
     const requestButton = document.createElement('button');
     requestButton.innerText = 'Add 3DTiles From URL';
     urlObject.parent.appendChild(requestButton);
-
-    // layers container
-    const layersContainer = document.createElement('div');
-    layersContainer.innerText = 'Layers:';
-    this.domElement.appendChild(layersContainer);
-
-    /**
-     *
-     * @param {itowns.C3DTilesLayer} layer - layer to add to dom element
-     */
-    const addLayerToDomElement = (layer) => {
-      const layerContainerDomElement = document.createElement('div');
-      if (options.layerContainerClassName)
-        layerContainerDomElement.classList.add(options.layerContainerClassName);
-      layersContainer.appendChild(layerContainerDomElement);
-
-      // visibility checkbox
-      const { input, parent } = createLabelInput(layer.name, 'checkbox');
-      layerContainerDomElement.appendChild(parent);
-
-      input.checked = layer.visible;
-      input.onchange = () => {
-        layer.visible = input.checked;
-        view.notifyChange();
-      };
-
-      // remove button
-      const removeButton = document.createElement('button');
-      removeButton.innerText = 'Remove';
-      layerContainerDomElement.appendChild(removeButton);
-
-      removeButton.onclick = () => {
-        view.removeLayer(layer.id, true); // clear cache
-        layerContainerDomElement.remove();
-      };
-    };
 
     requestButton.onclick = () => {
       // add layer
@@ -97,34 +110,51 @@ export class C3DTiles extends itownsWidget.Widget {
           view
         );
         itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
-        addLayerToDomElement(c3DTilesLayer);
+        if (options.displayExistingLayers)
+          addLayerToDomElement(
+            view,
+            c3DTilesLayer,
+            this.layersContainer,
+            options.layerContainerClassName
+          );
       } catch (error) {
         // do not catch error when a wrong url have been entered
         alert(error);
       }
     };
 
-    // initialize with current layer
-    view
-      .getLayers()
-      .filter((el) => el.isC3DTilesLayer)
-      .forEach((layer) => {
-        addLayerToDomElement(layer);
-      });
+    if (options.displayExistingLayers) {
+      this.layersContainer = document.createElement('div');
+      this.layersContainer.innerText = 'Layers:';
+      this.domElement.appendChild(this.layersContainer);
 
-    /**
-     * c3DTfeature display container
-     *
-     @type {HTMLDivElement} */
-    this.c3DTFeatureInfoContainer = document.createElement('div');
-    if (options.c3DTFeatureInfoContainerClassName)
-      this.c3DTFeatureInfoContainer.classList.add(
-        options.c3DTFeatureInfoContainerClassName
-      );
+      // Initialize the list of existing layer
+      view
+        .getLayers()
+        .filter((el) => el.isC3DTilesLayer)
+        .forEach((layer) => {
+          addLayerToDomElement(
+            view,
+            layer,
+            this.layersContainer,
+            options.layerContainerClassName
+          );
+        });
 
-    this.c3DTFeatureInfoContainer.hidden = true; // hidden by default
-    this.domElement.appendChild(this.c3DTFeatureInfoContainer);
-  }
+      /**
+       * c3DTfeature display container
+       *
+       @type {HTMLDivElement} */
+      this.c3DTFeatureInfoContainer = document.createElement('div');
+      if (options.c3DTFeatureInfoContainerClassName)
+        this.c3DTFeatureInfoContainer.classList.add(
+          options.c3DTFeatureInfoContainerClassName
+        );
+
+      this.c3DTFeatureInfoContainer.hidden = true; // hidden by default
+      this.domElement.appendChild(this.c3DTFeatureInfoContainer);
+    } // if (options.displayExistingLayers)
+  } // Constructor()
 
   /**
    *
