@@ -191,6 +191,37 @@
               deltaParameter.name = 'delta';
               uiVector.appendChild(deltaParameter);
 
+              // HELIX
+              // STSHelix
+              const stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
+                stLayer
+              );
+
+              // HTML
+              const optionHelix = document.createElement('option');
+              optionHelix.value = 'helix';
+              optionHelix.innerText = 'Helix';
+              selectSTShape.appendChild(optionHelix);
+
+              const uiHelix = document.createElement('div');
+              uiHelix.hidden = true;
+              ui.appendChild(uiHelix);
+
+              const helixDeltaParameter = document.createElement('input');
+              helixDeltaParameter.type = 'number';
+              helixDeltaParameter.name = 'delta';
+              uiHelix.appendChild(helixDeltaParameter);
+
+              const helixRadiusParameter = document.createElement('input');
+              helixRadiusParameter.type = 'number';
+              helixRadiusParameter.name = 'rayon';
+              uiHelix.appendChild(helixRadiusParameter);
+
+              const helixHeightParameter = document.createElement('input');
+              helixHeightParameter.type = 'number';
+              helixHeightParameter.name = 'height';
+              uiHelix.appendChild(helixHeightParameter);
+
               document.body.appendChild(ui);
 
               const oSTShapeUI = [
@@ -199,6 +230,7 @@
                   ui: uiCircle,
                 },
                 { stShape: stsVector, ui: uiVector },
+                { stShape: stsHelix, ui: uiHelix }
               ];
               // Events
               selectSTShape.onchange = () => {
@@ -221,6 +253,13 @@
                     uiVector.hidden = false;
                     deltaParameter.value = stsVector.delta;
                     break;
+                  case 'helix':
+                    stsHelix.display();
+                    uiHelix.hidden = false;
+                    helixRadiusParameter.value = stsHelix.radius;
+                    helixHeightParameter.value = stsHelix.height;
+                    helixDeltaParameter.value = stsHelix.delta;
+                    break;
                 }
               };
               radiusParameter.addEventListener('input', (event) => {
@@ -236,6 +275,21 @@
               deltaParameter.addEventListener('input', (event) => {
                 stsVector.delta = Number(event.target.value);
                 stsVector.display();
+              });
+
+              helixRadiusParameter.addEventListener('input', (event) => {
+                stsHelix.radius = Number(event.target.value);
+                stsHelix.display();
+              });
+
+              helixHeightParameter.addEventListener('input', (event) => {
+                stsHelix.height = Number(event.target.value);
+                stsHelix.display();
+              });
+
+              helixDeltaParameter.addEventListener('input', (event) => {
+                stsHelix.delta = Number(event.target.value);
+                stsHelix.display();
               });
             }
           );
