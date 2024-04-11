@@ -7,7 +7,6 @@ export class STSHelix extends STShape {
   constructor(stLayer, options = {}) {
     super(stLayer);
     this.radius = isNaN(options.radius) ? 1000 : options.radius;
-    this.height = isNaN(options.height) ? 550 : options.height;
     this.delta = isNaN(options.delta) ? 1000 : options.delta;
 
     this.layerCentroid = null;
