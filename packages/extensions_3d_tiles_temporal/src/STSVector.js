@@ -21,6 +21,16 @@ export class STSVector extends STShape {
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
 
+    const geometryDisplayed = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, this.delta * (this.stLayer.versions.length - 1)),
+    ]);
+    const materialDisplayed = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    const vectorLine = new THREE.Line(geometryDisplayed, materialDisplayed);
+
+    rootObject3D.add(vectorLine);
+    vectorLine.updateMatrixWorld();
+
     this.stLayer.versions.forEach((version) => {
       const copyObject = new THREE.Object3D().copy(
         version.c3DTLayer.root,
