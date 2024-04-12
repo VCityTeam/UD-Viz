@@ -29,8 +29,8 @@ export class STSHelix extends STShape {
       const angle = (i * -Math.PI) / 180;
       pointsDisplayed.push(
         new THREE.Vector3(
-          this.radius * Math.cos(angle),
-          this.radius * Math.sin(angle),
+          this.radius * Math.cos(angle) - this.radius,
+          this.radius * Math.sin(angle) - this.radius,
           (this.delta / (helixAngle / 10)) * (i / 10)
         )
       );
@@ -56,8 +56,8 @@ export class STSHelix extends STShape {
       const angleRad = (angleDeg * Math.PI) / 180;
       angleDeg -= angleBetweenVersions;
       const point = new THREE.Vector3(
-        this.radius * Math.cos(angleRad),
-        this.radius * Math.sin(angleRad),
+        this.radius * Math.cos(angleRad) - this.radius,
+        this.radius * Math.sin(angleRad) - this.radius,
         0
       );
 
@@ -94,30 +94,7 @@ export class STSHelix extends STShape {
     );
   }
 
-  update() {
-    // Compute the angle between camera and the base layer.
-    if (!this.stLayer.rootObject3D.children.length) return;
-
-    const dirToCamera = new THREE.Vector2(
-      this.layerCentroid.x - this.stLayer.view.camera.camera3D.position.x,
-      this.layerCentroid.y - this.stLayer.view.camera.camera3D.position.y
-    ).normalize();
-    const dirObject = new THREE.Vector2(0, 1);
-
-    let angle = dirObject.angleTo(dirToCamera);
-    const orientation =
-      dirToCamera.x * dirObject.y - dirToCamera.y * dirObject.x;
-    if (orientation > 0) angle = 2 * Math.PI - angle;
-
-    // Update position of the circle
-    if (!this.stLayer.rootObject3D) return;
-
-    this.stLayer.rootObject3D.setRotationFromAxisAngle(
-      new THREE.Vector3(0, 0, 1),
-      angle
-    );
-    this.stLayer.rootObject3D.updateMatrixWorld();
-  }
+  update() {}
 
   dispose() {
     super.dispose();
