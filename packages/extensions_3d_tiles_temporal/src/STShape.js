@@ -20,10 +20,13 @@ export class STShape {
     this.displayed = true;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.clear();
-    const box = new THREE.Box3().setFromObject(
-      this.stLayer.versions[0].c3DTLayer.root
+    const transform =
+      this.stLayer.versions[0].c3DTLayer.tileset.tiles[1].transform.elements;
+    this.layerCentroid = new THREE.Vector3(
+      transform[12],
+      transform[13],
+      transform[14]
     );
-    this.layerCentroid = box.getCenter(new THREE.Vector3());
 
     rootObject3D.position.copy(this.layerCentroid);
 
