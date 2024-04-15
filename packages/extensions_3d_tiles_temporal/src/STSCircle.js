@@ -11,6 +11,8 @@ export class STSCircle extends STShape {
 
     this.layerCentroid = null;
     this.frameRequester = null;
+
+    this.objectCopies = null;
   }
 
   display() {
@@ -44,12 +46,14 @@ export class STSCircle extends STShape {
 
     // Place versions cdtlayers + labels on the circle
     let angleDeg = 0;
+    this.objectCopies = [];
     this.stLayer.versions.forEach((version) => {
-      const copyObject = new THREE.Object3D().copy(
+      const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
-      rootObject3D.add(copyObject);
+      this.objectCopies.push(objectCopy);
+      rootObject3D.add(objectCopy);
       const angleRad = (angleDeg * Math.PI) / 180;
       angleDeg -= 360 / this.stLayer.versions.length;
       const point = new THREE.Vector3(
@@ -71,16 +75,14 @@ export class STSCircle extends STShape {
         );
       }
       // position C3DTLayer
-      copyObject.children.forEach((object) => {
+      objectCopy.children.forEach((object) => {
         object.position.copy(newPosition);
-        object.updateMatrixWorld();
       });
       dateSprite.position.copy(newPosition);
 
       // Date label sprite
       dateSprite.position.z += 40;
       dateSprite.scale.multiplyScalar(0.02);
-      dateSprite.updateMatrixWorld();
       rootObject3D.add(dateSprite);
     });
     rootObject3D.updateMatrixWorld();
@@ -115,15 +117,19 @@ export class STSCircle extends STShape {
     // Update position of the circle
     if (!this.stLayer.rootObject3D) return;
 
-    this.stLayer.rootObject3D.setRotationFromAxisAngle(
-      new THREE.Vector3(0, 0, 1),
-      angle
-    );
+    this.stLayer.rootObject3D.rotation.set(0, 0, angle);
+
+    this.objectCopies.forEach((object) => {
+      object.children.forEach((c) => {
+        c.rotation.set(0, 0, -angle);
+      });
+    });
     this.stLayer.rootObject3D.updateMatrixWorld();
   }
 
   dispose() {
     super.dispose();
+    this.objectCopies = null;
     this.stLayer.view.removeFrameRequester(
       MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
       this.frameRequester
