@@ -22,8 +22,8 @@ export class STSHelix extends STShape {
 
     // Init helix line
     const pointsDisplayed = [];
-    const angleBetweenVersions = 120;
-    const helixAngle = 360 + angleBetweenVersions;
+    const angleBetweenVersions = 240;
+    const helixAngle = angleBetweenVersions;
     const helixLength = helixAngle * (this.stLayer.versions.length - 1);
     for (let i = 0; i < helixLength; i += 10) {
       const angle = (i * -Math.PI) / 180;
