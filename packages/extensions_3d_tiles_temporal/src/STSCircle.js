@@ -10,8 +10,7 @@ export class STSCircle extends STShape {
     this.height = isNaN(options.height) ? 550 : options.height;
 
     this.layerCentroid = null;
-
-    this.frameRequester = this.update.bind(this);
+    this.frameRequester = null;
   }
 
   display() {
@@ -88,10 +87,14 @@ export class STSCircle extends STShape {
 
     view.notifyChange();
 
-    view.addFrameRequester(
-      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      this.frameRequester
-    );
+    if (!this.frameRequester) {
+      this.frameRequester = this.update.bind(this);
+
+      view.addFrameRequester(
+        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+        this.frameRequester
+      );
+    }
   }
 
   update() {
@@ -125,5 +128,6 @@ export class STSCircle extends STShape {
       MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
       this.frameRequester
     );
+    this.frameRequester = null;
   }
 }
