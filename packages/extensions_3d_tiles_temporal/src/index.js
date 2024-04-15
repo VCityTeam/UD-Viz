@@ -16,6 +16,7 @@ export { STLayer } from './STLayer';
 export { STSCircle } from './STSCircle';
 export { STSHelix } from './STSHelix';
 export { STSVector } from './STSVector';
+export { STSParabola } from './STSParabola';
 
 export const ID = '3DTILES_temporal';
 
