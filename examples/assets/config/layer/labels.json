@@ -15,25 +15,5 @@
         "haloWidth": 3
       }
     }
-  },
-  {
-    "url": "https://wxs.ign.fr/cartovecto/geoportail/wfs?",
-    "id": "Quartiers",
-    "sourceType": "wfs",
-    "version": "2.0.0",
-    "name": "BDCARTO_BDD_WLD_WGS84G:zone_habitat_mairie",
-    "format": "application/json",
-    "zoom": {
-      "min": 0
-    },
-    "style": {
-      "text": {
-        "field": "{toponyme}",
-        "color": "rgb(255,255,255)",
-        "size": 15,
-        "haloColor": "rgba(20,20,20, 0.8)",
-        "haloWidth": 3
-      }
-    }
   }
 ]

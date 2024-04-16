@@ -1,4 +1,4 @@
-const { MESSAGE, DEFAULT_PORT } = require('../bin/constant');
+const { MESSAGE, TEST_PORT } = require('../bin/constant');
 const { test } = require('@ud-viz/utils_node');
 const path = require('path');
 const cp = require('node:child_process');
@@ -25,6 +25,7 @@ const main = async function () {
       await exec('npm run build-dev-examples');
     }
   }
+  process.env.PORT = TEST_PORT;
 
   const backEndFork = cp.fork(path.resolve(__dirname, '../bin/backEnd.js'));
 
@@ -38,10 +39,10 @@ const main = async function () {
         if (message == MESSAGE.READY) {
           console.log('Back-end is ready');
           // index.html
-          await test.html('.', DEFAULT_PORT).catch((error) => {
+          await test.html('.', TEST_PORT).catch((error) => {
             throw error;
           });
-          await test.html('./examples', DEFAULT_PORT).catch((error) => {
+          await test.html('./examples', TEST_PORT).catch((error) => {
             throw error;
           });
           resolve();
@@ -68,11 +69,9 @@ const main = async function () {
       gameBackEndFork.on('message', async (backEndMessage) => {
         if (backEndMessage == MESSAGE.READY) {
           // test front end
-          await test
-            .html('./test/tutorials/game', DEFAULT_PORT)
-            .catch((error) => {
-              throw error;
-            });
+          await test.html('./test/tutorials/game', TEST_PORT).catch((error) => {
+            throw error;
+          });
           resolve();
         }
       });
