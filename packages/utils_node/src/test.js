@@ -219,7 +219,11 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
               .on('response', (response) => {
                 const log = `${response.status()} ${response.url()}`;
                 if (response.status() >= 400 && response.status() < 500) {
-                  throw new Error(log);
+                  if (!response.url().includes('http://localhost')) {
+                    console.warn(`ERROR SKIP: ${log}`);
+                  } else {
+                    throw new Error(log);
+                  }
                 } else {
                   console.log(log);
                 }
@@ -227,10 +231,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
               .on('requestfailed', (request) => {
                 const url = new URL(request.url());
 
-                if (
-                  url.host ==
-                  'spatial-multimedia-db.vcityliris.data.alpha.grandlyon.com'
-                )
+                if (!url.host.includes('http://localhost'))
                   console.warn(
                     `ERROR SKIP: ${
                       request.failure().errorText

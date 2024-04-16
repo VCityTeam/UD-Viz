@@ -85,16 +85,20 @@ app.use(
 app.use(express.static(path.resolve(__dirname, '../')));
 
 /**
+ * @type {number}
+ */
+const PORT = process.env.PORT || DEFAULT_PORT;
+/**
  * The HTTP server instance.
  *
  * @type {object}
  */
-const httpServer = app.listen(DEFAULT_PORT, (err) => {
+const httpServer = app.listen(PORT, (err) => {
   if (err) {
     console.error('Server could not start');
     return;
   }
-  console.log('Http server listening on port', DEFAULT_PORT);
+  console.log('Http server listening on port', PORT);
 });
 
 // Initialize examples game socket service
