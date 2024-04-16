@@ -75,9 +75,19 @@ export class STSCircle extends STShape {
         );
       }
       // position C3DTLayer
-      objectCopy.children.forEach((object) => {
-        object.position.copy(newPosition);
-      });
+      objectCopy.position.copy(newPosition);
+      for (let i = 0; i < objectCopy.children.length; i++) {
+        const child = objectCopy.children[i];
+        const tileId = version.c3DTLayer.root.children[i].tileId;
+        const tile = version.c3DTLayer.tileset.tiles[tileId];
+        const tileTransform = tile.transform.elements;
+        const tilePosition = new THREE.Vector3(
+          tileTransform[12],
+          tileTransform[13],
+          tileTransform[14]
+        );
+        child.position.copy(tilePosition.sub(this.layerCentroid));
+      }
       dateSprite.position.copy(newPosition);
 
       // Date label sprite
@@ -120,9 +130,7 @@ export class STSCircle extends STShape {
     this.stLayer.rootObject3D.rotation.set(0, 0, angle);
 
     this.objectCopies.forEach((object) => {
-      object.children.forEach((c) => {
-        c.rotation.set(0, 0, -angle);
-      });
+      object.rotation.set(0, 0, -angle);
     });
     this.stLayer.rootObject3D.updateMatrixWorld();
   }

@@ -32,11 +32,11 @@ export class STSVector extends STShape {
     vectorLine.updateMatrixWorld();
 
     this.stLayer.versions.forEach((version) => {
-      const copyObject = new THREE.Object3D().copy(
+      const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
-      rootObject3D.add(copyObject);
+      rootObject3D.add(objectCopy);
 
       const newPosition = new THREE.Vector3(
         0,
@@ -47,10 +47,19 @@ export class STSVector extends STShape {
       version.c3DTLayer.visible = false;
 
       const dateSprite = createSpriteFromString(version.date.toString());
-      copyObject.children.forEach((object) => {
-        object.position.copy(newPosition);
-        object.updateMatrixWorld();
-      });
+      objectCopy.position.copy(newPosition);
+      for (let i = 0; i < objectCopy.children.length; i++) {
+        const child = objectCopy.children[i];
+        const tileId = version.c3DTLayer.root.children[i].tileId;
+        const tile = version.c3DTLayer.tileset.tiles[tileId];
+        const tileTransform = tile.transform.elements;
+        const tilePosition = new THREE.Vector3(
+          tileTransform[12],
+          tileTransform[13],
+          tileTransform[14]
+        );
+        child.position.copy(tilePosition.sub(this.layerCentroid));
+      }
 
       dateSprite.position.copy(newPosition);
 

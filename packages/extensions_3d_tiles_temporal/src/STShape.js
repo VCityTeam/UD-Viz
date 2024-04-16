@@ -20,13 +20,20 @@ export class STShape {
     this.displayed = true;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.clear();
-    const transform =
-      this.stLayer.versions[0].c3DTLayer.tileset.tiles[1].transform.elements;
-    this.layerCentroid = new THREE.Vector3(
-      transform[12],
-      transform[13],
-      transform[14]
-    );
+    const tiles = this.stLayer.versions[0].c3DTLayer.tileset.tiles;
+    let k = 0;
+    const position = new THREE.Vector3();
+    for (let i = 1; i < tiles.length; i++) {
+      const tileTransform = tiles[i].transform.elements;
+      const tilePosition = new THREE.Vector3(
+        tileTransform[12],
+        tileTransform[13],
+        tileTransform[14]
+      );
+      position.add(tilePosition);
+      k++;
+    }
+    this.layerCentroid = position.divideScalar(k);
 
     rootObject3D.position.copy(this.layerCentroid);
 
