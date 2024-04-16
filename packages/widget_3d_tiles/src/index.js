@@ -14,7 +14,7 @@ const DEFAULT_OPTIONS = {
  * @param {itowns.View} view - The view to which the layer will be added
  * @param {itowns.C3DTilesLayer} layer - layer to be added to dom element
  * @param {HTMLDivElement} layersContainer - HTML division holding the listed layers
- * @param {string} layerContainerClassName - Class name of the layer container
+ * @param {string} [layerContainerClassName] - Class name of the layer container
  */
 function addLayerToDomElement(
   view,
@@ -65,7 +65,7 @@ export class C3DTiles extends itownsWidget.Widget {
     // Available layers are optionnaly listed in the UI. Inhibiting this display
     // allows for an alternative usage of other widgets with a similar purpose
     // but different feature e.g. @ud-viz/widget_layer_choice.
-    if (typeof options.displayExistingLayers == 'undefined') {
+    if (options.displayExistingLayers == undefined) {
       options.displayExistingLayers = true;
     }
 
