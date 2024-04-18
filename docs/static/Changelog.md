@@ -1,3 +1,30 @@
+
+# 4.2.0
+
+## @ud-viz/widget_3d_tiles
+    - The integrated layer manager that was previously mandatory is now 
+      optional. This allows the simultaneous usage of @ud-viz/widget_3d_tiles
+      and @ud-viz/wwidget_layer_choice without the UI redundancy/repetition
+      of existing layers listings. 
+
+## @ud-viz/wwidget_layer_choice
+    - Each layer description now has a remove button
+    - overflow of ui
+
+## @ud-viz/showroom
+    - css for the about and help buttons is now provided
+    - extralines now deleted
+    - html element now have added tiltes
+    - about and help button now removed from the sidebar. Instead tiny buttons
+      are created at the bottom left of the screen
+    - the added code tiny button redirects to .html code
+
+## ci
+    - Fix of the always failing labels config test (failure came from a change
+     in the WFS API as provided by IGN). The fix consists in skipping the 
+     triggered errors within the functional test when the request or the 
+     response are not related to localhost.
+
 # 4.1.0
 
 ## @ud-viz
