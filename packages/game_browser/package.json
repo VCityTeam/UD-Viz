@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_browser",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Game library interpretable in a browser environment based on itowns",
   "main": "src",
   "scripts": {
@@ -20,10 +20,10 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/packages/game_browser",
   "peerDependencies": {
-    "@ud-viz/frame3d": "4.1.0",
-    "@ud-viz/game_shared": "4.1.0",
-    "@ud-viz/utils_browser": "4.1.0",
-    "@ud-viz/utils_shared": "4.1.0",
+    "@ud-viz/frame3d": "4.2.0",
+    "@ud-viz/game_shared": "4.2.0",
+    "@ud-viz/utils_browser": "4.2.0",
+    "@ud-viz/utils_shared": "4.2.0",
     "howler": "2.2.3",
     "itowns": "2.41.1-next.9",
     "socket.io-client": "^4.7.2",
