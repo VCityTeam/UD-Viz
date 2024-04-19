@@ -88,15 +88,20 @@ For the install [imagemagick](https://imagemagick.org/index.php) and [graphicsma
 
 - **Linux**
 
-```bash
- sudo apt-get install -y imagemagick graphicsmagick
-```
+  ```bash
+   sudo apt-get install -y imagemagick graphicsmagick
+  ```
 
 - **Windows**
   - It seems not necessary to install imagemagick on windows.
   - Download and install graphicsmagick from [graphicmagick-binaries](https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/) (@ud-viz/game_node_template has been reported to work with version 1.3.34-Q8)
 
-> ⚠️ TIP : allias `gm` doesn't work in powershell because it conflicts with the command Get-Member !!!!
+  > ⚠️ TIP : allias `gm` doesn't work in powershell because it conflicts with the command Get-Member !!!!
+- **OSX**
+
+  ```bash
+  brew install imagemagick graphicsmagick
+  ```
 
 ### How to run it locally?
 
