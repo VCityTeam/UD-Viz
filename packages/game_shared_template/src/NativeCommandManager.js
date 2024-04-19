@@ -606,8 +606,6 @@ NativeCommandManager.moveUp = function (object3D, value, map, withMap = true) {
  *
  * @param {Object3D} object3D - object3D to move up
  * @param {number} value - amount to move up
- * @param {AbstractMap} map - map script
- * @param {boolean} [withMap=true] - map should be consider
  * @returns {boolean} - the movement make the object3D leaves the map
  */
 NativeCommandManager.moveDown = function (object3D, value) {
