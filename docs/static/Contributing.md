@@ -26,16 +26,16 @@ Notice that UD-Viz coding style uses a unix `linebreak-style` (aka `LF` as newli
 - Commit (`git commit`) with representative messages (commit messages end-up collected in the PR message and eventually release explanations).
 - Make sure your code is mature for a review.
 - `git rebase origin/master`, in order to resolve merge conflicts to master. Doc : [git-rebase](https://git-scm.com/docs/git-rebase). If you are not able to resolve all of the conflicts of your rebase, please open a new [discussion](https://github.com/VCityTeam/UD-Viz/discussions).
- > note that after a `git rebase` you have to `git push --force`
+  > note that after a `git rebase` you have to `git push --force`
 - `npm run eslint` must finish with no errors.
 - `npm run test-unit` must finish with no errors.
 - `npm run test-functional` must finish with no errors.
 - `npm audit` must finish without vulnerabilities lower than _high_.
 - `npm run test-links` must finish with no errors.
+  
+  > ⚠️ When your PR is open each push on your branch will trigger Travis CI jobs.
 
-⚠️ When your PR is open each push on your branch will trigger Travis CI jobs.
-
-> See [here](./Developers.md#npm-scripts) for more information.
+Refer [here](./Developers.md#npm-scripts) for more information about the above npm scripts.
 
 Before submitting a pull request, and because [UD-Viz still misses some tests](https://github.com/VCityTeam/UD-SV/issues/34),
 **non-regression testing must be done manually**.
@@ -43,7 +43,7 @@ A developer must thus at least check that all the
 [demo examples](../../examples/)
 (they should function similar to [their online deployment](https://ud-viz.vcityliris.data.alpha.grandlyon.com/)) are still effective.
 
-> Note that you should interact with ui (user interface) for complete tests.
+Note this **manual** check implies the realisation of a mininal set of UI (user interface) **manual** interactions (as opposed to visually asserting that a given example landing page gets displayed) before considering that the **manual** testing is positive.
 
 ### PR Submission
 
