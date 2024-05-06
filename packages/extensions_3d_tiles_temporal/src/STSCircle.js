@@ -13,8 +13,6 @@ export class STSCircle extends STShape {
     this.frameRequester = null;
 
     this.objectCopies = null;
-
-    this.versionSelected = null;
   }
 
   display() {
@@ -108,8 +106,6 @@ export class STSCircle extends STShape {
   }
 
   selectVersion(date) {
-    if (this.versionSelected) return;
-
     const object3dCopySelected = this.objectCopies[date];
     const offset = object3dCopySelected.position.clone();
 

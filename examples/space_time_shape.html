@@ -111,8 +111,8 @@
 
           // CREATE 3DTILES
 
-          let c3dtilesConfigs = [];
-          c3dtilesConfigs.push(configs['3DTiles_temporal'][2]);
+          let c3dtilesConfigs = configs['3DTiles_STS_data'];
+          // c3dtilesConfigs.push(configs['3DTiles_temporal'][2]);
           const versions = [];
           const temporalsWrappers = [];
           const promisesTileContentLoaded = [];
@@ -224,11 +224,6 @@
               optionDate.innerText = date.toString();
               selectDate.appendChild(optionDate);
             });
-
-            selectDate.onchange = () => {
-              console.log(selectDate.selectedOptions[0].value);
-              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-            };
 
             // VECTOR
             // STSVector
@@ -369,12 +364,18 @@
             radiusParameter.addEventListener('input', (event) => {
               stsCircle.radius = Number(event.target.value);
               stsCircle.display();
+              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
             });
 
             heightParameter.addEventListener('input', (event) => {
               stsCircle.height = Number(event.target.value);
               stsCircle.display();
+              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
             });
+
+            selectDate.onchange = () => {
+              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+            };
 
             deltaParameter.addEventListener('input', (event) => {
               stsVector.delta = Number(event.target.value);
