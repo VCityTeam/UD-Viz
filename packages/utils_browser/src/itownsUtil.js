@@ -78,7 +78,7 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
           view.controls.dispose();
           view.controls = undefined;
         }
-        resolve();
+        resolve(targetPos);
       }, timeoutDuration);
     } catch (e) {
       reject(e);
@@ -105,7 +105,7 @@ export function focusC3DTilesLayer(itownsView, layer) {
   if (layer.tileset.tiles[0])
     coordinates.z = layer.tileset.tiles[0].boundingVolume.box.max.z;
 
-  focusCameraOn(
+  return focusCameraOn(
     itownsView,
     itownsView.controls,
     new THREE.Vector3().copy(coordinates),
