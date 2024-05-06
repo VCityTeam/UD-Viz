@@ -24,7 +24,7 @@ export class STSCircle extends STShape {
     rootObject3D.position.z += this.height;
     // Init circle line
     const pointsDisplayed = [];
-    for (let i = 90; i < 360; i += 10) {
+    for (let i = 90; i <= 360; i += 10) {
       const angle = (i * Math.PI) / 180;
       pointsDisplayed.push(
         new THREE.Vector3(
@@ -55,7 +55,7 @@ export class STSCircle extends STShape {
       this.objectCopies.push(objectCopy);
       rootObject3D.add(objectCopy);
       const angleRad = (angleDeg * Math.PI) / 180;
-      angleDeg -= 360 / this.stLayer.versions.length;
+      angleDeg -= 270 / (this.stLayer.versions.length - 1);
       const point = new THREE.Vector3(
         this.radius * Math.cos(angleRad),
         this.radius * Math.sin(angleRad),
