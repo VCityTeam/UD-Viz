@@ -112,8 +112,7 @@
           // CREATE 3DTILES
 
           let c3dtilesConfigs = [];
-          // c3dtilesConfigs.push(configs['3DTiles_temporal'][0]);
-          c3dtilesConfigs = configs['3DTiles_STS_data'];
+          c3dtilesConfigs.push(configs['3DTiles_temporal'][2]);
           const versions = [];
           const temporalsWrappers = [];
           const promisesTileContentLoaded = [];
@@ -209,6 +208,27 @@
             heightParameter.type = 'number';
             heightParameter.name = 'height';
             uiCircle.appendChild(heightParameter);
+
+            const selectDate = document.createElement('select');
+            uiCircle.appendChild(selectDate);
+            const optionDateSelectedDefault = document.createElement('option');
+            optionDateSelectedDefault.innerText = 'Choose a date';
+            optionDateSelectedDefault.selected = true;
+            optionDateSelectedDefault.disabled = true;
+            optionDateSelectedDefault.hidden = true;
+            selectDate.appendChild(optionDateSelectedDefault);
+
+            versions.forEach((v) => {
+              const date = v.date;
+              const optionDate = document.createElement('option');
+              optionDate.innerText = date.toString();
+              selectDate.appendChild(optionDate);
+            });
+
+            selectDate.onchange = () => {
+              console.log(selectDate.selectedOptions[0].value);
+              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+            };
 
             // VECTOR
             // STSVector

@@ -13,6 +13,8 @@ export class STSCircle extends STShape {
     this.frameRequester = null;
 
     this.objectCopies = null;
+
+    this.versionSelected = null;
   }
 
   display() {
@@ -41,18 +43,17 @@ export class STSCircle extends STShape {
     const circleLine = new THREE.Line(geometryDisplayed, materialDisplayed);
 
     rootObject3D.add(circleLine);
-    circleLine.position.y += this.radius;
     circleLine.updateMatrixWorld();
 
     // Place versions cdtlayers + labels on the circle
     let angleDeg = 0;
-    this.objectCopies = [];
+    this.objectCopies = new Map();
     this.stLayer.versions.forEach((version) => {
       const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
-      this.objectCopies.push(objectCopy);
+      this.objectCopies[version.date] = objectCopy;
       rootObject3D.add(objectCopy);
       const angleRad = (angleDeg * Math.PI) / 180;
       angleDeg -= 270 / (this.stLayer.versions.length - 1);
@@ -66,14 +67,12 @@ export class STSCircle extends STShape {
 
       const dateSprite = createSpriteFromString(version.date.toString());
 
-      let newPosition = new THREE.Vector3(0, 0, -this.height);
-      if (version.date != 2012) {
-        newPosition = new THREE.Vector3(
-          circleLine.position.x + point.x,
-          circleLine.position.y + point.y,
-          circleLine.position.z
-        );
-      }
+      const newPosition = new THREE.Vector3(
+        circleLine.position.x + point.x,
+        circleLine.position.y + point.y,
+        circleLine.position.z
+      );
+
       // position C3DTLayer
       objectCopy.position.copy(newPosition);
       for (let i = 0; i < objectCopy.children.length; i++) {
@@ -88,12 +87,11 @@ export class STSCircle extends STShape {
         );
         child.position.copy(tilePosition.sub(this.layerCentroid));
       }
-      dateSprite.position.copy(newPosition);
 
       // Date label sprite
       dateSprite.position.z += 40;
       dateSprite.scale.multiplyScalar(0.02);
-      rootObject3D.add(dateSprite);
+      objectCopy.add(dateSprite);
     });
     rootObject3D.updateMatrixWorld();
 
@@ -107,6 +105,23 @@ export class STSCircle extends STShape {
         this.frameRequester
       );
     }
+  }
+
+  selectVersion(date) {
+    if (this.versionSelected) return;
+
+    const object3dCopySelected = this.objectCopies[date];
+    const offset = object3dCopySelected.position.clone();
+
+    this.stLayer.rootObject3D.children.forEach((object) => {
+      object.position.z = 0;
+      object.position.sub(offset);
+    });
+
+    object3dCopySelected.position.z = -this.height;
+
+    this.stLayer.rootObject3D.updateMatrixWorld(true);
+    this.stLayer.view.notifyChange();
   }
 
   update() {
@@ -129,9 +144,10 @@ export class STSCircle extends STShape {
 
     this.stLayer.rootObject3D.rotation.set(0, 0, angle);
 
-    this.objectCopies.forEach((object) => {
-      object.rotation.set(0, 0, -angle);
-    });
+    for (const date in this.objectCopies) {
+      this.objectCopies[date].rotation.set(0, 0, -angle);
+    }
+
     this.stLayer.rootObject3D.updateMatrixWorld();
   }
 
