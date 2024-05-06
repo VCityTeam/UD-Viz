@@ -20,6 +20,7 @@
           './assets/config/extents.json',
           './assets/config/crs.json',
           './assets/config/layer/3DTiles_temporal.json',
+          './assets/config/layer/3DTiles_STS_data.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
         ])
@@ -108,28 +109,68 @@
               udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
           });
 
-          const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
-            configs['3DTiles_temporal'][2].id,
-            {
-              name: configs['3DTiles_temporal'][2].id,
-              source: new udviz.itowns.C3DTilesSource({
-                url: configs['3DTiles_temporal'][2].url,
-              }),
-              registeredExtensions: extensions,
-            },
-            view
-          );
+          // CREATE 3DTILES
 
-          const dates = [2009, 2012, 2015, 2018];
+          let c3dtilesConfigs = [];
+          // c3dtilesConfigs.push(configs['3DTiles_temporal'][0]);
+          c3dtilesConfigs = configs['3DTiles_STS_data'];
+          const versions = [];
+          const temporalsWrappers = [];
+          const promisesTileContentLoaded = [];
+          c3dtilesConfigs.forEach((config) => {
+            const isTemporal = !!config.dates;
+            const datesJSON = isTemporal ? config.dates : [config.date];
+            const registerExtensions = isTemporal ? extensions : null;
+            datesJSON.forEach((date) => {
+              const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+                config.id + '_' + date.toString(),
+                {
+                  name: config.id + date.toString(),
+                  source: new udviz.itowns.C3DTilesSource({
+                    url: config.url,
+                  }),
+                  registeredExtensions: registerExtensions,
+                },
+                view
+              );
+              udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+              promisesTileContentLoaded.push(
+                new Promise((resolve) => {
+                  c3DTilesLayer.addEventListener(
+                    udviz.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+                    () => {
+                      resolve();
+                    }
+                  );
+                })
+              );
+              if (isTemporal) {
+                temporalsWrappers.push(
+                  new udviz.extensions3DTilesTemporal.Temporal3DTilesLayerWrapper(
+                    c3DTilesLayer
+                  )
+                );
+
+                // Between two dates there are two intermediate dates like this: 2009 -> firstHalfDate -> secondHalfDate 2012. We want always display firstHlafDate.
+                if (date == 2009) {
+                  temporalsWrappers[temporalsWrappers.length - 1].styleDate =
+                    date + 1;
+                } else {
+                  temporalsWrappers[temporalsWrappers.length - 1].styleDate =
+                    date - 2;
+                }
+              }
+              versions.push({ date: date, c3DTLayer: c3DTilesLayer });
+            });
+          });
 
           const stLayer = new udviz.extensions3DTilesTemporal.STLayer(
             view,
             new udviz.THREE.Object3D(),
-            c3DTilesLayer,
-            dates
+            versions
           );
 
-          Promise.all(stLayer.promisesTileContentLoaded).then(() => {
+          Promise.all(promisesTileContentLoaded).then(() => {
             const ui = document.createElement('div');
             ui.style =
               'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
