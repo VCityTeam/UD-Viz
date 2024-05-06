@@ -5,7 +5,7 @@ import {
   focusC3DTilesLayer,
 } from '@ud-viz/utils_browser';
 
-import { PointsMaterial } from 'three';
+import { PointsMaterial, EventDispatcher } from 'three';
 
 import { PlanarView, ColorLayersOrdering, ImageryLayers } from 'itowns';
 
@@ -16,13 +16,14 @@ import { PlanarView, ColorLayersOrdering, ImageryLayers } from 'itowns';
  * @property {boolean} [isPointCloud=false] - the layer is a point cloud allow to know if a C3DTilesLayer is a pointcloud or not without pulling tileset.json
  */
 
-export class LayerChoice {
+export class LayerChoice extends EventDispatcher {
   /**
    *
    * @param {PlanarView} view - itowns view
    * @param {Array<LayerParam>} layerParams - layer params to initialization
    */
   constructor(view, layerParams) {
+    super();
     /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
 
@@ -106,7 +107,12 @@ export class LayerChoice {
         focusButton.innerText = 'Focus';
         layerContainerDomElement.appendChild(focusButton);
         focusButton.onclick = () => {
-          focusC3DTilesLayer(this.view, param.layer);
+          focusC3DTilesLayer(this.view, param.layer).then((targetPos) => {
+            this.dispatchEvent({
+              type: LayerChoice.EVENT.FOCUS_3D_TILES,
+              message: { layerFocused: param.layer, targetPos: targetPos },
+            });
+          });
         };
       }
 
@@ -220,3 +226,7 @@ export class LayerChoice {
     this.view.notifyChange(this.view.camera.camera3D);
   }
 }
+
+LayerChoice.EVENT = {
+  FOCUS_3D_TILES: 'focus_3d_tiles',
+};
