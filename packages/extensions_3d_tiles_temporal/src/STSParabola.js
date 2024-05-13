@@ -23,10 +23,9 @@ export class STSParabola extends STShape {
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.position.z += this.height;
-    const startPoint = new THREE.Vector2(-this.distAxisX, this.distAxisY);
 
     const path = new THREE.Path();
-    path.moveTo(startPoint.x, startPoint.y);
+    path.moveTo(-this.distAxisX, this.distAxisY);
     const controlPoint1 = new THREE.Vector2(-this.distAxisX / 2, 0);
     path.quadraticCurveTo(controlPoint1.x, controlPoint1.y, 0, 0);
     const controlPoint2 = new THREE.Vector2(this.distAxisX / 2, 0);
