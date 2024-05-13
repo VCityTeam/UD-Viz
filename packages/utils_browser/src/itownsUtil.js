@@ -87,15 +87,15 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
 }
 
 /**
- *
  * Focus a C3DTiles Layer
  *
  * @param {itowns.PlanarView} itownsView - view
  * @param {itowns.C3DTilesLayer} layer - layer to focus
- * @todo this function is used by widget should be contribue or removed
+ * @returns {Promise | null} Promise of the camera focusing on C3DTiles
+ * @todo this function is used by widget should be contribue or remosved
  */
 export function focusC3DTilesLayer(itownsView, layer) {
-  if (!layer.isC3DTilesLayer) return;
+  if (!layer.isC3DTilesLayer) return null;
 
   const coordinates = itownsView.camera.position();
   const extent = layer.extent;
