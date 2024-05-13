@@ -318,6 +318,17 @@
             parabolaHeight.name = 'Height';
             uiParabola.appendChild(parabolaHeight);
 
+            const selectDateParabola = document.createElement('select');
+            uiParabola.appendChild(selectDateParabola);
+
+            versions.forEach((v) => {
+              const date = v.date;
+              const optionDate = document.createElement('option');
+              optionDate.innerText = date.toString();
+              if (date == stsParabola.middleDate) optionDate.selected = true;
+              selectDateParabola.appendChild(optionDate);
+            });
+
             document.body.appendChild(ui);
 
             const oSTShapeUI = [
@@ -380,6 +391,11 @@
 
             selectDate.onchange = () => {
               stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+            };
+
+            selectDateParabola.onchange = () => {
+              stsParabola.middleDate = selectDateParabola.selectedOptions[0].value;
+              stsParabola.display();
             };
 
             deltaParameter.addEventListener('input', (event) => {

@@ -15,6 +15,11 @@ export class STSParabola extends STShape {
 
     /** @type {Array<number>} */
     this.possibleDates = [];
+
+    this.middleDate =
+      this.stLayer.versions[
+        Math.round((this.stLayer.versions.length - 1) / 2)
+      ].date;
   }
 
   display() {
@@ -39,19 +44,14 @@ export class STSParabola extends STShape {
     const numberOfDivisions = 50;
     let points = path.getSpacedPoints(numberOfDivisions);
 
-    points.forEach((p) => {
-      const geometry = new THREE.SphereGeometry(10, 10, 10);
-      const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-      const sphere = new THREE.Mesh(geometry, material);
-      sphere.position.copy(new THREE.Vector3(p.x, p.y, 0));
-      rootObject3D.add(sphere);
-    });
-
     const spaceIndexBetweenTwoVersions = Math.round(
       25 / (this.stLayer.versions.length - 1)
     );
 
-    const nLeft = 5;
+    const middleVersion = this.stLayer.versions.find(
+      (v) => v.date == this.middleDate
+    );
+    const nLeft = this.stLayer.versions.indexOf(middleVersion);
     const nRight = this.stLayer.versions.length - 1 - nLeft;
 
     points = points.slice(
@@ -65,37 +65,45 @@ export class STSParabola extends STShape {
     const parabolaLine = new THREE.Line(geometryDisplayed, materialDisplayed);
 
     rootObject3D.add(parabolaLine);
-    rootObject3D.updateMatrixWorld();
-    view.notifyChange();
-    return;
+
     this.stLayer.versions.forEach((version) => {
-      const copyObject = new THREE.Object3D().copy(
+      const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
-      rootObject3D.add(copyObject);
-
-      const newPosition = new THREE.Vector3(
-        0,
-        0,
-        this.delta * this.stLayer.versions.indexOf(version)
-      );
+      rootObject3D.add(objectCopy);
 
       version.c3DTLayer.visible = false;
 
-      const dateSprite = createSpriteFromString(version.date.toString());
-      copyObject.children.forEach((object) => {
-        object.position.copy(newPosition);
-        object.updateMatrixWorld();
-      });
+      const curvePoint =
+        points[
+          spaceIndexBetweenTwoVersions * this.stLayer.versions.indexOf(version)
+        ];
+      const newPosition = new THREE.Vector3(curvePoint.x, curvePoint.y, 0);
 
-      dateSprite.position.copy(newPosition);
+      const dateSprite = createSpriteFromString(version.date.toString());
+
+      // position C3DTLayer
+      objectCopy.position.copy(newPosition);
+      if (version == middleVersion)
+        objectCopy.position.copy(new THREE.Vector3(0, 0, -this.height));
+      for (let i = 0; i < objectCopy.children.length; i++) {
+        const child = objectCopy.children[i];
+        const tileId = version.c3DTLayer.root.children[i].tileId;
+        const tile = version.c3DTLayer.tileset.tiles[tileId];
+        const tileTransform = tile.transform.elements;
+        const tilePosition = new THREE.Vector3(
+          tileTransform[12],
+          tileTransform[13],
+          tileTransform[14]
+        );
+        child.position.copy(tilePosition.sub(this.layerCentroid));
+      }
 
       // Date label sprite
       dateSprite.position.z += 40;
       dateSprite.scale.multiplyScalar(0.02);
-      dateSprite.updateMatrixWorld();
-      rootObject3D.add(dateSprite);
+      objectCopy.add(dateSprite);
     });
     rootObject3D.updateMatrixWorld();
 
