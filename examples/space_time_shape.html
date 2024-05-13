@@ -245,6 +245,11 @@
             deltaParameter.name = 'delta';
             uiVector.appendChild(deltaParameter);
 
+            const alphaParameter = document.createElement('input');
+            alphaParameter.type = 'number';
+            alphaParameter.name = 'alpha';
+            uiVector.appendChild(alphaParameter);
+
             // HELIX
             // STSHelix
             const stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
@@ -344,6 +349,7 @@
                   stsVector.display();
                   uiVector.hidden = false;
                   deltaParameter.value = stsVector.delta;
+                  alphaParameter.value = stsVector.alpha;
                   break;
                 case 'helix':
                   stsHelix.display();
@@ -378,6 +384,11 @@
 
             deltaParameter.addEventListener('input', (event) => {
               stsVector.delta = Number(event.target.value);
+              stsVector.display();
+            });
+
+            alphaParameter.addEventListener('input', (event) => {
+              stsVector.alpha = Number(event.target.value);
               stsVector.display();
             });
 

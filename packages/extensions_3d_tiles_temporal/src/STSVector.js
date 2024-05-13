@@ -7,6 +7,7 @@ export class STSVector extends STShape {
     super(stLayer);
 
     this.delta = isNaN(options.delta) ? 1000 : options.delta;
+    this.alpha = isNaN(options.alpha) ? 100 : options.alpha;
 
     /** @type {Map<string,object>} */
     this.featureDateID2ColorOpacity = new Map();
@@ -23,7 +24,11 @@ export class STSVector extends STShape {
 
     const geometryDisplayed = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, this.delta * (this.stLayer.versions.length - 1)),
+      new THREE.Vector3(
+        0,
+        this.alpha * (this.stLayer.versions.length - 1),
+        this.delta * (this.stLayer.versions.length - 1)
+      ),
     ]);
     const materialDisplayed = new THREE.LineBasicMaterial({ color: 0x0000ff });
     const vectorLine = new THREE.Line(geometryDisplayed, materialDisplayed);
@@ -40,7 +45,7 @@ export class STSVector extends STShape {
 
       const newPosition = new THREE.Vector3(
         0,
-        0,
+        this.alpha * this.stLayer.versions.indexOf(version),
         this.delta * this.stLayer.versions.indexOf(version)
       );
 
