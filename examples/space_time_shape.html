@@ -111,8 +111,8 @@
 
           // CREATE 3DTILES
 
-          let c3dtilesConfigs = configs['3DTiles_STS_data'];
-          // c3dtilesConfigs.push(configs['3DTiles_temporal'][2]);
+          const c3dtilesConfigs = configs['3DTiles_STS_data'];
+          // const c3dtilesConfigs = [configs['3DTiles_temporal'][2]];
           const versions = [];
           const temporalsWrappers = [];
           const promisesTileContentLoaded = [];
@@ -150,8 +150,7 @@
                   )
                 );
 
-                // Between two dates there are two intermediate dates like this: 2009 -> firstHalfDate -> secondHalfDate 2012. We want always display firstHlafDate.
-                if (date == 2009) {
+                if (date == Math.min(...datesJSON)) {
                   temporalsWrappers[temporalsWrappers.length - 1].styleDate =
                     date + 1;
                 } else {
