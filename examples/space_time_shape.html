@@ -116,7 +116,7 @@
           const versions = [];
           const temporalsWrappers = [];
           const promisesTileContentLoaded = [];
-          c3dtilesConfigs.forEach((config) => {
+          c3dtilesConfigs[1].forEach((config) => {
             const isTemporal = !!config.dates;
             const datesJSON = isTemporal ? config.dates : [config.date];
             const registerExtensions = isTemporal ? extensions : null;
@@ -182,14 +182,17 @@
             optionDefaultMode.hidden = true;
             selectMode.appendChild(optionDefaultMode);
 
-            for (const mode in udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE) {
+            for (const mode in udviz.extensions3DTilesTemporal
+              .STS_DISPLAY_MODE) {
               const optionMode = document.createElement('option');
-              optionMode.innerText = udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE[mode];
+              optionMode.innerText =
+                udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE[mode];
               selectMode.appendChild(optionMode);
             }
 
             const getCurrentMode = () => {
-              if (selectMode.selectedOptions[0] != optionDefaultMode) return selectMode.selectedOptions[0].value;
+              if (selectMode.selectedOptions[0] != optionDefaultMode)
+                return selectMode.selectedOptions[0].value;
               return undefined;
             };
 
@@ -405,7 +408,8 @@
                 if (element.stShape.displayed) {
                   element.stShape.display(getCurrentMode());
                 }
-              });};
+              });
+            };
 
             radiusParameter.addEventListener('input', (event) => {
               stsCircle.radius = Number(event.target.value);
@@ -424,7 +428,8 @@
             };
 
             selectDateParabola.onchange = () => {
-              stsParabola.middleDate = selectDateParabola.selectedOptions[0].value;
+              stsParabola.middleDate =
+                selectDateParabola.selectedOptions[0].value;
               stsParabola.display(getCurrentMode());
             };
 

@@ -1,32 +1,56 @@
 [
+  [
     {
-        "id": "Lyon-v1",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-1/tileset.json",
-        "date": 1998
+      "id": "Lyon-v1",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-1/tileset.json",
+      "date": 1998
     },
     {
-        "id": "Lyon-v2",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-2/tileset.json",
-        "date": 2004
+      "id": "Lyon-v2",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-2/tileset.json",
+      "date": 2004
     },
     {
-        "id": "Lyon-v3",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-3/tileset.json",
-        "date": 2006
+      "id": "Lyon-v3",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-3/tileset.json",
+      "date": 2006
     },
     {
-        "id": "Lyon-v4",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-4/tileset.json",
-        "date": 2012
+      "id": "Lyon-v4",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-4/tileset.json",
+      "date": 2012
     },
     {
-        "id": "Lyon-v5",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-5/tileset.json",
-        "date": 2015
+      "id": "Lyon-v5",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-5/tileset.json",
+      "date": 2015
     },
     {
-        "id": "Lyon-v6",
-        "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-6/tileset.json",
-        "date": 2024
+      "id": "Lyon-v6",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/FakeData/Lyon-version-6/tileset.json",
+      "date": 2024
     }
+  ],
+  [
+    {
+      "id": "Gratte-Ciel-v1",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Fake_Gratte-Ciel/version-1/tileset.json",
+      "date": 300
+    },
+    {
+      "id": "Gratte-Ciel-v2",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Fake_Gratte-Ciel/version-2/tileset.json",
+      "date": 1588
+    },
+    {
+      "id": "Gratte-Ciel-v3",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Fake_Gratte-Ciel/version-3/tileset.json",
+      "date": 2050
+    },
+    {
+      "id": "Gratte-Ciel-v14",
+      "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Fake_Gratte-Ciel/version-4/tileset.json",
+      "date": 2077
+    }
+  ]
 ]
