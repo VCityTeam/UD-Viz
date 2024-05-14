@@ -13,6 +13,8 @@ export class STSCircle extends STShape {
     this.frameRequester = null;
 
     this.objectCopies = null;
+
+    this.selectedDate = null;
   }
 
   display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
@@ -122,9 +124,11 @@ export class STSCircle extends STShape {
         this.frameRequester
       );
     }
+    if (this.selectedDate) this.selectVersion(this.selectedDate);
   }
 
   selectVersion(date) {
+    this.selectedDate = date;
     const object3dCopySelected = this.objectCopies[date];
     const offset = object3dCopySelected.position.clone();
 
