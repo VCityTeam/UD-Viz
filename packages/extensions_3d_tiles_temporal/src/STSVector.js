@@ -36,18 +36,43 @@ export class STSVector extends STShape {
     rootObject3D.add(vectorLine);
     vectorLine.updateMatrixWorld();
 
+    const yearDelta =
+      (this.delta * (this.stLayer.versions.length - 1)) /
+      this.stLayer.dateInterval;
+
+    const yearAlpha =
+      (this.alpha * (this.stLayer.versions.length - 1)) /
+      this.stLayer.dateInterval;
+
+    const firstDate = this.stLayer.versions[0].date;
+
     this.stLayer.versions.forEach((version) => {
       const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
       rootObject3D.add(objectCopy);
-
-      const newPosition = new THREE.Vector3(
-        0,
-        this.alpha * this.stLayer.versions.indexOf(version),
-        this.delta * this.stLayer.versions.indexOf(version)
-      );
+      const versionIndex = this.stLayer.versions.indexOf(version);
+      let newPosition;
+      switch (this.currentMode) {
+        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+          newPosition = new THREE.Vector3(
+            0,
+            this.alpha * versionIndex,
+            this.delta * versionIndex
+          );
+          break;
+        }
+        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+          const interval = version.date - firstDate;
+          newPosition = new THREE.Vector3(
+            0,
+            yearAlpha * interval,
+            yearDelta * interval
+          );
+          break;
+        }
+      }
 
       version.c3DTLayer.visible = false;
 

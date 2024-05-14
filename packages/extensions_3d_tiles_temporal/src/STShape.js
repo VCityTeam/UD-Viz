@@ -14,6 +14,8 @@ export class STShape {
 
     /** @type {boolean} */
     this.displayed = false;
+
+    this.currentMode = STShape.DISPLAY_MODE.CHRONOLOGICAL;
   }
 
   display() {
@@ -52,3 +54,8 @@ export class STShape {
     this.stLayer.view.notifyChange();
   }
 }
+
+STShape.DISPLAY_MODE = {
+  SEQUENTIAL: 'sequential',
+  CHRONOLOGICAL: 'chronological',
+};
