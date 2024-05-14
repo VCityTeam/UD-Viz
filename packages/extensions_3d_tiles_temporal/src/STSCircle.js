@@ -13,6 +13,7 @@ export class STSCircle extends STShape {
     this.frameRequester = null;
 
     this.objectCopies = null;
+    this.circleLine = null;
 
     this.selectedDate = null;
   }
@@ -41,6 +42,7 @@ export class STSCircle extends STShape {
     );
     const materialDisplayed = new THREE.LineBasicMaterial({ color: 0x0000ff });
     const circleLine = new THREE.Line(geometryDisplayed, materialDisplayed);
+    this.circleLine = circleLine;
 
     rootObject3D.add(circleLine);
     circleLine.updateMatrixWorld();
@@ -151,7 +153,8 @@ export class STSCircle extends STShape {
       this.layerCentroid.x - this.stLayer.view.camera.camera3D.position.x,
       this.layerCentroid.y - this.stLayer.view.camera.camera3D.position.y
     ).normalize();
-    const dirObject = new THREE.Vector2(0, 1);
+    let dirObject = this.circleLine.position.clone().normalize();
+    dirObject = new THREE.Vector2(dirObject.x, dirObject.y);
 
     let angle = dirObject.angleTo(dirToCamera);
     const orientation =
