@@ -16,6 +16,7 @@ export class STSCircle extends STShape {
     this.circleLine = null;
 
     this.selectedDate = null;
+    this.pause = false;
   }
 
   display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
@@ -146,6 +147,7 @@ export class STSCircle extends STShape {
   }
 
   update() {
+    if (this.pause) return;
     // Compute the angle between camera and the base layer.
     if (!this.stLayer.rootObject3D.children.length) return;
 

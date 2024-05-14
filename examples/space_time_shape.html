@@ -248,6 +248,14 @@
               selectDate.appendChild(optionDate);
             });
 
+            const updateCheckBoxLabel = document.createElement('label');
+            updateCheckBoxLabel.innerText = 'Freeze rotation';
+            uiCircle.appendChild(updateCheckBoxLabel);
+            const updateCheckBox = document.createElement('input');
+            updateCheckBox.type = 'checkbox';
+            updateCheckBox.name = 'update';
+            uiCircle.appendChild(updateCheckBox);
+
             // VECTOR
             // STSVector
             const stsVector = new udviz.extensions3DTilesTemporal.STSVector(
@@ -422,6 +430,10 @@
               stsCircle.display(getCurrentMode());
               stsCircle.selectVersion(selectDate.selectedOptions[0].value);
             });
+
+            updateCheckBox.onchange = () => {
+              stsCircle.pause = updateCheckBox.checked;
+            };
 
             selectDate.onchange = () => {
               stsCircle.selectVersion(selectDate.selectedOptions[0].value);
