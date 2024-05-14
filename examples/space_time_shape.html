@@ -222,16 +222,25 @@
             uiCircle.hidden = true;
             ui.appendChild(uiCircle);
 
+            const radiusParameterLabel = document.createElement('label');
+            radiusParameterLabel.innerText = 'Radius';
+            uiCircle.appendChild(radiusParameterLabel);
             const radiusParameter = document.createElement('input');
             radiusParameter.type = 'number';
-            radiusParameter.name = 'rayon';
+            radiusParameter.name = 'Radius';
             uiCircle.appendChild(radiusParameter);
 
+            const heightParameterLabel = document.createElement('label');
+            heightParameterLabel.innerText = 'Height';
+            uiCircle.appendChild(heightParameterLabel);
             const heightParameter = document.createElement('input');
             heightParameter.type = 'number';
-            heightParameter.name = 'height';
+            heightParameter.name = 'Height';
             uiCircle.appendChild(heightParameter);
 
+            const dateSelectLabel = document.createElement('label');
+            dateSelectLabel.innerText = 'Year';
+            uiCircle.appendChild(dateSelectLabel);
             const selectDate = document.createElement('select');
             uiCircle.appendChild(selectDate);
             const optionDateSelectedDefault = document.createElement('option');
@@ -272,11 +281,17 @@
             uiVector.hidden = true;
             ui.appendChild(uiVector);
 
+            const deltaLabel = document.createElement('label');
+            deltaLabel.innerText = 'Delta';
+            uiVector.appendChild(deltaLabel);
             const deltaParameter = document.createElement('input');
             deltaParameter.type = 'number';
             deltaParameter.name = 'delta';
             uiVector.appendChild(deltaParameter);
 
+            const alphaLabel = document.createElement('label');
+            alphaLabel.innerText = 'Alpha';
+            uiVector.appendChild(alphaLabel);
             const alphaParameter = document.createElement('input');
             alphaParameter.type = 'number';
             alphaParameter.name = 'alpha';
@@ -298,11 +313,17 @@
             uiHelix.hidden = true;
             ui.appendChild(uiHelix);
 
+            const helixDeltaLabel = document.createElement('label');
+            helixDeltaLabel.innerText = 'Delta';
+            uiHelix.appendChild(helixDeltaLabel);
             const helixDeltaParameter = document.createElement('input');
             helixDeltaParameter.type = 'number';
             helixDeltaParameter.name = 'delta';
             uiHelix.appendChild(helixDeltaParameter);
 
+            const helixRadiuslabel = document.createElement('label');
+            helixRadiuslabel.innerText = 'Radius';
+            uiHelix.appendChild(helixRadiuslabel);
             const helixRadiusParameter = document.createElement('input');
             helixRadiusParameter.type = 'number';
             helixRadiusParameter.name = 'rayon';
@@ -344,12 +365,14 @@
             const labelHeight = document.createElement('label');
             labelHeight.innerText = 'Height';
             uiParabola.appendChild(labelHeight);
-
             const parabolaHeight = document.createElement('input');
             parabolaHeight.type = 'number';
             parabolaHeight.name = 'Height';
             uiParabola.appendChild(parabolaHeight);
 
+            const parabolaDateSelectLabel = document.createElement('label');
+            parabolaDateSelectLabel.innerText = 'Year';
+            uiParabola.appendChild(parabolaDateSelectLabel);
             const selectDateParabola = document.createElement('select');
             uiParabola.appendChild(selectDateParabola);
 
