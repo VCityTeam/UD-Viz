@@ -44,8 +44,13 @@ export class STSCircle extends STShape {
     circleLine.updateMatrixWorld();
 
     // Place versions cdtlayers + labels on the circle
-    let angleDeg = 0;
     this.objectCopies = new Map();
+
+    let yearDelta;
+    let interval;
+
+    const firstDate = this.stLayer.versions[0].date;
+
     this.stLayer.versions.forEach((version) => {
       const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
@@ -53,8 +58,22 @@ export class STSCircle extends STShape {
       );
       this.objectCopies[version.date] = objectCopy;
       rootObject3D.add(objectCopy);
+      switch (this.currentMode) {
+        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+          interval = this.stLayer.versions.indexOf(version);
+          yearDelta = 270 / (this.stLayer.versions.length - 1);
+          break;
+        }
+        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+          interval = version.date - firstDate;
+          yearDelta = 270 / this.stLayer.dateInterval;
+          break;
+        }
+      }
+
+      const angleDeg = yearDelta * -interval;
       const angleRad = (angleDeg * Math.PI) / 180;
-      angleDeg -= 270 / (this.stLayer.versions.length - 1);
+
       const point = new THREE.Vector3(
         this.radius * Math.cos(angleRad),
         this.radius * Math.sin(angleRad),

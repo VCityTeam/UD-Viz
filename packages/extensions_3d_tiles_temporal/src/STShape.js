@@ -15,7 +15,7 @@ export class STShape {
     /** @type {boolean} */
     this.displayed = false;
 
-    this.currentMode = STShape.DISPLAY_MODE.CHRONOLOGICAL;
+    this.currentMode = STShape.DISPLAY_MODE.SEQUENTIAL;
   }
 
   display() {
