@@ -42,22 +42,41 @@ export class STSParabola extends STShape {
     );
 
     const numberOfDivisions = 50;
+    const middleIndex = numberOfDivisions / 2;
+
     let points = path.getSpacedPoints(numberOfDivisions);
 
-    const spaceIndexBetweenTwoVersions = Math.round(
-      25 / (this.stLayer.versions.length - 1)
-    );
-
+    const length = this.stLayer.versions.length;
     const middleVersion = this.stLayer.versions.find(
       (v) => v.date == this.middleDate
     );
-    const nLeft = this.stLayer.versions.indexOf(middleVersion);
-    const nRight = this.stLayer.versions.length - 1 - nLeft;
 
-    points = points.slice(
-      25 - spaceIndexBetweenTwoVersions * nLeft,
-      25 + spaceIndexBetweenTwoVersions * nRight + 1
-    );
+    let yearDelta;
+    let minIndex;
+    let maxIndex;
+    switch (this.currentMode) {
+      case STShape.DISPLAY_MODE.SEQUENTIAL: {
+        const nLeft = this.stLayer.versions.indexOf(middleVersion);
+        const nRight = length - 1 - nLeft;
+        yearDelta = Math.round(middleIndex / (length - 1));
+        (minIndex = middleIndex - yearDelta * nLeft),
+          (maxIndex = middleIndex + yearDelta * nRight + 1);
+        break;
+      }
+      case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+        yearDelta = numberOfDivisions / 2 / this.stLayer.dateInterval;
+        minIndex =
+          middleIndex -
+          (this.middleDate - this.stLayer.versions[0].date) * yearDelta;
+        maxIndex =
+          middleIndex +
+          (this.stLayer.versions[length - 1].date - this.middleDate) *
+            yearDelta;
+        break;
+      }
+    }
+
+    points = points.slice(Math.round(minIndex), Math.round(maxIndex) + 1);
 
     const geometryDisplayed = new THREE.BufferGeometry().setFromPoints(points);
 
@@ -75,10 +94,19 @@ export class STSParabola extends STShape {
 
       version.c3DTLayer.visible = false;
 
-      const curvePoint =
-        points[
-          spaceIndexBetweenTwoVersions * this.stLayer.versions.indexOf(version)
-        ];
+      let curveIndex;
+      switch (this.currentMode) {
+        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+          curveIndex = yearDelta * this.stLayer.versions.indexOf(version);
+          break;
+        }
+        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+          const interval = version.date - this.stLayer.versions[0].date;
+          curveIndex = yearDelta * interval;
+          break;
+        }
+      }
+      const curvePoint = points[Math.round(curveIndex)];
       const newPosition = new THREE.Vector3(curvePoint.x, curvePoint.y, 0);
 
       const dateSprite = createSpriteFromString(version.date.toString());
