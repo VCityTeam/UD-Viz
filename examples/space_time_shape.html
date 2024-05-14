@@ -173,7 +173,28 @@
             ui.style =
               'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
 
+            const selectMode = document.createElement('select');
+            ui.appendChild(selectMode);
+            const optionDefaultMode = document.createElement('option');
+            optionDefaultMode.innerText = 'Choose a Mode';
+            optionDefaultMode.selected = true;
+            optionDefaultMode.disabled = true;
+            optionDefaultMode.hidden = true;
+            selectMode.appendChild(optionDefaultMode);
+
+            for (const mode in udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE) {
+              const optionMode = document.createElement('option');
+              optionMode.innerText = udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE[mode];
+              selectMode.appendChild(optionMode);
+            }
+
+            const getCurrentMode = () => {
+              if (selectMode.selectedOptions[0] != optionDefaultMode) return selectMode.selectedOptions[0].value;
+              return undefined;
+            };
+
             const selectSTShape = document.createElement('select');
+            selectSTShape.hidden = true;
             ui.appendChild(selectSTShape);
             const optionDefault = document.createElement('option');
             optionDefault.innerText = 'Choose a Shape';
@@ -351,25 +372,25 @@
               });
               switch (selectSTShape.selectedOptions[0].value) {
                 case 'circle':
-                  stsCircle.display();
+                  stsCircle.display(getCurrentMode());
                   uiCircle.hidden = false;
                   radiusParameter.value = stsCircle.radius;
                   heightParameter.value = stsCircle.height;
                   break;
                 case 'vector':
-                  stsVector.display();
+                  stsVector.display(getCurrentMode());
                   uiVector.hidden = false;
                   deltaParameter.value = stsVector.delta;
                   alphaParameter.value = stsVector.alpha;
                   break;
                 case 'helix':
-                  stsHelix.display();
+                  stsHelix.display(getCurrentMode());
                   uiHelix.hidden = false;
                   helixRadiusParameter.value = stsHelix.radius;
                   helixDeltaParameter.value = stsHelix.delta;
                   break;
                 case 'parabola':
-                  stsParabola.display();
+                  stsParabola.display(getCurrentMode());
                   uiParabola.hidden = false;
                   parabolaDistAxisX.value = stsParabola.distAxisX;
                   parabolaDistAxisY.value = stsParabola.distAxisY;
@@ -377,15 +398,24 @@
                   break;
               }
             };
+
+            selectMode.onchange = () => {
+              oSTShapeUI.forEach((element) => {
+                selectSTShape.hidden = false;
+                if (element.stShape.displayed) {
+                  element.stShape.display(getCurrentMode());
+                }
+              });};
+
             radiusParameter.addEventListener('input', (event) => {
               stsCircle.radius = Number(event.target.value);
-              stsCircle.display();
+              stsCircle.display(getCurrentMode());
               stsCircle.selectVersion(selectDate.selectedOptions[0].value);
             });
 
             heightParameter.addEventListener('input', (event) => {
               stsCircle.height = Number(event.target.value);
-              stsCircle.display();
+              stsCircle.display(getCurrentMode());
               stsCircle.selectVersion(selectDate.selectedOptions[0].value);
             });
 
@@ -395,42 +425,42 @@
 
             selectDateParabola.onchange = () => {
               stsParabola.middleDate = selectDateParabola.selectedOptions[0].value;
-              stsParabola.display();
+              stsParabola.display(getCurrentMode());
             };
 
             deltaParameter.addEventListener('input', (event) => {
               stsVector.delta = Number(event.target.value);
-              stsVector.display();
+              stsVector.display(getCurrentMode());
             });
 
             alphaParameter.addEventListener('input', (event) => {
               stsVector.alpha = Number(event.target.value);
-              stsVector.display();
+              stsVector.display(getCurrentMode());
             });
 
             helixRadiusParameter.addEventListener('input', (event) => {
               stsHelix.radius = Number(event.target.value);
-              stsHelix.display();
+              stsHelix.display(getCurrentMode());
             });
 
             helixDeltaParameter.addEventListener('input', (event) => {
               stsHelix.delta = Number(event.target.value);
-              stsHelix.display();
+              stsHelix.display(getCurrentMode());
             });
 
             parabolaDistAxisX.addEventListener('input', (event) => {
               stsParabola.distAxisX = Number(event.target.value);
-              stsParabola.display();
+              stsParabola.display(getCurrentMode());
             });
 
             parabolaDistAxisY.addEventListener('input', (event) => {
               stsParabola.distAxisY = Number(event.target.value);
-              stsParabola.display();
+              stsParabola.display(getCurrentMode());
             });
 
             parabolaHeight.addEventListener('input', (event) => {
               stsParabola.height = Number(event.target.value);
-              stsParabola.display();
+              stsParabola.display(getCurrentMode());
             });
           });
 
