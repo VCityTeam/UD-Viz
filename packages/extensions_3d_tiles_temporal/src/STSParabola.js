@@ -1,4 +1,4 @@
-import { STShape } from './STShape';
+import { DISPLAY_MODE, STShape } from './STShape';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
 
@@ -22,7 +22,7 @@ export class STSParabola extends STShape {
       ].date;
   }
 
-  display() {
+  display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
     super.display();
 
     const view = this.stLayer.view;
@@ -54,16 +54,16 @@ export class STSParabola extends STShape {
     let yearDelta;
     let minIndex;
     let maxIndex;
-    switch (this.currentMode) {
-      case STShape.DISPLAY_MODE.SEQUENTIAL: {
+    switch (displayMode) {
+      case DISPLAY_MODE.SEQUENTIAL: {
         const nLeft = this.stLayer.versions.indexOf(middleVersion);
         const nRight = length - 1 - nLeft;
         yearDelta = Math.round(middleIndex / (length - 1));
-        (minIndex = middleIndex - yearDelta * nLeft),
-          (maxIndex = middleIndex + yearDelta * nRight + 1);
+        minIndex = middleIndex - yearDelta * nLeft;
+        maxIndex = middleIndex + yearDelta * nRight;
         break;
       }
-      case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+      case DISPLAY_MODE.CHRONOLOGICAL: {
         yearDelta = numberOfDivisions / 2 / this.stLayer.dateInterval;
         minIndex =
           middleIndex -
@@ -95,12 +95,12 @@ export class STSParabola extends STShape {
       version.c3DTLayer.visible = false;
 
       let curveIndex;
-      switch (this.currentMode) {
-        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+      switch (displayMode) {
+        case DISPLAY_MODE.SEQUENTIAL: {
           curveIndex = yearDelta * this.stLayer.versions.indexOf(version);
           break;
         }
-        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+        case DISPLAY_MODE.CHRONOLOGICAL: {
           const interval = version.date - this.stLayer.versions[0].date;
           curveIndex = yearDelta * interval;
           break;

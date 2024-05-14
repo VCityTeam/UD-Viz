@@ -1,4 +1,4 @@
-import { STShape } from './STShape';
+import { DISPLAY_MODE, STShape } from './STShape';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
@@ -14,7 +14,7 @@ export class STSHelix extends STShape {
     this.frameRequester = this.update.bind(this);
   }
 
-  display() {
+  display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
     super.display();
 
     const view = this.stLayer.view;
@@ -60,14 +60,14 @@ export class STSHelix extends STShape {
       );
       rootObject3D.add(objectCopy);
 
-      switch (this.currentMode) {
-        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+      switch (displayMode) {
+        case DISPLAY_MODE.SEQUENTIAL: {
           interval = this.stLayer.versions.indexOf(version);
           yearDelta = helixLength / (this.stLayer.versions.length - 1);
           heightDelta = this.delta;
           break;
         }
-        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+        case DISPLAY_MODE.CHRONOLOGICAL: {
           interval = version.date - firstDate;
           yearDelta = helixLength / this.stLayer.dateInterval;
           heightDelta =

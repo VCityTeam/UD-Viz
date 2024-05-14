@@ -1,4 +1,4 @@
-import { STShape } from './STShape';
+import { DISPLAY_MODE, STShape } from './STShape';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
 
@@ -16,7 +16,7 @@ export class STSVector extends STShape {
     this.possibleDates = [];
   }
 
-  display() {
+  display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
     super.display();
 
     const view = this.stLayer.view;
@@ -50,14 +50,14 @@ export class STSVector extends STShape {
       rootObject3D.add(objectCopy);
       const versionIndex = this.stLayer.versions.indexOf(version);
 
-      switch (this.currentMode) {
-        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+      switch (displayMode) {
+        case DISPLAY_MODE.SEQUENTIAL: {
           interval = versionIndex;
           yearDelta = this.delta;
           yearAlpha = this.alpha;
           break;
         }
-        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+        case DISPLAY_MODE.CHRONOLOGICAL: {
           interval = version.date - firstDate;
           yearDelta =
             (this.delta * (this.stLayer.versions.length - 1)) /
