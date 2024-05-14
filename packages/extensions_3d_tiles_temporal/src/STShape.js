@@ -14,8 +14,6 @@ export class STShape {
 
     /** @type {boolean} */
     this.displayed = false;
-
-    this.currentMode = STShape.DISPLAY_MODE.SEQUENTIAL;
   }
 
   display() {
@@ -55,7 +53,7 @@ export class STShape {
   }
 }
 
-STShape.DISPLAY_MODE = {
+export const DISPLAY_MODE = {
   SEQUENTIAL: 'sequential',
   CHRONOLOGICAL: 'chronological',
 };

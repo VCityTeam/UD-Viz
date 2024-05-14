@@ -1,4 +1,4 @@
-import { STShape } from './STShape';
+import { DISPLAY_MODE, STShape } from './STShape';
 import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
@@ -15,7 +15,7 @@ export class STSCircle extends STShape {
     this.objectCopies = null;
   }
 
-  display() {
+  display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
     super.display();
 
     const view = this.stLayer.view;
@@ -58,13 +58,13 @@ export class STSCircle extends STShape {
       );
       this.objectCopies[version.date] = objectCopy;
       rootObject3D.add(objectCopy);
-      switch (this.currentMode) {
-        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+      switch (displayMode) {
+        case DISPLAY_MODE.SEQUENTIAL: {
           interval = this.stLayer.versions.indexOf(version);
           yearDelta = 270 / (this.stLayer.versions.length - 1);
           break;
         }
-        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+        case DISPLAY_MODE.CHRONOLOGICAL: {
           interval = version.date - firstDate;
           yearDelta = 270 / this.stLayer.dateInterval;
           break;
