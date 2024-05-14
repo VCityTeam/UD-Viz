@@ -46,15 +46,40 @@ export class STSHelix extends STShape {
     helixLine.updateMatrixWorld();
 
     // Place versions cdtlayers + labels on the circle
-    let angleDeg = 0;
+
+    let yearDelta;
+    let heightDelta;
+    let interval;
+
+    const firstDate = this.stLayer.versions[0].date;
+
     this.stLayer.versions.forEach((version) => {
       const objectCopy = new THREE.Object3D().copy(
         version.c3DTLayer.root,
         true
       );
       rootObject3D.add(objectCopy);
+
+      switch (this.currentMode) {
+        case STShape.DISPLAY_MODE.SEQUENTIAL: {
+          interval = this.stLayer.versions.indexOf(version);
+          yearDelta = helixLength / (this.stLayer.versions.length - 1);
+          heightDelta = this.delta;
+          break;
+        }
+        case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
+          interval = version.date - firstDate;
+          yearDelta = helixLength / this.stLayer.dateInterval;
+          heightDelta =
+            (this.delta * (this.stLayer.versions.length - 1)) /
+            this.stLayer.dateInterval;
+          break;
+        }
+      }
+
+      const angleDeg = yearDelta * -interval;
       const angleRad = (angleDeg * Math.PI) / 180;
-      angleDeg -= angleBetweenVersions;
+
       const point = new THREE.Vector3(
         this.radius * Math.cos(angleRad) - this.radius,
         this.radius * Math.sin(angleRad) - this.radius,
@@ -68,7 +93,7 @@ export class STSHelix extends STShape {
       const newPosition = new THREE.Vector3(
         helixLine.position.x + point.x,
         helixLine.position.y + point.y,
-        this.delta * this.stLayer.versions.indexOf(version)
+        heightDelta * interval
       );
 
       // position C3DTLayer

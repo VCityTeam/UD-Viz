@@ -36,13 +36,9 @@ export class STSVector extends STShape {
     rootObject3D.add(vectorLine);
     vectorLine.updateMatrixWorld();
 
-    const yearDelta =
-      (this.delta * (this.stLayer.versions.length - 1)) /
-      this.stLayer.dateInterval;
-
-    const yearAlpha =
-      (this.alpha * (this.stLayer.versions.length - 1)) /
-      this.stLayer.dateInterval;
+    let yearDelta;
+    let yearAlpha;
+    let interval;
 
     const firstDate = this.stLayer.versions[0].date;
 
@@ -53,26 +49,31 @@ export class STSVector extends STShape {
       );
       rootObject3D.add(objectCopy);
       const versionIndex = this.stLayer.versions.indexOf(version);
-      let newPosition;
+
       switch (this.currentMode) {
         case STShape.DISPLAY_MODE.SEQUENTIAL: {
-          newPosition = new THREE.Vector3(
-            0,
-            this.alpha * versionIndex,
-            this.delta * versionIndex
-          );
+          interval = versionIndex;
+          yearDelta = this.delta;
+          yearAlpha = this.alpha;
           break;
         }
         case STShape.DISPLAY_MODE.CHRONOLOGICAL: {
-          const interval = version.date - firstDate;
-          newPosition = new THREE.Vector3(
-            0,
-            yearAlpha * interval,
-            yearDelta * interval
-          );
+          interval = version.date - firstDate;
+          yearDelta =
+            (this.delta * (this.stLayer.versions.length - 1)) /
+            this.stLayer.dateInterval;
+          yearAlpha =
+            (this.alpha * (this.stLayer.versions.length - 1)) /
+            this.stLayer.dateInterval;
           break;
         }
       }
+
+      const newPosition = new THREE.Vector3(
+        0,
+        yearAlpha * interval,
+        yearDelta * interval
+      );
 
       version.c3DTLayer.visible = false;
 
