@@ -136,8 +136,8 @@ export class STSCircle extends STShape {
     const offset = object3dCopySelected.position.clone();
 
     this.stLayer.rootObject3D.children.forEach((object) => {
-      object.position.z = 0;
       object.position.sub(offset);
+      object.position.z = 0;
     });
 
     object3dCopySelected.position.z = -this.height;
