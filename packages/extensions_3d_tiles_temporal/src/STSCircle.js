@@ -1,21 +1,35 @@
-import { DISPLAY_MODE, STShape } from './STShape';
-import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
+import { MAIN_LOOP_EVENTS } from 'itowns';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
+import { STLayer } from './STLayer';
+import { DISPLAY_MODE, STShape } from './STShape';
 
 export class STSCircle extends STShape {
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   * @param {object} options Options of the shape
+   * @param {number} options.radius Radius of the helix
+   * @param {number} options.height Height at which the circle is drawn
+   */
   constructor(stLayer, options = {}) {
     super(stLayer);
+
+    /** @type {number} */
     this.radius = isNaN(options.radius) ? 1000 : options.radius;
+    /** @type {number} */
     this.height = isNaN(options.height) ? 550 : options.height;
 
-    this.layerCentroid = null;
     this.frameRequester = null;
 
+    /** @type {Array<THREE.Object3D>} */
     this.objectCopies = null;
+    /** @type {THREE.Line} */
     this.circleLine = null;
 
+    /** @type {number} */
     this.selectedDate = null;
+    /** @type {boolean} */
     this.pause = false;
   }
 

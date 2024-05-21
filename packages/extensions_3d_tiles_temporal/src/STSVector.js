@@ -1,19 +1,23 @@
-import { DISPLAY_MODE, STShape } from './STShape';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
+import { STLayer } from './STLayer';
+import { DISPLAY_MODE, STShape } from './STShape';
 
 export class STSVector extends STShape {
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   * @param {object} options Options of the shape
+   * @param {number} options.delta Distance between two versions on Z axis
+   * @param {number} options.alpha Distance between two versions on Y axis
+   */
   constructor(stLayer, options = {}) {
     super(stLayer);
 
+    /** @type {number} */
     this.delta = isNaN(options.delta) ? 1000 : options.delta;
+    /** @type {number} */
     this.alpha = isNaN(options.alpha) ? 100 : options.alpha;
-
-    /** @type {Map<string,object>} */
-    this.featureDateID2ColorOpacity = new Map();
-
-    /** @type {Array<number>} */
-    this.possibleDates = [];
   }
 
   display(displayMode = DISPLAY_MODE.SEQUENTIAL) {

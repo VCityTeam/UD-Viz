@@ -1,21 +1,28 @@
-import { DISPLAY_MODE, STShape } from './STShape';
 import * as THREE from 'three';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
+import { STLayer } from './STLayer';
+import { DISPLAY_MODE, STShape } from './STShape';
 
 export class STSParabola extends STShape {
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   * @param {object} options Options of the shape
+   * @param {number} options.distAxisX Distance from control point on X axis
+   * @param {number} options.distAxisY Distance from control point on Y axis
+   * @param {number} options.height Height at which the parabola is drawn
+   */
   constructor(stLayer, options = {}) {
     super(stLayer);
 
-    this.distAxisX = isNaN(options.distAxisX) ? 1000 : options.distAxisX; // distance from control point on x axis
+    /** @type {number} */
+    this.distAxisX = isNaN(options.distAxisX) ? 1000 : options.distAxisX;
+    /** @type {number} */
     this.distAxisY = isNaN(options.distAxisY) ? 1000 : options.distAxisY;
+    /** @type {number} */
     this.height = isNaN(options.height) ? 550 : options.height;
 
-    /** @type {Map<string,object>} */
-    this.featureDateID2ColorOpacity = new Map();
-
-    /** @type {Array<number>} */
-    this.possibleDates = [];
-
+    /** @type {number} */
     this.middleDate =
       this.stLayer.versions[
         Math.round((this.stLayer.versions.length - 1) / 2)
