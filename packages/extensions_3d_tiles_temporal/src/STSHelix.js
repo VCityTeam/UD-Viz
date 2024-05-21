@@ -1,17 +1,24 @@
-import { DISPLAY_MODE, STShape } from './STShape';
-import { MAIN_LOOP_EVENTS } from 'itowns';
 import * as THREE from 'three';
+import { MAIN_LOOP_EVENTS } from 'itowns';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
+import { STLayer } from './STLayer';
+import { DISPLAY_MODE, STShape } from './STShape';
 
 export class STSHelix extends STShape {
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   * @param {object} options Options of the shape
+   * @param {number} options.radius Radius of the helix
+   * @param {number} options.delta Distance between two versions on Z axis
+   */
   constructor(stLayer, options = {}) {
     super(stLayer);
+
+    /** @type {number} */
     this.radius = isNaN(options.radius) ? 1000 : options.radius;
+    /** @type {number} */
     this.delta = isNaN(options.delta) ? 1000 : options.delta;
-
-    this.layerCentroid = null;
-
-    this.frameRequester = this.update.bind(this);
   }
 
   display(displayMode = DISPLAY_MODE.SEQUENTIAL) {

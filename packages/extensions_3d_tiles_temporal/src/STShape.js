@@ -4,16 +4,20 @@ import { STLayer } from './STLayer';
 export class STShape {
   /**
    *
-   * @param {STLayer} stLayer
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
    */
   constructor(stLayer) {
     if (new.target === STShape) {
       throw new TypeError('Cannot construct STShape instances directly');
     }
+    /** @type {STLayer} */
     this.stLayer = stLayer;
 
     /** @type {boolean} */
     this.displayed = false;
+
+    /** @type {THREE.Vector3} */
+    this.layerCentroid = null;
   }
 
   display() {
