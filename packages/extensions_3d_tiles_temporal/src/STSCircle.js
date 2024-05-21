@@ -192,10 +192,11 @@ export class STSCircle extends STShape {
   dispose() {
     super.dispose();
     this.objectCopies = null;
-    this.stLayer.view.removeFrameRequester(
-      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      this.frameRequester
-    );
+    if (this.frameRequester != null)
+      this.stLayer.view.removeFrameRequester(
+        MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
+        this.frameRequester
+      );
     this.frameRequester = null;
   }
 }

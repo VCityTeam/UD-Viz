@@ -109,414 +109,480 @@
               udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
           });
 
+          // CREATE HTML
+          const ui = document.createElement('div');
+          document.body.appendChild(ui);
+          ui.style =
+            'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
+
+          const selectDataset = document.createElement('select');
+          ui.appendChild(selectDataset);
+          const optionDefaultDataset = document.createElement('option');
+          optionDefaultDataset.innerText = 'Choose a dataset';
+          optionDefaultDataset.selected = true;
+          optionDefaultDataset.disabled = true;
+          optionDefaultDataset.hidden = true;
+          selectDataset.appendChild(optionDefaultDataset);
+          const datasetFakeDataLyon = document.createElement('option');
+          datasetFakeDataLyon.value = 'fakeLyon';
+          datasetFakeDataLyon.innerText = 'Lyon fake data';
+          selectDataset.appendChild(datasetFakeDataLyon);
+          const datasetFakeDataGratteCiel = document.createElement('option');
+          datasetFakeDataGratteCiel.value = 'fakeGratteCiel';
+          datasetFakeDataGratteCiel.innerText = 'Gratte Ciel fake data';
+          selectDataset.appendChild(datasetFakeDataGratteCiel);
+          const datasetLyon = document.createElement('option');
+          datasetLyon.value = 'lyon';
+          datasetLyon.innerText = 'Lyon temporal';
+          selectDataset.appendChild(datasetLyon);
+          const datasetGratteCiel = document.createElement('option');
+          datasetGratteCiel.value = 'gratteCiel';
+          datasetGratteCiel.innerText = 'GratteCiel temporal';
+          selectDataset.appendChild(datasetGratteCiel);
+
+          const getDataset = () => {
+            switch (selectDataset.selectedOptions[0].value) {
+              case 'fakeLyon':
+                return configs['3DTiles_STS_data'][0];
+              case 'fakeGratteCiel':
+                return configs['3DTiles_STS_data'][1];
+              case 'lyon':
+                return [configs['3DTiles_temporal'][0]];
+              case 'gratteCiel':
+                return [configs['3DTiles_temporal'][2]];
+            }
+          };
+
+          const selectMode = document.createElement('select');
+          selectMode.hidden = true;
+          ui.appendChild(selectMode);
+          const optionDefaultMode = document.createElement('option');
+          optionDefaultMode.innerText = 'Choose a Mode';
+          optionDefaultMode.selected = true;
+          optionDefaultMode.disabled = true;
+          optionDefaultMode.hidden = true;
+          selectMode.appendChild(optionDefaultMode);
+
+          for (const mode in udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE) {
+            const optionMode = document.createElement('option');
+            optionMode.innerText =
+              udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE[mode];
+            selectMode.appendChild(optionMode);
+          }
+
+          const getCurrentMode = () => {
+            if (selectMode.selectedOptions[0] != optionDefaultMode)
+              return selectMode.selectedOptions[0].value;
+            return undefined;
+          };
+
+          const selectSTShape = document.createElement('select');
+          selectSTShape.hidden = true;
+          ui.appendChild(selectSTShape);
+          const optionDefault = document.createElement('option');
+          optionDefault.innerText = 'Choose a Shape';
+          optionDefault.selected = true;
+          optionDefault.disabled = true;
+          optionDefault.hidden = true;
+          selectSTShape.appendChild(optionDefault);
+
+          // CIRCLE HTML
+          const optionCircle = document.createElement('option');
+          optionCircle.value = 'circle';
+          optionCircle.innerText = 'Circle';
+          selectSTShape.appendChild(optionCircle);
+
+          const uiCircle = document.createElement('div');
+          uiCircle.hidden = true;
+          ui.appendChild(uiCircle);
+
+          const radiusParameterLabel = document.createElement('label');
+          radiusParameterLabel.innerText = 'Radius';
+          uiCircle.appendChild(radiusParameterLabel);
+          const radiusParameter = document.createElement('input');
+          radiusParameter.type = 'number';
+          radiusParameter.name = 'Radius';
+          uiCircle.appendChild(radiusParameter);
+
+          const heightParameterLabel = document.createElement('label');
+          heightParameterLabel.innerText = 'Height';
+          uiCircle.appendChild(heightParameterLabel);
+          const heightParameter = document.createElement('input');
+          heightParameter.type = 'number';
+          heightParameter.name = 'Height';
+          uiCircle.appendChild(heightParameter);
+
+          const dateSelectLabel = document.createElement('label');
+          dateSelectLabel.innerText = 'Year';
+          uiCircle.appendChild(dateSelectLabel);
+          const selectDate = document.createElement('select');
+          uiCircle.appendChild(selectDate);
+
+          const updateCheckBoxLabel = document.createElement('label');
+          updateCheckBoxLabel.innerText = 'Freeze rotation';
+          uiCircle.appendChild(updateCheckBoxLabel);
+          const updateCheckBox = document.createElement('input');
+          updateCheckBox.type = 'checkbox';
+          updateCheckBox.name = 'update';
+          uiCircle.appendChild(updateCheckBox);
+
+          // VECTOR HTML
+          const optionVector = document.createElement('option');
+          optionVector.value = 'vector';
+          optionVector.innerText = 'Vector';
+          selectSTShape.appendChild(optionVector);
+
+          const uiVector = document.createElement('div');
+          uiVector.hidden = true;
+          ui.appendChild(uiVector);
+
+          const deltaLabel = document.createElement('label');
+          deltaLabel.innerText = 'Delta';
+          uiVector.appendChild(deltaLabel);
+          const deltaParameter = document.createElement('input');
+          deltaParameter.type = 'number';
+          deltaParameter.name = 'delta';
+          uiVector.appendChild(deltaParameter);
+
+          const alphaLabel = document.createElement('label');
+          alphaLabel.innerText = 'Alpha';
+          uiVector.appendChild(alphaLabel);
+          const alphaParameter = document.createElement('input');
+          alphaParameter.type = 'number';
+          alphaParameter.name = 'alpha';
+          uiVector.appendChild(alphaParameter);
+
+          // HELIX HTML
+          const optionHelix = document.createElement('option');
+          optionHelix.value = 'helix';
+          optionHelix.innerText = 'Helix';
+          selectSTShape.appendChild(optionHelix);
+
+          const uiHelix = document.createElement('div');
+          uiHelix.hidden = true;
+          ui.appendChild(uiHelix);
+
+          const helixDeltaLabel = document.createElement('label');
+          helixDeltaLabel.innerText = 'Delta';
+          uiHelix.appendChild(helixDeltaLabel);
+          const helixDeltaParameter = document.createElement('input');
+          helixDeltaParameter.type = 'number';
+          helixDeltaParameter.name = 'delta';
+          uiHelix.appendChild(helixDeltaParameter);
+
+          const helixRadiuslabel = document.createElement('label');
+          helixRadiuslabel.innerText = 'Radius';
+          uiHelix.appendChild(helixRadiuslabel);
+          const helixRadiusParameter = document.createElement('input');
+          helixRadiusParameter.type = 'number';
+          helixRadiusParameter.name = 'rayon';
+          uiHelix.appendChild(helixRadiusParameter);
+
+          // PARABOLA HTML
+          const optionParabola = document.createElement('option');
+          optionParabola.value = 'parabola';
+          optionParabola.innerText = 'Parabola';
+          selectSTShape.appendChild(optionParabola);
+
+          const uiParabola = document.createElement('div');
+          uiParabola.hidden = true;
+          ui.appendChild(uiParabola);
+
+          const labelDistAxisX = document.createElement('label');
+          labelDistAxisX.innerText = 'Distance on X axis';
+          uiParabola.appendChild(labelDistAxisX);
+
+          const parabolaDistAxisX = document.createElement('input');
+          parabolaDistAxisX.type = 'number';
+          parabolaDistAxisX.name = 'distAxisX';
+          uiParabola.appendChild(parabolaDistAxisX);
+
+          const labelDistAxisY = document.createElement('label');
+          labelDistAxisY.innerText = 'Distance on Y axis';
+          uiParabola.appendChild(labelDistAxisY);
+          const parabolaDistAxisY = document.createElement('input');
+          parabolaDistAxisY.type = 'number';
+          parabolaDistAxisY.name = 'distAxisY';
+          uiParabola.appendChild(parabolaDistAxisY);
+
+          const labelHeight = document.createElement('label');
+          labelHeight.innerText = 'Height';
+          uiParabola.appendChild(labelHeight);
+          const parabolaHeight = document.createElement('input');
+          parabolaHeight.type = 'number';
+          parabolaHeight.name = 'Height';
+          uiParabola.appendChild(parabolaHeight);
+
+          const parabolaDateSelectLabel = document.createElement('label');
+          parabolaDateSelectLabel.innerText = 'Year';
+          uiParabola.appendChild(parabolaDateSelectLabel);
+          const selectDateParabola = document.createElement('select');
+          uiParabola.appendChild(selectDateParabola);
+
           // CREATE 3DTILES
 
-          const c3dtilesConfigs = configs['3DTiles_STS_data'];
-          // const c3dtilesConfigs = [configs['3DTiles_temporal'][2]];
-          const versions = [];
-          const temporalsWrappers = [];
-          const promisesTileContentLoaded = [];
-          c3dtilesConfigs[1].forEach((config) => {
-            const isTemporal = !!config.dates;
-            const datesJSON = isTemporal ? config.dates : [config.date];
-            const registerExtensions = isTemporal ? extensions : null;
-            datesJSON.forEach((date) => {
-              const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
-                config.id + '_' + date.toString(),
-                {
-                  name: config.id + date.toString(),
-                  source: new udviz.itowns.C3DTilesSource({
-                    url: config.url,
-                  }),
-                  registeredExtensions: registerExtensions,
-                },
-                view
-              );
-              udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
-              promisesTileContentLoaded.push(
-                new Promise((resolve) => {
-                  c3DTilesLayer.addEventListener(
-                    udviz.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
-                    () => {
-                      resolve();
-                    }
-                  );
-                })
-              );
-              if (isTemporal) {
-                temporalsWrappers.push(
-                  new udviz.extensions3DTilesTemporal.Temporal3DTilesLayerWrapper(
-                    c3DTilesLayer
-                  )
-                );
+          let versions = [];
+          let stsCircle = null;
+          let stsVector = null;
+          let stsHelix = null;
+          let stsParabola = null;
 
-                if (date == Math.min(...datesJSON)) {
-                  temporalsWrappers[temporalsWrappers.length - 1].styleDate =
-                    date + 1;
-                } else {
-                  temporalsWrappers[temporalsWrappers.length - 1].styleDate =
-                    date - 2;
-                }
-              }
-              versions.push({ date: date, c3DTLayer: c3DTilesLayer });
-            });
-          });
-
-          const stLayer = new udviz.extensions3DTilesTemporal.STLayer(
-            view,
-            new udviz.THREE.Object3D(),
-            versions
-          );
-
-          Promise.all(promisesTileContentLoaded).then(() => {
-            const ui = document.createElement('div');
-            ui.style =
-              'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
-
-            const selectMode = document.createElement('select');
-            ui.appendChild(selectMode);
-            const optionDefaultMode = document.createElement('option');
-            optionDefaultMode.innerText = 'Choose a Mode';
-            optionDefaultMode.selected = true;
-            optionDefaultMode.disabled = true;
-            optionDefaultMode.hidden = true;
-            selectMode.appendChild(optionDefaultMode);
-
-            for (const mode in udviz.extensions3DTilesTemporal
-              .STS_DISPLAY_MODE) {
-              const optionMode = document.createElement('option');
-              optionMode.innerText =
-                udviz.extensions3DTilesTemporal.STS_DISPLAY_MODE[mode];
-              selectMode.appendChild(optionMode);
+          selectDataset.onchange = () => {
+            selectMode.hidden = false;
+            if (versions.length > 0) {
+              versions.forEach((v) => {
+                view.removeLayer(v.c3DTLayer.id);
+              });
+              versions = [];
             }
+            const c3dtilesConfigs = getDataset();
+            const temporalsWrappers = [];
+            const promisesTileContentLoaded = [];
+            c3dtilesConfigs.forEach((config) => {
+              const isTemporal = !!config.dates;
+              const datesJSON = isTemporal ? config.dates : [config.date];
+              const registerExtensions = isTemporal ? extensions : null;
+              datesJSON.forEach((date) => {
+                const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+                  config.id + '_' + date.toString(),
+                  {
+                    name: config.id + date.toString(),
+                    source: new udviz.itowns.C3DTilesSource({
+                      url: config.url,
+                    }),
+                    registeredExtensions: registerExtensions,
+                  },
+                  view
+                );
+                udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
+                promisesTileContentLoaded.push(
+                  new Promise((resolve) => {
+                    c3DTilesLayer.addEventListener(
+                      udviz.itowns.C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
+                      () => {
+                        resolve();
+                      }
+                    );
+                  })
+                );
+                if (isTemporal) {
+                  temporalsWrappers.push(
+                    new udviz.extensions3DTilesTemporal.Temporal3DTilesLayerWrapper(
+                      c3DTilesLayer
+                    )
+                  );
 
-            const getCurrentMode = () => {
-              if (selectMode.selectedOptions[0] != optionDefaultMode)
-                return selectMode.selectedOptions[0].value;
-              return undefined;
-            };
-
-            const selectSTShape = document.createElement('select');
-            selectSTShape.hidden = true;
-            ui.appendChild(selectSTShape);
-            const optionDefault = document.createElement('option');
-            optionDefault.innerText = 'Choose a Shape';
-            optionDefault.selected = true;
-            optionDefault.disabled = true;
-            optionDefault.hidden = true;
-            selectSTShape.appendChild(optionDefault);
-
-            // CIRCLE
-            // STSCircle
-            const stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
-              stLayer
-            );
-
-            // HTML
-            const optionCircle = document.createElement('option');
-            optionCircle.value = 'circle';
-            optionCircle.innerText = 'Circle';
-            selectSTShape.appendChild(optionCircle);
-
-            const uiCircle = document.createElement('div');
-            uiCircle.hidden = true;
-            ui.appendChild(uiCircle);
-
-            const radiusParameterLabel = document.createElement('label');
-            radiusParameterLabel.innerText = 'Radius';
-            uiCircle.appendChild(radiusParameterLabel);
-            const radiusParameter = document.createElement('input');
-            radiusParameter.type = 'number';
-            radiusParameter.name = 'Radius';
-            uiCircle.appendChild(radiusParameter);
-
-            const heightParameterLabel = document.createElement('label');
-            heightParameterLabel.innerText = 'Height';
-            uiCircle.appendChild(heightParameterLabel);
-            const heightParameter = document.createElement('input');
-            heightParameter.type = 'number';
-            heightParameter.name = 'Height';
-            uiCircle.appendChild(heightParameter);
-
-            const dateSelectLabel = document.createElement('label');
-            dateSelectLabel.innerText = 'Year';
-            uiCircle.appendChild(dateSelectLabel);
-            const selectDate = document.createElement('select');
-            uiCircle.appendChild(selectDate);
-            const optionDateSelectedDefault = document.createElement('option');
-            optionDateSelectedDefault.innerText = 'Choose a date';
-            optionDateSelectedDefault.selected = true;
-            optionDateSelectedDefault.disabled = true;
-            optionDateSelectedDefault.hidden = true;
-            selectDate.appendChild(optionDateSelectedDefault);
-
-            versions.forEach((v) => {
-              const date = v.date;
-              const optionDate = document.createElement('option');
-              optionDate.innerText = date.toString();
-              selectDate.appendChild(optionDate);
+                  if (date == Math.min(...datesJSON)) {
+                    temporalsWrappers[temporalsWrappers.length - 1].styleDate =
+                      date + 1;
+                  } else {
+                    temporalsWrappers[temporalsWrappers.length - 1].styleDate =
+                      date - 2;
+                  }
+                }
+                versions.push({ date: date, c3DTLayer: c3DTilesLayer });
+              });
             });
 
-            const updateCheckBoxLabel = document.createElement('label');
-            updateCheckBoxLabel.innerText = 'Freeze rotation';
-            uiCircle.appendChild(updateCheckBoxLabel);
-            const updateCheckBox = document.createElement('input');
-            updateCheckBox.type = 'checkbox';
-            updateCheckBox.name = 'update';
-            uiCircle.appendChild(updateCheckBox);
-
-            // VECTOR
-            // STSVector
-            const stsVector = new udviz.extensions3DTilesTemporal.STSVector(
-              stLayer
+            const stLayer = new udviz.extensions3DTilesTemporal.STLayer(
+              view,
+              new udviz.THREE.Object3D(),
+              versions
             );
 
-            // HTML
-            const optionVector = document.createElement('option');
-            optionVector.value = 'vector';
-            optionVector.innerText = 'Vector';
-            selectSTShape.appendChild(optionVector);
-
-            const uiVector = document.createElement('div');
-            uiVector.hidden = true;
-            ui.appendChild(uiVector);
-
-            const deltaLabel = document.createElement('label');
-            deltaLabel.innerText = 'Delta';
-            uiVector.appendChild(deltaLabel);
-            const deltaParameter = document.createElement('input');
-            deltaParameter.type = 'number';
-            deltaParameter.name = 'delta';
-            uiVector.appendChild(deltaParameter);
-
-            const alphaLabel = document.createElement('label');
-            alphaLabel.innerText = 'Alpha';
-            uiVector.appendChild(alphaLabel);
-            const alphaParameter = document.createElement('input');
-            alphaParameter.type = 'number';
-            alphaParameter.name = 'alpha';
-            uiVector.appendChild(alphaParameter);
-
-            // HELIX
-            // STSHelix
-            const stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
-              stLayer
-            );
-
-            // HTML
-            const optionHelix = document.createElement('option');
-            optionHelix.value = 'helix';
-            optionHelix.innerText = 'Helix';
-            selectSTShape.appendChild(optionHelix);
-
-            const uiHelix = document.createElement('div');
-            uiHelix.hidden = true;
-            ui.appendChild(uiHelix);
-
-            const helixDeltaLabel = document.createElement('label');
-            helixDeltaLabel.innerText = 'Delta';
-            uiHelix.appendChild(helixDeltaLabel);
-            const helixDeltaParameter = document.createElement('input');
-            helixDeltaParameter.type = 'number';
-            helixDeltaParameter.name = 'delta';
-            uiHelix.appendChild(helixDeltaParameter);
-
-            const helixRadiuslabel = document.createElement('label');
-            helixRadiuslabel.innerText = 'Radius';
-            uiHelix.appendChild(helixRadiuslabel);
-            const helixRadiusParameter = document.createElement('input');
-            helixRadiusParameter.type = 'number';
-            helixRadiusParameter.name = 'rayon';
-            uiHelix.appendChild(helixRadiusParameter);
-
-            // PARABOLA
-            // STSParabola
-            const stsParabola = new udviz.extensions3DTilesTemporal.STSParabola(
-              stLayer
-            );
-
-            // HTML
-            const optionParabola = document.createElement('option');
-            optionParabola.value = 'parabola';
-            optionParabola.innerText = 'Parabola';
-            selectSTShape.appendChild(optionParabola);
-
-            const uiParabola = document.createElement('div');
-            uiParabola.hidden = true;
-            ui.appendChild(uiParabola);
-
-            const labelDistAxisX = document.createElement('label');
-            labelDistAxisX.innerText = 'Distance on X axis';
-            uiParabola.appendChild(labelDistAxisX);
-
-            const parabolaDistAxisX = document.createElement('input');
-            parabolaDistAxisX.type = 'number';
-            parabolaDistAxisX.name = 'distAxisX';
-            uiParabola.appendChild(parabolaDistAxisX);
-
-            const labelDistAxisY = document.createElement('label');
-            labelDistAxisY.innerText = 'Distance on Y axis';
-            uiParabola.appendChild(labelDistAxisY);
-            const parabolaDistAxisY = document.createElement('input');
-            parabolaDistAxisY.type = 'number';
-            parabolaDistAxisY.name = 'distAxisY';
-            uiParabola.appendChild(parabolaDistAxisY);
-
-            const labelHeight = document.createElement('label');
-            labelHeight.innerText = 'Height';
-            uiParabola.appendChild(labelHeight);
-            const parabolaHeight = document.createElement('input');
-            parabolaHeight.type = 'number';
-            parabolaHeight.name = 'Height';
-            uiParabola.appendChild(parabolaHeight);
-
-            const parabolaDateSelectLabel = document.createElement('label');
-            parabolaDateSelectLabel.innerText = 'Year';
-            uiParabola.appendChild(parabolaDateSelectLabel);
-            const selectDateParabola = document.createElement('select');
-            uiParabola.appendChild(selectDateParabola);
-
-            versions.forEach((v) => {
-              const date = v.date;
-              const optionDate = document.createElement('option');
-              optionDate.innerText = date.toString();
-              if (date == stsParabola.middleDate) optionDate.selected = true;
-              selectDateParabola.appendChild(optionDate);
-            });
-
-            document.body.appendChild(ui);
-
-            const oSTShapeUI = [
+            Promise.all(promisesTileContentLoaded).then(() => {
+              // STSCircle
+              if (stsCircle != null)
               {
-                stShape: stsCircle,
-                ui: uiCircle,
-              },
-              { stShape: stsVector, ui: uiVector },
-              { stShape: stsHelix, ui: uiHelix },
-              { stShape: stsParabola, ui: uiParabola },
-            ];
-            // Events
-            selectSTShape.onchange = () => {
-              console.log(selectSTShape.selectedOptions[0].value);
-              oSTShapeUI.forEach((element) => {
-                if (element.stShape.displayed) {
-                  element.stShape.dispose();
-                  element.ui.hidden = true;
-                }
-              });
-              switch (selectSTShape.selectedOptions[0].value) {
-                case 'circle':
-                  stsCircle.display(getCurrentMode());
-                  uiCircle.hidden = false;
-                  radiusParameter.value = stsCircle.radius;
-                  heightParameter.value = stsCircle.height;
-                  break;
-                case 'vector':
-                  stsVector.display(getCurrentMode());
-                  uiVector.hidden = false;
-                  deltaParameter.value = stsVector.delta;
-                  alphaParameter.value = stsVector.alpha;
-                  break;
-                case 'helix':
-                  stsHelix.display(getCurrentMode());
-                  uiHelix.hidden = false;
-                  helixRadiusParameter.value = stsHelix.radius;
-                  helixDeltaParameter.value = stsHelix.delta;
-                  break;
-                case 'parabola':
-                  stsParabola.display(getCurrentMode());
-                  uiParabola.hidden = false;
-                  parabolaDistAxisX.value = stsParabola.distAxisX;
-                  parabolaDistAxisY.value = stsParabola.distAxisY;
-                  parabolaHeight.value = stsParabola.height;
-                  break;
+                stsCircle.dispose();
+                uiCircle.hidden = true;
+                stsCircle.stLayer = stLayer;
               }
-            };
+              else {
+                stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
+                  stLayer
+                );
+              }
 
-            selectMode.onchange = () => {
-              oSTShapeUI.forEach((element) => {
-                selectSTShape.hidden = false;
-                if (element.stShape.displayed) {
-                  element.stShape.display(getCurrentMode());
+              selectDate.innerHTML = '';
+              versions.forEach((v) => {
+                const date = v.date;
+                const optionDate = document.createElement('option');
+                optionDate.innerText = date.toString();
+                if (versions.indexOf(v) == 0) {
+                  optionDate.selected = true;
+                  stsCircle.selectedDate = date;
                 }
+                selectDate.appendChild(optionDate);
               });
-            };
 
-            radiusParameter.addEventListener('input', (event) => {
-              stsCircle.radius = Number(event.target.value);
-              stsCircle.display(getCurrentMode());
-              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+              // STSVector
+              if (stsVector != null)
+              {
+                stsVector.dispose();
+                uiVector.hidden = true;
+                stsVector.stLayer = stLayer;
+              }
+              else {
+                stsVector = new udviz.extensions3DTilesTemporal.STSVector(
+                  stLayer
+                );
+              }
+
+              // STSHelix
+              if (stsHelix != null)
+              {
+                stsHelix.dispose();
+                uiHelix.hidden = true;
+                stsHelix.stLayer = stLayer;
+              }
+              else {
+                stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
+                  stLayer
+                );
+              }
+
+              // STSParabola
+              if (stsParabola != null)
+              {
+                stsParabola.dispose();
+                uiParabola.hidden = true;
+                stsParabola.stLayer = stLayer;
+              }
+              else {
+                stsParabola = new udviz.extensions3DTilesTemporal.STSParabola(
+                  stLayer
+                );
+              }
+
+              selectDateParabola.innerHTML = '';
+              versions.forEach((v) => {
+                const date = v.date;
+                const optionDate = document.createElement('option');
+                optionDate.innerText = date.toString();
+                if (date == stsParabola.middleDate) optionDate.selected = true;
+                selectDateParabola.appendChild(optionDate);
+              });
+
+              const oSTShapeUI = [
+                {
+                  stShape: stsCircle,
+                  ui: uiCircle,
+                },
+                { stShape: stsVector, ui: uiVector },
+                { stShape: stsHelix, ui: uiHelix },
+                { stShape: stsParabola, ui: uiParabola },
+              ];
+
+              // Events
+              selectSTShape.onchange = () => {
+                console.log(selectSTShape.selectedOptions[0].value);
+                oSTShapeUI.forEach((element) => {
+                  if (element.stShape.displayed) {
+                    element.stShape.dispose();
+                    element.ui.hidden = true;
+                  }
+                });
+                switch (selectSTShape.selectedOptions[0].value) {
+                  case 'circle':
+                    stsCircle.display(getCurrentMode());
+                    uiCircle.hidden = false;
+                    radiusParameter.value = stsCircle.radius;
+                    heightParameter.value = stsCircle.height;
+                    break;
+                  case 'vector':
+                    stsVector.display(getCurrentMode());
+                    uiVector.hidden = false;
+                    deltaParameter.value = stsVector.delta;
+                    alphaParameter.value = stsVector.alpha;
+                    break;
+                  case 'helix':
+                    stsHelix.display(getCurrentMode());
+                    uiHelix.hidden = false;
+                    helixRadiusParameter.value = stsHelix.radius;
+                    helixDeltaParameter.value = stsHelix.delta;
+                    break;
+                  case 'parabola':
+                    stsParabola.display(getCurrentMode());
+                    uiParabola.hidden = false;
+                    parabolaDistAxisX.value = stsParabola.distAxisX;
+                    parabolaDistAxisY.value = stsParabola.distAxisY;
+                    parabolaHeight.value = stsParabola.height;
+                    break;
+                }
+              };
+
+              selectMode.onchange = () => {
+                oSTShapeUI.forEach((element) => {
+                  selectSTShape.hidden = false;
+                  if (element.stShape.displayed) {
+                    element.stShape.display(getCurrentMode());
+                  }
+                });
+              };
+
+              radiusParameter.addEventListener('input', (event) => {
+                stsCircle.radius = Number(event.target.value);
+                stsCircle.display(getCurrentMode());
+                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+              });
+
+              heightParameter.addEventListener('input', (event) => {
+                stsCircle.height = Number(event.target.value);
+                stsCircle.display(getCurrentMode());
+                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+              });
+
+              updateCheckBox.onchange = () => {
+                stsCircle.pause = updateCheckBox.checked;
+              };
+
+              selectDate.onchange = () => {
+                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+              };
+
+              selectDateParabola.onchange = () => {
+                stsParabola.middleDate =
+                  selectDateParabola.selectedOptions[0].value;
+                stsParabola.display(getCurrentMode());
+              };
+
+              deltaParameter.addEventListener('input', (event) => {
+                stsVector.delta = Number(event.target.value);
+                stsVector.display(getCurrentMode());
+              });
+
+              alphaParameter.addEventListener('input', (event) => {
+                stsVector.alpha = Number(event.target.value);
+                stsVector.display(getCurrentMode());
+              });
+
+              helixRadiusParameter.addEventListener('input', (event) => {
+                stsHelix.radius = Number(event.target.value);
+                stsHelix.display(getCurrentMode());
+              });
+
+              helixDeltaParameter.addEventListener('input', (event) => {
+                stsHelix.delta = Number(event.target.value);
+                stsHelix.display(getCurrentMode());
+              });
+
+              parabolaDistAxisX.addEventListener('input', (event) => {
+                stsParabola.distAxisX = Number(event.target.value);
+                stsParabola.display(getCurrentMode());
+              });
+
+              parabolaDistAxisY.addEventListener('input', (event) => {
+                stsParabola.distAxisY = Number(event.target.value);
+                stsParabola.display(getCurrentMode());
+              });
+
+              parabolaHeight.addEventListener('input', (event) => {
+                stsParabola.height = Number(event.target.value);
+                stsParabola.display(getCurrentMode());
+              });
             });
-
-            heightParameter.addEventListener('input', (event) => {
-              stsCircle.height = Number(event.target.value);
-              stsCircle.display(getCurrentMode());
-              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-            });
-
-            updateCheckBox.onchange = () => {
-              stsCircle.pause = updateCheckBox.checked;
-            };
-
-            selectDate.onchange = () => {
-              stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-            };
-
-            selectDateParabola.onchange = () => {
-              stsParabola.middleDate =
-                selectDateParabola.selectedOptions[0].value;
-              stsParabola.display(getCurrentMode());
-            };
-
-            deltaParameter.addEventListener('input', (event) => {
-              stsVector.delta = Number(event.target.value);
-              stsVector.display(getCurrentMode());
-            });
-
-            alphaParameter.addEventListener('input', (event) => {
-              stsVector.alpha = Number(event.target.value);
-              stsVector.display(getCurrentMode());
-            });
-
-            helixRadiusParameter.addEventListener('input', (event) => {
-              stsHelix.radius = Number(event.target.value);
-              stsHelix.display(getCurrentMode());
-            });
-
-            helixDeltaParameter.addEventListener('input', (event) => {
-              stsHelix.delta = Number(event.target.value);
-              stsHelix.display(getCurrentMode());
-            });
-
-            parabolaDistAxisX.addEventListener('input', (event) => {
-              stsParabola.distAxisX = Number(event.target.value);
-              stsParabola.display(getCurrentMode());
-            });
-
-            parabolaDistAxisY.addEventListener('input', (event) => {
-              stsParabola.distAxisY = Number(event.target.value);
-              stsParabola.display(getCurrentMode());
-            });
-
-            parabolaHeight.addEventListener('input', (event) => {
-              stsParabola.height = Number(event.target.value);
-              stsParabola.display(getCurrentMode());
-            });
-          });
-
-          // DEBUG
-          //   window.addEventListener('keydown', (event) => {
-          //     if (event.key == 'l') {
-          //       console.log(stc.versions);
-          //     }
-
-          //     if (event.key == 'ArrowRight') {
-          //       stc.rotateCircleDisplayed(-1);
-          //     }
-          //     if (event.key == 'ArrowLeft') {
-          //       stc.rotateCircleDisplayed(1);
-          //     }
-          //   });
+          };
         });
     </script>
     SCRIPT_TAG_RELOAD
