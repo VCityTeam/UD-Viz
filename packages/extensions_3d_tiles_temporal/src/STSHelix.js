@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { MAIN_LOOP_EVENTS } from 'itowns';
 import { createSpriteFromString } from '@ud-viz/utils_browser/src/THREEUtil';
 import { STLayer } from './STLayer';
 import { DISPLAY_MODE, STShape } from './STShape';
@@ -128,20 +127,11 @@ export class STSHelix extends STShape {
     rootObject3D.updateMatrixWorld();
 
     view.notifyChange();
-
-    view.addFrameRequester(
-      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      this.frameRequester
-    );
   }
 
   update() {}
 
   dispose() {
     super.dispose();
-    this.stLayer.view.removeFrameRequester(
-      MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-      this.frameRequester
-    );
   }
 }
