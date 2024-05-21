@@ -179,12 +179,11 @@
           const selectSTShape = document.createElement('select');
           selectSTShape.hidden = true;
           ui.appendChild(selectSTShape);
-          const optionDefault = document.createElement('option');
-          optionDefault.innerText = 'Choose a Shape';
-          optionDefault.selected = true;
-          optionDefault.disabled = true;
-          optionDefault.hidden = true;
-          selectSTShape.appendChild(optionDefault);
+          const optionDefaultShape = document.createElement('option');
+          optionDefaultShape.innerText = 'Choose a Shape';
+          optionDefaultShape.disabled = true;
+          optionDefaultShape.hidden = true;
+          selectSTShape.appendChild(optionDefaultShape);
 
           // CIRCLE HTML
           const optionCircle = document.createElement('option');
@@ -329,6 +328,7 @@
 
           selectDataset.onchange = () => {
             selectMode.hidden = false;
+            optionDefaultShape.selected = true;
             if (versions.length > 0) {
               versions.forEach((v) => {
                 view.removeLayer(v.c3DTLayer.id);
@@ -395,8 +395,8 @@
               if (stsCircle != null)
               {
                 stsCircle.dispose();
-                uiCircle.hidden = true;
                 stsCircle.stLayer = stLayer;
+                uiCircle.hidden = true;
               }
               else {
                 stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
@@ -420,8 +420,8 @@
               if (stsVector != null)
               {
                 stsVector.dispose();
-                uiVector.hidden = true;
                 stsVector.stLayer = stLayer;
+                uiVector.hidden = true;
               }
               else {
                 stsVector = new udviz.extensions3DTilesTemporal.STSVector(
@@ -433,8 +433,8 @@
               if (stsHelix != null)
               {
                 stsHelix.dispose();
-                uiHelix.hidden = true;
                 stsHelix.stLayer = stLayer;
+                uiHelix.hidden = true;
               }
               else {
                 stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
@@ -446,8 +446,8 @@
               if (stsParabola != null)
               {
                 stsParabola.dispose();
-                uiParabola.hidden = true;
                 stsParabola.stLayer = stLayer;
+                uiParabola.hidden = true;
               }
               else {
                 stsParabola = new udviz.extensions3DTilesTemporal.STSParabola(
