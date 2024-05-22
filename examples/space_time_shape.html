@@ -460,19 +460,21 @@
 
           // EVENTS
 
-          const oSTShapeUI = [
-            {
-              stShape: stsCircle,
-              ui: uiCircle,
-            },
-            { stShape: stsVector, ui: uiVector },
-            { stShape: stsHelix, ui: uiHelix },
-            { stShape: stsParabola, ui: uiParabola },
-          ];
+          const getShapesWithUi = () => {
+            return [
+              {
+                stShape: stsCircle,
+                ui: uiCircle,
+              },
+              { stShape: stsVector, ui: uiVector },
+              { stShape: stsHelix, ui: uiHelix },
+              { stShape: stsParabola, ui: uiParabola },
+            ];
+          };
 
           selectSTShape.onchange = () => {
             console.log(selectSTShape.selectedOptions[0].value);
-            oSTShapeUI.forEach((element) => {
+            getShapesWithUi().forEach((element) => {
               if (element.stShape != null && element.stShape.displayed) {
                 element.stShape.dispose();
                 element.ui.hidden = true;
@@ -508,7 +510,7 @@
           };
 
           selectMode.onchange = () => {
-            oSTShapeUI.forEach((element) => {
+            getShapesWithUi().forEach((element) => {
               selectSTShape.hidden = false;
               if (element.stShape != null && element.stShape.displayed) {
                 element.stShape.display(getCurrentMode());
