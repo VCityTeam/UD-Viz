@@ -34,6 +34,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.knownNamespaceLabels = config.namespaceLabels;
     this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
+      .attr('id', this.id)
       .attr('class', 'd3_graph')
       .attr('id', 'svg')
       .attr('viewBox', [0, 0, this.width, this.height])
@@ -1109,6 +1110,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node click event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseover', (event, datum) => {
@@ -1265,6 +1267,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseover event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseout', (event, datum) => {
@@ -1281,6 +1284,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseout event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mousemove', (event, datum) => {
