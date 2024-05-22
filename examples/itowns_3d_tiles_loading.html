@@ -42,7 +42,7 @@
         .loadMultipleJSON([
           './assets/config/extents.json',
           './assets/config/crs.json',
-          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/3DTiles_Lyon.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
         ])
@@ -130,7 +130,7 @@
 
           const loadingBoxId = (layer, tileId) => layer.id + tileId;
 
-          configs['3DTiles'].forEach((layerConfig) => {
+          configs['3DTiles_Lyon'].forEach((layerConfig) => {
             const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
               layerConfig['id'],
               {

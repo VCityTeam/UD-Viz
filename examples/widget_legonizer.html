@@ -20,7 +20,7 @@
         .loadMultipleJSON([
           './assets/config/crs.json',
           './assets/config/extents.json',
-          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/3DTiles_Lyon.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
         ])
@@ -32,7 +32,7 @@
             configs['crs'][0].name,
             configs['crs'][0].transform
           );
-          configs['3DTiles_legonizer'] = configs['3DTiles'];
+          configs['3DTiles_legonizer'] = configs['3DTiles_Lyon'];
 
           const extent = new udviz.itowns.Extent(
             configs['extents'][0].name,
