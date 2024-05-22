@@ -26,6 +26,8 @@ export class STSCircle extends STShape {
     this.objectCopies = null;
     /** @type {THREE.Line} */
     this.circleLine = null;
+    /** @type {THREE.Line} */
+    this.dashedLine = null;
 
     /** @type {number} */
     this.selectedDate = null;
@@ -61,6 +63,23 @@ export class STSCircle extends STShape {
 
     rootObject3D.add(circleLine);
     circleLine.updateMatrixWorld();
+
+    const dashedLineGeom = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, this.height),
+    ]);
+    const dashedLineMaterial = new THREE.LineDashedMaterial({
+      color: 0x0000ff,
+      linewidth: 1,
+      scale: 1,
+      dashSize: 3,
+      gapSize: 3,
+    });
+    const dashedLine = new THREE.Line(dashedLineGeom, dashedLineMaterial);
+    dashedLine.computeLineDistances();
+    this.dashedLine = dashedLine;
+
+    dashedLine.updateMatrixWorld();
 
     // Place versions cdtlayers + labels on the circle
     this.objectCopies = new Map();
@@ -155,6 +174,7 @@ export class STSCircle extends STShape {
     });
 
     object3dCopySelected.position.z = -this.height;
+    object3dCopySelected.add(this.dashedLine);
 
     this.stLayer.rootObject3D.updateMatrixWorld(true);
     this.stLayer.view.notifyChange();
