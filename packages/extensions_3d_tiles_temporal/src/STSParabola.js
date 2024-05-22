@@ -22,6 +22,9 @@ export class STSParabola extends STShape {
     /** @type {number} */
     this.height = isNaN(options.height) ? 550 : options.height;
 
+    /** @type {THREE.Line} */
+    this.dashedLine = null;
+
     /** @type {number} */
     this.middleDate =
       this.stLayer.versions[
@@ -35,6 +38,24 @@ export class STSParabola extends STShape {
     const view = this.stLayer.view;
     const rootObject3D = this.stLayer.rootObject3D;
     rootObject3D.position.z += this.height;
+
+    const dashedLineGeom = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0, 0, -this.height),
+      new THREE.Vector3(0, 0, 0),
+    ]);
+    const dashedLineMaterial = new THREE.LineDashedMaterial({
+      color: 0x0000ff,
+      linewidth: 1,
+      scale: 1,
+      dashSize: 3,
+      gapSize: 3,
+    });
+    const dashedLine = new THREE.Line(dashedLineGeom, dashedLineMaterial);
+    dashedLine.computeLineDistances();
+    this.dashedLine = dashedLine;
+
+    rootObject3D.add(dashedLine);
+    dashedLine.updateMatrixWorld();
 
     const path = new THREE.Path();
     path.moveTo(-this.distAxisX, this.distAxisY);
