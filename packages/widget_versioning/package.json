@@ -1,0 +1,26 @@
+{
+  "name": "@ud-viz/widget_versioning",
+  "version": "4.2.0",
+  "description": "widget versioning of the itowns framework",
+  "main": "src",
+  "scripts": {
+    "test": "node ../../bin/browserTest.js ./test",
+    "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VCityTeam/UD-Viz.git"
+  },
+  "license": "(LGPL-2.1)",
+  "bugs": {
+    "url": "https://github.com/VCityTeam/UD-Viz/issues"
+  },
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_versioning",
+  "peerDependencies": {
+    "@ud-viz/utils_browser": "4.2.0",
+    "@ud-viz/widget_sparql": "4.2.0"
+  }
+}

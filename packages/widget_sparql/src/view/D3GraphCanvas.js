@@ -32,12 +32,18 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.width = configSparqlWidget.width;
     this.fontSize = configSparqlWidget.fontSize;
     this.knownNamespaceLabels = configSparqlWidget.namespaceLabels;
+    this.id = 'd3_graph-' + Math.random().toString(36).substring(7);
     this.svg = d3
       .create('svg')
+      .attr('id', this.id)
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
     this.data = new Graph();
+    this.node = null;
+    this.node_label = null;
+    this.link = null;
+    this.link_label = null;
     this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10);
   }
 
@@ -75,7 +81,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     this.svg.call(zoom);
 
-    const link = this.svg
+    this.link = this.svg
       .append('g')
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.8)
@@ -84,7 +90,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .join('line')
       .attr('stroke-width', (d) => Math.sqrt(d.value));
 
-    const node = this.svg
+    this.node = this.svg
       .append('g')
       .selectAll('circle')
       .data(nodes)
@@ -100,75 +106,32 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node click event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseover', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          nodes[datum.index].color_id,
-          'white',
-          'white'
-        );
-        event.target.style['fill'] = setColor(
-          nodes[datum.index].color_id,
-          '#333'
-        );
-        node_label
-          .filter((e, j) => {
-            return datum.index == j;
-          })
-          .style('fill', 'white')
-          .style('opacity', '1');
-        link_label
-          .filter((e) => {
-            return (
-              datum.index == e.source.index || datum.index == e.target.index
-            );
-          })
-          .style('fill', 'white')
-          .style('opacity', '1');
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseout', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          nodes[datum.index].color_id,
-          '#ddd',
-          '#111'
-        );
-        event.target.style['fill'] = setColor(
-          nodes[datum.index].color_id,
-          'black'
-        );
-        node_label
-          .filter((e, j) => {
-            return datum.index == j;
-          })
-          .style('fill', 'grey')
-          .style('opacity', '0.5');
-        link_label
-          .filter((e) => {
-            return (
-              datum.index == e.source.index || datum.index == e.target.index
-            );
-          })
-          .style('fill', 'grey')
-          .style('opacity', '0.5');
         this.dispatchEvent({
           type: 'mouseout',
           message: 'node mouseout event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .call(this.drag(simulation));
 
-    node.append('title').text((d) => d.id);
+    this.node.append('title').text((d) => d.id);
 
-    const node_label = this.svg
+    this.node_label = this.svg
       .selectAll('.node_label')
       .data(nodes)
       .enter()
@@ -187,7 +150,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('pointer-events', 'none')
       .attr('class', 'node_label');
 
-    const link_label = this.svg
+    this.link_label = this.svg
       .selectAll('.link_label')
       .data(links)
       .enter()
@@ -207,67 +170,69 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('class', 'link_label');
 
     simulation.on('tick', () => {
-      node_label
+      this.node_label
         .attr('x', function (d) {
           return d.x;
         })
         .attr('y', function (d) {
           return d.y - 10;
         });
-      link
+      this.link
         .attr('x1', (d) => d.source.x)
         .attr('y1', (d) => d.source.y)
         .attr('x2', (d) => d.target.x)
         .attr('y2', (d) => d.target.y);
-      link_label
+      this.link_label
         .attr('x', function (d) {
           return (d.source.x + d.target.x) / 2;
         })
         .attr('y', function (d) {
           return (d.source.y + d.target.y) / 2;
         });
-      node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
+      this.node.attr('cx', (d) => d.x).attr('cy', (d) => d.y);
     });
 
     // Create legend
-    this.svg
-      .append('text')
-      .attr('x', 12)
-      .attr('y', 24)
-      .style('font-size', '18px')
-      .style('text-decoration', 'underline')
-      .text('Legend')
-      .style('fill', 'FloralWhite');
+    if (legend.length > 0) {
+      this.svg
+        .append('text')
+        .attr('x', 12)
+        .attr('y', 24)
+        .style('font-size', '18px')
+        .style('text-decoration', 'underline')
+        .text('Legend')
+        .style('fill', 'FloralWhite');
 
-    // legend colors
-    this.svg
-      .append('g')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1)
-      .selectAll('rect')
-      .data(legend)
-      .join('rect')
-      .attr('x', 12)
-      .attr('y', (d, i) => 32 + i * 16)
-      .attr('width', 10)
-      .attr('height', 10)
-      .style('fill', (d, i) => {
-        return setColor(i, '#000');
-      })
-      .append('title')
-      .text((d) => d);
+      // legend colors
+      this.svg
+        .append('g')
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1)
+        .selectAll('rect')
+        .data(legend)
+        .join('rect')
+        .attr('x', 12)
+        .attr('y', (d, i) => 32 + i * 16)
+        .attr('width', 10)
+        .attr('height', 10)
+        .style('fill', (d, i) => {
+          return setColor(i, '#000');
+        })
+        .append('title')
+        .text((d) => d);
 
-    // legend text
-    this.svg
-      .append('g')
-      .selectAll('text')
-      .data(legend)
-      .join('text')
-      .attr('x', 26)
-      .attr('y', (d, i) => 41 + i * 16)
-      .text((d) => d)
-      .style('fill', 'FloralWhite')
-      .style('font-size', '14px');
+      // legend text
+      this.svg
+        .append('g')
+        .selectAll('text')
+        .data(legend)
+        .join('text')
+        .attr('x', 26)
+        .attr('y', (d, i) => 41 + i * 16)
+        .text((d) => d)
+        .style('fill', 'FloralWhite')
+        .style('font-size', '14px');
+    }
   }
 
   /**
@@ -352,7 +317,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
    */
   handleZoom(event) {
-    d3.selectAll('svg g')
+    d3.selectAll(`#${this.id} g`)
       .filter((d, i) => i < 2)
       .attr('height', '100%')
       .attr('width', '100%')
@@ -367,7 +332,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           event.transform.k +
           ')'
       );
-    d3.selectAll('text.node_label')
+    d3.selectAll(`#${this.id} text.node_label`)
       .style('font-size', this.fontSize / event.transform.k + 'px')
       .attr(
         'transform',
@@ -379,7 +344,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           event.transform.k +
           ')'
       );
-    d3.selectAll('text.link_label')
+    d3.selectAll(`#${this.id} text.link_label`)
       .style('font-size', this.fontSize / event.transform.k + 'px')
       .attr(
         'transform',

@@ -65,6 +65,20 @@ export class SparqlQueryWindow {
     this.jsonRenderer = new JsonRenderer();
 
     /**
+     * The event listeners for the graphs.
+     *
+     * @type {object}
+     */
+    this.eventListeners = {};
+
+    /**
+     * The sparqlModule view configuration.
+     *
+     * @type {object}
+     */
+    this.configSparqlWidget = configSparqlWidget;
+
+    /**
      * Contains the D3 graph view to display RDF data.
      *
      * @type {D3GraphCanvas}
@@ -147,6 +161,9 @@ export class SparqlQueryWindow {
     this.clearDataView();
     switch (view_type) {
       case 'graph':
+        Object.entries(this.eventListeners).forEach(([event, listener]) => {
+          this.d3Graph.addEventListener(event, listener);
+        });
         this.d3Graph.update(response);
         this.dataView.append(this.d3Graph.canvas);
         break;
@@ -167,6 +184,15 @@ export class SparqlQueryWindow {
       default:
         console.error('This result format is not supported: ' + view_type);
     }
+  }
+
+  /**
+   * Add event listeners to the graphs
+   *
+   * @param {object} eventListeners An object containing event listeners to be added to the graph
+   */
+  addEventListeners(eventListeners) {
+    this.eventListeners = eventListeners;
   }
 
   /**
@@ -271,6 +297,7 @@ export class SparqlQueryWindow {
     interfaceElement.appendChild(this.resetButton);
     this.dataView = document.createElement('div');
     this.dataView.className = 'box-selection';
+    this.dataView.setAttribute('style', 'display:flex');
     interfaceElement.appendChild(this.dataView);
   }
 }

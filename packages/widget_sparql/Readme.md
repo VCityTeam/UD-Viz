@@ -119,19 +119,24 @@ flowchart TD
 
 ## Module Configuration
 
-The module takes two configuration files:
+The module takes two configuration files and a object containing events listeners:
 
 1. Server configuration
 2. Widget (view+model) configuration
+3. The events listeners object 
 
 ### Widget Configuration
 
 The minimal configuration required to make a SPARQL server class work is the following :
 
+<!-- TODO: Add the url_parameters inside the options -->
 ```json
 {
   "url": "http://localhost:9999/strabon/",
-  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query="
+  "url_parameters": "Query?handle=download&format=SPARQL/JSON&view=HTML&query=",
+  "options": {
+    "query": "body"
+  }
 }
 ```
 

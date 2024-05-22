@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>widget versioning</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/loading_screen.css" />
+    <link rel="stylesheet" href="./assets/css/widget_versioning.css" />
+  </head>
+  <body>
+    <script src="../dist/RUN_MODE/bundle.js"></script>
+    <script src="./assets/js/loadingScreen.js"></script>
+
+    <script type="text/javascript">
+      const udviz = window.udviz;
+
+      const setColor = function (d, default_color, override_color = undefined) {
+        if (override_color) return override_color;
+        return default_color;
+      };
+
+      udviz
+        .loadMultipleJSON([
+          './assets/config/widget/versioning_widget.json',
+          './assets/config/server/sparql_versioning_server.json',
+        ])
+        .then((configs) => {
+          const sparqlVersioningWidgetView =
+            new udviz.widgetVersioning.SparqlVersioningQueryWindow(
+              new udviz.widgetSPARQL.SparqlEndpointResponseProvider(
+                configs['sparql_versioning_server']
+              ),
+              configs['versioning_widget']
+            );
+
+          sparqlVersioningWidgetView.addEventListeners({
+            mouseover: ({ event, datum, graphId }) => {
+              // Add mouseover event listener to the nodes of the d3Graphs
+              const node_value =
+                sparqlVersioningWidgetView.getNodesByIdGraphAndIdNode(
+                  graphId,
+                  datum.index
+                );
+
+              if (node_value !== undefined) {
+                sparqlVersioningWidgetView.d3Graphs.forEach((d3Graph) => {
+                  const index = d3Graph.data.nodes.findIndex(
+                    (d) => d.id === node_value
+                  );
+
+                  const nodes = d3Graph.data.nodes.map((d) => Object.create(d));
+                  if (nodes[index] !== undefined) {
+                    event.target.style['stroke'] = setColor(
+                      nodes[index].color_id,
+                      'white',
+                      'white'
+                    );
+                    event.target.style['fill'] = setColor(
+                      nodes[index].color_id,
+                      '#333'
+                    );
+                  }
+
+                  d3Graph.node_label
+                    .filter((e, j) => {
+                      return index == j;
+                    })
+                    .style('fill', 'white')
+                    .style('opacity', '1');
+                  d3Graph.link_label
+                    .filter((e) => {
+                      return index == e.source.index || index == e.target.index;
+                    })
+                    .style('fill', 'white')
+                    .style('opacity', '1');
+                });
+              }
+            },
+            mouseout: function ({ event, datum, graphId }) {
+              // Add mouseout event listener to the nodes of the d3Graphs
+              const node_value =
+                sparqlVersioningWidgetView.getNodesByIdGraphAndIdNode(
+                  graphId,
+                  datum.index
+                );
+
+              if (node_value !== undefined) {
+                sparqlVersioningWidgetView.d3Graphs.forEach((d3Graph) => {
+                  const index = d3Graph.data.nodes.findIndex(
+                    (d) => d.id === node_value
+                  );
+
+                  const nodes = d3Graph.data.nodes.map((d) => Object.create(d));
+                  if (nodes[index] !== undefined) {
+                    event.target.style['stroke'] = setColor(
+                      nodes[index].color_id,
+                      '#ddd',
+                      '#111'
+                    );
+                    event.target.style['fill'] = setColor(
+                      nodes[index].color_id,
+                      '#1f77b4'
+                    );
+                  }
+
+                  d3Graph.node_label
+                    .filter((e, j) => {
+                      return index == j;
+                    })
+                    .style('fill', 'grey')
+                    .style('opacity', '0.5');
+                  d3Graph.link_label
+                    .filter((e) => {
+                      return (
+                        index == e.source.index ||
+                        index == e.target.index
+                      );
+                    })
+                    .style('fill', 'grey')
+                    .style('opacity', '0.5');
+                });
+              }
+            },
+            click: ({ event, datum, graphId }) => {
+              // Add click event listener to the nodes of the d3Graphs
+              console.log('clicked node data:', event, datum, graphId);
+            },
+          });
+
+          sparqlVersioningWidgetView.domElement.classList.add(
+            'widget_versioning'
+          );
+
+          // Add UI
+          const uiDomElement = sparqlVersioningWidgetView.domElement;
+          uiDomElement.classList.add('full_screen');
+          document.body.appendChild(uiDomElement);
+        });
+    </script>
+    SCRIPT_TAG_RELOAD
+  </body>
+</html>

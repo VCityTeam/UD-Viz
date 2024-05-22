@@ -1,0 +1,60 @@
+{
+  "height": 500,
+  "width": 500,
+  "fontSize": 4,
+  "queries": [
+    {
+      "title": "Select all the versioned graphs",
+      "formats": {
+        "versioning": "Versioning",
+        "graph": "Graph",
+        "table": "Table",
+        "json": "JSON"
+      },
+      "filepath": "./assets/queries/versioning.rq"
+    },
+    {
+      "title": "Select the max note across all versioned graphs",
+      "formats": {
+        "table": "Table",
+        "json": "JSON"
+      },
+      "filepath": "./assets/queries/versioning-2.rq"
+    }
+  ],
+  "namespaceLabels": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs",
+    "http://www.w3.org/2002/07/owl#": "owl",
+    "http://www.w3.org/2001/XMLSchema#": "xsd",
+    "https://w3id.org/list#": "list",
+    "http://www.w3.org/2004/02/skos/core#": "skos",
+    "http://www.opengis.net/gml#": "gml",
+    "http://www.opengis.net/ont/gml#": "gmlowl",
+    "http://www.opengis.net/def/uom/OGC/1.0/": "units",
+    "http://www.opengis.net/ont/geosparql#": "geo",
+    "http://www.opengis.net/def/function/geosparql/": "geof",
+    "http://strdf.di.uoa.gr/ontology#": "strdf",
+    "http://www.w3.org/1999/xlink#": "xlink",
+    "https://w3id.org/express#": "express",
+    "http://www.w3.org/2006/time#": "time",
+    "http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#": "ifc",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/core#": "core2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/building#": "bldg2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/bridge#": "brid2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/landuse#": "luse2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/appearance#": "app2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/relief#": "dem2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/cityfurniture#": "frn2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/generics#": "gen2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/cityobjectgroup#": "grp2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/texturedsurface#": "tex2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/tunnel#": "tun2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/vegetation#": "veg2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/waterbody#": "wtr2",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/core#": "core3",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/construction#": "con3",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#": "bldg3",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/versioning#": "vers"
+  }
+}

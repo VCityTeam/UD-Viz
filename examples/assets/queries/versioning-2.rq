@@ -1,0 +1,7 @@
+SELECT (MAX(?object) as ?maxnote)
+WHERE
+  { GRAPH ?graph
+      { 
+          ?subject  <http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/rating1>  ?object .
+      }
+  }
