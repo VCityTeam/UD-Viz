@@ -44,7 +44,7 @@ function autoDurationTravel(controls, targetPos) {
  * - `horizontalDistance` : Desired distance of the camera from the target
  * position.
  * @returns {Promise} Promise of the camera focusing on target
- * @todo this function is used by widget should be contribute to itowns or be remove
+ * @todo this function is used by widget should be contributed or removed
  */
 export function focusCameraOn(view, controls, targetPos, options = {}) {
   return new Promise((resolve, reject) => {
@@ -92,7 +92,7 @@ export function focusCameraOn(view, controls, targetPos, options = {}) {
  * @param {itowns.PlanarView} itownsView - view
  * @param {itowns.C3DTilesLayer} layer - layer to focus
  * @returns {Promise | null} Promise of the camera focusing on C3DTiles
- * @todo this function is used by widget should be contribue or remosved
+ * @todo this function is used by widget should be contributed or removed
  */
 export function focusC3DTilesLayer(itownsView, layer) {
   if (!layer.isC3DTilesLayer) return null;
