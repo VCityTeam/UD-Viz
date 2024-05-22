@@ -19,7 +19,7 @@
         .loadMultipleJSON([
           './assets/config/extents.json',
           './assets/config/crs.json',
-          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/3DTiles_Lyon.json',
         ])
         .then((configs) => {
           udviz.proj4.default.defs(
@@ -63,7 +63,7 @@
           });
 
           // create 3DTilesLayers
-          configs['3DTiles'].forEach((layerConfig) => {
+          configs['3DTiles_Lyon'].forEach((layerConfig) => {
             const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
               layerConfig['id'],
               {

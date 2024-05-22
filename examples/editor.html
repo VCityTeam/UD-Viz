@@ -28,7 +28,7 @@
           './assets/config/layer/geoJSONs.json',
           './assets/config/layer/elevation.json',
           './assets/config/layer/labels.json',
-          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/3DTiles_Lyon.json',
         ])
         .then((configs) => {
           udviz.proj4.default.defs(
@@ -152,7 +152,7 @@
             udviz.downloadObjectAsJson(result, object3D.name);
           };
 
-          configs['3DTiles'].forEach((layerConfig) => {
+          configs['3DTiles_Lyon'].forEach((layerConfig) => {
             udviz.itowns.View.prototype.addLayer.call(
               view,
               new udviz.itowns.C3DTilesLayer(

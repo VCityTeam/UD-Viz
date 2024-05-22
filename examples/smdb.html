@@ -20,7 +20,7 @@
           './assets/config/crs.json',
           './assets/config/frame3D_planars.json',
           './assets/config/server/spatial_multimedia_db_server.json',
-          './assets/config/layer/3DTiles.json',
+          './assets/config/layer/3DTiles_Lyon.json',
           './assets/config/layer/base_maps.json',
           './assets/config/layer/elevation.json',
         ])
@@ -56,7 +56,7 @@
             loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
 
           // /// ADD LAYERS
-          configs['3DTiles'].forEach((layerConfig) => {
+          configs['3DTiles_Lyon'].forEach((layerConfig) => {
             udviz.itowns.View.prototype.addLayer.call(
               view,
               new udviz.itowns.C3DTilesLayer(
