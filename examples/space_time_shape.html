@@ -392,13 +392,11 @@
 
             Promise.all(promisesTileContentLoaded).then(() => {
               // STSCircle
-              if (stsCircle != null)
-              {
+              if (stsCircle != null) {
                 stsCircle.dispose();
                 stsCircle.stLayer = stLayer;
                 uiCircle.hidden = true;
-              }
-              else {
+              } else {
                 stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
                   stLayer
                 );
@@ -417,39 +415,33 @@
               });
 
               // STSVector
-              if (stsVector != null)
-              {
+              if (stsVector != null) {
                 stsVector.dispose();
                 stsVector.stLayer = stLayer;
                 uiVector.hidden = true;
-              }
-              else {
+              } else {
                 stsVector = new udviz.extensions3DTilesTemporal.STSVector(
                   stLayer
                 );
               }
 
               // STSHelix
-              if (stsHelix != null)
-              {
+              if (stsHelix != null) {
                 stsHelix.dispose();
                 stsHelix.stLayer = stLayer;
                 uiHelix.hidden = true;
-              }
-              else {
+              } else {
                 stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
                   stLayer
                 );
               }
 
               // STSParabola
-              if (stsParabola != null)
-              {
+              if (stsParabola != null) {
                 stsParabola.dispose();
                 stsParabola.stLayer = stLayer;
                 uiParabola.hidden = true;
-              }
-              else {
+              } else {
                 stsParabola = new udviz.extensions3DTilesTemporal.STSParabola(
                   stLayer
                 );
@@ -463,126 +455,127 @@
                 if (date == stsParabola.middleDate) optionDate.selected = true;
                 selectDateParabola.appendChild(optionDate);
               });
-
-              const oSTShapeUI = [
-                {
-                  stShape: stsCircle,
-                  ui: uiCircle,
-                },
-                { stShape: stsVector, ui: uiVector },
-                { stShape: stsHelix, ui: uiHelix },
-                { stShape: stsParabola, ui: uiParabola },
-              ];
-
-              // Events
-              selectSTShape.onchange = () => {
-                console.log(selectSTShape.selectedOptions[0].value);
-                oSTShapeUI.forEach((element) => {
-                  if (element.stShape.displayed) {
-                    element.stShape.dispose();
-                    element.ui.hidden = true;
-                  }
-                });
-                switch (selectSTShape.selectedOptions[0].value) {
-                  case 'circle':
-                    stsCircle.display(getCurrentMode());
-                    uiCircle.hidden = false;
-                    radiusParameter.value = stsCircle.radius;
-                    heightParameter.value = stsCircle.height;
-                    break;
-                  case 'vector':
-                    stsVector.display(getCurrentMode());
-                    uiVector.hidden = false;
-                    deltaParameter.value = stsVector.delta;
-                    alphaParameter.value = stsVector.alpha;
-                    break;
-                  case 'helix':
-                    stsHelix.display(getCurrentMode());
-                    uiHelix.hidden = false;
-                    helixRadiusParameter.value = stsHelix.radius;
-                    helixDeltaParameter.value = stsHelix.delta;
-                    break;
-                  case 'parabola':
-                    stsParabola.display(getCurrentMode());
-                    uiParabola.hidden = false;
-                    parabolaDistAxisX.value = stsParabola.distAxisX;
-                    parabolaDistAxisY.value = stsParabola.distAxisY;
-                    parabolaHeight.value = stsParabola.height;
-                    break;
-                }
-              };
-
-              selectMode.onchange = () => {
-                oSTShapeUI.forEach((element) => {
-                  selectSTShape.hidden = false;
-                  if (element.stShape.displayed) {
-                    element.stShape.display(getCurrentMode());
-                  }
-                });
-              };
-
-              radiusParameter.addEventListener('input', (event) => {
-                stsCircle.radius = Number(event.target.value);
-                stsCircle.display(getCurrentMode());
-                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-              });
-
-              heightParameter.addEventListener('input', (event) => {
-                stsCircle.height = Number(event.target.value);
-                stsCircle.display(getCurrentMode());
-                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-              });
-
-              updateCheckBox.onchange = () => {
-                stsCircle.pause = updateCheckBox.checked;
-              };
-
-              selectDate.onchange = () => {
-                stsCircle.selectVersion(selectDate.selectedOptions[0].value);
-              };
-
-              selectDateParabola.onchange = () => {
-                stsParabola.middleDate =
-                  selectDateParabola.selectedOptions[0].value;
-                stsParabola.display(getCurrentMode());
-              };
-
-              deltaParameter.addEventListener('input', (event) => {
-                stsVector.delta = Number(event.target.value);
-                stsVector.display(getCurrentMode());
-              });
-
-              alphaParameter.addEventListener('input', (event) => {
-                stsVector.alpha = Number(event.target.value);
-                stsVector.display(getCurrentMode());
-              });
-
-              helixRadiusParameter.addEventListener('input', (event) => {
-                stsHelix.radius = Number(event.target.value);
-                stsHelix.display(getCurrentMode());
-              });
-
-              helixDeltaParameter.addEventListener('input', (event) => {
-                stsHelix.delta = Number(event.target.value);
-                stsHelix.display(getCurrentMode());
-              });
-
-              parabolaDistAxisX.addEventListener('input', (event) => {
-                stsParabola.distAxisX = Number(event.target.value);
-                stsParabola.display(getCurrentMode());
-              });
-
-              parabolaDistAxisY.addEventListener('input', (event) => {
-                stsParabola.distAxisY = Number(event.target.value);
-                stsParabola.display(getCurrentMode());
-              });
-
-              parabolaHeight.addEventListener('input', (event) => {
-                stsParabola.height = Number(event.target.value);
-                stsParabola.display(getCurrentMode());
-              });
             });
           };
+
+          // EVENTS
+
+          const oSTShapeUI = [
+            {
+              stShape: stsCircle,
+              ui: uiCircle,
+            },
+            { stShape: stsVector, ui: uiVector },
+            { stShape: stsHelix, ui: uiHelix },
+            { stShape: stsParabola, ui: uiParabola },
+          ];
+
+          selectSTShape.onchange = () => {
+            console.log(selectSTShape.selectedOptions[0].value);
+            oSTShapeUI.forEach((element) => {
+              if (element.stShape != null && element.stShape.displayed) {
+                element.stShape.dispose();
+                element.ui.hidden = true;
+              }
+            });
+            switch (selectSTShape.selectedOptions[0].value) {
+              case 'circle':
+                stsCircle.display(getCurrentMode());
+                uiCircle.hidden = false;
+                radiusParameter.value = stsCircle.radius;
+                heightParameter.value = stsCircle.height;
+                break;
+              case 'vector':
+                stsVector.display(getCurrentMode());
+                uiVector.hidden = false;
+                deltaParameter.value = stsVector.delta;
+                alphaParameter.value = stsVector.alpha;
+                break;
+              case 'helix':
+                stsHelix.display(getCurrentMode());
+                uiHelix.hidden = false;
+                helixRadiusParameter.value = stsHelix.radius;
+                helixDeltaParameter.value = stsHelix.delta;
+                break;
+              case 'parabola':
+                stsParabola.display(getCurrentMode());
+                uiParabola.hidden = false;
+                parabolaDistAxisX.value = stsParabola.distAxisX;
+                parabolaDistAxisY.value = stsParabola.distAxisY;
+                parabolaHeight.value = stsParabola.height;
+                break;
+            }
+          };
+
+          selectMode.onchange = () => {
+            oSTShapeUI.forEach((element) => {
+              selectSTShape.hidden = false;
+              if (element.stShape != null && element.stShape.displayed) {
+                element.stShape.display(getCurrentMode());
+              }
+            });
+          };
+
+          radiusParameter.addEventListener('input', (event) => {
+            stsCircle.radius = Number(event.target.value);
+            stsCircle.display(getCurrentMode());
+            stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+          });
+
+          heightParameter.addEventListener('input', (event) => {
+            stsCircle.height = Number(event.target.value);
+            stsCircle.display(getCurrentMode());
+            stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+          });
+
+          updateCheckBox.onchange = () => {
+            stsCircle.pause = updateCheckBox.checked;
+          };
+
+          selectDate.onchange = () => {
+            stsCircle.selectVersion(selectDate.selectedOptions[0].value);
+          };
+
+          selectDateParabola.onchange = () => {
+            stsParabola.middleDate =
+              selectDateParabola.selectedOptions[0].value;
+            stsParabola.display(getCurrentMode());
+          };
+
+          deltaParameter.addEventListener('input', (event) => {
+            stsVector.delta = Number(event.target.value);
+            stsVector.display(getCurrentMode());
+          });
+
+          alphaParameter.addEventListener('input', (event) => {
+            stsVector.alpha = Number(event.target.value);
+            stsVector.display(getCurrentMode());
+          });
+
+          helixRadiusParameter.addEventListener('input', (event) => {
+            stsHelix.radius = Number(event.target.value);
+            stsHelix.display(getCurrentMode());
+          });
+
+          helixDeltaParameter.addEventListener('input', (event) => {
+            stsHelix.delta = Number(event.target.value);
+            stsHelix.display(getCurrentMode());
+          });
+
+          parabolaDistAxisX.addEventListener('input', (event) => {
+            stsParabola.distAxisX = Number(event.target.value);
+            stsParabola.display(getCurrentMode());
+          });
+
+          parabolaDistAxisY.addEventListener('input', (event) => {
+            stsParabola.distAxisY = Number(event.target.value);
+            stsParabola.display(getCurrentMode());
+          });
+
+          parabolaHeight.addEventListener('input', (event) => {
+            stsParabola.height = Number(event.target.value);
+            stsParabola.display(getCurrentMode());
+          });
         });
     </script>
     SCRIPT_TAG_RELOAD
