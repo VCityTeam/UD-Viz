@@ -10,8 +10,6 @@ export {
   C3DTTemporalTileset,
 };
 
-export * from './SpaceTimeCube';
-
 export { STLayer } from './STLayer';
 export { DISPLAY_MODE as STS_DISPLAY_MODE } from './STShape';
 export { STSCircle } from './STSCircle';
