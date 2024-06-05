@@ -10,8 +10,7 @@ export class STShape {
     if (new.target === STShape) {
       throw new TypeError('Cannot construct STShape instances directly');
     }
-    /** @type {STLayer} */
-    this.stLayer = stLayer;
+    this.setSTLayer(stLayer);
 
     /** @type {boolean} */
     this.displayed = false;
@@ -54,6 +53,15 @@ export class STShape {
       version.c3DTLayer.visible = true;
     });
     this.stLayer.view.notifyChange();
+  }
+
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   */
+  setSTLayer(stLayer) {
+    /** @type {STLayer} */
+    this.stLayer = stLayer;
   }
 }
 

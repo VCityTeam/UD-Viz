@@ -24,12 +24,6 @@ export class STSParabola extends STShape {
 
     /** @type {THREE.Line} */
     this.dashedLine = null;
-
-    /** @type {number} */
-    this.middleDate =
-      this.stLayer.versions[
-        Math.round((this.stLayer.versions.length - 1) / 2)
-      ].date;
   }
 
   display(displayMode = DISPLAY_MODE.SEQUENTIAL) {
@@ -168,5 +162,20 @@ export class STSParabola extends STShape {
 
   dispose() {
     super.dispose();
+  }
+
+  /**
+   *
+   * @param {STLayer} stLayer The STLayer instance used to create the shape
+   */
+  setSTLayer(stLayer) {
+    super.setSTLayer(stLayer);
+
+    if (stLayer)
+      /** @type {number} */
+      this.middleDate =
+        this.stLayer.versions[
+          Math.round((this.stLayer.versions.length - 1) / 2)
+        ].date;
   }
 }

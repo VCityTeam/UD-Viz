@@ -394,7 +394,7 @@
               // STSCircle
               if (stsCircle != null) {
                 stsCircle.dispose();
-                stsCircle.stLayer = stLayer;
+                stsCircle.setSTLayer(stLayer);
                 uiCircle.hidden = true;
               } else {
                 stsCircle = new udviz.extensions3DTilesTemporal.STSCircle(
@@ -417,7 +417,7 @@
               // STSVector
               if (stsVector != null) {
                 stsVector.dispose();
-                stsVector.stLayer = stLayer;
+                stsVector.setSTLayer(stLayer);
                 uiVector.hidden = true;
               } else {
                 stsVector = new udviz.extensions3DTilesTemporal.STSVector(
@@ -428,7 +428,7 @@
               // STSHelix
               if (stsHelix != null) {
                 stsHelix.dispose();
-                stsHelix.stLayer = stLayer;
+                stsHelix.setSTLayer(stLayer);
                 uiHelix.hidden = true;
               } else {
                 stsHelix = new udviz.extensions3DTilesTemporal.STSHelix(
@@ -439,7 +439,7 @@
               // STSParabola
               if (stsParabola != null) {
                 stsParabola.dispose();
-                stsParabola.stLayer = stLayer;
+                stsParabola.setSTLayer(stLayer);
                 uiParabola.hidden = true;
               } else {
                 stsParabola = new udviz.extensions3DTilesTemporal.STSParabola(
