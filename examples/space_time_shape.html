@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/examples.css" />
+    <link rel="stylesheet" href="./assets/css/space_time_shape.css" />
     <link rel="stylesheet" href="./assets/css/loading_screen.css" />
   </head>
 
@@ -111,12 +112,17 @@
 
           // CREATE HTML
           const ui = document.createElement('div');
+          ui.id = 'stp_ui';
           document.body.appendChild(ui);
-          ui.style =
-            'position: absolute; display: grid; left: 0%; top: 0%; z-index:10';
+
+          const divSelect = document.createElement('div');
+          ui.appendChild(divSelect);
+
+          const divUiSTS = document.createElement('div');
+          ui.appendChild(divUiSTS);
 
           const selectDataset = document.createElement('select');
-          ui.appendChild(selectDataset);
+          divSelect.appendChild(selectDataset);
           const optionDefaultDataset = document.createElement('option');
           optionDefaultDataset.innerText = 'Choose a dataset';
           optionDefaultDataset.selected = true;
@@ -155,7 +161,7 @@
 
           const selectMode = document.createElement('select');
           selectMode.hidden = true;
-          ui.appendChild(selectMode);
+          divSelect.appendChild(selectMode);
           const optionDefaultMode = document.createElement('option');
           optionDefaultMode.innerText = 'Choose a Mode';
           optionDefaultMode.selected = true;
@@ -178,7 +184,7 @@
 
           const selectSTShape = document.createElement('select');
           selectSTShape.hidden = true;
-          ui.appendChild(selectSTShape);
+          divSelect.appendChild(selectSTShape);
           const optionDefaultShape = document.createElement('option');
           optionDefaultShape.innerText = 'Choose a Shape';
           optionDefaultShape.disabled = true;
@@ -193,7 +199,7 @@
 
           const uiCircle = document.createElement('div');
           uiCircle.hidden = true;
-          ui.appendChild(uiCircle);
+          divUiSTS.appendChild(uiCircle);
 
           const radiusParameterLabel = document.createElement('label');
           radiusParameterLabel.innerText = 'Radius';
@@ -233,7 +239,7 @@
 
           const uiVector = document.createElement('div');
           uiVector.hidden = true;
-          ui.appendChild(uiVector);
+          divUiSTS.appendChild(uiVector);
 
           const deltaLabel = document.createElement('label');
           deltaLabel.innerText = 'Delta';
@@ -259,7 +265,7 @@
 
           const uiHelix = document.createElement('div');
           uiHelix.hidden = true;
-          ui.appendChild(uiHelix);
+          divUiSTS.appendChild(uiHelix);
 
           const helixDeltaLabel = document.createElement('label');
           helixDeltaLabel.innerText = 'Delta';
@@ -285,7 +291,7 @@
 
           const uiParabola = document.createElement('div');
           uiParabola.hidden = true;
-          ui.appendChild(uiParabola);
+          divUiSTS.appendChild(uiParabola);
 
           const labelDistAxisX = document.createElement('label');
           labelDistAxisX.innerText = 'Distance on X axis';
