@@ -159,12 +159,7 @@
           sparqlWorkspaceWidgetView.domElement.classList.add(
             'widget_workspace'
           );
-
-          // Add UI
-          const uiDomElement = document.createElement('div');
-          uiDomElement.classList.add('full_screen');
-          document.body.appendChild(uiDomElement);
-          uiDomElement.appendChild(sparqlWorkspaceWidgetView.domElement);
+          document.body.appendChild(sparqlWorkspaceWidgetView.domElement);
 
           // Add listeners for D3Canvas node events. Three events are possible 'click', 'mouseover', and 'mouseout'
           sparqlWorkspaceWidgetView.d3Graph.addEventListener(
