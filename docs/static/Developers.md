@@ -134,7 +134,9 @@ co-evolve UD-Viz and its usage within your application.
 
 In order to establish that specific developing context you might
 - clone both repositories side by side (that is your cloned application 
-  repository stands in the same directory as the cloned UD-Viz) on your local 
+  repository stands in the same directory as the cloned UD-Viz) on your local
+- within the cloned UD-Viz repository, run `npm install` (because your
+  `webpack.config.js` will make reference to `../UD-Viz/node_modules`).
 - Modify your the `package.json` of your application in order to "point" 
   to the cloned version of the UD-Viz library.
   Entries of the form
