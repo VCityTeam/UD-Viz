@@ -14,12 +14,22 @@
       "filepath": "./assets/queries/versioning.rq"
     },
     {
-      "title": "Select the max note across all versioned graphs",
+      "title": "Select the max note across all versioned graphs (BSBM)",
       "formats": {
         "table": "Table",
         "json": "JSON"
       },
       "filepath": "./assets/queries/versioning-2.rq"
+    },
+    {
+      "title": "Select all the versioned graphs and the associated types",
+      "formats": {
+        "versioning": "Versioning",
+        "graph": "Graph",
+        "table": "Table",
+        "json": "JSON"
+      },
+      "filepath": "./assets/queries/versioning-3.rq"
     }
   ],
   "namespaceLabels": {

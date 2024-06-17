@@ -1,0 +1,12 @@
+PREFIX vers: <https://github.com/VCityTeam/ConVer-G/Version#>
+
+SELECT * WHERE {
+    GRAPH ?versionedGraph { 
+        ?subject  ?predicate  ?object .
+    }
+    ?versionedGraph vers:is-version-of ?graph ;
+        vers:is-in-version ?version .
+
+    ?subject  a ?subjectType .
+    ?object a ?objectType .
+}
