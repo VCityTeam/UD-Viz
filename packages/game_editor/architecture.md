@@ -11,8 +11,8 @@ flowchart
      IDsrcObjectInputScriptVariablesExternalExternal2ejs["external.js"]
     end
     subgraph IDsrcObjectInputScriptVariablesGame["game"]
-     IDsrcObjectInputScriptVariablesGameNativeCommandManagerScriptInput2ejs["NativeCommandManagerScriptInput.js"]
      IDsrcObjectInputScriptVariablesGameGame2ejs["game.js"]
+     IDsrcObjectInputScriptVariablesGameNativeCommandManagerScriptInput2ejs["NativeCommandManagerScriptInput.js"]
     end
    end
    subgraph IDsrcObjectInputUserData["userData"]
