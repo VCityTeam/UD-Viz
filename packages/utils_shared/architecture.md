@@ -1,8 +1,8 @@
 ```mermaid
 flowchart
  subgraph IDsrc["src"]
-  IDsrcProcessInterval2ejs["ProcessInterval.js"]
   IDsrcIndex2ejs["index.js"]
+  IDsrcProcessInterval2ejs["ProcessInterval.js"]
  end
 IDsrcIndex2ejs-.->|import|IDsrcProcessInterval2ejs
 ```

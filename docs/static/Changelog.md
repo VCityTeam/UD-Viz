@@ -1,29 +1,44 @@
+# 4.3.0
+
+## @ud-viz
+- Doc: Add Readme mardown files for all packages.
+
+## @ud-viz/utils_browser
+
+- New function `createSpriteFromString`
+
+## @ud-viz/extensions_3d_tiles_temporal
+
+- New method to visualise the evolution of the city. We integrate all the versions simultaneously in the city to allow a better understanding of the evolution.
+- We implement our method through 4 timelines shapes: Vector, Helix, Circle, Parabola
+- In addition, we implement two ways to position the versions accross the timeline:Sequential, Chronological.
+- UI to select display mode in example
 
 # 4.2.0
 
 ## @ud-viz/widget_3d_tiles
-    - The integrated layer manager that was previously mandatory is now 
-      optional. This allows the simultaneous usage of @ud-viz/widget_3d_tiles
-      and @ud-viz/wwidget_layer_choice without the UI redundancy/repetition
-      of existing layers listings. 
+  - The integrated layer manager that was previously mandatory is now 
+    optional. This allows the simultaneous usage of @ud-viz/widget_3d_tiles
+    and @ud-viz/wwidget_layer_choice without the UI redundancy/repetition
+    of existing layers listings. 
 
-## @ud-viz/wwidget_layer_choice
-    - Each layer description now has a remove button
-    - overflow of ui
+## @ud-viz/widget_layer_choice
+  - Each layer description now has a remove button
+  - overflow of ui
 
 ## @ud-viz/showroom
-    - css for the about and help buttons is now provided
-    - extralines now deleted
-    - html element now have added tiltes
-    - about and help button now removed from the sidebar. Instead tiny buttons
-      are created at the bottom left of the screen
-    - the added code tiny button redirects to .html code
+  - css for the about and help buttons is now provided
+  - extralines now deleted
+  - html element now have added tiltes
+  - about and help button now removed from the sidebar. Instead tiny buttons
+    are created at the bottom left of the screen
+  - the added code tiny button redirects to .html code
 
 ## ci
-    - Fix of the always failing labels config test (failure came from a change
-     in the WFS API as provided by IGN). The fix consists in skipping the 
-     triggered errors within the functional test when the request or the 
-     response are not related to localhost.
+  - Fix of the always failing labels config test (failure came from a change
+   in the WFS API as provided by IGN). The fix consists in skipping the 
+   triggered errors within the functional test when the request or the 
+   response are not related to localhost.
 
 # 4.1.0
 
@@ -118,9 +133,9 @@
 
 ## @ud-viz
 
-    - npm cmd webpack-bundle-analyzer 
-    - script setPackageVersion.js
-    - update to itowns 2.41.1-next.9
+  - npm cmd webpack-bundle-analyzer 
+  - script setPackageVersion.js
+  - update to itowns 2.41.1-next.9
 
 
 ## @ud-viz/game_shared
@@ -263,27 +278,27 @@
 
 ## @ud-viz/shared
 
-    - NativeCommandManager: possibility to customize speed
-    - Context: add IS_SCRIPTBASE static in ScriptBase class
+  - NativeCommandManager: possibility to customize speed
+  - Context: add IS_SCRIPTBASE static in ScriptBase class
 
 ## @ud-viz/node
 
-    - JS Script to generate mermaid diagrams in markdown from JS projects
+  - JS Script to generate mermaid diagrams in markdown from JS projects
 
 ## @ud-viz/browser
 
-    - update to iTowns 2.39.1-next.25
-    - Remove addLayer methods (now in examples)
-    - Frame3D: change default maxSubdivisionLevel from 3 to 5
-    - Frame3D: remove 'size" attribute
-    - Fix AudioController: spatialized sounds decompose feature
-    - LocalStorage: vector3 tracking
-    - Context: add IS_SCRIPTBASE static in ScriptBase class
-    - Remove JQuery
-    - Use domElement instead of rootHtml
-    - `URLUtil`
-    - Game: commands are applied at step
-    - FileUtil is no longer exposed in the API
+  - update to iTowns 2.39.1-next.25
+  - Remove addLayer methods (now in examples)
+  - Frame3D: change default maxSubdivisionLevel from 3 to 5
+  - Frame3D: remove 'size" attribute
+  - Fix AudioController: spatialized sounds decompose feature
+  - LocalStorage: vector3 tracking
+  - Context: add IS_SCRIPTBASE static in ScriptBase class
+  - Remove JQuery
+  - Use domElement instead of rootHtml
+  - `URLUtil`
+  - Game: commands are applied at step
+  - FileUtil is no longer exposed in the API
 
 # v3.1.0
 

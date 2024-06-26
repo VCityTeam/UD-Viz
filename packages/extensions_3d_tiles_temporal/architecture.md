@@ -2,6 +2,12 @@
 flowchart
  subgraph IDsrc["src"]
   IDsrcIndex2ejs["index.js"]
+  IDsrcSTLayer2ejs["STLayer.js"]
+  IDsrcSTSCircle2ejs["STSCircle.js"]
+  IDsrcSTShape2ejs["STShape.js"]
+  IDsrcSTSHelix2ejs["STSHelix.js"]
+  IDsrcSTSParabola2ejs["STSParabola.js"]
+  IDsrcSTSVector2ejs["STSVector.js"]
   subgraph IDsrcModel["model"]
    IDsrcModelC3DTTemporalBatchTable2ejs["C3DTTemporalBatchTable.js"]
    IDsrcModelC3DTTemporalBoundingVolume2ejs["C3DTTemporalBoundingVolume.js"]
@@ -25,6 +31,21 @@ flowchart
 IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalBatchTable2ejs
 IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalBoundingVolume2ejs
 IDsrcIndex2ejs-.->|import|IDsrcModelC3DTTemporalTileset2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTShape2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTSCircle2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTSHelix2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTSVector2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSTSParabola2ejs
+IDsrcSTSCircle2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcSTSCircle2ejs-.->|import|IDsrcSTShape2ejs
+IDsrcSTShape2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcSTSHelix2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcSTSHelix2ejs-.->|import|IDsrcSTShape2ejs
+IDsrcSTSParabola2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcSTSParabola2ejs-.->|import|IDsrcSTShape2ejs
+IDsrcSTSVector2ejs-.->|import|IDsrcSTLayer2ejs
+IDsrcSTSVector2ejs-.->|import|IDsrcSTShape2ejs
 IDsrcModelC3DTTemporalPrimaryTransaction2ejs-.->|import|IDsrcModelC3DTTemporalTransaction2ejs
 IDsrcModelC3DTTemporalTransactionAggregate2ejs-.->|import|IDsrcModelC3DTTemporalTransaction2ejs
 ```
