@@ -22,7 +22,7 @@
   "peerDependencies": {
     "@ud-viz/game_browser": "4.3.0",
     "@ud-viz/utils_browser": "4.3.0",
-    "legonizer": "^1.0.0",
+    "legonizer": "1.0.0",
     "itowns": "2.41.1-next.9",
     "three": "0.154.0"
   }
