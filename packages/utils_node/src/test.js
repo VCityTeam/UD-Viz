@@ -17,11 +17,7 @@ const { computeFileFormat } = require('@ud-viz/utils_shared');
  * @todo goto necessary ?
  * @returns {Promise} - promise resolving when test have passed
  */
-const browserScripts = function (
-  testFolderPath,
-  bundlePath,
-  disableThirdParty = false
-) {
+function browserScripts(testFolderPath, bundlePath, disableThirdParty = false) {
   return folderInBrowserPage(testFolderPath, async (page, currentFile) => {
     console.log('\n\nstart testing script ', currentFile.name);
 
@@ -31,21 +27,27 @@ const browserScripts = function (
       await page.goto('chrome://settings/cookies');
       await page.evaluate(() =>
         document
-          .querySelector('settings-ui')
-          .shadowRoot.querySelector('settings-main')
+          .querySelector('body > settings-ui')
+          .shadowRoot.querySelector('#main')
           .shadowRoot.querySelector('settings-basic-page')
-          .shadowRoot.querySelector('settings-section settings-privacy-page')
-          .shadowRoot.querySelector('settings-cookies-page')
-          .shadowRoot.querySelector('#blockThirdParty')
-          .shadowRoot.querySelector('#label')
+          .shadowRoot.querySelector(
+            '#basicPage > settings-section.expanded > settings-privacy-page'
+          )
+          .shadowRoot.querySelector(
+            '#trackingProtection > settings-cookies-page'
+          )
+          .shadowRoot.querySelector('#blockThirdPartyToggle')
+          .shadowRoot.querySelector('#control')
+          .shadowRoot.querySelector('#bar')
           .click()
       );
     }
 
+    await page.goto('https://example.com/');
     // import bundle.js
     if (bundlePath) await page.evaluate(fs.readFileSync(bundlePath, 'utf8'));
 
-    // console.log(currentFile.name, ' has imported bundle');
+    console.log(currentFile.name, ' has imported bundle');
     // test script
     await page.evaluate(
       eval(fs.readFileSync(testFolderPath + '/' + currentFile.name, 'utf8'))
@@ -53,7 +55,7 @@ const browserScripts = function (
 
     console.log(currentFile.name, ' test succeed');
   });
-};
+}
 
 /**
  * Test scripts by spawning them and waiting the process to exit, script should have a structure like below
@@ -64,9 +66,9 @@ const browserScripts = function (
  * @param {string} folderPath - path of the folder where scripts belong
  * @returns {Promise} - a promise resolving when test have passed
  */
-const scripts = function (folderPath) {
+function scripts(folderPath) {
   return new Promise((resolve) => {
-    const test = function (folderPath, file) {
+    const test = (folderPath, file) => {
       return new Promise((resolveTest, rejectTest) => {
         const pathFile = folderPath + '/' + file.name;
 
@@ -123,7 +125,7 @@ const scripts = function (folderPath) {
       }
     });
   });
-};
+}
 
 /**
  * Open html files in a page of a puppeteer browser in order to catch error
@@ -132,7 +134,7 @@ const scripts = function (folderPath) {
  * @param {number} port - port of the server http listening
  * @returns {Promise} - promise resolving when test have passed
  */
-const html = function (folderPath, port) {
+function html(folderPath, port) {
   return folderInBrowserPage(folderPath, (page, currentFile) => {
     // check if file is an html file
     if (computeFileFormat(currentFile.name) != 'html') return Promise.resolve();
@@ -154,7 +156,7 @@ const html = function (folderPath, port) {
         });
     });
   });
-};
+}
 
 /**
  * @callback PageTestFile
@@ -169,7 +171,7 @@ const html = function (folderPath, port) {
  * @param {PageTestFile} pageTest - description of the test
  * @returns {Promise} - a promise resolving when test have passed
  */
-const folderInBrowserPage = function (testFolderPath, pageTest) {
+function folderInBrowserPage(testFolderPath, pageTest) {
   return new Promise((resolve, reject) => {
     fs.readdir(testFolderPath, { withFileTypes: true }, async (err, files) => {
       if (err) {
@@ -180,8 +182,9 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
       if (files.length) {
         // launch a headless browser
         const browser = await puppeteer.launch({
-          headless: 'new',
+          headless: 'true',
           args: [
+            '--remote-debugging-port=8001',
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
@@ -195,6 +198,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
           ],
         });
         // console.log('browser opened');
+        // Create a new browser context
 
         let index = 0;
 
@@ -266,7 +270,7 @@ const folderInBrowserPage = function (testFolderPath, pageTest) {
       resolve();
     });
   });
-};
+}
 
 module.exports = {
   scripts: scripts,

@@ -13,8 +13,8 @@ const bundlePath = path.resolve(
     : '../dist/production/bundle.js'
 );
 
-const forceBuild =
-  typeof process.argv[3] == 'string' ? process.argv[3] == 'force-build' : false;
+const testFolderPath = process.argv[2];
+const forceBuild = process.argv[3] == 'force-build';
 
 const run = async () => {
   // build bundle if there is not
@@ -34,7 +34,7 @@ const run = async () => {
       : false;
 
   test
-    .browserScripts(process.argv[2], bundlePath, disableThirdParty)
+    .browserScripts(testFolderPath, bundlePath, disableThirdParty)
     .catch((error) => {
       throw error;
     });
