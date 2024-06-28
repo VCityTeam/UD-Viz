@@ -182,9 +182,8 @@ function folderInBrowserPage(testFolderPath, pageTest) {
       if (files.length) {
         // launch a headless browser
         const browser = await puppeteer.launch({
-          headless: 'true',
+          headless: 'new',
           args: [
-            '--remote-debugging-port=8001',
             '--disable-gpu',
             '--disable-dev-shm-usage',
             '--disable-setuid-sandbox',
