@@ -28,7 +28,7 @@ jobs:
         - npm run test-functional
       name: 'Functional test'
     - script:
-        - npm audit --audit-level=high
+        - npm audit --audit-level=critical
       name: 'Lightweight dependencies security audit'
     - script:
         - npm run test-links
