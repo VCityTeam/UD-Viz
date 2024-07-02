@@ -3,7 +3,9 @@ import { D3GraphCanvas } from './D3GraphCanvas';
 import { Table } from './Table';
 import { JsonRenderer } from './JsonRenderer';
 
-import { loadTextFile } from '@ud-viz/utils_browser';
+import { loadTextFile, getUriLocalname } from '@ud-viz/utils_browser';
+
+import { SparqlQuery } from './SparqlQuery';
 
 /**
  * The SPARQL query window class which provides the user interface for querying
@@ -47,6 +49,12 @@ export class SparqlQueryWindow {
 
     /** @type {HTMLElement} */
     this.toggleQueryTextAreaButton = null;
+
+    /** @type {HTMLElement} */
+    this.menu = null;
+
+    /** @type {HTMLElement} */
+    this.menuList = null;
 
     this.initHtml();
 
@@ -120,6 +128,7 @@ export class SparqlQueryWindow {
     };
 
     this.form.onsubmit = () => {
+      // fonction exécutée quand le form est submitted
       console.log('submit');
       console.debug(this.queryTextArea.value);
       this.sparqlProvider
@@ -133,7 +142,68 @@ export class SparqlQueryWindow {
     this.resetButton.onclick = () => {
       this.d3Graph.clearCanvas();
       this.d3Graph.data.clear();
+      this.explorationQuery.where_conditions = [
+        [
+          '?subject ?predicate ?object ;a ?subjectType .',
+          'OPTIONAL { ?object a ?objectType }',
+          'FILTER (?subject = data:69266BC115)',
+        ],
+      ]; // exemple de bâtiment
+      this.updateQueryTextArea(this.querySelect.value);
     };
+
+    this.explorationQuery = new SparqlQuery();
+    this.explorationQuery.prefix.push([
+      'bldg',
+      'https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#',
+    ]);
+    this.explorationQuery.prefix.push([
+      'skos',
+      'http://www.w3.org/2004/02/skos/core#',
+    ]);
+    this.explorationQuery.prefix.push([
+      'data',
+      'https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/GratteCiel_Workspace_2009_2018/3.0/GratteCiel_2018_split#',
+    ]);
+    this.explorationQuery.select_variable.push(
+      'subject',
+      'subjectType',
+      'predicate',
+      'object',
+      'objectType'
+    );
+    this.explorationQuery.options.push(
+      ['FILTER', '?subjectType != owl:NamedIndividual'],
+      ['FILTER', '!bound(?objectType) || ?objectType != owl:NamedIndividual'],
+      ['FILTER', '?subject != owl:NamedIndividual'],
+      ['FILTER', '?object != owl:NamedIndividual']
+    );
+    this.explorationQuery.where_conditions.push([
+      '?subject ?predicate ?object ;a ?subjectType .',
+      'OPTIONAL { ?object a ?objectType }',
+      'FILTER (?subject = data:69266BC115)',
+    ]); // exemple de bâtiment
+  }
+
+  /**
+   * Update the query to add the children of the node
+   *
+   * @param {string} node_id the ID of the node
+   */
+  updateExplorationQuery(node_id) {
+    this.explorationQuery.where_conditions.push([
+      '?subject ?predicate ?object ;a ?subjectType .',
+      'OPTIONAL { ?object a ?objectType }',
+      'FILTER (?subject = data:' + getUriLocalname(node_id) + ')',
+    ]);
+    this.queryTextArea.value = this.explorationQuery.generateQuery();
+    this.d3Graph.clearCanvas();
+    this.d3Graph.data.clear();
+    this.sparqlProvider
+      .querySparqlEndpointService(this.queryTextArea.value)
+      .then((response) =>
+        this.updateDataView(response, this.resultSelect.value)
+      );
   }
 
   /**
@@ -147,7 +217,7 @@ export class SparqlQueryWindow {
     this.clearDataView();
     switch (view_type) {
       case 'graph':
-        this.d3Graph.update(response);
+        this.d3Graph.init(response); // a remplacé update
         this.dataView.append(this.d3Graph.canvas);
         break;
       case 'json':
@@ -258,7 +328,7 @@ export class SparqlQueryWindow {
     this.queryTextArea.setAttribute('style', 'display:none');
     this.form.appendChild(this.queryTextArea);
     const submitButton = document.createElement('input');
-    submitButton.setAttribute('type', 'submit');
+    submitButton.setAttribute('type', 'submit'); // quand le bouton est pressé alors la fonction associée à l'argument onsubmit de this.form est exécutée
     submitButton.setAttribute('value', 'Send');
     this.form.appendChild(submitButton);
     const formatLabel = document.createElement('label');
@@ -272,5 +342,26 @@ export class SparqlQueryWindow {
     this.dataView = document.createElement('div');
     this.dataView.className = 'box-selection';
     interfaceElement.appendChild(this.dataView);
+    this.menu = document.createElement('div');
+    this.menu.setAttribute('id', 'context-menu');
+    this.domElement.appendChild(this.menu);
+    this.menuList = document.createElement('ul');
+    this.menu.appendChild(this.menuList);
+    this.optionCluster = document.createElement('li');
+    this.menuList.appendChild(this.optionCluster);
+    this.optionCluster.style.display = 'none';
+    this.optionAddChildren = document.createElement('li');
+    this.menuList.appendChild(this.optionAddChildren);
+    this.optionAddChildren.style.display = 'none';
+    this.optionAddChildren.innerText = 'Ajouter ses enfants';
+    this.optionAnnuler = document.createElement('li');
+    this.menuList.appendChild(this.optionAnnuler);
+    this.optionAnnuler.innerText = 'Annuler';
+    this.optionAnnuler.onclick = () => {
+      this.menu.style.display = 'none';
+      this.optionAddChildren.display = 'none';
+      this.optionCluster.display = 'none';
+    };
+    this.optionsType = document.createElement('g');
   }
 }
