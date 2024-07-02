@@ -1,3 +1,5 @@
+import { getUriLocalname } from '@ud-viz/utils_browser';
+
 /** @class */
 export class Graph {
   /**
@@ -12,6 +14,8 @@ export class Graph {
       // { source: 'x', target: 'y', label: 1 }
     ];
     this.typeList = [];
+    this._nodes = [];
+    this._links = [];
   }
 
   /**
@@ -43,7 +47,7 @@ export class Graph {
           // if there is a subjectType assign a type and color id
           triple.subjectType
         ) {
-          node.type = triple.subjectType.value;
+          node.type = getUriLocalname(triple.subjectType.value);
           node.color_id = this.getNodeColorId(triple.subjectType.value);
         }
         this.nodes.push(node);
@@ -57,7 +61,7 @@ export class Graph {
           // if there is an objectType assign a color id
           triple.objectType
         ) {
-          node.type = triple.objectType.value;
+          node.type = getUriLocalname(triple.objectType.value);
           node.color_id = this.getNodeColorId(triple.objectType.value);
         }
         this.nodes.push(node);
