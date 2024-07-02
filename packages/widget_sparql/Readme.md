@@ -2,7 +2,7 @@
 
 [![NPM package version](https://badgen.net/npm/v/@ud-viz/widget_sparql)](https://npmjs.com/package/@ud-viz/widget_sparql)
 
-# SPARQL Module
+## SPARQL Module
 
 The SPARQL Module adds basic functionality to query and visualize Semantic Web data stored in a Strabon Triple-store from a UD-Viz interface.
 
@@ -89,7 +89,7 @@ An example of the visualization of this query:
 #### Table
 
 The table view features a filter for searching for data within a column. In addition rows can be sorted in ascending or descending order by column.
-The table also provides features for filtering and ordering the table contents. 
+The table also provides features for filtering and ordering the table contents.
 
 ![Table view demonstraction](./img/sparql-widget-table-demo.gif)
 
@@ -99,19 +99,19 @@ The JSON view returns a collapsible representation of the query reponse.
 
 ![JSON view demonstraction](./img/sparql-widget-json-demo.gif)
 
-
 #### Customizing events with D3
 
 D3 provides event handlers for when users interact with elements of the visualized data.
 These events can be used to add functionality to the interface depending on the needs of an application.
 
 In the example below, the URIs of nodes in the graph correspond with identifiers of objects in the tileset batch table.
-- *mouseover* and *mouseout* events are used to highlight the corresponding geometry of the object in the 3D scene.
-- A *click* event is used to zoom in on the corresponding geometry.
+
+- _mouseover_ and _mouseout_ events are used to highlight the corresponding geometry of the object in the 3D scene.
+- A _click_ event is used to zoom in on the corresponding geometry.
 
 ![an example of customized D3 mouse events](./img/node-event-example.gif)
 
-To see how this can be done check out the [SPARQL module example](./../../examples/widget_sparql.html) 
+To see how this can be done check out the [SPARQL module example](./../../examples/widget_sparql.html)
 
 ## Code architecture
 
@@ -175,7 +175,6 @@ The minimal configuration required to make a SPARQL Widget class work is the fol
 - `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
 
 Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [Graph](https://vcityteam.github.io/UD-Viz/html/widget_sparql/Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/widget_sparql/SparqlQueryWindow.html) documentation for more information
-
 
 ## Documentation
 
