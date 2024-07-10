@@ -18,7 +18,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    *                                                    This doesn't (yet) affect the legend font size.
    */
   constructor(configSparqlWidget) {
-    // appel depuis la classe SparqlQueryWindow
     super();
     if (
       !configSparqlWidget ||
@@ -33,23 +32,24 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.width = configSparqlWidget.width;
     this.fontSize = configSparqlWidget.fontSize;
     this.knownNamespaceLabels = configSparqlWidget.namespaceLabels;
-    this.svg = d3 // le svg dans lequel est affiché le graph
+    this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
       .attr('class', 'd3_graph')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
-    this.data = new Graph(); // objet Graph dans data
-    this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 renvoie un tableau de 10 couleurs & d3.scaleOrdinal sert à créer une échelle ordinale (valeur discrète -> valeur discrète)
+    this.data = new Graph();
+    this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
+    this.zoomClustering = true;
   }
 
   // / Data Functions ///
 
   /**
-   * Add all the descendant's ID of the node
+   * Retrieve the ID of all the node's descendants
    *
-   * @param {string} node_id ID of the node
-   * @param {Array} list list of descendant
-   * @returns {Array} the list
+   * @param {string} node_id a node ID
+   * @param {Array} list an empty list
+   * @returns {Array} the list of all the node's descendants
    */
   generateDescendantList(node_id, list) {
     const allNodes = this.data.nodes.concat(this.data._nodes);
@@ -72,18 +72,15 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
-   * Add the childs and the parent of each node
+   * Create and initialize the 'child' and 'parent' properties for all nodes
    *
    */
   addChildParent() {
-    const links = this.data.links;
-    const nodes = this.data.nodes;
-
-    for (const link of links) {
-      const source = nodes.find((element) => {
+    for (const link of this.data.links) {
+      const source = this.data.nodes.find((element) => {
         return element.id == link.source;
       });
-      const target = nodes.find((element) => {
+      const target = this.data.nodes.find((element) => {
         return element.id == link.target;
       });
 
@@ -111,7 +108,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       }
     }
 
-    for (const node of nodes) {
+    for (const node of this.data.nodes) {
       if (!('parent' in node)) {
         node.group = 0;
       }
@@ -122,11 +119,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     while (modif) {
       modif = false;
-      for (const node of nodes) {
+      for (const node of this.data.nodes) {
         if (node.group == i) {
           if (node.child != undefined) {
             for (const childNodeId of node.child) {
-              const childNode = nodes.find((element) => {
+              const childNode = this.data.nodes.find((element) => {
                 return element.id == childNodeId;
               });
               childNode.group = i + 1;
@@ -142,7 +139,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Return true if any parent of the node is a cluster, false otherwise
    *
-   * @param {string} node_id the ID of the node
+   * @param {string} node_id a node ID
    * @returns {boolean} the result
    */
   OneParentCluster(node_id) {
@@ -166,9 +163,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
-   * Return true if any parent of the node is visible
+   * Return true if any parent of the node is visible, false otherwise
    *
-   * @param {string} node_id the ID of the node
+   * @param {string} node_id a node ID
    * @returns {boolean} the result
    */
   OneParentVisible(node_id) {
@@ -176,15 +173,19 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     const node = allNodes.find((element) => {
       return element.id == node_id;
     });
-    if (node.parent != undefined) {
-      for (const parent_id of node.parent) {
-        const parent = this.data.nodes.find((element) => {
-          return element.id == parent_id;
-        });
-        if (parent != undefined) {
-          return true;
+    if (node != undefined) {
+      if (node.parent != undefined) {
+        for (const parent_id of node.parent) {
+          const parent = this.data.nodes.find((element) => {
+            return element.id == parent_id;
+          });
+          if (parent != undefined) {
+            return true;
+          }
         }
       }
+    } else {
+      console.debug('[OneParentVisible] node undefined: ', node_id);
     }
     return false;
   }
@@ -192,69 +193,75 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Change the state of the node from simple node to cluster, or the opposite
    *
-   * @param {string} node_id ID of the clicked node
+   * @param {string} node_id a node ID
    */
   changeVisibilityChildren(node_id) {
-    const node = this.data.nodes.find((d) => d.id == node_id);
-    if (node.child != undefined) {
-      node.cluster = node.cluster != true;
-      const descendants = [];
-      this.generateDescendantList(node_id, descendants);
-      if (node.cluster) {
-        for (const descendant_id of descendants) {
-          this.hideNode(descendant_id);
-        }
-        for (const descendant_id of descendants) {
-          const nodeLinks = [];
-          this.data.links.forEach((element) => {
-            if (
-              element.source.id == descendant_id ||
-              element.target.id == descendant_id
-            ) {
-              nodeLinks.push(element);
-            }
-          });
-          for (const link of nodeLinks) {
-            this.hideLink(link);
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    const node = allNodes.find((d) => d.id == node_id);
+    if (node != undefined) {
+      if (node.child != undefined) {
+        node.cluster = node.cluster != true;
+        const descendants = [];
+        this.generateDescendantList(node_id, descendants);
+        if (node.cluster) {
+          for (const descendant_id of descendants) {
+            this.hideNode(descendant_id);
           }
-        }
-      } else {
-        for (const descendant_id of descendants) {
-          if (
-            this.OneParentVisible(descendant_id) &&
-            !this.OneParentCluster(descendant_id)
-          ) {
-            this.showNode(descendant_id);
-          }
-        }
-        for (const descendant_id of descendants) {
-          if (
-            this.OneParentVisible(descendant_id) &&
-            !this.OneParentCluster(descendant_id)
-          ) {
+          for (const descendant_id of descendants) {
             const nodeLinks = [];
-            this.data._links.forEach((element) => {
+            this.data.links.forEach((element) => {
               if (
-                (element.source == descendant_id ||
-                  element.target == descendant_id) &&
-                this.data.nodes.find((d) => d.id == element.source) !=
-                  undefined &&
-                this.data.nodes.find((d) => d.id == element.target) != undefined
+                element.source.id == descendant_id ||
+                element.target.id == descendant_id
               ) {
                 nodeLinks.push(element);
               }
             });
             for (const link of nodeLinks) {
-              this.showLink(link);
+              this.hideLink(link);
+            }
+          }
+        } else {
+          for (const descendant_id of descendants) {
+            if (
+              this.OneParentVisible(descendant_id) &&
+              !this.OneParentCluster(descendant_id)
+            ) {
+              this.showNode(descendant_id);
+            }
+          }
+          for (const descendant_id of descendants) {
+            if (
+              this.OneParentVisible(descendant_id) &&
+              !this.OneParentCluster(descendant_id)
+            ) {
+              const nodeLinks = [];
+              this.data._links.forEach((element) => {
+                if (
+                  (element.source == descendant_id ||
+                    element.target == descendant_id) &&
+                  this.data.nodes.find((d) => d.id == element.source) !=
+                    undefined &&
+                  this.data.nodes.find((d) => d.id == element.target) !=
+                    undefined
+                ) {
+                  nodeLinks.push(element);
+                }
+              });
+              for (const link of nodeLinks) {
+                this.showLink(link);
+              }
             }
           }
         }
       }
+    } else {
+      console.debug('[changeVisibilityChildren] node undefined: ', node_id);
     }
   }
 
   /**
-   * Create a new link and add it to the graph.
+   * Create a new link and add it to the graph
    *
    * @param {string} source source of the link
    * @param {string} target target of the link
@@ -280,6 +287,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     const node = {};
     node.id = node_id;
     node.cluster = false;
+    node.display = true;
     this.data.nodes.push(node);
     return node;
   }
@@ -310,7 +318,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       );
       this.update();
     } else {
-      console.log('Error remove node');
+      console.debug('[removeNode] node undefined: ', node_id);
     }
   }
 
@@ -318,8 +326,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    * Create a new cluster and add it to the graph
    *
    * @param {string} cluster_id the ID of the created cluster
-   * @param {Array} nodes_id an array of nodes ID (string)
+   * @param {Array} nodes_id an array of node IDs
    * @param {string} source_id the ID of the node to which the created cluster will be linked
+   * @returns {object} the created cluster
    */
   createNewCluster(cluster_id, nodes_id, source_id = undefined) {
     const cluster = this.createNewNode(cluster_id);
@@ -332,13 +341,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return element.id == source_id;
       });
       source.child.push(cluster_id);
+      cluster.parent = [source_id];
     }
     this.changeVisibilityChildren(cluster_id);
-    this.update();
+    return cluster;
   }
 
   /**
-   * Hide the node
+   * Hide the node from the graph
    *
    * @param {string} node_id a node ID
    */
@@ -354,17 +364,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       const propertiesToDelete = ['index', 'vx', 'vy', 'x', 'y'];
       propertiesToDelete.forEach((prop) => delete node_copy[prop]);
       this.data._nodes.push(node_copy);
-      /* const nodeLinks = [];
-      this.data.links.forEach((element) => {
-        if (element.source.id == node_id || element.target.id == node_id) {
-          nodeLinks.push(element);
-        }
-      });
-      for (const link of nodeLinks) {
-        this.hideLink(link);
-      } */
     } else {
-      console.log('node undefined' + '' + node_id);
+      console.debug('[hideNode] node undefined: ', node_id);
     }
   }
 
@@ -383,17 +384,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return element.id != node_id;
       });
       this.data.nodes.push(node_copy);
-      /* const nodeLinks = [];
-      this.data._links.forEach((element) => {
-        if (element.source == node_id || element.target == node_id) {
-          nodeLinks.push(element);
-        }
-      });
-      for (const link of nodeLinks) {
-        this.showLink(link);
-      } */
     } else {
-      console.log('node undefined' + '' + node_id);
+      console.debug('[showNode] node undefined: ', node_id);
     }
   }
 
@@ -413,7 +405,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       link_copy.target = link_copy.target.id;
       this.data._links.push(link_copy);
     } else {
-      console.log('link undefined');
+      console.debug('[hideLink] link undefined: ', link);
     }
   }
 
@@ -430,12 +422,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       });
       this.data.links.push(link_copy);
     } else {
-      console.log('link undefined');
+      console.debug('[showLink] link undefined: ', link);
     }
   }
 
   /**
-   * Return the list of types of the children of the node
+   * Return a list of the node's child types
    *
    * @param {string} node_id a node ID
    * @returns {Array} the list
@@ -466,7 +458,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
-   * Return the list of children of the node from that type
+   * Returns the list of children of the node of this type
    *
    * @param {string} node_id a node ID
    * @param {string} type a type
@@ -492,7 +484,24 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
-   * Initialize the d3 SVG canvas based on the data from a graph dataset.
+   * Return a list of node IDs whose group is equal to groupIndex
+   *
+   * @param {int} groupIndex the index of the group
+   * @returns {Array} the list
+   */
+  getNodeByGroup(groupIndex) {
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    const nodes = [];
+    for (const node of allNodes) {
+      if (node.group == groupIndex) {
+        nodes.push(node.id);
+      }
+    }
+    return nodes;
+  }
+
+  /**
+   * Initialize the d3 SVG canvas based on the data from a graph dataset
    *
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
@@ -502,14 +511,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     for (const node of this.data.nodes) {
       node.cluster = false;
       node.realNode = true;
+      node.display = true;
     }
 
-    const legend = this.prefixLegend(this.data.typeList); // génère les infos sur la légende si la requête génère une typeList (si color_id)
+    const legend = this.prefixLegend(this.data.typeList);
     const colorScale = this.colorSetOrScale;
     const setColor = function (d, default_color, override_color = undefined) {
-      // renvoie override_color si pas undefined ou colorScale(d) sinon car colorScale est défini
       if (override_color && colorScale) return override_color;
-      else if (colorScale) return colorScale(d); // colorScale prend une color_id en paramètre
+      else if (colorScale) return colorScale(d);
       return default_color;
     };
 
@@ -518,30 +527,40 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.nodeCircle = this.g.append('g').selectAll('.node');
     this.nodeCluster = this.g.append('g').selectAll('.node');
 
+    this.distanceLink = 30;
+    this.chargeStrength = -40;
+    this.forceCenter = 0.1;
+
     this.simulation = d3
-      .forceSimulation(this.data.nodes) // définit les noeuds de la simulation
+      .forceSimulation(this.data.nodes) // defines simulation nodes
       .force(
         'link',
-        d3.forceLink(this.data.links).id((d) => d.id) // génère les liens entre les noeuds (le .id permet de dire à d3 comment identifier les noeuds)
+        d3
+          .forceLink(this.data.links)
+          .id((d) => d.id) // tells d3 how to identify nodes
+          .distance(this.distanceLink)
       )
-      .force('charge', d3.forceManyBody().strength(-40)) // ajoute une force de répulsion entre les noeuds
-      .force('x', d3.forceX(this.width / 2).strength(0.1))
-      .force('y', d3.forceY(this.height / 2).strength(0.1))
+      .force('charge', d3.forceManyBody().strength(this.chargeStrength)) // adds a repulsive force between the nodes
+      .force('x', d3.forceX(this.width / 2).strength(this.forceCenter))
+      .force('y', d3.forceY(this.height / 2).strength(this.forceCenter))
       .force('collide', d3.forceCollide(5))
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2)) // définit le centre de gravité du graph au centre du canva
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2)) // defines the graph's center of gravity at the center of the canva
       .alphaTarget(1)
       .on('tick', () => this.ticked(this));
 
-    const zoom = d3.zoom().on('zoom', this.handleZoom); // ajoute le "event handler" qui permet de gérer le zoom
+    // adds an event handler for zoom management
+    const zoom = d3.zoom().on('zoom', (event) => {
+      this.handleZoom(event, this);
+    });
 
-    this.svg.call(zoom); // associe le zoom au svg
+    this.svg.call(zoom);
 
     this.node_label = this.g.selectAll('.node_label');
     this.link_label = this.g.selectAll('.link_label');
 
-    // Create legend
+    // create legend
     this.svg
-      .append('text') // ajoute le texte "Legend"
+      .append('text')
       .attr('x', 12)
       .attr('y', 24)
       .style('font-size', '14px')
@@ -579,7 +598,29 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
 
+    // create an initial group cluster
+    if (this.zoomClustering) {
+      const cluster = this.createNewCluster('zoom', this.getNodeByGroup(1));
+      cluster.display = false;
+      this.hiddenGroup = 1;
+    }
+
+    // initialize the zoom sensitivity
+    this.zoomSensitivity = 1;
+
     this.update();
+  }
+
+  /**
+   * Update the forces of the simulation
+   *
+   */
+  updateForceSimulation() {
+    this.simulation.force('link').distance(this.distanceLink);
+    this.simulation.force('charge').strength(this.chargeStrength);
+    this.simulation.force('x').strength(this.forceCenter);
+    this.simulation.force('y').strength(this.forceCenter);
+    this.simulation.alpha(1).restart();
   }
 
   /**
@@ -590,27 +631,37 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   update() {
     const colorScale = this.colorSetOrScale;
     const setColor = function (d, default_color, override_color = undefined) {
-      // renvoie override_color si pas undefined ou colorScale(d) sinon car colorScale est défini
       if (override_color && colorScale) return override_color;
-      else if (colorScale) return colorScale(d); // colorScale prend une color_id en paramètre
+      else if (colorScale) return colorScale(d);
       return default_color;
     };
 
+    // attach the data to svg elements
     this.nodeCircle = this.nodeCircle.data(
       this.data.nodes.filter((d) => !d.cluster),
       function (d) {
         return d.id;
       }
     );
+
+    // remove svg elements linked to deleted data
     this.nodeCircle.exit().remove();
+
+    // create a new circle for each new node added to the data
     this.nodeCircle = this.nodeCircle
       .enter()
       .append('circle')
-      .attr('r', 4)
-      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111')) // ici d correspond à la data jointe à l'élément
+      .attr('r', (d) => {
+        return 7 - d.group;
+      })
+      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111')) // d corresponds to the data attached to the element
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
       .attr('fill', (d) => setColor(d.color_id, 'black'))
+      .style('visibility', (d) => {
+        const result = d.display ? 'visible' : 'hidden';
+        return result;
+      })
       .call(
         d3
           .drag()
@@ -619,9 +670,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           .on('end', (e, d) => this.dragended(e, d, this))
       )
       .on('click', (event, datum) => {
-        // événement déclenché lors d'un clic sur un élément (datum correspond à la data encore = le node cliqué)
         this.dispatchEvent({
-          // à quoi ça sert ?
           type: 'click',
           message: 'node click event',
           event: event,
@@ -629,7 +678,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseover', (event, datum) => {
-        // événement déclenché lors que la souris est sur l'élément
         event.target.style['stroke'] = setColor(
           this.data.nodes[datum.index].color_id,
           'white',
@@ -641,11 +689,10 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         );
         this.node_label
           .filter((e, j) => {
-            // ne retient que le label du node concerné
             return datum.index == j;
           })
           .style('fill', 'white')
-          .style('opacity', '1'); // passe en blanc le label du node
+          .style('opacity', '1');
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
@@ -654,7 +701,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        // événement déclenché lors que la souris quitte l'élément
         event.target.style['stroke'] = setColor(
           this.data.nodes[datum.index].color_id,
           '#ddd',
@@ -682,7 +728,10 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return d.id;
       }
     );
+
     this.nodeCluster.exit().remove();
+
+    // create a new rectangle for each new cluster added to the data
     this.nodeCluster = this.nodeCluster
       .enter()
       .append('rect')
@@ -691,8 +740,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('height', 14)
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
-      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111')) // ici d correspond à la data jointe à l'élément
+      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
       .attr('fill', (d) => setColor(d.color_id, 'black'))
+      .style('visibility', (d) => {
+        const result = d.display ? 'visible' : 'hidden';
+        return result;
+      })
       .call(
         d3
           .drag()
@@ -701,9 +754,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           .on('end', (e, d) => this.dragended(e, d, this))
       )
       .on('click', (event, datum) => {
-        // événement déclenché lors d'un clic sur un élément (datum correspond à la data encore = le node cliqué)
         this.dispatchEvent({
-          // à quoi ça sert ?
           type: 'click',
           message: 'node click event',
           event: event,
@@ -711,7 +762,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseover', (event, datum) => {
-        // événement déclenché lors que la souris est sur l'élément
         event.target.style['stroke'] = setColor(
           this.data.nodes[datum.index].color_id,
           'white',
@@ -723,11 +773,10 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         );
         this.node_label
           .filter((e, j) => {
-            // ne retient que le label du node concerné
             return datum.index == j;
           })
           .style('fill', 'white')
-          .style('opacity', '1'); // passe en blanc le label du node
+          .style('opacity', '1');
         this.link_label
           .filter((e) => {
             return (
@@ -735,7 +784,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
             );
           })
           .style('fill', 'white')
-          .style('opacity', '1'); // passe en blanc le label de tous les links du node
+          .style('opacity', '1');
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
@@ -744,7 +793,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        // événement déclenché lors que la souris quitte l'élément
         event.target.style['stroke'] = setColor(
           this.data.nodes[datum.index].color_id,
           '#ddd',
@@ -765,24 +813,46 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       })
       .merge(this.nodeCluster);
 
-    // Apply the general update pattern to the links.
     this.link = this.link.data(this.data.links, function (d) {
       return d.source.id + '-' + d.target.id;
     });
+
     this.link.exit().remove();
+
+    // create a new line for each new link added to the data
     this.link = this.link
       .enter()
       .append('line')
       .attr('stroke-width', 0.75)
-      .attr('stroke', '#999') // couleur du contour
-      .attr('stroke-opacity', 0.8) // opacité du contour
+      .attr('stroke', '#999')
+      .attr('stroke-opacity', 0.8)
+      .style('visibility', (d) => {
+        let source;
+        let target;
+        if (d.source.id == undefined) {
+          const allNodes = this.data.nodes.concat(this.data._nodes);
+          source = this.data.nodes.find((element) => {
+            return element.id == d.source;
+          });
+          target = allNodes.find((element) => {
+            return element.id == d.target;
+          });
+        } else {
+          source = d.source;
+          target = d.target;
+        }
+        const result = source.display && target.display ? 'visible' : 'hidden';
+        return result;
+      })
       .on('mouseover', (event, datum) => {
-        // événement déclenché lors que la souris est sur l'élément
         this.link_label
           .filter((e) => {
             return datum.index == e.index;
           })
-          .style('visibility', 'visible');
+          .style('visibility', (d) => {
+            const res = d.display ? 'visible' : 'hidden';
+            return res;
+          });
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
@@ -791,7 +861,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        // événement déclenché lors que la souris est sur l'élément
         this.link_label
           .filter((e) => {
             return datum.index == e.index;
@@ -808,11 +877,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     this.node_label = this.node_label.data(this.data.nodes, function (d) {
       return d.id;
-    }); // lié à la data des nodes
+    });
     this.node_label.exit().remove();
     this.node_label = this.node_label
       .enter()
-      .append('text') // rajoute une balise <text>
+      .append('text')
       .text(function (d) {
         return getUriLocalname(d.id);
       })
@@ -822,7 +891,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('text-shadow', '1px 1px black')
       .style('fill', 'white')
       .style('opacity', '0.3')
-      .style('pointer-events', 'none') // node_label pas soumis aux événements du pointer
+      .style('pointer-events', 'none')
+      .style('visibility', (d) => {
+        const res = d.display ? 'visible' : 'hidden';
+        return res;
+      })
       .attr('class', 'node_label')
       .merge(this.node_label);
 
@@ -847,7 +920,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('class', 'link_label')
       .merge(this.link_label);
 
-    // Update and restart the simulation.
+    // update and restart the simulation.
     this.simulation.nodes(this.data.nodes);
     this.simulation.force('link').links(this.data.links);
     this.simulation.alpha(1).restart();
@@ -933,14 +1006,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    * A handler function for selecting elements to transform during a zoom event
    *
    * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
+   * @param {D3GraphCanvas} graph this
    */
-  handleZoom(event) {
-    // redimensionne les éléments du svg suivant le zoom
+  handleZoom(event, graph) {
     d3.selectAll('g.graph')
-      // .filter((d, i) => i < 2) //pourquoi ?
       .attr('height', '100%')
       .attr('width', '100%')
-      // .attr('transform', event.transform) //remplace bien le .attr suivant : pourquoi c'est commenté ?
       .attr(
         'transform',
         'translate(' +
@@ -951,6 +1022,28 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           event.transform.k +
           ')'
       );
+    // zoom clustering by group
+    if (graph.zoomClustering) {
+      if (
+        Math.floor(event.transform.k / this.zoomSensitivity) !=
+          graph.hiddenGroup &&
+        Math.floor(event.transform.k) >= this.zoomSensitivity
+      ) {
+        graph.changeVisibilityChildren('zoom');
+        graph.removeNode('zoom');
+        const node = graph.createNewCluster(
+          'zoom',
+          graph.getNodeByGroup(
+            Math.floor(event.transform.k / this.zoomSensitivity)
+          )
+        );
+        node.display = false;
+        graph.hiddenGroup = Math.floor(
+          event.transform.k / this.zoomSensitivity
+        );
+        graph.update();
+      }
+    }
   }
 
   ticked(graph) {
@@ -1001,13 +1094,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     d.fy = d.y;
   }
 
-  // Fonction pour le drag
   dragged(event, d) {
     d.fx = event.x;
     d.fy = event.y;
   }
 
-  // Fonction pour terminer le drag
   dragended(event, d, graph) {
     if (!event.active) graph.simulation.alphaTarget(0);
     d.fx = null;

@@ -14,8 +14,8 @@ export class Graph {
       // { source: 'x', target: 'y', label: 1 }
     ];
     this.typeList = [];
-    this._nodes = [];
-    this._links = [];
+    this._nodes = []; // store the hidden nodes
+    this._links = []; // store the hidden links
   }
 
   /**
@@ -66,11 +66,23 @@ export class Graph {
         }
         this.nodes.push(node);
       }
-      const link = {
-        source: triple.subject.value,
-        target: triple.object.value,
-        label: triple.predicate.value,
-      };
+      let link;
+      if (
+        triple.predicate.value ==
+        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+      ) {
+        link = {
+          source: triple.object.value,
+          target: triple.subject.value,
+          label: triple.predicate.value,
+        };
+      } else {
+        link = {
+          source: triple.subject.value,
+          target: triple.object.value,
+          label: triple.predicate.value,
+        };
+      }
       this.links.push(link);
     }
 
@@ -146,6 +158,8 @@ export class Graph {
   clear() {
     this.nodes = [];
     this.links = [];
+    this._nodes = [];
+    this._links = [];
     this.typeList = [];
   }
 }

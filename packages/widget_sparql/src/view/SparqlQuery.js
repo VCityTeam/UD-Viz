@@ -1,10 +1,18 @@
 /** @class */
+
+/**
+ * The SPARQL query class for writing SPARQL queries based on defined conditions
+ */
 export class SparqlQuery {
+  /**
+   * Create a new empty SPARQL Query
+   *
+   */
   constructor() {
     this.select_variable = [];
-    this.where_conditions = []; // "?subject ?predicate ?object ; a ?subjectType."
-    this.options = []; // ["FILTER","?subject a bldg Building"] or ["OPTIONAL","?object a ?objectType"]
-    this.prefix = []; // ["bldg", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#"]
+    this.where_conditions = []; // example: "?subject ?predicate ?object ; a ?subjectType."
+    this.options = []; // examples: ["FILTER","?subject a bldg Building"] or ["OPTIONAL","?object a ?objectType"]
+    this.prefix = []; // example: ["bldg", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#"]
   }
 
   /**
