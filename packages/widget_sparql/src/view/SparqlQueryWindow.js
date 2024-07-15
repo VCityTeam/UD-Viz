@@ -24,8 +24,9 @@ export class SparqlQueryWindow {
    *                                              with this query. Should be an object of key, value
    *                                              pairs. The keys of these pairs should correspond
    *                                              with the cases in the updateDataView() function.
+   * @param  {Function} handleZoom Function to handle the zoom.
    */
-  constructor(sparqlProvider, configSparqlWidget) {
+  constructor(sparqlProvider, configSparqlWidget, handleZoom = undefined) {
     /** @type {HTMLElement} */
     this.domElement = null;
 
@@ -56,12 +57,6 @@ export class SparqlQueryWindow {
     /** @type {HTMLElement} */
     this.menuList = null;
 
-    /** @type {HTMLElement} */
-    this.buildingIdInput = null;
-
-    /** @type {HTMLElement} */
-    this.showBuildingButton = null;
-
     /**
      * The SPARQL Endpoint Response Provider
      *
@@ -69,11 +64,7 @@ export class SparqlQueryWindow {
      */
     this.sparqlProvider = sparqlProvider;
 
-    /**
-     *A reference to the JsonRenderer class
-     *
-     * @type {JsonRenderer}
-     */
+    this.explorationQuery = undefined;
     this.jsonRenderer = new JsonRenderer();
 
     /**
@@ -81,7 +72,7 @@ export class SparqlQueryWindow {
      *
      * @type {D3GraphCanvas}
      */
-    this.d3Graph = new D3GraphCanvas(configSparqlWidget);
+    this.d3Graph = new D3GraphCanvas(configSparqlWidget, handleZoom, undefined);
 
     /**
      * Contains the D3 table to display RDF data.
@@ -97,7 +88,17 @@ export class SparqlQueryWindow {
      */
     this.queries = configSparqlWidget['queries'];
 
+    /**
+     * The Sparql exploration query
+     *
+     * @type {string}
+     */
+
+    this.explorationQuery = undefined;
+
     this.initHtml();
+
+    this.toggleQueryTextAreaButton.onclick = () => this.toggleQueryTextArea();
 
     /**
      * Sets the SparqlEndpointResponseProvider
@@ -109,11 +110,15 @@ export class SparqlQueryWindow {
     // Get queries from text files and update the this.queries
     const promises = [];
     this.queries.forEach((query) => {
-      promises.push(
-        loadTextFile(query.filepath).then((result) => {
-          query.text = result;
-        })
-      );
+      if (query.filepath) {
+        promises.push(
+          loadTextFile(query.filepath).then((result) => {
+            query.text = result;
+          })
+        );
+      } else {
+        query.text = '';
+      }
     });
 
     Promise.all(promises).then(() => {
@@ -125,8 +130,6 @@ export class SparqlQueryWindow {
         this.updateResultDropdown(0);
       }
     });
-
-    this.toggleQueryTextAreaButton.onclick = () => this.toggleQueryTextArea();
 
     if (this.queries.length > 1) {
       this.querySelect.onchange = () => {
@@ -145,33 +148,10 @@ export class SparqlQueryWindow {
       return false;
     };
 
-    // create and initialize a query that will be updated by clicking on graph nodes and on 3D model buildings
-    this.explorationQuery = new SparqlQuery();
-    this.explorationQuery.prefix.push([
-      'bldg',
-      'https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/building#',
-    ]);
-    this.explorationQuery.prefix.push([
-      'skos',
-      'http://www.w3.org/2004/02/skos/core#',
-    ]);
-    this.explorationQuery.prefix.push([
-      'data',
-      'https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/Villeurbanne/2018/GratteCiel_2018_split#',
-    ]);
-    this.explorationQuery.select_variable.push(
-      'subject',
-      'subjectType',
-      'predicate',
-      'object',
-      'objectType'
-    );
-    this.explorationQuery.options.push(
-      ['FILTER', '?subjectType != owl:NamedIndividual'],
-      ['FILTER', '!bound(?objectType) || ?objectType != owl:NamedIndividual'],
-      ['FILTER', '?subject != owl:NamedIndividual'],
-      ['FILTER', '?object != owl:NamedIndividual']
-    );
+    this.resetButton.onclick = () => {
+      this.d3Graph.clearCanvas();
+      this.d3Graph.data.clear();
+    };
   }
 
   /**
@@ -210,7 +190,6 @@ export class SparqlQueryWindow {
         this.dataView.append(this.d3Graph.canvas);
         this.dataView.style['height'] = this.d3Graph.height + 'px';
         this.dataView.style['width'] = this.d3Graph.width + 'px';
-        this.menuUser.style.display = 'block';
         this.resetButton.style.display = 'block';
         break;
       case 'json':
@@ -218,7 +197,6 @@ export class SparqlQueryWindow {
         this.jsonRenderer.renderjson.set_max_string_length(40);
         this.dataView.style['height'] = '100%';
         this.dataView.append(this.jsonRenderer.renderjson(response));
-        this.menuUser.style.display = 'none';
         break;
       case 'table':
         this.dataView.append(this.table.domElement);
@@ -227,7 +205,6 @@ export class SparqlQueryWindow {
         this.table.filterInput.addEventListener('change', (e) =>
           Table.update(this.table, e)
         );
-        this.menuUser.style.display = 'none';
         break;
       default:
         console.error('This result format is not supported: ' + view_type);
@@ -252,16 +229,21 @@ export class SparqlQueryWindow {
   }
 
   /**
-   * Update the this.queryTextArea with the text of the query that was selected in the dropdown
+   * Update the this.queryTextArea with the text of the query that was selected in the dropdown, or the exploration query
    *
    * @param {number} index the index of the query in the this.queries array
    */
   updateQueryTextArea(index) {
-    if (Number(index) == 0) {
-      // only with the exploration query
+    const query = this.queries[Number(index)];
+    if (query.exploration != undefined) {
+      this.explorationQuery = new SparqlQuery();
+      this.explorationQuery.prefix = query.exploration.prefix;
+      this.explorationQuery.select_variable = query.exploration.select_variable;
+      this.explorationQuery.options = query.exploration.options;
       this.queryTextArea.value = this.explorationQuery.generateQuery();
     } else {
-      this.queryTextArea.value = this.queries[Number(index)].text;
+      this.explorationQuery = undefined;
+      this.queryTextArea.value = query.text;
     }
   }
 
@@ -303,29 +285,6 @@ export class SparqlQueryWindow {
       option.innerText = v;
       this.resultSelect.appendChild(option);
     });
-  }
-
-  /**
-   * Initialize the html context menu of the view
-   */
-  initContextMenu() {
-    this.menu = document.createElement('div');
-    this.menu.setAttribute('id', 'context-menu');
-    this.domElement.appendChild(this.menu);
-    this.menuList = document.createElement('ul');
-    this.menu.appendChild(this.menuList);
-    this.optionCluster = document.createElement('li');
-    this.menuList.appendChild(this.optionCluster);
-    this.optionCluster.style.display = 'none';
-    this.optionAddChildren = document.createElement('li');
-    this.menuList.appendChild(this.optionAddChildren);
-    this.optionAddChildren.style.display = 'none';
-    this.optionAddChildren.innerText = 'Add its children';
-    this.optionsType = document.createElement('g');
-    this.optionCamera = document.createElement('li');
-    this.menuList.appendChild(this.optionCamera);
-    this.optionCamera.style.display = 'none';
-    this.optionCamera.innerText = 'Focus the camera on the building';
   }
 
   /**
@@ -372,163 +331,6 @@ export class SparqlQueryWindow {
   }
 
   /**
-   * Initialize the user menu of graph configuration
-   */
-  initMenuUserGraphConfiguration() {
-    this.menuUser = document.createElement('div');
-    this.menuUser.className = 'menuUser';
-    this.interfaceElement.insertBefore(this.menuUser, this.dataView);
-
-    this.zoom = document.createElement('input');
-    this.zoom.setAttribute('type', 'range');
-    this.zoom.setAttribute('min', '0.5');
-    this.zoom.setAttribute('max', '1.5');
-    this.zoom.setAttribute('step', '0.25');
-    this.zoom.setAttribute('value', '1');
-
-    this.zoom.oninput = () => {
-      this.d3Graph.zoomSensitivity = this.zoom.value;
-    };
-
-    const zoomLabel = document.createElement('label');
-    zoomLabel.innerText = '\nZoom sensitivity: ';
-
-    const zoomScale = document.createElement('div');
-    zoomScale.className = 'scale';
-
-    for (let i = 0.5; i <= 1.5; i += 0.25) {
-      const zoomScaleLabel = document.createElement('span');
-      zoomScaleLabel.className = 'scale_label';
-      zoomScaleLabel.innerText = i;
-      zoomScale.appendChild(zoomScaleLabel);
-    }
-
-    const menuLabel = document.createElement('label');
-    menuLabel.innerText = 'Graph configuration\n';
-    menuLabel.className = 'menu-label';
-
-    this.buildingIdInput = document.createElement('input');
-
-    const buildingIdLabel = document.createElement('label');
-    buildingIdLabel.innerText = '\nBuilding ID: ';
-
-    this.showBuildingButton = document.createElement('input');
-    this.showBuildingButton.setAttribute('type', 'submit');
-    this.showBuildingButton.setAttribute('value', 'Show');
-
-    const chargeStrengthConfiguration = document.createElement('input');
-    chargeStrengthConfiguration.setAttribute('type', 'range');
-    chargeStrengthConfiguration.setAttribute('min', '-80');
-    chargeStrengthConfiguration.setAttribute('max', '0');
-    chargeStrengthConfiguration.setAttribute('step', '20');
-    chargeStrengthConfiguration.setAttribute('value', '-40');
-
-    chargeStrengthConfiguration.oninput = () => {
-      this.d3Graph.chargeStrength = chargeStrengthConfiguration.value;
-      this.d3Graph.updateForceSimulation();
-    };
-
-    const chargeStrengthLabel = document.createElement('label');
-    chargeStrengthLabel.innerText = '\n\nStrength of node attraction: ';
-
-    const chargeStrengthScale = document.createElement('div');
-    chargeStrengthScale.className = 'scale';
-
-    for (let i = -80; i <= 0; i += 20) {
-      const chargeStrengthScaleLabel = document.createElement('span');
-      chargeStrengthScaleLabel.className = 'scale_label';
-      chargeStrengthScaleLabel.innerText = i;
-      chargeStrengthScale.appendChild(chargeStrengthScaleLabel);
-    }
-
-    const distanceLinkConfiguration = document.createElement('input');
-    distanceLinkConfiguration.setAttribute('type', 'range');
-    distanceLinkConfiguration.setAttribute('min', '10');
-    distanceLinkConfiguration.setAttribute('max', '50');
-    distanceLinkConfiguration.setAttribute('step', '10');
-    distanceLinkConfiguration.setAttribute('value', '30');
-
-    distanceLinkConfiguration.oninput = () => {
-      this.d3Graph.distanceLink = distanceLinkConfiguration.value;
-      this.d3Graph.updateForceSimulation();
-    };
-
-    const distanceLinkLabel = document.createElement('label');
-    distanceLinkLabel.innerText = '\n Length of links: ';
-
-    const distanceLinkScale = document.createElement('div');
-    distanceLinkScale.className = 'scale';
-
-    for (let i = 10; i <= 50; i += 10) {
-      const distanceLinkScaleLabel = document.createElement('span');
-      distanceLinkScaleLabel.className = 'scale_label';
-      distanceLinkScaleLabel.innerText = i;
-      distanceLinkScale.appendChild(distanceLinkScaleLabel);
-    }
-
-    const forceCenterConfiguration = document.createElement('input');
-    forceCenterConfiguration.setAttribute('type', 'range');
-    forceCenterConfiguration.setAttribute('min', '0');
-    forceCenterConfiguration.setAttribute('max', '0.3');
-    forceCenterConfiguration.setAttribute('step', '0.1');
-    forceCenterConfiguration.setAttribute('value', '0.1');
-
-    forceCenterConfiguration.oninput = () => {
-      this.d3Graph.forceCenter = forceCenterConfiguration.value;
-      this.d3Graph.updateForceSimulation();
-    };
-
-    const forceCenterLabel = document.createElement('label');
-    forceCenterLabel.innerText = '\n Attraction to the graph center: ';
-
-    const forceCenterScale = document.createElement('div');
-    forceCenterScale.className = 'scale';
-
-    for (const i of [0, 0.1, 0.2, 0.3]) {
-      const forceCenterScaleLabel = document.createElement('span');
-      forceCenterScaleLabel.className = 'scale_label';
-      forceCenterScaleLabel.innerText = i;
-      forceCenterScale.appendChild(forceCenterScaleLabel);
-    }
-
-    const zoomCheckBox = document.createElement('input');
-    zoomCheckBox.setAttribute('type', 'checkbox');
-    zoomCheckBox.setAttribute('id', 'zoom');
-    zoomCheckBox.setAttribute('name', 'zoom');
-    zoomCheckBox.defaultChecked = true;
-    const zoomCheckBoxLabel = document.createElement('label');
-    zoomCheckBoxLabel.innerText = ' Zoom Clustering';
-    zoomCheckBoxLabel.setAttribute('for', 'zoom');
-
-    zoomCheckBox.oninput = () => {
-      this.d3Graph.zoomClustering = zoomCheckBox.checked;
-      if (!zoomCheckBox.checked) {
-        this.d3Graph.changeVisibilityChildren('zoom');
-        this.d3Graph.removeNode('zoom');
-      }
-    };
-
-    this.menuUser.appendChild(menuLabel);
-    this.menuUser.appendChild(zoomLabel);
-    this.menuUser.appendChild(this.zoom);
-    this.menuUser.appendChild(zoomScale);
-    this.menuUser.appendChild(buildingIdLabel);
-    this.menuUser.appendChild(this.buildingIdInput);
-    this.menuUser.appendChild(this.showBuildingButton);
-    this.menuUser.appendChild(chargeStrengthLabel);
-    this.menuUser.appendChild(chargeStrengthConfiguration);
-    this.menuUser.appendChild(chargeStrengthScale);
-    this.menuUser.appendChild(distanceLinkLabel);
-    this.menuUser.appendChild(distanceLinkConfiguration);
-    this.menuUser.appendChild(distanceLinkScale);
-    this.menuUser.appendChild(forceCenterLabel);
-    this.menuUser.appendChild(forceCenterConfiguration);
-    this.menuUser.appendChild(forceCenterScale);
-    this.menuUser.appendChild(zoomCheckBox);
-    this.menuUser.appendChild(zoomCheckBoxLabel);
-  }
-
-  /**
    * Initialize the html of the view
    */
   initHtml() {
@@ -538,7 +340,5 @@ export class SparqlQueryWindow {
     this.domElement.appendChild(this.interfaceElement);
     this.initQueryTextAreaForm();
     this.initResultDisplay();
-    this.initMenuUserGraphConfiguration();
-    this.initContextMenu();
   }
 }

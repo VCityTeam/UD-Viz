@@ -6,32 +6,28 @@ import * as THREE from 'three';
 
 export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
-   * Create a new D3 graph from an RDF JSON object.
+   * Create a new D3 graph from a JSON object.
    * Adapted from https://observablehq.com/@d3/force-directed-graph#chart and
    * https://www.d3indepth.com/zoom-and-pan/
    *
-   * @param {object} configSparqlWidget The sparqlModule configuration.
-   * @param {number} configSparqlWidget.height The SVG canvas height.
-   * @param {number} configSparqlWidget.width The SVG canvas width.
-   * @param {number} configSparqlWidget.fontSize The font size to use for node and link labels.
-   * @param {object} configSparqlWidget.namespaceLabels Prefix declarations which will replace text labels in the Legend.
-   *                                                    This doesn't (yet) affect the legend font size.
+   * @param {object} config The sparqlModule configuration.
+   * @param {number} config.height The SVG canvas height.
+   * @param {number} config.width The SVG canvas width.
+   * @param {number} config.fontSize The font size to use for node and link labels.
+   * @param {object} config.namespaceLabels Prefix declarations which will replace text labels in the Legend. This doesn't (yet) affect the legend font size.
+   * @param {Function} handleZoom The function that handles the zoom.
+   * @param {Function} formatResponse The function that formats the response from JSON into a list of nodes and links.
    */
-  constructor(configSparqlWidget) {
+  constructor(config, handleZoom, formatResponse) {
     super();
-    if (
-      !configSparqlWidget ||
-      !configSparqlWidget.height ||
-      !configSparqlWidget.width ||
-      !configSparqlWidget.fontSize
-    ) {
-      console.log(configSparqlWidget);
+    if (!config || !config.height || !config.width || !config.fontSize) {
+      console.log(config);
       throw 'The given "configSparqlWidget" configuration is incorrect.';
     }
-    this.height = configSparqlWidget.height;
-    this.width = configSparqlWidget.width;
-    this.fontSize = configSparqlWidget.fontSize;
-    this.knownNamespaceLabels = configSparqlWidget.namespaceLabels;
+    this.height = config.height;
+    this.width = config.width;
+    this.fontSize = config.fontSize;
+    this.knownNamespaceLabels = config.namespaceLabels;
     this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
       .attr('class', 'd3_graph')
@@ -39,7 +35,96 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('display', 'hidden');
     this.data = new Graph();
     this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
-    this.zoomClustering = true;
+
+    if (handleZoom == undefined) {
+      this.handleZoom = (ev) => {
+        d3.selectAll('g.graph')
+          .attr('height', '100%')
+          .attr('width', '100%')
+          .attr(
+            'transform',
+            'translate(' +
+              ev.transform.x +
+              ',' +
+              ev.transform.y +
+              ') scale(' +
+              ev.transform.k +
+              ')'
+          );
+      };
+    } else {
+      this.handleZoom = handleZoom;
+    }
+
+    if (formatResponse == undefined) {
+      this.formatResponse = (response, graph) => {
+        /* If the query is formatted using subject, predicate, object, and optionally
+            subjectType and objectType variables the node color based on the type of the
+            subject or object's respective type */
+        if (
+          !response.head.vars.includes('subject') ||
+          !response.head.vars.includes('predicate') ||
+          !response.head.vars.includes('object')
+        ) {
+          throw (
+            'Missing endpoint response bindings for graph construction. Needs at least "subject", "predicate", "object". Found binding: ' +
+            response.head.vars
+          );
+        }
+        for (const triple of response.results.bindings) {
+          if (
+            // if the subject doesn't exist yet
+            graph.nodes.find((n) => n.id == triple.subject.value) == undefined
+          ) {
+            const node = { id: triple.subject.value };
+            if (
+              // if there is a subjectType assign a type and color id
+              triple.subjectType
+            ) {
+              node.type = getUriLocalname(triple.subjectType.value);
+              node.color_id = graph.getNodeColorId(triple.subjectType.value);
+            }
+            graph.nodes.push(node);
+          }
+          if (
+            // if the object doesn't exist yet
+            graph.nodes.find((n) => n.id == triple.object.value) == undefined
+          ) {
+            const node = { id: triple.object.value };
+            if (
+              // if there is an objectType assign a color id
+              triple.objectType
+            ) {
+              node.type = getUriLocalname(triple.objectType.value);
+              node.color_id = graph.getNodeColorId(triple.objectType.value);
+            }
+            graph.nodes.push(node);
+          }
+          let link;
+          if (
+            triple.predicate.value ==
+            'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+          ) {
+            link = {
+              source: triple.object.value,
+              target: triple.subject.value,
+              label: triple.predicate.value,
+            };
+          } else {
+            link = {
+              source: triple.subject.value,
+              target: triple.object.value,
+              label: triple.predicate.value,
+            };
+          }
+          graph.links.push(link);
+        }
+
+        console.debug(graph);
+      };
+    } else {
+      this.formatResponse = formatResponse;
+    }
   }
 
   // / Data Functions ///
@@ -69,6 +154,43 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       }
     }
     return list;
+  }
+
+  /**
+   * Return true if the graph possesses a cycle, false otherwise
+   *
+   * @param {string} node_id a node ID
+   * @param {Map} map an empty map at first
+   * @returns {boolean} the result
+   */
+  possessCycle(node_id, map) {
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    if (map.size < allNodes.length) {
+      for (const node of allNodes) {
+        map.set(node.id, 'white');
+      }
+    }
+    const node = allNodes.find((element) => {
+      return element.id == node_id;
+    });
+    if (node != undefined) {
+      map.set(node.id, 'grey');
+      if (node.child != undefined) {
+        for (const child_id of node.child) {
+          if (map.get(child_id) == 'grey') {
+            return true;
+          } else if (map.get(child_id) == 'white') {
+            if (this.possessCycle(child_id, map)) {
+              return true;
+            }
+          }
+        }
+      }
+      map.set(node.id, 'black');
+      return false;
+    }
+    console.log('[haveCycle] node undefined');
+    return undefined;
   }
 
   /**
@@ -176,9 +298,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     if (node != undefined) {
       if (node.parent != undefined) {
         for (const parent_id of node.parent) {
-          const parent = this.data.nodes.find((element) => {
-            return element.id == parent_id;
-          });
+          const parent = this.data.nodes.find(
+            (element) => element.id == parent_id
+          );
           if (parent != undefined) {
             return true;
           }
@@ -427,7 +549,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
-   * Return a list of the node's child types
+   * Return a list of the node's children types
    *
    * @param {string} node_id a node ID
    * @returns {Array} the list
@@ -506,7 +628,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
   init(response) {
-    this.data.formatResponseData(response);
+    this.formatResponse(response, this.data);
+
     this.addChildParent();
     for (const node of this.data.nodes) {
       node.cluster = false;
@@ -550,7 +673,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     // adds an event handler for zoom management
     const zoom = d3.zoom().on('zoom', (event) => {
-      this.handleZoom(event, this);
+      if (this.handleZoom.length == 1) {
+        this.handleZoom(event);
+      } else {
+        this.handleZoom(event, this);
+      }
     });
 
     this.svg.call(zoom);
@@ -597,16 +724,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .text((d) => d)
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
-
-    // create an initial group cluster
-    if (this.zoomClustering) {
-      const cluster = this.createNewCluster('zoom', this.getNodeByGroup(1));
-      cluster.display = false;
-      this.hiddenGroup = 1;
-    }
-
-    // initialize the zoom sensitivity
-    this.zoomSensitivity = 1;
 
     this.update();
   }
@@ -1000,50 +1117,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .on('start', dragstarted)
       .on('drag', dragged)
       .on('end', dragended);
-  }
-
-  /**
-   * A handler function for selecting elements to transform during a zoom event
-   *
-   * @param {d3.D3ZoomEvent} event the zoom event containing information on how the svg canvas is being translated and scaled
-   * @param {D3GraphCanvas} graph this
-   */
-  handleZoom(event, graph) {
-    d3.selectAll('g.graph')
-      .attr('height', '100%')
-      .attr('width', '100%')
-      .attr(
-        'transform',
-        'translate(' +
-          event.transform.x +
-          ',' +
-          event.transform.y +
-          ') scale(' +
-          event.transform.k +
-          ')'
-      );
-    // zoom clustering by group
-    if (graph.zoomClustering) {
-      if (
-        Math.floor(event.transform.k / this.zoomSensitivity) !=
-          graph.hiddenGroup &&
-        Math.floor(event.transform.k) >= this.zoomSensitivity
-      ) {
-        graph.changeVisibilityChildren('zoom');
-        graph.removeNode('zoom');
-        const node = graph.createNewCluster(
-          'zoom',
-          graph.getNodeByGroup(
-            Math.floor(event.transform.k / this.zoomSensitivity)
-          )
-        );
-        node.display = false;
-        graph.hiddenGroup = Math.floor(
-          event.transform.k / this.zoomSensitivity
-        );
-        graph.update();
-      }
-    }
   }
 
   ticked(graph) {
