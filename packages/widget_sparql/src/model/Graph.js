@@ -1,5 +1,3 @@
-import { getUriLocalname } from '@ud-viz/utils_browser';
-
 /** @class */
 export class Graph {
   /**
@@ -16,77 +14,6 @@ export class Graph {
     this.typeList = [];
     this._nodes = []; // store the hidden nodes
     this._links = []; // store the hidden links
-  }
-
-  /**
-   * update the graph nodes and links.
-   *
-   * @param {object} response A JSON object returned by a SparqlEndpointResponseProvider.EVENT_ENDPOINT_RESPONSE_UPDATED event
-   */
-  formatResponseData(response) {
-    /* If the query is formatted using subject, predicate, object, and optionally
-        subjectType and objectType variables the node color based on the type of the
-        subject or object's respective type */
-    if (
-      !response.head.vars.includes('subject') ||
-      !response.head.vars.includes('predicate') ||
-      !response.head.vars.includes('object')
-    ) {
-      throw (
-        'Missing endpoint response bindings for graph construction. Needs at least "subject", "predicate", "object". Found binding: ' +
-        response.head.vars
-      );
-    }
-    for (const triple of response.results.bindings) {
-      if (
-        // if the subject doesn't exist yet
-        this.nodes.find((n) => n.id == triple.subject.value) == undefined
-      ) {
-        const node = { id: triple.subject.value };
-        if (
-          // if there is a subjectType assign a type and color id
-          triple.subjectType
-        ) {
-          node.type = getUriLocalname(triple.subjectType.value);
-          node.color_id = this.getNodeColorId(triple.subjectType.value);
-        }
-        this.nodes.push(node);
-      }
-      if (
-        // if the object doesn't exist yet
-        this.nodes.find((n) => n.id == triple.object.value) == undefined
-      ) {
-        const node = { id: triple.object.value };
-        if (
-          // if there is an objectType assign a color id
-          triple.objectType
-        ) {
-          node.type = getUriLocalname(triple.objectType.value);
-          node.color_id = this.getNodeColorId(triple.objectType.value);
-        }
-        this.nodes.push(node);
-      }
-      let link;
-      if (
-        triple.predicate.value ==
-        'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-      ) {
-        link = {
-          source: triple.object.value,
-          target: triple.subject.value,
-          label: triple.predicate.value,
-        };
-      } else {
-        link = {
-          source: triple.subject.value,
-          target: triple.object.value,
-          label: triple.predicate.value,
-        };
-      }
-      this.links.push(link);
-    }
-
-    console.debug(this);
   }
 
   /**
