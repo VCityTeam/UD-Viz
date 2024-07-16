@@ -100,23 +100,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
             }
             graph.nodes.push(node);
           }
-          let link;
-          if (
-            triple.predicate.value ==
-            'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-          ) {
-            link = {
-              source: triple.object.value,
-              target: triple.subject.value,
-              label: triple.predicate.value,
-            };
-          } else {
-            link = {
-              source: triple.subject.value,
-              target: triple.object.value,
-              label: triple.predicate.value,
-            };
-          }
+          const link = {
+            source: triple.subject.value,
+            target: triple.object.value,
+            label: triple.predicate.value,
+          };
           graph.links.push(link);
         }
 
@@ -230,31 +218,46 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       }
     }
 
+    let cyclic = false;
+
     for (const node of this.data.nodes) {
-      if (!('parent' in node)) {
-        node.group = 0;
+      const map = new Map();
+      if (this.possessCycle(node.id, map)) {
+        cyclic = true;
       }
     }
 
-    let modif = true;
-    let i = 0;
-
-    while (modif) {
-      modif = false;
+    if (!cyclic) {
       for (const node of this.data.nodes) {
-        if (node.group == i) {
-          if (node.child != undefined) {
-            for (const childNodeId of node.child) {
-              const childNode = this.data.nodes.find((element) => {
-                return element.id == childNodeId;
-              });
-              childNode.group = i + 1;
-              modif = true;
+        if (!('parent' in node)) {
+          node.group = 0;
+        }
+      }
+
+      let modif = true;
+      let i = 0;
+
+      while (modif) {
+        modif = false;
+        for (const node of this.data.nodes) {
+          if (node.group == i) {
+            if (node.child != undefined) {
+              for (const childNodeId of node.child) {
+                const childNode = this.data.nodes.find((element) => {
+                  return element.id == childNodeId;
+                });
+                childNode.group = i + 1;
+                modif = true;
+              }
             }
           }
         }
+        i++;
       }
-      i++;
+    } else {
+      for (const node of this.data.nodes) {
+        node.group = 0;
+      }
     }
   }
 
@@ -317,7 +320,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    *
    * @param {string} node_id a node ID
    */
-  changeVisibilityChildren(node_id) {
+  changeVisibilityDescendants(node_id) {
     const allNodes = this.data.nodes.concat(this.data._nodes);
     const node = allNodes.find((d) => d.id == node_id);
     if (node != undefined) {
@@ -383,6 +386,103 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
+   * Change the state of the node from simple node to cluster, or the opposite
+   *
+   * @param {string} node_id a node ID
+   */
+  changeVisibilityChildren(node_id) {
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    const node = allNodes.find((d) => d.id == node_id);
+    if (node != undefined) {
+      if (node.child != undefined) {
+        node.cluster = node.cluster != true;
+        if (node.cluster) {
+          for (const child_id of node.child) {
+            this.hideNode(child_id);
+          }
+          for (const child_id of node.child) {
+            const nodeLinks = [];
+            this.data.links.forEach((element) => {
+              if (
+                element.source.id == child_id ||
+                element.target.id == child_id
+              ) {
+                nodeLinks.push(element);
+              }
+            });
+            for (const link of nodeLinks) {
+              this.hideLink(link);
+            }
+          }
+          let link;
+          this.data._links.forEach((element) => {
+            if (
+              node.child.includes(element.source) &&
+              element.source != node.id
+            ) {
+              link = this.createNewLink(
+                node_id,
+                element.target,
+                node_id + '_children_cluster'
+              );
+              if (link) link.realLink = false;
+            }
+            if (
+              node.child.includes(element.target) &&
+              element.target != node.id
+            ) {
+              link = this.createNewLink(
+                element.source,
+                node_id,
+                node_id + '_children_cluster'
+              );
+              if (link) link.realLink = false;
+            }
+          });
+        } else {
+          for (const child_id of node.child) {
+            if (
+              this.OneParentVisible(child_id) &&
+              !this.OneParentCluster(child_id)
+            ) {
+              this.showNode(child_id);
+            }
+          }
+          for (const child_id of node.child) {
+            if (
+              this.OneParentVisible(child_id) &&
+              !this.OneParentCluster(child_id)
+            ) {
+              const nodeLinks = [];
+              this.data._links.forEach((element) => {
+                if (
+                  (element.source == child_id || element.target == child_id) &&
+                  this.data.nodes.find((d) => d.id == element.source) !=
+                    undefined &&
+                  this.data.nodes.find((d) => d.id == element.target) !=
+                    undefined
+                ) {
+                  nodeLinks.push(element);
+                }
+              });
+              for (const link of nodeLinks) {
+                this.showLink(link);
+              }
+            }
+          }
+          this.data.links.forEach((element) => {
+            if (element.label == node_id + '_children_cluster') {
+              this.removeLink(element);
+            }
+          });
+        }
+      }
+    } else {
+      console.debug('[changeVisibilityChildren] node undefined: ', node_id);
+    }
+  }
+
+  /**
    * Create a new link and add it to the graph
    *
    * @param {string} source source of the link
@@ -391,12 +491,18 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    * @returns {object} the created link
    */
   createNewLink(source, target, label) {
-    const link = {};
-    link.source = source;
-    link.target = target;
-    link.label = label;
-    this.data.links.push(link);
-    return link;
+    if (
+      this.data.nodes.find((element) => element.id == source) != undefined &&
+      this.data.nodes.find((element) => element.id == target) != undefined
+    ) {
+      const link = {};
+      link.source = source;
+      link.target = target;
+      link.label = label;
+      this.data.links.push(link);
+      return link;
+    }
+    return null;
   }
 
   /**
@@ -445,6 +551,16 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
+   * Remove the link from the graph
+   *
+   * @param {Object} link the link
+   */
+  removeLink(link) {
+    this.data.links = this.data.links.filter((d) => d != link);
+    this.data._links = this.data._links.filter((d) => d != link);
+  }
+
+  /**
    * Create a new cluster and add it to the graph
    *
    * @param {string} cluster_id the ID of the created cluster
@@ -457,6 +573,17 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     cluster.cluster = false;
     cluster.child = nodes_id;
     cluster.realNode = false;
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    for (const node_id of nodes_id) {
+      const node = allNodes.find((element) => {
+        return element.id == node_id;
+      });
+      if (!('parent' in node)) {
+        node.parent = [cluster_id];
+      } else {
+        node.parent.push(cluster_id);
+      }
+    }
     if (source_id != undefined) {
       this.createNewLink(source_id, cluster_id, 'isCluster');
       const source = this.data.nodes.find((element) => {
@@ -562,7 +689,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     const childrenType = [];
     if (node != undefined) {
       for (const child_id of node.child) {
-        const child = allNodes.find((element) => {
+        const child = this.data.nodes.find((element) => {
           return element.id == child_id;
         });
         if (
@@ -577,6 +704,28 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       }
     }
     return childrenType;
+  }
+
+  /**
+   * Return a list of the different types of nodes
+   *
+   * @returns {Array} the list
+   */
+  getTypeList() {
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    const typeList = [];
+    for (const node of allNodes) {
+      if (
+        node != undefined &&
+        node.type != undefined &&
+        typeList.find((element) => {
+          return element == node.type;
+        }) == undefined
+      ) {
+        typeList.push(node.type);
+      }
+    }
+    return typeList;
   }
 
   /**
@@ -623,6 +772,23 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
+   * Return a list of node IDs whose type is equal to typeName
+   *
+   * @param {string} typeName the name of the type
+   * @returns {Array} the list
+   */
+  getNodeByType(typeName) {
+    const allNodes = this.data.nodes.concat(this.data._nodes);
+    const nodes = [];
+    for (const node of allNodes) {
+      if (node.type == typeName) {
+        nodes.push(node.id);
+      }
+    }
+    return nodes;
+  }
+
+  /**
    * Initialize the d3 SVG canvas based on the data from a graph dataset
    *
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
@@ -635,6 +801,10 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       node.cluster = false;
       node.realNode = true;
       node.display = true;
+    }
+
+    for (const link of this.data.links) {
+      link.realLink = true;
     }
 
     const legend = this.prefixLegend(this.data.typeList);
@@ -943,6 +1113,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('stroke-width', 0.75)
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.8)
+      .attr('stroke-dasharray', (d) => {
+        let result;
+        if (d.realLink) result = undefined;
+        else result = '1';
+        return result;
+      })
       .style('visibility', (d) => {
         let source;
         let target;
