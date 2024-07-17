@@ -31,10 +31,22 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
       .attr('class', 'd3_graph')
+      .attr('id', 'svg')
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
     this.data = new Graph();
     this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
+
+    this.tooltip = d3
+      .create('div')
+      .style('visibility', 'hidden')
+      .attr('class', 'tooltip')
+      .style('background-color', 'white')
+      .style('border', 'solid')
+      .style('border-width', '2px')
+      .style('border-radius', '5px')
+      .style('position', 'absolute')
+      .style('padding', '5px');
 
     if (handleZoom == undefined) {
       this.handleZoom = (ev) => {
@@ -492,6 +504,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    */
   createNewLink(source, target, label) {
     if (
+      source != target &&
       this.data.nodes.find((element) => element.id == source) != undefined &&
       this.data.nodes.find((element) => element.id == target) != undefined
     ) {
@@ -553,7 +566,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Remove the link from the graph
    *
-   * @param {Object} link the link
+   * @param {object} link the link
    */
   removeLink(link) {
     this.data.links = this.data.links.filter((d) => d != link);
@@ -819,6 +832,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.link = this.g.append('g').selectAll('.link');
     this.nodeCircle = this.g.append('g').selectAll('.node');
     this.nodeCluster = this.g.append('g').selectAll('.node');
+    this.label = this.svg.append('g').attr('class', 'graph');
 
     this.distanceLink = 30;
     this.chargeStrength = -40;
@@ -852,8 +866,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     this.svg.call(zoom);
 
-    this.node_label = this.g.selectAll('.node_label');
-    this.link_label = this.g.selectAll('.link_label');
+    this.node_label_cluster = this.label.selectAll('.node_label_cluster');
+    this.node_label = this.label.selectAll('.node_label');
+    this.link_label = this.label.selectAll('.link_label');
 
     // create legend
     this.svg
@@ -895,6 +910,22 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
 
+    this.svg
+      .append('defs')
+      .append('marker')
+      .attr('id', 'arrowhead')
+      .attr('viewBox', '-0 -5 10 10')
+      .attr('refX', 28)
+      .attr('refY', 0)
+      .attr('orient', 'auto')
+      .attr('markerWidth', 5)
+      .attr('markerHeight', 5)
+      .attr('xoverflow', 'visible')
+      .append('svg:path')
+      .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+      .attr('fill', '#999')
+      .style('stroke', 'none');
+
     this.update();
   }
 
@@ -923,6 +954,34 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       return default_color;
     };
 
+    const hexToDec = function (hex) {
+      const code = hex.charCodeAt(0);
+      if (code >= 97) return code - 87;
+      return parseInt(hex);
+    };
+
+    const htmlTooltip = function (data, propertiesOff = []) {
+      let str = '';
+      for (const property in data) {
+        if (!propertiesOff.includes(property))
+          str = str + `<strong>${property}:</strong> ${data[property]}<br>`;
+      }
+      return str;
+    };
+
+    const modifyColorTint = function (hex, k) {
+      hex = hex.toLowerCase();
+      let r = (hexToDec(hex[1]) * 16 + hexToDec(hex[2])) * k;
+      if (r > 255) r = 255;
+      let g = (hexToDec(hex[3]) * 16 + hexToDec(hex[4])) * k;
+      if (g > 255) g = 255;
+      let b = (hexToDec(hex[5]) * 16 + hexToDec(hex[6])) * k;
+      if (b > 255) b = 255;
+      const res =
+        'rgb(' + r.toString() + ',' + g.toString() + ',' + b.toString() + ')';
+      return res;
+    };
+
     // attach the data to svg elements
     this.nodeCircle = this.nodeCircle.data(
       this.data.nodes.filter((d) => !d.cluster),
@@ -944,7 +1003,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111')) // d corresponds to the data attached to the element
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
-      .attr('fill', (d) => setColor(d.color_id, 'black'))
+      .attr('fill', (d) => d.color_id)
       .style('visibility', (d) => {
         const result = d.display ? 'visible' : 'hidden';
         return result;
@@ -965,21 +1024,24 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseover', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          'white',
-          'white'
-        );
-        event.target.style['fill'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          '#333'
-        );
+        this.tooltip.style('visibility', 'visible');
+        event.target.style['stroke'] = 'white';
         this.node_label
           .filter((e, j) => {
             return datum.index == j;
           })
           .style('fill', 'white')
           .style('opacity', '1');
+        if (datum.child != undefined) {
+          const allNodes = this.data.nodes.concat(this.data._nodes);
+          for (const child_id of datum.child) {
+            const child = allNodes.find((e) => e.id == child_id);
+            if (child.color_id != undefined)
+              this.nodeCircle
+                .filter((e) => e.id == child_id)
+                .style('fill', modifyColorTint(child.color_id, 1.2));
+          }
+        }
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
@@ -988,21 +1050,57 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          '#ddd',
-          '#111'
-        );
+        this.tooltip
+          .style('visibility', 'hidden')
+          .html(
+            htmlTooltip(datum, [
+              'color_id',
+              'cluster',
+              'parent',
+              'child',
+              'realNode',
+              'display',
+              'index',
+              'group',
+              'x',
+              'y',
+              'vx',
+              'vy',
+              'fx',
+              'fy',
+            ])
+          );
+        event.target.style['stroke'] = 'black';
         this.node_label
           .filter((e, j) => {
             return datum.index == j;
           })
           .style('fill', 'grey')
           .style('opacity', '0.5');
-
+        if (datum.child != undefined) {
+          const allNodes = this.data.nodes.concat(this.data._nodes);
+          for (const child_id of datum.child) {
+            const child = allNodes.find((e) => e.id == child_id);
+            if (child.color_id != undefined)
+              this.nodeCircle
+                .filter((e) => e.id == child_id)
+                .style('fill', child.color_id);
+          }
+        }
         this.dispatchEvent({
           type: 'mouseout',
           message: 'node mouseout event',
+          event: event,
+          datum: datum,
+        });
+      })
+      .on('mousemove', (event, datum) => {
+        this.tooltip
+          .style('left', event.pageX + 30 + 'px')
+          .style('top', event.pageY + 'px');
+        this.dispatchEvent({
+          type: 'mousemove',
+          message: 'node mousemove event',
           event: event,
           datum: datum,
         });
@@ -1022,13 +1120,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.nodeCluster = this.nodeCluster
       .enter()
       .append('rect')
-      .attr('fill', 'blue')
       .attr('width', 14)
       .attr('height', 14)
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
-      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111'))
-      .attr('fill', (d) => setColor(d.color_id, 'black'))
+      .attr('stroke', 'black')
+      .attr('fill', '#DEDEDE')
       .style('visibility', (d) => {
         const result = d.display ? 'visible' : 'hidden';
         return result;
@@ -1049,26 +1146,28 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseover', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          'white',
-          'white'
-        );
-        event.target.style['fill'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          '#333'
-        );
-        this.node_label
+        this.tooltip
+          .style('visibility', 'visible')
+          .html(
+            htmlTooltip(datum, [
+              'color_id',
+              'cluster',
+              'realNode',
+              'display',
+              'index',
+              'group',
+              'x',
+              'y',
+              'vx',
+              'vy',
+              'fx',
+              'fy',
+            ])
+          );
+        event.target.style['stroke'] = 'white';
+        this.node_label_cluster
           .filter((e, j) => {
             return datum.index == j;
-          })
-          .style('fill', 'white')
-          .style('opacity', '1');
-        this.link_label
-          .filter((e) => {
-            return (
-              datum.index == e.source.index || datum.index == e.target.index
-            );
           })
           .style('fill', 'white')
           .style('opacity', '1');
@@ -1080,12 +1179,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        event.target.style['stroke'] = setColor(
-          this.data.nodes[datum.index].color_id,
-          '#ddd',
-          '#111'
-        );
-        this.node_label
+        this.tooltip.style('visibility', 'hidden');
+        event.target.style['stroke'] = 'black';
+        this.node_label_cluster
           .filter((e, j) => {
             return datum.index == j;
           })
@@ -1094,6 +1190,17 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         this.dispatchEvent({
           type: 'mouseout',
           message: 'node mouseout event',
+          event: event,
+          datum: datum,
+        });
+      })
+      .on('mousemove', (event, datum) => {
+        this.tooltip
+          .style('left', event.pageX + 30 + 'px')
+          .style('top', event.pageY + 'px');
+        this.dispatchEvent({
+          type: 'mousemove',
+          message: 'node mousemove event',
           event: event,
           datum: datum,
         });
@@ -1113,6 +1220,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('stroke-width', 0.75)
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.8)
+      .attr('marker-end', 'url(#arrowhead)')
       .attr('stroke-dasharray', (d) => {
         let result;
         if (d.realLink) result = undefined;
@@ -1122,8 +1230,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('visibility', (d) => {
         let source;
         let target;
+        const allNodes = this.data.nodes.concat(this.data._nodes);
         if (d.source.id == undefined) {
-          const allNodes = this.data.nodes.concat(this.data._nodes);
           source = this.data.nodes.find((element) => {
             return element.id == d.source;
           });
@@ -1138,14 +1246,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return result;
       })
       .on('mouseover', (event, datum) => {
-        this.link_label
-          .filter((e) => {
-            return datum.index == e.index;
-          })
-          .style('visibility', (d) => {
-            const res = d.display ? 'visible' : 'hidden';
-            return res;
-          });
+        this.tooltip
+          .style('visibility', 'visible')
+          .html(htmlTooltip(datum, ['index', 'realLink']));
         this.dispatchEvent({
           type: 'mouseover',
           message: 'node mouseover event',
@@ -1154,11 +1257,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        this.link_label
-          .filter((e) => {
-            return datum.index == e.index;
-          })
-          .style('visibility', 'hidden');
+        this.tooltip.style('visibility', 'hidden');
         this.dispatchEvent({
           type: 'mouseout',
           message: 'node mouseout event',
@@ -1166,11 +1265,25 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           datum: datum,
         });
       })
+      .on('mousemove', (event, datum) => {
+        this.tooltip
+          .style('left', event.pageX + 30 + 'px')
+          .style('top', event.pageY + 'px');
+        this.dispatchEvent({
+          type: 'mousemove',
+          message: 'node mousemove event',
+          event: event,
+          datum: datum,
+        });
+      })
       .merge(this.link);
 
-    this.node_label = this.node_label.data(this.data.nodes, function (d) {
-      return d.id;
-    });
+    this.node_label = this.node_label.data(
+      this.data.nodes.filter((d) => !d.cluster),
+      function (d) {
+        return d.id;
+      }
+    );
     this.node_label.exit().remove();
     this.node_label = this.node_label
       .enter()
@@ -1192,10 +1305,39 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('class', 'node_label')
       .merge(this.node_label);
 
+    this.node_label_cluster = this.node_label_cluster.data(
+      this.data.nodes.filter((d) => d.cluster),
+      function (d) {
+        return d.id;
+      }
+    );
+    this.node_label_cluster.exit().remove();
+    this.node_label_cluster = this.node_label_cluster
+      .enter()
+      .append('text')
+      .text(function (d) {
+        return getUriLocalname(d.id) + ' [' + d.child.length.toString() + ']';
+      })
+      .style('text-anchor', 'middle')
+      .style('font-family', 'Arial')
+      .style('font-size', this.fontSize)
+      .style('text-shadow', '1px 1px black')
+      .style('fill', 'white')
+      .style('opacity', '0.3')
+      .style('pointer-events', 'none')
+      .style('visibility', (d) => {
+        const res = d.display ? 'visible' : 'hidden';
+        return res;
+      })
+      .attr('class', 'node_label')
+      .merge(this.node_label_cluster);
+
     this.link_label = this.link_label.data(this.data.links, function (d) {
       return d.source.id + '-' + d.target.id;
     });
+
     this.link_label.exit().remove();
+
     this.link_label = this.link_label
       .enter()
       .append('text')
@@ -1226,6 +1368,15 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    */
   get canvas() {
     return this.svg.node();
+  }
+
+  /**
+   * Getter for retrieving the d3 tooltip div.
+   *
+   * @returns {d3.div.node} return the D3 tooltip div
+   */
+  get tooltipDiv() {
+    return this.tooltip.node();
   }
 
   /**
@@ -1321,6 +1472,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       });
 
     graph.node_label
+      .attr('x', function (d) {
+        return d.x;
+      })
+      .attr('y', function (d) {
+        return d.y - 10;
+      });
+
+    graph.node_label_cluster
       .attr('x', function (d) {
         return d.x;
       })
