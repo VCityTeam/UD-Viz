@@ -37,6 +37,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.data = new Graph();
     this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
 
+    this.linkNum = {};
+
     this.tooltip = d3
       .create('div')
       .style('visibility', 'hidden')
@@ -128,6 +130,27 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   // / Data Functions ///
+
+  /**
+   * Generate the label of a clustered node
+   *
+   * @param {object} node a node
+   * @param {D3GraphCanvas} graph this
+   * @returns {string} the desired label of the node
+   */
+  generateClusterLabel(node, graph) {
+    const map = new Map();
+    if (graph.possessCycle(node.id, map))
+      return (
+        getUriLocalname(node.id) + ' [' + node.child.length.toString() + ']'
+      );
+    return (
+      getUriLocalname(node.id) +
+      ' [' +
+      graph.generateDescendantList(node.id, []).length.toString() +
+      ']'
+    );
+  }
 
   /**
    * Retrieve the ID of all the node's descendants
@@ -802,12 +825,29 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   /**
+   * Set the link index and the number of links between two nodes
+   *
+   */
+  setLinkIndexAndNum() {
+    for (const link of this.data.links) {
+      if (this.linkNum[link.source + ',' + link.target] == undefined) {
+        this.linkNum[link.source + ',' + link.target] = 1;
+      } else {
+        this.linkNum[link.source + ',' + link.target] =
+          this.linkNum[link.source + ',' + link.target] + 1;
+      }
+      link.linkindex = this.linkNum[link.source + ',' + link.target];
+    }
+  }
+
+  /**
    * Initialize the d3 SVG canvas based on the data from a graph dataset
    *
    * @param {object} response an RDF JSON object ideally formatted by this.formatResponseData().
    */
   init(response) {
     this.formatResponse(response, this.data);
+    this.setLinkIndexAndNum();
 
     this.addChildParent();
     for (const node of this.data.nodes) {
@@ -964,7 +1004,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       let str = '';
       for (const property in data) {
         if (!propertiesOff.includes(property))
-          str = str + `<strong>${property}:</strong> ${data[property]}<br>`;
+          if (property != 'source' && property != 'target')
+            str = str + `<strong>${property}:</strong> ${data[property]}<br>`;
+          else
+            str =
+              str + `<strong>${property}:</strong> ${data[property]['id']}<br>`;
       }
       return str;
     };
@@ -1024,7 +1068,26 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseover', (event, datum) => {
-        this.tooltip.style('visibility', 'visible');
+        this.tooltip
+          .style('visibility', 'visible')
+          .html(
+            htmlTooltip(datum, [
+              'color_id',
+              'cluster',
+              'parent',
+              'child',
+              'realNode',
+              'display',
+              'index',
+              'group',
+              'x',
+              'y',
+              'vx',
+              'vy',
+              'fx',
+              'fy',
+            ])
+          );
         event.target.style['stroke'] = 'white';
         this.node_label
           .filter((e, j) => {
@@ -1050,26 +1113,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         });
       })
       .on('mouseout', (event, datum) => {
-        this.tooltip
-          .style('visibility', 'hidden')
-          .html(
-            htmlTooltip(datum, [
-              'color_id',
-              'cluster',
-              'parent',
-              'child',
-              'realNode',
-              'display',
-              'index',
-              'group',
-              'x',
-              'y',
-              'vx',
-              'vy',
-              'fx',
-              'fy',
-            ])
-          );
+        this.tooltip.style('visibility', 'hidden');
         event.target.style['stroke'] = 'black';
         this.node_label
           .filter((e, j) => {
@@ -1216,11 +1260,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     // create a new line for each new link added to the data
     this.link = this.link
       .enter()
-      .append('line')
+      .append('path')
       .attr('stroke-width', 0.75)
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.8)
-      .attr('marker-end', 'url(#arrowhead)')
+      // .attr('marker-end', 'url(#arrowhead)') to be fixed
       .attr('stroke-dasharray', (d) => {
         let result;
         if (d.realLink) result = undefined;
@@ -1315,9 +1359,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.node_label_cluster = this.node_label_cluster
       .enter()
       .append('text')
-      .text(function (d) {
-        return getUriLocalname(d.id) + ' [' + d.child.length.toString() + ']';
-      })
+      .text((d) => this.generateClusterLabel(d, this))
       .style('text-anchor', 'middle')
       .style('font-family', 'Arial')
       .style('font-size', this.fontSize)
@@ -1457,19 +1499,43 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return d.y;
       });
 
-    graph.link
-      .attr('x1', function (d) {
-        return d.source.x;
-      })
-      .attr('y1', function (d) {
-        return d.source.y;
-      })
-      .attr('x2', function (d) {
-        return d.target.x;
-      })
-      .attr('y2', function (d) {
-        return d.target.y;
-      });
+    graph.link.attr('d', function (d) {
+      const dx = d.target.x - d.source.x,
+        dy = d.target.y - d.source.y;
+      let dr = Math.sqrt(dx * dx + dy * dy);
+      // get the total link numbers between source and target node
+      const totalLinkNum =
+        graph.linkNum[d.source.id + ',' + d.target.id] ||
+        graph.linkNum[d.target.id + ',' + d.source.id];
+
+      if (totalLinkNum > 1) {
+        // if there are multiple links between these two nodes, we need generate different dr for each path
+        dr = dr / (1 + (1 / totalLinkNum) * (d.linkindex - 1));
+      }
+      // generate svg path
+      return (
+        'M' +
+        d.source.x +
+        ',' +
+        d.source.y +
+        'A' +
+        dr +
+        ',' +
+        dr +
+        ' 0 0 1,' +
+        d.target.x +
+        ',' +
+        d.target.y +
+        'A' +
+        dr +
+        ',' +
+        dr +
+        ' 0 0 0,' +
+        d.source.x +
+        ',' +
+        d.source.y
+      );
+    });
 
     graph.node_label
       .attr('x', function (d) {
