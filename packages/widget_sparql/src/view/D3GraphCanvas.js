@@ -35,9 +35,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
     this.data = new Graph();
-    this.colorSetOrScale = d3.scaleOrdinal(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
-
-    this.linkNum = {};
 
     this.tooltip = d3
       .create('div')
@@ -85,6 +82,20 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
             response.head.vars
           );
         }
+        const getNodeColorId = (type) => {
+          const colorScale = d3
+            .scaleOrdinal()
+            .domain([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+            .range(d3.schemeCategory10); // d3.schemeCategory10 returns an array of 10 colors and d3.scaleOrdinal is used to create an ordinal scale
+          if (!this.data.typeList.includes(type)) {
+            this.data.typeList.push(type);
+            this.data.legend.push({
+              type: type,
+              color: colorScale(this.data.typeList.findIndex((d) => d == type)),
+            });
+          }
+          return colorScale(this.data.typeList.findIndex((d) => d == type));
+        };
         for (const triple of response.results.bindings) {
           if (
             // if the subject doesn't exist yet
@@ -96,7 +107,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
               triple.subjectType
             ) {
               node.type = getUriLocalname(triple.subjectType.value);
-              node.color_id = graph.getNodeColorId(triple.subjectType.value);
+              node.color_id = getNodeColorId(node.type);
             }
             graph.nodes.push(node);
           }
@@ -110,7 +121,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
               triple.objectType
             ) {
               node.type = getUriLocalname(triple.objectType.value);
-              node.color_id = graph.getNodeColorId(triple.objectType.value);
+              node.color_id = getNodeColorId(node.type);
             }
             graph.nodes.push(node);
           }
@@ -415,8 +426,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           }
         }
       }
+      this.setLinkIndexAndNum();
     } else {
-      console.debug('[changeVisibilityChildren] node undefined: ', node_id);
+      console.debug('[changeVisibilityDescendant] node undefined: ', node_id);
     }
   }
 
@@ -512,6 +524,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           });
         }
       }
+      this.setLinkIndexAndNum();
     } else {
       console.debug('[changeVisibilityChildren] node undefined: ', node_id);
     }
@@ -536,6 +549,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       link.target = target;
       link.label = label;
       this.data.links.push(link);
+      this.setLinkIndexAndNum();
       return link;
     }
     return null;
@@ -594,6 +608,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   removeLink(link) {
     this.data.links = this.data.links.filter((d) => d != link);
     this.data._links = this.data._links.filter((d) => d != link);
+    this.setLinkIndexAndNum();
   }
 
   /**
@@ -829,14 +844,17 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    *
    */
   setLinkIndexAndNum() {
+    this.linkNum = {};
     for (const link of this.data.links) {
-      if (this.linkNum[link.source + ',' + link.target] == undefined) {
-        this.linkNum[link.source + ',' + link.target] = 1;
+      const source = link.source.id || link.source;
+      const target = link.target.id || link.target;
+      if (this.linkNum[source + ',' + target] == undefined) {
+        this.linkNum[source + ',' + target] = 1;
       } else {
-        this.linkNum[link.source + ',' + link.target] =
-          this.linkNum[link.source + ',' + link.target] + 1;
+        this.linkNum[source + ',' + target] =
+          this.linkNum[source + ',' + target] + 1;
       }
-      link.linkindex = this.linkNum[link.source + ',' + link.target];
+      link.linkindex = this.linkNum[source + ',' + target];
     }
   }
 
@@ -859,14 +877,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     for (const link of this.data.links) {
       link.realLink = true;
     }
-
-    const legend = this.prefixLegend(this.data.typeList);
-    const colorScale = this.colorSetOrScale;
-    const setColor = function (d, default_color, override_color = undefined) {
-      if (override_color && colorScale) return override_color;
-      else if (colorScale) return colorScale(d);
-      return default_color;
-    };
 
     this.g = this.svg.append('g').attr('class', 'graph');
     this.link = this.g.append('g').selectAll('.link');
@@ -926,15 +936,13 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('stroke', '#111')
       .attr('stroke-width', 1)
       .selectAll('rect')
-      .data(legend)
+      .data(this.data.legend)
       .join('rect')
       .attr('x', 12)
       .attr('y', (d, i) => 32 + i * 16)
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', (d, i) => {
-        return setColor(i, '#000');
-      })
+      .style('fill', (d) => d.color)
       .append('title')
       .text((d) => d);
 
@@ -942,11 +950,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.svg
       .append('g')
       .selectAll('text')
-      .data(legend)
+      .data(this.data.legend)
       .join('text')
       .attr('x', 26)
       .attr('y', (d, i) => 41 + i * 16)
-      .text((d) => d)
+      .text((d) => d.type)
       .style('fill', 'FloralWhite')
       .style('font-size', '14px');
 
@@ -955,14 +963,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .append('marker')
       .attr('id', 'arrowhead')
       .attr('viewBox', '-0 -5 10 10')
-      .attr('refX', 28)
-      .attr('refY', 0)
       .attr('orient', 'auto')
       .attr('markerWidth', 5)
       .attr('markerHeight', 5)
+      .attr('refX', 5)
       .attr('xoverflow', 'visible')
       .append('svg:path')
-      .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+      .attr('d', 'M 0 0 L 0,5 L 10,0 L 0,-5')
+      .attr('transform-origin', '100 100') // change rien
       .attr('fill', '#999')
       .style('stroke', 'none');
 
@@ -987,13 +995,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    *
    */
   update() {
-    const colorScale = this.colorSetOrScale;
-    const setColor = function (d, default_color, override_color = undefined) {
-      if (override_color && colorScale) return override_color;
-      else if (colorScale) return colorScale(d);
-      return default_color;
-    };
-
     const hexToDec = function (hex) {
       const code = hex.charCodeAt(0);
       if (code >= 97) return code - 87;
@@ -1042,12 +1043,16 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .enter()
       .append('circle')
       .attr('r', (d) => {
+        // d corresponds to the data attached to the element
         return 7 - d.group;
       })
-      .attr('stroke', (d) => setColor(d.color_id, '#ddd', '#111')) // d corresponds to the data attached to the element
+      .attr('stroke', 'black')
       .attr('stroke-opacity', 0.8)
       .attr('stroke-width', 0.75)
-      .attr('fill', (d) => d.color_id)
+      .attr('fill', (d) => {
+        if (d.color_id) return d.color_id;
+        return '#DEDEDE';
+      })
       .style('visibility', (d) => {
         const result = d.display ? 'visible' : 'hidden';
         return result;
@@ -1264,13 +1269,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('stroke-width', 0.75)
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.8)
-      // .attr('marker-end', 'url(#arrowhead)') to be fixed
+      .attr('marker-mid', 'url(#arrowhead)')
       .attr('stroke-dasharray', (d) => {
         let result;
         if (d.realLink) result = undefined;
         else result = '1';
         return result;
       })
+      .attr('fill', 'none')
       .style('visibility', (d) => {
         let source;
         let target;
@@ -1500,40 +1506,88 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       });
 
     graph.link.attr('d', function (d) {
-      const dx = d.target.x - d.source.x,
-        dy = d.target.y - d.source.y;
-      let dr = Math.sqrt(dx * dx + dy * dy);
-      // get the total link numbers between source and target node
-      const totalLinkNum =
-        graph.linkNum[d.source.id + ',' + d.target.id] ||
-        graph.linkNum[d.target.id + ',' + d.source.id];
-
-      if (totalLinkNum > 1) {
-        // if there are multiple links between these two nodes, we need generate different dr for each path
-        dr = dr / (1 + (1 / totalLinkNum) * (d.linkindex - 1));
+      const getNormalVec = (A, B) => {
+        const n = {
+          x: 1,
+          y: (A.x - B.x) / (B.y - A.y),
+        };
+        const norm = Math.sqrt(n.x * n.x + n.y * n.y);
+        n.x = n.x / norm;
+        n.y = n.y / norm;
+        return n;
+      };
+      const n = getNormalVec(d.source, d.target);
+      if (n.y * (d.target.y - d.source.y) < 0) {
+        n.y = -1 * n.y;
+        n.x = -1 * n.x;
       }
-      // generate svg path
+      const k = 5 * d.linkindex;
+      const Q = {
+        x: (d.source.x + d.target.x) / 2 + n.x * k,
+        y: (d.source.y + d.target.y) / 2 + n.y * k,
+        n: n,
+      };
+      const path = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'path'
+      );
+      path.setAttribute(
+        'd',
+        'M ' +
+          d.source.x +
+          ' ' +
+          d.source.y +
+          ' ' +
+          'Q ' +
+          Q.x +
+          ' ' +
+          Q.y +
+          ' ' +
+          d.target.x +
+          ' ' +
+          d.target.y
+      );
+      const M = path.getPointAtLength(path.getTotalLength() / 2);
+      const n1 = getNormalVec(d.source, M);
+      const n2 = getNormalVec(d.target, M);
+      if (n1.x * Q.n.x + n1.y * Q.n.y < 0) {
+        n1.y = -1 * n1.y;
+        n1.x = -1 * n1.x;
+      }
+      if (n2.x * Q.n.x + n2.y * Q.n.y < 0) {
+        n2.y = -1 * n2.y;
+        n2.x = -1 * n2.x;
+      }
+      const k12 = d.linkindex;
+      const Q1 = {
+        x: (d.source.x + M.x) / 2 + n1.x * k12,
+        y: (d.source.y + M.y) / 2 + n1.y * k12,
+      };
+      const Q2 = {
+        x: (d.target.x + M.x) / 2 + n2.x * k12,
+        y: (d.target.y + M.y) / 2 + n2.y * k12,
+      };
       return (
-        'M' +
+        'M ' +
         d.source.x +
-        ',' +
+        ' ' +
         d.source.y +
-        'A' +
-        dr +
-        ',' +
-        dr +
-        ' 0 0 1,' +
+        ' Q ' +
+        Q1.x +
+        ' ' +
+        Q1.y +
+        ' ' +
+        M.x +
+        ' ' +
+        M.y +
+        ' Q ' +
+        Q2.x +
+        ' ' +
+        Q2.y +
+        ' ' +
         d.target.x +
-        ',' +
-        d.target.y +
-        'A' +
-        dr +
-        ',' +
-        dr +
-        ' 0 0 0,' +
-        d.source.x +
-        ',' +
-        d.source.y
+        ' ' +
+        d.target.y
       );
     });
 
