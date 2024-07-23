@@ -14,20 +14,8 @@ export class Graph {
     this.typeList = [];
     this._nodes = []; // store the hidden nodes
     this._links = []; // store the hidden links
-  }
 
-  /**
-   * Get the id (or index) of a uri from the typeList. Each type in the type list is used
-   * to color nodes in the graph. If the uri does not exist in the typeList, add the uri.
-   *
-   * @param {string} uri the uri to map to a color index.
-   * @returns {number} the index of the color
-   */
-  getNodeColorId(uri) {
-    if (!this.typeList.includes(uri)) {
-      this.typeList.push(uri);
-    }
-    return this.typeList.findIndex((d) => d == uri);
+    this.legend = []; // associate a type to a color
   }
 
   /**
@@ -88,5 +76,6 @@ export class Graph {
     this._nodes = [];
     this._links = [];
     this.typeList = [];
+    this.legend = [];
   }
 }
