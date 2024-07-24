@@ -174,7 +174,114 @@ The minimal configuration required to make a SPARQL Widget class work is the fol
 - `width` the width (in pixels) of a d3 canvas for visualizing graphs
 - `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
 
-Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [Graph](https://vcityteam.github.io/UD-Viz/html/widget_sparql/Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/widget_sparql/SparqlQueryWindow.html) documentation for more information
+Parameters can also be configured to use custom labels instead of full URI namespaces in the legend.
+
+```json
+{
+    "namespaceLabels": {
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+      "http://www.w3.org/2000/01/rdf-schema#": "rdfs",
+      "http://www.w3.org/2002/07/owl#": "owl",
+      "http://www.w3.org/2004/02/skos/core#": "skos",
+      "http://www.opengis.net/gml#": "gml",
+      "http://www.opengis.net/ont/geosparql#": "geo",
+      "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#": "type",
+      "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#": "bldg",
+      "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/construction#": "con",
+      "http://def.isotc211.org/iso19107/2003/CoordinateGeometry#": "iso19107-cm",
+  }
+}
+```
+
+It is also possible to configure custom queries. You can either define a query with the `exploration` attribute or the `filepath` attribute:
+
+- the `filepath` attribute is used to specify a path to a file in which a sparql query has already been written
+- the `exploration` attribute is used to set the context for queries updated gradually by the user thanks to the `SparqlQuery.js` class and the method `updateExplorationQuery` of the `SparqlQueryWidget.js` class
+
+When an exploration query is selected, clicking on an element in the 3D scene adds the corresponding node and its children to the graph.
+
+```json
+{
+  "queries": [
+      {
+        "title": "Exploration query",
+        "formats": {
+          "graph": "Graph",
+          "json": "JSON"
+        },
+        "exploration": {
+          "prefix": [
+            ["bldg", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/building#"],
+            ["skos", "http://www.w3.org/2004/02/skos/core#"],
+            ["data", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/Villeurbanne/2018/GratteCiel_2018_split#"]
+          ],
+          "select_variable": [
+            "subject",
+            "subjectType",
+            "predicate",
+            "object",
+            "objectType"
+          ],
+          "options": [
+            ["FILTER", "?subjectType != owl:NamedIndividual"],
+            ["FILTER", "!bound(?objectType) || ?objectType != owl:NamedIndividual"],
+            ["FILTER", "?subject != owl:NamedIndividual"],
+            ["FILTER", "?object != owl:NamedIndividual"]
+          ]
+        }
+      },
+      {
+        "title": "Construct query",
+        "formats": {
+          "graph": "Graph",
+          "json": "JSON"
+        },
+        "filepath": "./assets/queries/construct.rq"
+      }
+    ]
+  }
+```
+
+## The D3GraphCanvas.js class
+
+Two new parameters have been added to the `D3GraphCanvas.js` class:
+
+- the handleZoom function for configuring zoom management in the graph
+- the formatResponse function for formatting the JSON response into node and link objects
+
+The formatResponse function should add the nodes and links to the attributes `nodes` and `links` of the instance of `Graph.js`.
+
+```js
+data.nodes = [
+  {
+    id: "node's id",
+    type: "node's type", // OPTIONAL 
+    color_id: "node's color in hex", // OPTIONAL 
+  },
+]
+
+data.links = [
+  {
+    source: "source node's id",
+    target: "target node's id", 
+    label: "link's label" 
+  },
+]
+
+```
+
+It can also define the `legend` attribute of the Graph `data`.
+
+```js
+data.legend = [
+  {
+    type: "description",
+    color: "color to the rectangle associated to the description", 
+  },
+]
+```
+
+Two default parameters are defined to handle the zoom and format the response returned by an instance of the `SparqlEndpointResponseProvider.js` class.
 
 ## Documentation
 
