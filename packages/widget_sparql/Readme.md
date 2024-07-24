@@ -297,6 +297,37 @@ data.legend = [
 
 Two default parameters are defined to handle the zoom and format the response returned by an instance of the `SparqlEndpointResponseProvider.js` class.
 
+## The SparqlQuery.js class
+
+The SPARQL query class is used for writing SPARQL queries based on defined conditions. Here are the conditions that can be defined:
+
+- the variables following the SELECT statement
+- the conditions in the WHERE clause
+- the different options and filters of the query
+- the prefixes
+
+Then, the method `generateQuery` builds and returns the corresponding query.
+
+Here is the architecture of the built query:
+
+```rq
+[prefix]
+SELECT ?select_variable[0] , ?select_variable[1] , ...
+WHERE
+{
+  {
+    where_conditions[0]
+  } UNION {
+    where_conditions[1]
+  } UNION {
+    ...
+  }
+  options[0][0] { options[0][1] } # options[0][0] = OPTIONAL
+  options[1][0] ( options[1][1] ) # options[1][0] = FILTER
+  ...
+}
+```
+
 ## Documentation
 
 > [Online Documentation](https://vcityteam.github.io/UD-Viz/html/widget_sparql/)
