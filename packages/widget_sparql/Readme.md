@@ -167,12 +167,26 @@ The minimal configuration required to make a SPARQL Widget class work is the fol
   "height": 500,
   "width": 500,
   "fontSize": 4
+  "fontFamily": "Arial",
+  "strokeWidth": 0.75,
+  "nodeSize": 7,
+  "defaultColor": "#dedede",
+  "linkColor": "#999",
+  "nodeStrokeColor": "black",
+  "fontSizeLegend": 14,
 }
 ```
 
 - `height` the height (in pixels) of a d3 canvas for visualizing graphs
 - `width` the width (in pixels) of a d3 canvas for visualizing graphs
 - `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
+- `fontFamily` fontfamily to be used in the d3 canvas for labeling graph nodes
+- `strokeWidth` the width (in pixels) of the color of the nodes' and links' stroke
+- `nodeSize` the radius (in pixels) of the circles representing the nodes
+- `defaultColor` the color of the nodes without the property `color_id`
+- `linkColor` the color of the links
+- `nodeStrokeColor` the color of the nodes' stroke
+- `fontSizeLegend` fontsize to be used in the d3 canvas for displaying the legend
 
 Parameters can also be configured to use custom labels instead of full URI namespaces in the legend.
 
