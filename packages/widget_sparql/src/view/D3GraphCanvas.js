@@ -27,6 +27,14 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.height = config.height;
     this.width = config.width;
     this.fontSize = config.fontSize;
+    this.fontFamily = config.fontFamily;
+    this.strokeWidth = config.strokeWidth;
+    this.nodeSize = config.nodeSize;
+    this.defaultColor = config.defaultColor;
+    this.linkColor = config.linkColor;
+    this.nodeStrokeColor = config.nodeStrokeColor;
+    this.fontSizeLegend = config.fontSizeLegend;
+
     this.knownNamespaceLabels = config.namespaceLabels;
     this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
@@ -392,6 +400,31 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
               this.hideLink(link);
             }
           }
+          let link;
+          this.data._links.forEach((element) => {
+            if (
+              node.child.includes(element.source) &&
+              element.source != node.id
+            ) {
+              link = this.createNewLink(
+                node_id,
+                element.target,
+                node_id + '_children_cluster'
+              );
+              if (link) link.realLink = false;
+            }
+            if (
+              node.child.includes(element.target) &&
+              element.target != node.id
+            ) {
+              link = this.createNewLink(
+                element.source,
+                node_id,
+                node_id + '_children_cluster'
+              );
+              if (link) link.realLink = false;
+            }
+          });
         } else {
           for (const descendant_id of descendants) {
             if (
@@ -424,6 +457,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
               }
             }
           }
+          this.data.links.forEach((element) => {
+            if (element.label == node_id + '_children_cluster') {
+              this.removeLink(element);
+            }
+          });
         }
       }
       this.setLinkIndexAndNum();
@@ -925,10 +963,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .append('text')
       .attr('x', 12)
       .attr('y', 24)
-      .style('font-size', '14px')
+      .style('font-size', this.fontSizeLegend)
       .style('text-decoration', 'underline')
-      .text('Legend')
-      .style('fill', 'FloralWhite');
+      .text('Legend');
 
     // legend colors
     this.svg
@@ -955,8 +992,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('x', 26)
       .attr('y', (d, i) => 41 + i * 16)
       .text((d) => d.type)
-      .style('fill', 'FloralWhite')
-      .style('font-size', '14px');
+      .style('font-size', this.fontSizeLegend);
 
     this.svg
       .append('defs')
@@ -970,8 +1006,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('xoverflow', 'visible')
       .append('svg:path')
       .attr('d', 'M 0 0 L 0,5 L 10,0 L 0,-5')
-      .attr('transform-origin', '100 100') // change rien
-      .attr('fill', '#999')
+      .attr('fill', this.linkColor)
       .style('stroke', 'none');
 
     this.update();
@@ -1027,6 +1062,16 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       return res;
     };
 
+    const nodeCircleSize = function (d, graph) {
+      if (d.group != undefined) return graph.nodeSize - d.group;
+      return graph.nodeSize;
+    };
+
+    const nodeCircleColor = function (d, graph) {
+      if (d.color_id) return d.color_id;
+      return graph.defaultColor;
+    };
+
     // attach the data to svg elements
     this.nodeCircle = this.nodeCircle.data(
       this.data.nodes.filter((d) => !d.cluster),
@@ -1042,17 +1087,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.nodeCircle = this.nodeCircle
       .enter()
       .append('circle')
-      .attr('r', (d) => {
-        // d corresponds to the data attached to the element
-        return 7 - d.group;
-      })
-      .attr('stroke', 'black')
+      .attr('r', (d) => nodeCircleSize(d, this))
+      .attr('stroke', this.nodeStrokeColor)
       .attr('stroke-opacity', 0.8)
-      .attr('stroke-width', 0.75)
-      .attr('fill', (d) => {
-        if (d.color_id) return d.color_id;
-        return '#DEDEDE';
-      })
+      .attr('stroke-width', this.strokeWidth)
+      .attr('fill', (d) => nodeCircleColor(d, this))
       .style('visibility', (d) => {
         const result = d.display ? 'visible' : 'hidden';
         return result;
@@ -1104,7 +1143,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           const allNodes = this.data.nodes.concat(this.data._nodes);
           for (const child_id of datum.child) {
             const child = allNodes.find((e) => e.id == child_id);
-            if (child.color_id != undefined)
+            if (child && child.color_id != undefined)
               this.nodeCircle
                 .filter((e) => e.id == child_id)
                 .style('fill', modifyColorTint(child.color_id, 1.2));
@@ -1119,7 +1158,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       })
       .on('mouseout', (event, datum) => {
         this.tooltip.style('visibility', 'hidden');
-        event.target.style['stroke'] = 'black';
+        event.target.style['stroke'] = this.nodeStrokeColor;
         this.node_label
           .filter((e, j) => {
             return datum.index == j;
@@ -1130,7 +1169,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           const allNodes = this.data.nodes.concat(this.data._nodes);
           for (const child_id of datum.child) {
             const child = allNodes.find((e) => e.id == child_id);
-            if (child.color_id != undefined)
+            if (child && child.color_id != undefined)
               this.nodeCircle
                 .filter((e) => e.id == child_id)
                 .style('fill', child.color_id);
@@ -1169,12 +1208,12 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.nodeCluster = this.nodeCluster
       .enter()
       .append('rect')
-      .attr('width', 14)
-      .attr('height', 14)
+      .attr('width', this.nodeSize * 2)
+      .attr('height', this.nodeSize * 2)
       .attr('stroke-opacity', 0.8)
-      .attr('stroke-width', 0.75)
-      .attr('stroke', 'black')
-      .attr('fill', '#DEDEDE')
+      .attr('stroke-width', this.strokeWidth)
+      .attr('stroke', this.nodeStrokeColor)
+      .attr('fill', this.defaultColor)
       .style('visibility', (d) => {
         const result = d.display ? 'visible' : 'hidden';
         return result;
@@ -1229,7 +1268,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       })
       .on('mouseout', (event, datum) => {
         this.tooltip.style('visibility', 'hidden');
-        event.target.style['stroke'] = 'black';
+        event.target.style['stroke'] = this.nodeStrokeColor;
         this.node_label_cluster
           .filter((e, j) => {
             return datum.index == j;
@@ -1266,8 +1305,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.link = this.link
       .enter()
       .append('path')
-      .attr('stroke-width', 0.75)
-      .attr('stroke', '#999')
+      .attr('stroke-width', this.strokeWidth)
+      .attr('stroke', this.linkColor)
       .attr('stroke-opacity', 0.8)
       .attr('marker-mid', 'url(#arrowhead)')
       .attr('stroke-dasharray', (d) => {
@@ -1342,7 +1381,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return getUriLocalname(d.id);
       })
       .style('text-anchor', 'middle')
-      .style('font-family', 'Arial')
+      .style('font-family', this.fontFamily)
       .style('font-size', this.fontSize)
       .style('text-shadow', '1px 1px black')
       .style('fill', 'white')
@@ -1367,7 +1406,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .append('text')
       .text((d) => this.generateClusterLabel(d, this))
       .style('text-anchor', 'middle')
-      .style('font-family', 'Arial')
+      .style('font-family', this.fontFamily)
       .style('font-size', this.fontSize)
       .style('text-shadow', '1px 1px black')
       .style('fill', 'white')
@@ -1393,7 +1432,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return getUriLocalname(d.label);
       })
       .style('text-anchor', 'middle')
-      .style('font-family', 'Arial')
+      .style('font-family', this.fontFamily)
       .style('font-size', this.fontSize)
       .style('text-shadow', '1px 1px black')
       .style('fill', 'white')
@@ -1495,7 +1534,9 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   }
 
   ticked(graph) {
-    graph.nodeCluster.attr('x', (d) => d.x - 7).attr('y', (d) => d.y - 7);
+    graph.nodeCluster
+      .attr('x', (d) => d.x - graph.nodeSize)
+      .attr('y', (d) => d.y - graph.nodeSize);
 
     graph.nodeCircle
       .attr('cx', function (d) {
@@ -1596,7 +1637,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return d.x;
       })
       .attr('y', function (d) {
-        return d.y - 10;
+        return d.y - graph.nodeSize - 3;
       });
 
     graph.node_label_cluster
@@ -1604,7 +1645,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
         return d.x;
       })
       .attr('y', function (d) {
-        return d.y - 10;
+        return d.y - graph.nodeSize - 3;
       });
 
     graph.link_label
