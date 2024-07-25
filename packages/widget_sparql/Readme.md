@@ -174,7 +174,7 @@ The minimal configuration required to make a SPARQL Widget class work is the fol
 - `width` the width (in pixels) of a d3 canvas for visualizing graphs
 - `fontSize` fontsize to be used in the d3 canvas for labeling graph nodes
 
-Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [graph](https://vcityteam.github.io/UD-Viz/html/browser/Graph_Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/browser/SparqlQueryWindow.html) documentation for more information
+Parameters can also be configured to define custom queries and to use custom labels instead of full URI namespaces in the legend. See the [Graph](https://vcityteam.github.io/UD-Viz/html/widget_sparql/Graph.html) and [SparqlQueryWindow](https://vcityteam.github.io/UD-Viz/html/widget_sparql/SparqlQueryWindow.html) documentation for more information
 
 
 ## Documentation
