@@ -20,20 +20,16 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    */
   constructor(config, handleZoom, formatResponse) {
     super();
-    if (!config || !config.height || !config.width || !config.fontSize) {
-      console.log(config);
-      throw 'The given "configSparqlWidget" configuration is incorrect.';
-    }
-    this.height = config.height;
-    this.width = config.width;
-    this.fontSize = config.fontSize;
-    this.fontFamily = config.fontFamily;
-    this.strokeWidth = config.strokeWidth;
-    this.nodeSize = config.nodeSize;
-    this.defaultColor = config.defaultColor;
-    this.linkColor = config.linkColor;
-    this.nodeStrokeColor = config.nodeStrokeColor;
-    this.fontSizeLegend = config.fontSizeLegend;
+    this.height = config.height || 800;
+    this.width = config.width || 1500;
+    this.fontSize = config.fontSize || 4;
+    this.fontFamily = config.fontFamily || 'Arial';
+    this.strokeWidth = config.strokeWidth || 0.75;
+    this.nodeSize = config.nodeSize || 7;
+    this.defaultColor = config.defaultColor || 'white';
+    this.linkColor = config.linkColor || '#999';
+    this.nodeStrokeColor = config.nodeStrokeColor || 'black';
+    this.fontSizeLegend = config.fontSizeLegend || 15;
 
     this.knownNamespaceLabels = config.namespaceLabels;
     this.svg = d3 // the svg in which the graph is displayed
