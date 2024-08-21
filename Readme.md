@@ -24,6 +24,9 @@ UD-Viz is a javascript mono repository for creating web applications for visuali
   <a href="https://projet.liris.cnrs.fr/vcity/permalink/demo-multi-dim-navigation.html"><img src="./img/MultimediaViz.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
   <a href="https://projet.liris.cnrs.fr/vcity/permalink/demo-story-telling-gier.html"><img src="./img/Gier_Valley.png" alt="Multimedia Viz Mosaic" width="32.5%"></a>
 </p>
+<p>
+  <a href="https://projet.liris.cnrs.fr/vcity/permalink/demo-udviz-morphologie-industrielle.html" ><img src="./img/Industrial_Morphology.png" alt="Industrial Morphology" width="32.5%"></a>
+</p>
 
 _3D tiles related_
 
