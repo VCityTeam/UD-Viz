@@ -7,12 +7,263 @@
     <link rel="stylesheet" href="./assets/css/examples.css" />
     <link rel="stylesheet" href="./assets/css/loading_screen.css" />
     <link rel="stylesheet" href="./assets/css/widget_sparql.css" />
+    <link rel="stylesheet" href="./assets/css/context-menu.css" />
   </head>
   <body>
     <script src="../dist/RUN_MODE/bundle.js"></script>
     <script src="./assets/js/loadingScreen.js"></script>
 
     <script type="text/javascript">
+
+    /**
+     * The class that adds the display of a drop-down menu containing clustering functionalities when a node is clicked
+     */
+    class ContextMenuGraphClustering {
+      /**
+       * Create a new Context Menu
+       *
+       * @param {D3GraphCanvas} d3Graph The graph.
+       */
+      constructor(d3Graph) {
+        this.d3Graph = d3Graph;
+
+        /** @type {HTMLDivElement} */
+        this.menu = document.createElement('div');
+        this.menu.setAttribute('id', 'context-menu');
+
+        /** @type {HTMLUListElement} */
+        this.menuList = document.createElement('ul');
+        this.menu.appendChild(this.menuList);
+
+        /** @type {Map} */
+        this.optionsMap = new Map();
+
+        /** @type {object} */
+        this.node = null;
+
+        window.onclick = () => {
+          this.hide();
+        };
+
+        this.initOptionClusterChildren();
+        this.initOptionClusterChildrenByType();
+        this.initOptionClusterDescendants();
+      }
+
+      /**
+       * Initialize the clustering by children
+       *
+       */
+      initOptionClusterChildren() {
+        const optionElement = document.createElement('li');
+        optionElement.onclick = () => {
+          this.d3Graph.changeVisibilityChildren(this.node.id);
+          this.d3Graph.update();
+        };
+        this.menuList.appendChild(optionElement);
+        this.optionsMap.set('clusterChildren', optionElement);
+      }
+
+      /**
+       * Initialize the clustering by descendants
+       *
+       */
+      initOptionClusterDescendants() {
+        const optionElement = document.createElement('li');
+        optionElement.onclick = () => {
+          this.d3Graph.changeVisibilityDescendants(this.node.id);
+          this.d3Graph.update();
+        };
+        this.menuList.appendChild(optionElement);
+        this.optionsMap.set('clusterDescendants', optionElement);
+      }
+
+      /**
+       * Initialize the clustering of children by type
+       *
+       */
+      initOptionClusterChildrenByType() {
+        const optionsContainer = document.createElement('g');
+        this.menuList.appendChild(optionsContainer);
+        this.optionsMap.set('typeContainer', optionsContainer);
+      }
+
+      /**
+       * Add a new option to the context menu
+       *
+       * @param {string} id an id for the option
+       * @param {HTMLLIElement} option the new option (its onclick and innerText properties must be defined)
+       */
+      initNewOption(id, option) {
+        this.menuList.appendChild(option);
+        this.optionsMap.set(id, option);
+      }
+
+      /**
+       * Get an option by id
+       *
+       * @param {string} id the id of the option
+       * @returns {HTMLLIElement} the option
+       */
+      getOptionById(id) {
+        if (this.optionsMap.has(id)) {
+          return this.optionsMap.get(id);
+        }
+        return null;
+      }
+
+    /**
+     * Get the menu
+     *
+     * @returns {HTMLDivElement} the menu
+     */
+      get() {
+        return this.menu;
+      }
+
+      /**
+       * Display an added option in the context menu
+       *
+       * @param {string} id the id of the option
+       */
+      displayOption(id) {
+        if (this.optionsMap.has(id)) {
+          this.optionsMap.get(id).style.display = 'block';
+        }
+      }
+
+      /**
+       * Display the context menu and its original options
+       *
+       * @param {event} event the click event
+       * @param {object} node a node
+       */
+      display(event, node) {
+        this.hide();
+
+        this.node = node;
+
+        this.menu.style.left = `${event.event.pageX}px`;
+        this.menu.style.top = `${event.event.pageY}px`;
+        this.menu.style.display = 'block';
+
+        if (node.child != undefined) {
+          const map = new Map();
+          if (this.d3Graph.possessCycle(node.id, map)) {
+            const optionClusterChildren = this.optionsMap.get('clusterChildren');
+            optionClusterChildren.style.display = 'block';
+            if (node.cluster && node.realNode) {
+              optionClusterChildren.innerText = 'Show the children';
+            } else {
+              optionClusterChildren.innerText = 'Hide the children';
+            }
+          } else {
+            const optionClusterDescendants =
+              this.optionsMap.get('clusterDescendants');
+            optionClusterDescendants.style.display = 'block';
+            if (node.cluster) {
+              optionClusterDescendants.innerText = 'Show the descendants';
+            } else {
+              optionClusterDescendants.innerText = 'Hide the descendants';
+            }
+          }
+          const childrenType = this.d3Graph.getChildrenType(this.node.id);
+          if (childrenType.length > 1) {
+            const optionsClusterByType = this.optionsMap.get('typeContainer');
+            optionsClusterByType.style.display = 'block';
+            for (const type of childrenType) {
+              const option = document.createElement('li');
+              option.innerText = 'Hide the children with type ' + type;
+              option.onclick = () => {
+                const childrenList = this.d3Graph.getChildrenByType(
+                  this.node.id,
+                  type
+                );
+                this.d3Graph.createNewCluster(type, childrenList);
+                this.d3Graph.update();
+              };
+              optionsClusterByType.appendChild(option);
+            }
+          }
+        }
+      }
+
+      /**
+       * Hide the context menu and reset its displayed options
+       *
+       */
+      hide() {
+        this.menu.style.display = 'none';
+        for (const option of this.optionsMap.values()) {
+          option.style.display = 'none';
+        }
+        const optionsClusterByType = this.optionsMap.get('typeContainer');
+        while (optionsClusterByType.hasChildNodes()) {
+          optionsClusterByType.removeChild(optionsClusterByType.firstChild);
+        }
+      }
+    }
+
+      /**
+       * The class that creates a list of checkboxes for the clusterisation by type.
+       */
+      class GraphClusteringByType {
+        /**
+         * Create a new Context Menu
+         *
+         * @param {D3GraphCanvas} d3Graph The graph.
+         */
+        constructor(d3Graph) {
+          this.d3Graph = d3Graph;
+
+          /** @type {HTMLDivElement} */
+          this.menu = document.createElement('g');
+          this.menu.style.display = 'flex';
+          this.menu.setAttribute('id', 'type-clustering-menu');
+        }
+
+        /**
+         * Get the menu
+         *
+         * @returns {HTMLDivElement} the menu
+         */
+        get() {
+          return this.menu;
+        }
+
+        /**
+         * Init the list of checkboxes
+         *
+         */
+        init() {
+          while (this.menu.hasChildNodes()) {
+            this.menu.removeChild(this.menu.firstChild);
+          }
+
+          const typeList = this.d3Graph.getTypeList();
+          for (const type of typeList) {
+            const option = document.createElement('input');
+            option.setAttribute('type', 'checkbox');
+            option.setAttribute('id', type);
+            option.oninput = () => {
+              if (option.checked) {
+                const nodeList = this.d3Graph.getNodeByType(type);
+                this.d3Graph.createNewCluster(type, nodeList, undefined);
+                this.d3Graph.update();
+              } else {
+                this.d3Graph.changeVisibilityChildren(option.id);
+                this.d3Graph.removeNode(option.id);
+              }
+            };
+            const optionLabel = document.createElement('label');
+            optionLabel.innerText = type;
+            optionLabel.setAttribute('for', type);
+            this.menu.appendChild(option);
+            this.menu.appendChild(optionLabel);
+          }
+        }
+      }
+
       const udviz = window.udviz;
 
       udviz
@@ -54,6 +305,16 @@
             view.scene
           );
 
+          const style = new udviz.itowns.Style({
+            fill: {
+              color: function (feature) {
+                return feature.userData.selectedColor
+                  ? feature.userData.selectedColor
+                  : 'white';
+                },
+              },
+          });
+
           // add a 3DTiles temporal layer
 
           const extensions = new udviz.itowns.C3DTExtensions();
@@ -70,6 +331,7 @@
             const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
               layerConfig.id,
               {
+                style: style,
                 name: layerConfig.id,
                 source: new udviz.itowns.C3DTilesSource({
                   url: layerConfig.url,
@@ -83,78 +345,395 @@
           });
 
           // //// SPARQL MODULE
+
+          let hiddenGroup = undefined;
+
+          
+          const handleZoom = (ev, graph) => {
+            const getMaxiGroup = (graph) => {
+              let max = 0;
+              graph.data.nodes.forEach((elem) => {
+                if (elem.group > max) max = elem.group;
+              });
+              return max;
+            };
+            udviz.d3.selectAll('g.graph')
+              .attr('height', '100%')
+              .attr('width', '100%')
+              .attr(
+                'transform',
+                'translate(' +
+                  ev.transform.x +
+                  ',' +
+                  ev.transform.y +
+                  ') scale(' +
+                  ev.transform.k +
+                  ')'
+              );
+            // zoom clustering by group
+            if (zoomCheckBox.checked) {
+              if (
+                Math.floor(ev.transform.k / zoom.value) !=
+                  hiddenGroup &&
+                Math.floor(ev.transform.k) >= zoom.value
+              ) {
+                graph.changeVisibilityChildren('zoom');
+                graph.removeNode('zoom');
+                let clusteredNodes = [];
+                const maxGroup = getMaxiGroup(graph);
+                for (let i = Math.floor(ev.transform.k / zoom.value) ; i <= maxGroup ; i++) {
+                  clusteredNodes = clusteredNodes.concat(graph.getNodeByGroup(i));
+                }
+                const node = graph.createNewCluster(
+                  'zoom',
+                  clusteredNodes
+                );
+                node.display = false;
+                hiddenGroup = Math.floor(
+                  ev.transform.k / zoom.value
+                );
+                graph.update();
+              }
+            }
+          };
+
           const sparqlWidget = new udviz.widgetSPARQL.SparqlQueryWindow(
             new udviz.widgetSPARQL.SparqlEndpointResponseProvider(
               configs['sparql_server']
             ),
-            configs['sparql_widget']
+            configs['sparql_widget'],
+            handleZoom
           );
           sparqlWidget.domElement.classList.add('widget_sparql');
+
+          const contextMenu = new ContextMenuGraphClustering(sparqlWidget.d3Graph);
+          const typeClustering = new GraphClusteringByType(sparqlWidget.d3Graph);
+
+          const button = document.createElement('button');
+          button.innerText = 'Stop the simulation';
+          button.style['width'] = sparqlWidget.d3Graph.width + 'px';
+
+          button.onclick = () => {
+            sparqlWidget.d3Graph.simulation.stop();
+          };
 
           // Add UI
           const uiDomElement = document.createElement('div');
           uiDomElement.classList.add('full_screen');
           document.body.appendChild(uiDomElement);
           uiDomElement.appendChild(sparqlWidget.domElement);
+          uiDomElement.appendChild(contextMenu.get());
+          sparqlWidget.domElement.appendChild(sparqlWidget.d3Graph.tooltipDiv);
 
-          // Add listeners for D3Canvas node events. Three events are currently recognized 'click', 'mouseover', and 'mouseout'
+          // Add new options to the context-menu
 
-          // graph event
-          sparqlWidget.d3Graph.addEventListener('click', (event) => {
-            // Get clicked node's data, if nodeData.type is 'Building', zoom camera on a feature with the same 'gmlid' as nodeData.id
-            const nodeData = sparqlWidget.d3Graph.data.getNodeByIndex(
-              event.datum.index
-            );
-
-            console.debug('node clicked: ', nodeData);
-
-            if (udviz.getUriLocalname(nodeData.type) == 'Building') {
-              const clickedResult = udviz.fetchC3DTileFeatureWithNodeText(
-                view,
-                'gml_id',
-                udviz.getUriLocalname(nodeData.id)
-              );
-              if (!clickedResult) return;
-
-              udviz.focusCameraOn(
-                view,
-                view.controls,
-                clickedResult.layer
-                  .computeWorldBox3(clickedResult.feature)
-                  .getCenter(new udviz.THREE.Vector3()),
-                {
-                  verticalDistance: 200,
-                  horizontalDistance: 200,
-                }
-              );
-            }
-          });
-
-          // graph event
-          sparqlWidget.table.addEventListener('click', (event) => {
-            const col = event.datum.col;
-            const row = event.datum.row;
+          const optionCamera = document.createElement('li');
+          optionCamera.innerText = 'Focus the camera on the building';
+          optionCamera.onclick = () => {
             const clickedResult = udviz.fetchC3DTileFeatureWithNodeText(
               view,
               'gml_id',
-              udviz.getUriLocalname(row[col].value)
+              udviz.getUriLocalname(contextMenu.node.id)
             );
             if (!clickedResult) return;
 
-            console.debug('clicked cell value: ', row[col].value);
+            console.debug(clickedResult.feature.getInfo());
 
             udviz.focusCameraOn(
               view,
               view.controls,
-              clickedResult.layer
-                .computeWorldBox3(clickedResult.feature)
+              clickedResult.feature
+                .computeWorldBox3(undefined)
                 .getCenter(new udviz.THREE.Vector3()),
               {
                 verticalDistance: 200,
                 horizontalDistance: 200,
               }
             );
+          };
+          contextMenu.initNewOption('camera',optionCamera);
+
+          const optionExploration = document.createElement('li');
+          optionExploration.innerText = 'Add its children';
+          optionExploration.onclick = () => {
+            sparqlWidget.updateExplorationQuery(udviz.getUriLocalname(contextMenu.node.id));
+          };
+          contextMenu.initNewOption('exploration',optionExploration);
+
+          // Add listeners for D3Canvas node events. Three events are currently recognized 'click', 'mouseover', and 'mouseout'
+          // eslint-disable-next-line no-unused-vars
+          sparqlWidget.d3Graph.addEventListener('graph_initialized', (event) => {
+            typeClustering.init();
+            sparqlWidget.domElement.appendChild(button);
           });
+
+          sparqlWidget.d3Graph.addEventListener('click', (event) => {
+
+            event.event.stopPropagation();
+
+            const node = event.datum;
+            console.log('node clicked: ', node);
+
+            if (node.display && node.realNode) {
+              contextMenu.display(event, node);
+
+              if (node.type == 'Building') {
+                contextMenu.displayOption('camera');
+              }
+
+              if (node.child == undefined && sparqlWidget.explorationQuery != undefined) {
+                contextMenu.displayOption('exploration');
+              }
+            }
+            else if (!node.realNode) {
+              sparqlWidget.d3Graph.changeVisibilityChildren(node.id);
+              sparqlWidget.d3Graph.removeNode(node.id);
+              const element = document.getElementById(node.id);
+              if (element) {
+                element.checked = false;
+              }
+            }
+          });
+
+          const contextSelection = {
+            feature: [],
+            layer: [],
+          };
+
+          sparqlWidget.resetButton.onclick = () => {
+            // define a new on click behavior of the 'Clear Graph' button
+            sparqlWidget.d3Graph.clearCanvas();
+            sparqlWidget.domElement.removeChild(sparqlWidget.domElement.lastChild);
+            sparqlWidget.d3Graph.data.clear();
+            if (sparqlWidget.explorationQuery) {
+              sparqlWidget.explorationQuery.where_conditions = [];
+              if (sparqlWidget.queries.length > 1)
+                sparqlWidget.updateQueryTextArea(sparqlWidget.querySelect.value);
+              else sparqlWidget.queryTextArea.value = sparqlWidget.explorationQuery.generateQuery();
+            }
+            if (contextSelection.feature.length) {
+              // reset feature userData
+              for (let i = 0 ; i < contextSelection.feature.length ; i++){
+                contextSelection.feature[i].userData.selectedColor = null;
+                contextSelection.layer[i].updateStyle();
+              }
+              contextSelection.feature = [];
+              contextSelection.layer = [];
+              view.notifyChange();
+            }
+          };
+
+          view.domElement.onclick = (event) => {
+
+            // get intersects based on the click event
+            const intersects = view.pickObjectsAt(
+              event,
+              0,
+              view.getLayers().filter((el) => el.isC3DTilesLayer)
+            );
+
+            if (intersects.length) {
+              // get featureClicked
+              const featureClicked =
+                intersects[0].layer.getC3DTileFeatureFromIntersectsArray(
+                  intersects
+                );
+              if (featureClicked && sparqlWidget.explorationQuery != undefined) {
+                // update the graph with the node of the clicked building
+                const batchTable = featureClicked.getInfo().batchTable;
+                const node_id = batchTable.gml_id;
+                sparqlWidget.updateExplorationQuery(node_id);
+                
+                // write in userData the selectedColor
+                featureClicked.userData.selectedColor = 'red';
+
+                // and update its style layer
+                intersects[0].layer.updateStyle();
+
+                // set contextSelection
+                contextSelection.feature.push(featureClicked);
+                contextSelection.layer.push(intersects[0].layer);
+              }
+            }
+
+            view.notifyChange(); // need a redraw of the view
+          };
+
+          // initialize the user menu of graph configuration
+          const menuUser = document.createElement('div'); // à afficher que si visualisation graphe
+          menuUser.className = 'menuUser';
+          sparqlWidget.interfaceElement.insertBefore(menuUser, sparqlWidget.dataView);
+          
+          sparqlWidget.interfaceElement.insertBefore(typeClustering.get(), sparqlWidget.dataView);
+
+          const zoom = document.createElement('input');
+          zoom.setAttribute('type', 'range');
+          zoom.setAttribute('min', '0.5');
+          zoom.setAttribute('max', '1.5');
+          zoom.setAttribute('step', '0.25');
+          zoom.setAttribute('value', '1');
+
+          const zoomLabel = document.createElement('label');
+          zoomLabel.innerText = '\nZoom sensitivity: ';
+
+          const zoomScale = document.createElement('div');
+          zoomScale.className = 'scale';
+
+          for (let i = 0.5; i <= 1.5; i += 0.25) {
+          const zoomScaleLabel = document.createElement('span');
+          zoomScaleLabel.className = 'scale_label';
+          zoomScaleLabel.innerText = i;
+          zoomScale.appendChild(zoomScaleLabel);
+          }
+
+          const menuLabel = document.createElement('label');
+          menuLabel.innerText = 'Graph configuration\n';
+          menuLabel.className = 'menu-label';
+
+          const buildingIdInput = document.createElement('input');
+
+          const buildingIdLabel = document.createElement('label');
+          buildingIdLabel.innerText = '\nBuilding ID: ';
+
+          const showBuildingButton = document.createElement('input');
+          showBuildingButton.setAttribute('type', 'submit');
+          showBuildingButton.setAttribute('value', 'Show');
+
+          const chargeStrengthConfiguration = document.createElement('input');
+          chargeStrengthConfiguration.setAttribute('type', 'range');
+          chargeStrengthConfiguration.setAttribute('min', '-80');
+          chargeStrengthConfiguration.setAttribute('max', '0');
+          chargeStrengthConfiguration.setAttribute('step', '20');
+          chargeStrengthConfiguration.setAttribute('value', '-40');
+
+          chargeStrengthConfiguration.oninput = () => { // à changer dans d3Graph > voir pour le rendre dynamique
+          sparqlWidget.d3Graph.chargeStrength = chargeStrengthConfiguration.value;
+          sparqlWidget.d3Graph.updateForceSimulation();
+          };
+
+          const chargeStrengthLabel = document.createElement('label');
+          chargeStrengthLabel.innerText = '\n\nStrength of node attraction: ';
+
+          const chargeStrengthScale = document.createElement('div');
+          chargeStrengthScale.className = 'scale';
+
+          for (let i = -80; i <= 0; i += 20) {
+          const chargeStrengthScaleLabel = document.createElement('span');
+          chargeStrengthScaleLabel.className = 'scale_label';
+          chargeStrengthScaleLabel.innerText = i;
+          chargeStrengthScale.appendChild(chargeStrengthScaleLabel);
+          }
+
+          const distanceLinkConfiguration = document.createElement('input');
+          distanceLinkConfiguration.setAttribute('type', 'range');
+          distanceLinkConfiguration.setAttribute('min', '10');
+          distanceLinkConfiguration.setAttribute('max', '50');
+          distanceLinkConfiguration.setAttribute('step', '10');
+          distanceLinkConfiguration.setAttribute('value', '30');
+
+          distanceLinkConfiguration.oninput = () => {
+          sparqlWidget.d3Graph.distanceLink = distanceLinkConfiguration.value;
+          sparqlWidget.d3Graph.updateForceSimulation();
+          };
+
+          const distanceLinkLabel = document.createElement('label');
+          distanceLinkLabel.innerText = '\n Length of links: ';
+
+          const distanceLinkScale = document.createElement('div');
+          distanceLinkScale.className = 'scale';
+
+          for (let i = 10; i <= 50; i += 10) {
+          const distanceLinkScaleLabel = document.createElement('span');
+          distanceLinkScaleLabel.className = 'scale_label';
+          distanceLinkScaleLabel.innerText = i;
+          distanceLinkScale.appendChild(distanceLinkScaleLabel);
+          }
+
+          const forceCenterConfiguration = document.createElement('input');
+          forceCenterConfiguration.setAttribute('type', 'range');
+          forceCenterConfiguration.setAttribute('min', '0');
+          forceCenterConfiguration.setAttribute('max', '0.3');
+          forceCenterConfiguration.setAttribute('step', '0.1');
+          forceCenterConfiguration.setAttribute('value', '0.1');
+
+          forceCenterConfiguration.oninput = () => {
+          sparqlWidget.d3Graph.forceCenter = forceCenterConfiguration.value;
+          sparqlWidget.d3Graph.updateForceSimulation();
+          };
+
+          const forceCenterLabel = document.createElement('label');
+          forceCenterLabel.innerText = '\n Attraction to the graph center: ';
+
+          const forceCenterScale = document.createElement('div');
+          forceCenterScale.className = 'scale';
+
+          for (const i of [0, 0.1, 0.2, 0.3]) {
+          const forceCenterScaleLabel = document.createElement('span');
+          forceCenterScaleLabel.className = 'scale_label';
+          forceCenterScaleLabel.innerText = i;
+          forceCenterScale.appendChild(forceCenterScaleLabel);
+          }
+
+          const zoomCheckBox = document.createElement('input');
+          zoomCheckBox.setAttribute('type', 'checkbox');
+          zoomCheckBox.setAttribute('id', 'zoom');
+          zoomCheckBox.setAttribute('name', 'zoom');
+          zoomCheckBox.defaultChecked = true;
+          const zoomCheckBoxLabel = document.createElement('label');
+          zoomCheckBoxLabel.innerText = ' Zoom Clustering';
+          zoomCheckBoxLabel.setAttribute('for', 'zoom');
+
+          zoomCheckBox.oninput = () => {
+          if (!zoomCheckBox.checked) {
+            sparqlWidget.d3Graph.changeVisibilityChildren('zoom');
+            sparqlWidget.d3Graph.removeNode('zoom');
+          }
+          };
+
+          menuUser.appendChild(menuLabel);
+          menuUser.appendChild(zoomLabel);
+          menuUser.appendChild(zoom);
+          menuUser.appendChild(zoomScale);
+          menuUser.appendChild(buildingIdLabel);
+          menuUser.appendChild(buildingIdInput);
+          menuUser.appendChild(showBuildingButton);
+          menuUser.appendChild(chargeStrengthLabel);
+          menuUser.appendChild(chargeStrengthConfiguration);
+          menuUser.appendChild(chargeStrengthScale);
+          menuUser.appendChild(distanceLinkLabel);
+          menuUser.appendChild(distanceLinkConfiguration);
+          menuUser.appendChild(distanceLinkScale);
+          menuUser.appendChild(forceCenterLabel);
+          menuUser.appendChild(forceCenterConfiguration);
+          menuUser.appendChild(forceCenterScale);
+          menuUser.appendChild(zoomCheckBox);
+          menuUser.appendChild(zoomCheckBoxLabel);
+
+          showBuildingButton.onclick = () => {
+            // add on click behavior of the 'Show' button: focus the camera of the building matching the ID written in the input
+            const node_id = buildingIdInput.value;
+            const clickedResult = udviz.fetchC3DTileFeatureWithNodeText(
+              view,
+              'gml_id',
+              node_id
+            );
+            if (!clickedResult) {
+              alert('No building with this ID !');
+            return;
+            }
+
+            udviz.focusCameraOn(
+            view,
+            view.controls,
+            clickedResult.feature
+              .computeWorldBox3(undefined)
+              .getCenter(new udviz.THREE.Vector3()),
+            {
+              verticalDistance: 200,
+              horizontalDistance: 200,
+            }
+            );
+          };
         });
     </script>
     SCRIPT_TAG_RELOAD

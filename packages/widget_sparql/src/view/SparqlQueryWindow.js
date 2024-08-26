@@ -182,7 +182,6 @@ export class SparqlQueryWindow {
    * @param {string} view_type the selected semantic data view type
    */
   updateDataView(response, view_type) {
-    console.debug(response);
     this.clearDataView();
     switch (view_type) {
       case 'graph':

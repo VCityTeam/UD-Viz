@@ -1,45 +1,49 @@
 {
   "height": 500,
-  "width": 500,
+  "width": 800,
   "fontSize": 4,
+  "fontFamily": "Arial",
+  "strokeWidth": 0.75,
+  "nodeSize": 7,
+  "defaultColor": "#dedede",
+  "linkColor": "#999",
+  "nodeStrokeColor": "black",
+  "fontSizeLegend": 14,
   "queries": [
     {
-      "title": "Select a CityGML Building with ID: 'VILLEURBANNE_00012_23'",
+      "title": "Requête exploration",
       "formats": {
         "graph": "Graph",
         "json": "JSON"
       },
-      "filepath": "./assets/queries/buildingByIDQuery.rq"
+      "exploration": {
+        "prefix": [
+          ["bldg", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/2.0/building#"],
+          ["skos", "http://www.w3.org/2004/02/skos/core#"],
+          ["data", "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/Villeurbanne/2018/GratteCiel_2018_split#"]
+        ],
+        "select_variable": [
+          "subject",
+          "subjectType",
+          "predicate",
+          "object",
+          "objectType"
+        ],
+        "options": [
+          ["FILTER", "?subjectType != owl:NamedIndividual"],
+          ["FILTER", "!bound(?objectType) || ?objectType != owl:NamedIndividual"],
+          ["FILTER", "?subject != owl:NamedIndividual"],
+          ["FILTER", "?object != owl:NamedIndividual"]
+        ]
+      }
     },
     {
-      "title": "Select an IFC Slab with ID: '2Q4QvRyEvCrefpeva98EMR'",
-      "formats": {
-        "graph": "Graph"
-      },
-      "filepath": "./assets/queries/ifcSlabByIDQuery.rq"
-    },
-    {
-      "title": "Count how many IFC Slabs are in the graph",
-      "formats": {
-        "table": "Table"
-      },
-      "filepath": "./assets/queries/ifcSlabCountQuery.rq"
-    },
-    {
-      "title": "Select all IFC Slabs in the graph",
-      "formats": {
-        "graph": "Graph"
-      },
-      "filepath": "./assets/queries/ifcSlabQuery.rq"
-    },
-    {
-      "title": "Select several random features within the 2012 version of the city model",
+      "title": "Requête construct",
       "formats": {
         "graph": "Graph",
-        "table": "Table",
         "json": "JSON"
       },
-      "filepath": "./assets/queries/version.rq"
+      "filepath": "./assets/queries/construct.rq"
     }
   ],
   "namespaceLabels": {
@@ -58,20 +62,11 @@
     "http://www.w3.org/1999/xlink#": "xlink",
     "https://w3id.org/express#": "express",
     "http://standards.buildingsmart.org/IFC/DEV/IFC2x3/TC1/OWL#": "ifc",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/core#": "core",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/building#": "bldg",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/bridge#": "brid",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/landuse#": "luse",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/appearance#": "app",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/relief#": "dem",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityfurniture#": "frn",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/generics#": "gen",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/cityobjectgroup#": "grp",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/texturedsurface#": "tex",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/tunnel#": "tun",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/vegetation#": "veg",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/2.0/waterbody#": "wtr",
     "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/CityGML/3.0/versioning#": "vers",
-    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#": "type"
+    "https://raw.githubusercontent.com/VCityTeam/UD-Graph/master/Ontologies/Workspace/3.0/transactiontypes#": "type",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/building#": "bldg",
+    "https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Ontologies/CityGML/3.0/construction#": "con",
+    "http://def.isotc211.org/iso19107/2003/CoordinateGeometry#": "iso19107-cm",
+    "http://www.w3.org/2006/time#": "time"
   }
 }

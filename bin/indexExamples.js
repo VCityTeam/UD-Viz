@@ -45,11 +45,13 @@ export * as widgetLegonizer from '@ud-viz/widget_legonizer';
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import * as proj4 from 'proj4';
+import * as d3 from 'd3'; 
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass';
 export {
+  d3,
   THREE,
   itowns,
   proj4,

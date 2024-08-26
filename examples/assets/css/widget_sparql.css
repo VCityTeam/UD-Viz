@@ -1,9 +1,42 @@
 .widget_sparql {
-  background-color: #313336bb;
+  background-color: #354661bb;
   width: fit-content;
   color: white;
   z-index: 5;
   position: absolute;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.menuUser {
+  border-radius: 5px;
+  border: 2px solid black;
+  display: block;
+  padding: .5em;
+  height: fit-content;
+  width: fit-content;
+  background-color: white;
+  color: black;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 0;
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.scale-label {
+  font-size: 12px;
+  text-align: center;
+}
+
+.menu-label {
+  font-weight: bold;
 }
 
 a {
