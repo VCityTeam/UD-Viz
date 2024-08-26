@@ -1,5 +1,5 @@
 {
-  "url": "http://localhost:9013/blazegraph/",
+  "url": "http://localhost:9011/blazegraph/",
   "url_parameters": "sparql?format=json&query=",
   "options": {}
 }

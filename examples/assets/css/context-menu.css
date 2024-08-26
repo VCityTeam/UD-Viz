@@ -1,0 +1,24 @@
+#context-menu {
+    display: none;
+    position: absolute;
+    background-color: rgb(218, 213, 213);
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+  
+#context-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#context-menu li {
+    padding: 6px 20px;
+    cursor: pointer;
+    color: rgb(0, 0, 0);
+}
+
+#context-menu li:hover {
+    background-color: #f0f0f0;
+}

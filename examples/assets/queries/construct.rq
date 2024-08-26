@@ -1,0 +1,11 @@
+PREFIX data: <https://dataset-dl.liris.cnrs.fr/rdf-owl-urban-data-ontologies/Datasets/Villeurbanne/2018/GratteCiel_2018_split#>
+
+CONSTRUCT {
+   data:69266BM55_0 ?prop ?val .
+   ?child ?childProp ?childPropVal . 
+}
+WHERE {
+     data:69266BM55_0 ?prop ?val ;
+        (data:overrides|!data:overrides)+ ?child .
+  		  ?child ?childProp ?childPropVal.
+}

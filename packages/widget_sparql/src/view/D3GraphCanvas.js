@@ -136,8 +136,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           };
           graph.links.push(link);
         }
-
-        console.debug(graph);
       };
     } else {
       this.formatResponse = formatResponse;
@@ -935,7 +933,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .force('x', d3.forceX(this.width / 2).strength(this.forceCenter))
       .force('y', d3.forceY(this.height / 2).strength(this.forceCenter))
       .force('collide', d3.forceCollide(5))
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2)) // defines the graph's center of gravity at the center of the canva
       .alphaTarget(1)
       .on('tick', () => this.ticked(this));
 
@@ -955,40 +952,42 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.link_label = this.label.selectAll('.link_label');
 
     // create legend
-    this.svg
-      .append('text')
-      .attr('x', 12)
-      .attr('y', 24)
-      .style('font-size', this.fontSizeLegend)
-      .style('text-decoration', 'underline')
-      .text('Legend');
+    if (this.data.legend.length > 0) {
+      this.svg
+        .append('text')
+        .attr('x', 12)
+        .attr('y', 24)
+        .style('font-size', this.fontSizeLegend)
+        .style('text-decoration', 'underline')
+        .text('Legend');
 
-    // legend colors
-    this.svg
-      .append('g')
-      .attr('stroke', '#111')
-      .attr('stroke-width', 1)
-      .selectAll('rect')
-      .data(this.data.legend)
-      .join('rect')
-      .attr('x', 12)
-      .attr('y', (d, i) => 32 + i * 16)
-      .attr('width', 10)
-      .attr('height', 10)
-      .style('fill', (d) => d.color)
-      .append('title')
-      .text((d) => d);
+      // legend colors
+      this.svg
+        .append('g')
+        .attr('stroke', '#111')
+        .attr('stroke-width', 1)
+        .selectAll('rect')
+        .data(this.data.legend)
+        .join('rect')
+        .attr('x', 12)
+        .attr('y', (d, i) => 32 + i * 16)
+        .attr('width', 10)
+        .attr('height', 10)
+        .style('fill', (d) => d.color)
+        .append('title')
+        .text((d) => d);
 
-    // legend text
-    this.svg
-      .append('g')
-      .selectAll('text')
-      .data(this.data.legend)
-      .join('text')
-      .attr('x', 26)
-      .attr('y', (d, i) => 41 + i * 16)
-      .text((d) => d.type)
-      .style('font-size', this.fontSizeLegend);
+      // legend text
+      this.svg
+        .append('g')
+        .selectAll('text')
+        .data(this.data.legend)
+        .join('text')
+        .attr('x', 26)
+        .attr('y', (d, i) => 41 + i * 16)
+        .text((d) => d.type)
+        .style('font-size', this.fontSizeLegend);
+    }
 
     this.svg
       .append('defs')
@@ -996,8 +995,8 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .attr('id', 'arrowhead')
       .attr('viewBox', '-0 -5 10 10')
       .attr('orient', 'auto')
-      .attr('markerWidth', 5)
-      .attr('markerHeight', 5)
+      .attr('markerWidth', (this.strokeWidth / 0.75) * 4)
+      .attr('markerHeight', 10)
       .attr('refX', 5)
       .attr('xoverflow', 'visible')
       .append('svg:path')
@@ -1006,6 +1005,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .style('stroke', 'none');
 
     this.update();
+    this.dispatchEvent({
+      type: 'graph_initialized',
+      message: 'd3Graph init finished',
+      event: null,
+    });
   }
 
   /**
@@ -1110,6 +1114,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       .on('mouseover', (event, datum) => {
         this.tooltip
           .style('visibility', 'visible')
+          .style('color', 'black')
           .html(
             htmlTooltip(datum, [
               'color_id',
@@ -1442,6 +1447,11 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.simulation.nodes(this.data.nodes);
     this.simulation.force('link').links(this.data.links);
     this.simulation.alpha(1).restart();
+    this.dispatchEvent({
+      type: 'graph_updated',
+      message: 'd3Graph update finished',
+      event: null,
+    });
   }
 
   /**
@@ -1486,49 +1496,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
   // / Interface Functions ///
 
-  /**
-   * Create a drag effect for graph nodes within the context of a force simulation
-   *
-   * @param {d3.forceSimulation} simulation The active D3 force simulation of the graph
-   * @returns {d3.drag} a D3 drag function to enable dragging nodes within the graph
-   */
-  drag(simulation) {
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragstarted(event) {
-      if (!event.active) simulation.alphaTarget(0.3).restart(); // assure que la simulation redémarre et "s'anime" si aucune autre interaction n'est en cours (pour la fluidité)
-      event.subject.fx = event.subject.x; // associe à fx (= la position fixe x du node, sans intéraction de force) sa position x avant le début du drag
-      event.subject.fy = event.subject.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragged(event) {
-      event.subject.fx = event.x; // met à jour la position fixe du node avec la valeur de sa position actuelle
-      event.subject.fy = event.y;
-    }
-
-    /**
-     *
-     * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
-     */
-    function dragended(event) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null; // réinitialise la valeur de position fixe du node
-      event.subject.fy = null;
-    }
-
-    return d3
-      .drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended);
-  }
-
   ticked(graph) {
     graph.nodeCluster
       .attr('x', (d) => d.x - graph.nodeSize)
@@ -1544,10 +1511,17 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
 
     graph.link.attr('d', function (d) {
       const getNormalVec = (A, B) => {
-        const n = {
-          x: 1,
-          y: (A.x - B.x) / (B.y - A.y),
-        };
+        let n;
+        if (B.y - A.y != 0)
+          n = {
+            x: 1,
+            y: (A.x - B.x) / (B.y - A.y),
+          };
+        else
+          n = {
+            x: 0,
+            y: 1,
+          };
         const norm = Math.sqrt(n.x * n.x + n.y * n.y);
         n.x = n.x / norm;
         n.y = n.y / norm;
@@ -1653,21 +1627,48 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       });
   }
 
+  /**
+   *
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+   * @param {object} d the dragged node
+   * @param {D3GraphCanvas} graph this
+   */
   dragstarted(event, d, graph) {
     if (!event.active) graph.simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+    if (d.fixed == undefined) {
+      if (d.fx == undefined) {
+        d.fixed = false;
+        d.fx = d.x;
+        d.fy = d.y;
+      } else d.fixed = true;
+    }
   }
 
+  /**
+   *
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+   * @param {object} d the dragged node
+   * @param {D3GraphCanvas} graph this
+   */
   dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
+    if (!d.fixed) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
   }
 
+  /**
+   *
+   * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
+   * @param {object} d the dragged node
+   * @param {D3GraphCanvas} graph this
+   */
   dragended(event, d, graph) {
     if (!event.active) graph.simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
+    if (!d.fixed) {
+      d.fx = null;
+      d.fy = null;
+    }
   }
 
   /**
