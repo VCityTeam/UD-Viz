@@ -1655,7 +1655,6 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    *
    * @param {d3.D3DragEvent} event the drag event containing information on which node is being clicked and dragged
    * @param {object} d the dragged node
-   * @param {D3GraphCanvas} graph this
    */
   dragged(event, d) {
     if (!d.fixed) {
