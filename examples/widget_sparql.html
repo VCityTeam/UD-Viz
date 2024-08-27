@@ -270,7 +270,7 @@
         .loadMultipleJSON([
           './assets/config/extents.json',
           './assets/config/crs.json',
-          './assets/config/layer/3DTiles_temporal.json',
+          './assets/config/layer/3DTiles_Lyon.json',
           './assets/config/widget/sparql_widget.json',
           './assets/config/server/sparql_server.json',
         ])
@@ -327,22 +327,22 @@
               udviz.extensions3DTilesTemporal.C3DTTemporalTileset,
           });
 
-          configs['3DTiles_temporal'].forEach((layerConfig) => {
-            const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
-              layerConfig.id,
-              {
-                style: style,
-                name: layerConfig.id,
-                source: new udviz.itowns.C3DTilesSource({
-                  url: layerConfig.url,
-                }),
-                registeredExtensions: extensions,
-              },
-              view
-            );
 
-            udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
-          });
+          const layerConfig = configs['3DTiles_Lyon'][9];
+          const c3DTilesLayer = new udviz.itowns.C3DTilesLayer(
+            layerConfig.id,
+            {
+              style: style,
+              name: layerConfig.id,
+              source: new udviz.itowns.C3DTilesSource({
+                url: layerConfig.url,
+              }),
+              registeredExtensions: extensions,
+            },
+            view
+          );
+
+          udviz.itowns.View.prototype.addLayer.call(view, c3DTilesLayer);
 
           // //// SPARQL MODULE
 
