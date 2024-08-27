@@ -1510,6 +1510,13 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       });
 
     graph.link.attr('d', function (d) {
+      /**
+       * Calculate the vector normal to vector AB
+       *
+       * @param {object} A a point
+       * @param {object} B a point
+       * @returns {object} the normal vector
+       */
       const getNormalVec = (A, B) => {
         let n;
         if (B.y - A.y != 0)
