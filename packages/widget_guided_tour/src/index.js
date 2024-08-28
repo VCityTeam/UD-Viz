@@ -171,7 +171,7 @@ export class GuidedTour {
     const step = this.getCurrentStep();
     if (step.position && step.rotation)
       this.travelToPosition(step.position, step.rotation);
-    this.filterLayers(step.layers);
+    if (step.layers && step.layers.length > 0) this.filterLayers(step.layers);
     this.addMedia(step.media);
   }
 
