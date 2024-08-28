@@ -1,7 +1,7 @@
 # UD-Viz : Urban Data Vizualisation
 
 [![CodeQL](https://github.com/VCityTeam/UD-Viz/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/VCityTeam/UD-Viz/actions/workflows/codeql-analysis.yml)
-[![CI status](https://app.travis-ci.com/VCityTeam/UD-Viz.svg?token=2TLV2qhtpKaFYJvsMzwz&branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
+[![CI status](https://api.travis-ci.com/VCityTeam/UD-Viz.svg?branch=master)](https://app.travis-ci.com/github/VCityTeam/UD-Viz)
 [![Documentation Status](https://readthedocs.org/projects/ansicolortags/badge/?version=latest)](http://vcityteam.github.io/UD-Viz/html/index.html)
 
 UD-Viz is a javascript mono repository for creating web applications for visualizing and interacting with geospatial 3D urban data.
