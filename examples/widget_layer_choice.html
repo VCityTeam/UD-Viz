@@ -84,7 +84,7 @@
               new udviz.itowns.C3DTilesLayer(
                 layerConfig['id'],
                 {
-                  name: layerConfig['id'],
+                  name: layerConfig.name || layerConfig.id,
                   source: new udviz.itowns.C3DTilesSource({
                     url: layerConfig['url'],
                   }),
@@ -143,7 +143,7 @@
           configs['geoJSONs'].forEach((layerConfig) => {
             view.addLayer(
               new udviz.itowns.ColorLayer(layerConfig.id, {
-                name: layerConfig.id,
+                name: layerConfig.name || layerConfig.id,
                 transparent: true,
                 source: new udviz.itowns.FileSource({
                   url: layerConfig.url,

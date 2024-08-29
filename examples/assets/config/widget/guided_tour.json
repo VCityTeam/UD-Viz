@@ -1,138 +1,123 @@
 {
-    "tour": {
-        "name": "Tour example",
-        "description": "This is an example of guided tour",
-        "startIndex": 0,
-        "endIndex": 3,
-        "steps": [
-            {
-                "previous": 0,
-                "next": 1,
-                "layers": [
-                    "planar",
-                    "Base_Map",
-                    "Lyon-1",
-                    "Lyon-2",
-                    "Lyon-3",
-                    "Lyon-4",
-                    "Lyon-5",
-                    "Lyon-6",
-                    "Lyon-7",
-                    "Lyon-8",
-                    "Lyon-9"
-                ],
-                "media": [
-                    "TEXT_00", "IMG_00"
-                ],
-                "position": {
-                    "x": 1844817,
-                    "y": 5175845,
-                    "z": 13958
-                },
-                "rotation": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0,
-                    "w": 1
-                }
-            },
-            {
-                "previous": 0,
-                "next": 2,
-                "layers": [
-                    "planar",
-                    "Base_Map",
-                    "Lyon-1",
-                    "Lyon-2",
-                    "Lyon-3",
-                    "Lyon-4",
-                    "Lyon-5",
-                    "Lyon-6",
-                    "Lyon-7"
-                ],
-                "media": [
-                    "VID_00", "TEXT_00"
-                ],
-                "position": {
-                    "x": 1841860,
-                    "y": 5172347,
-                    "z": 1800
-                },
-                "rotation": {
-                    "x": 0.4372485384286126,
-                    "y": -0.021137977602860868,
-                    "z": -0.04341426312873182,
-                    "w": 0.8980434863089272
-                }
-            },
-            {
-                "previous": 1,
-                "next": 3,
-                "layers": [
-                    "planar",
-                    "Base_Map",
-                    "Lyon-1"
-                ],
-                "media": [
-                    "AUD_00", "IMG_00"
-                ],
-                "position": {
-                    "x": 1842432,
-                    "y": 5175753,
-                    "z": 400
-                },
-                "rotation": {
-                    "x": 0.35922373109642836,
-                    "y": -0.28960235472088647,
-                    "z": -0.5568198186433112,
-                    "w": 0.6906811686467995
-                }
-            },
-            {
-                "previous": 2,
-                "next": 3,
-                "layers": [
-                    "planar",
-                    "Base_Map",
-                    "Lyon-3"
-                ],
-                "media": [
-                    "VID_00", "AUD_00"
-                ],
-                "position": {
-                    "x": 1844393,
-                    "y": 5174236,
-                    "z": 700
-                },
-                "rotation": {
-                    "x": 0.43419437332154354,
-                    "y": 0.08434226729415112,
-                    "z": 0.1710188272096401,
-                    "w": 0.8804056956105141
-                }
-            }
-        ]
-    },
-    "media": [
-        {
-            "id": "TEXT_00",
-            "type": "text",
-            "value": "This is an example"
+  "tour": {
+    "id": "tour_example",
+    "name": "Tour example",
+    "description": "This is an example of guided tour",
+    "startIndex": 0,
+    "endIndex": 3,
+    "steps": [
+      {
+        "previous": 0,
+        "next": 1,
+        "layers": [
+          "planar",
+          "Base_Map",
+          "Lyon-1",
+          "Lyon-2",
+          "Lyon-3",
+          "Lyon-4",
+          "Lyon-5",
+          "Lyon-6",
+          "Lyon-7",
+          "Lyon-8",
+          "Lyon-9"
+        ],
+        "media": ["TEXT_00", "IMG_00"],
+        "position": {
+          "x": 1844817,
+          "y": 5175845,
+          "z": 13958
         },
-        {
-            "id": "IMG_00",
-            "type": "image",
-            "value": "https://projet.liris.cnrs.fr/vcity/UD-Viz.png"
-        },
-        {
-            "id": "VID_00",
-            "type": "video",
-            "value": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        },
-        {
-            "id": "AUD_00",
-            "type": "audio",
-            "value": "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
+        "rotation": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "w": 1
         }
+      },
+      {
+        "previous": 0,
+        "next": 2,
+        "layers": [
+          "planar",
+          "Base_Map",
+          "Lyon-1",
+          "Lyon-2",
+          "Lyon-3",
+          "Lyon-4",
+          "Lyon-5",
+          "Lyon-6",
+          "Lyon-7"
+        ],
+        "media": ["VID_00", "TEXT_00"],
+        "position": {
+          "x": 1841860,
+          "y": 5172347,
+          "z": 1800
+        },
+        "rotation": {
+          "x": 0.4372485384286126,
+          "y": -0.021137977602860868,
+          "z": -0.04341426312873182,
+          "w": 0.8980434863089272
+        }
+      },
+      {
+        "previous": 1,
+        "next": 3,
+        "layers": ["planar", "Base_Map", "Lyon-1"],
+        "media": ["AUD_00", "IMG_00"],
+        "position": {
+          "x": 1842432,
+          "y": 5175753,
+          "z": 400
+        },
+        "rotation": {
+          "x": 0.35922373109642836,
+          "y": -0.28960235472088647,
+          "z": -0.5568198186433112,
+          "w": 0.6906811686467995
+        }
+      },
+      {
+        "previous": 2,
+        "next": 3,
+        "layers": ["planar", "Base_Map", "Lyon-3"],
+        "media": ["VID_00", "AUD_00"],
+        "position": {
+          "x": 1844393,
+          "y": 5174236,
+          "z": 700
+        },
+        "rotation": {
+          "x": 0.43419437332154354,
+          "y": 0.08434226729415112,
+          "z": 0.1710188272096401,
+          "w": 0.8804056956105141
+        }
+      }
     ]
+  },
+  "media": [
+    {
+      "id": "TEXT_00",
+      "type": "text",
+      "value": "This is an example"
+    },
+    {
+      "id": "IMG_00",
+      "type": "image",
+      "value": "https://projet.liris.cnrs.fr/vcity/UD-Viz.png"
+    },
+    {
+      "id": "VID_00",
+      "type": "video",
+      "value": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+    },
+    {
+      "id": "AUD_00",
+      "type": "audio",
+      "value": "https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba.mp3"
+    }
+  ]
 }

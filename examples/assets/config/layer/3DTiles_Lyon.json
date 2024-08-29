@@ -1,42 +1,52 @@
 [
   {
-    "id": "Lyon-1",
+    "id": "lyon_1_2018",
+    "name": "Lyon 1 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-1_2018/tileset.json"
   },
   {
-    "id": "Lyon-2",
+    "id": "lyon_2_2018",
+    "name": "Lyon 2 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-2_2018/tileset.json"
   },
   {
-    "id": "Lyon-3",
+    "id": "lyon_3_2018",
+    "name": "Lyon 3 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-3_2018/tileset.json"
   },
   {
-    "id": "Lyon-4",
+    "id": "lyon_4_2018",
+    "name": "Lyon 4 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-4_2018/tileset.json"
   },
   {
-    "id": "Lyon-5",
+    "id": "lyon_5_2018",
+    "name": "Lyon 5 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-5_2018/tileset.json"
   },
   {
-    "id": "Lyon-6",
+    "id": "lyon_6_2018",
+    "name": "Lyon 6 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-6_2018/tileset.json"
   },
   {
-    "id": "Lyon-7",
+    "id": "lyon_7_2018",
+    "name": "Lyon 7 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-7_2018/tileset.json"
   },
   {
-    "id": "Lyon-8",
+    "id": "lyon_8_2018",
+    "name": "Lyon 8 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-8_2018/tileset.json"
   },
   {
-    "id": "Lyon-9",
+    "id": "lyon_9_2018",
+    "name": "Lyon 9 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/Lyon-9_2018/tileset.json"
   },
   {
-    "id": "Gratte Ciel 2018",
+    "id": "gratte_ciel_2018",
+    "name": "Gratte-Ciel 2018",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/2018/GratteCiel_2018/tileset.json"
   }
 ]
