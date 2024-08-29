@@ -1,12 +1,14 @@
 {
   "slides": [
     {
-      "name": "diapo1",
+      "id": "diapo_1",
+      "name": "Diapo test 1",
       "folder": "./assets/img/slide",
       "diapositives": ["1.jpeg", "2.jpeg", "3.jpeg"]
     },
     {
-      "name": "diapo2",
+      "id": "diapo_2",
+      "name": "Diapo test 2",
       "folder": "./assets/img/slide",
       "diapositives": ["11.jpeg", "12.jpeg", "13.jpeg"]
     }

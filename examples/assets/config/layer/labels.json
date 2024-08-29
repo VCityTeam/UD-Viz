@@ -1,6 +1,7 @@
 [
   {
-    "id": "Mairies de la métropole de Lyon",
+    "id": "mairies_metropole_lyon",
+    "name": "Mairies de la métropole de Lyon",
     "url": "https://data.grandlyon.com/geoserver/metropole-de-lyon/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=metropole-de-lyon:adr_voie_lieu.adrmairiepct&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "sourceType": "file",
     "zoom": {

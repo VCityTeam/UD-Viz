@@ -1,6 +1,7 @@
 [
   {
-    "id": "bus-lines",
+    "id": "bus_lines",
+    "name": "Ligne de bus",
     "url": "https://data.grandlyon.com/geoserver/sytral/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=sytral:tcl_sytral.tcllignebus_2_0_0&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "fill": {
@@ -13,7 +14,8 @@
     }
   },
   {
-    "id": "Zones-Humides",
+    "id": "wetland",
+    "name": "Zones humides",
     "url": "https://data.grandlyon.com/geoserver/metropole-de-lyon/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=metropole-de-lyon:evg_esp_veg.evgmarezonehumide&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "fill": {
@@ -26,7 +28,8 @@
     }
   },
   {
-    "id": "velo-v",
+    "id": "velo_v",
+    "name": "Stations Velov",
     "url": "https://data.grandlyon.com/geoserver/metropole-de-lyon/ows?SERVICE=WFS&VERSION=2.0.0&request=GetFeature&typename=metropole-de-lyon:pvo_patrimoine_voirie.pvostationvelov&outputFormat=application/json&SRSNAME=EPSG:3946&startIndex=0&sortBy=gid",
     "style": {
       "point": {

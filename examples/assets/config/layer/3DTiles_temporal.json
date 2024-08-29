@@ -1,29 +1,20 @@
 [
   {
-    "id": "Lyon-1-temporal",
+    "id": "lyon_1_temporal",
+    "name": "Lyon 1er temporel",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Lyon1er_Temporal-2009-2012-2015_TileSet/tileset.json",
-    "dates": [
-      2009,
-      2012,
-      2015
-    ]
+    "dates": [2009, 2012, 2015]
   },
   {
-    "id": "La Doua temporel",
+    "id": "doua_temporal",
+    "name": "La Doua temporel",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/la-doua_2009-2018-temporal_tileset/tileset.json",
-    "dates": [
-      2009,
-      2018
-    ]
+    "dates": [2009, 2018]
   },
   {
-    "id": "Gratte-Ciel temporel",
+    "id": "gratte_ciel_temporal",
+    "name": "Gratte-Ciel temporel",
     "url": "https://dataset-dl.liris.cnrs.fr/three-d-tiles-lyon-metropolis/Temporal/Villeurbanne_GratteCiel_Temporal_2009-2012-2015-2018_TileSet/tileset.json",
-    "dates": [
-      2009,
-      2012,
-      2015,
-      2018
-    ]
+    "dates": [2009, 2012, 2015, 2018]
   }
 ]
