@@ -98,7 +98,10 @@ export class STSParabola extends STShape {
       }
     }
 
-    points = points.slice(Math.round(minIndex), Math.round(maxIndex) + 1);
+    points = points.slice(
+      Math.max(Math.round(minIndex), 0),
+      Math.min(Math.round(maxIndex) + 1, points.length)
+    );
 
     const geometryDisplayed = new THREE.BufferGeometry().setFromPoints(points);
 
@@ -119,7 +122,13 @@ export class STSParabola extends STShape {
       let curveIndex;
       switch (displayMode) {
         case DISPLAY_MODE.SEQUENTIAL: {
-          curveIndex = yearDelta * this.stLayer.versions.indexOf(version);
+          curveIndex = Math.max(
+            0,
+            Math.min(
+              points.length - 1,
+              yearDelta * this.stLayer.versions.indexOf(version)
+            )
+          );
           break;
         }
         case DISPLAY_MODE.CHRONOLOGICAL: {
