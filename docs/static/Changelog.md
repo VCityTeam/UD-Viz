@@ -1,3 +1,27 @@
+# 4.4.0
+
+## @ud-viz
+
+- Add a new demo (industrial morphology) to demo mosaic
+- Fix CI badges
+- Add a `name` field in layers config files
+- Bump webpack from 5.88.2 to 5.94.0
+
+## @ud-vie/extensions_3d_tiles_temporal
+
+- Fix STParabola to insure curve points indexes are never out of bounds
+
+## @ud-viz/widget_guided_tour
+
+- Allow steps with no layer to hide
+
+## @ud-viz/widget_sparql
+
+- Add dropdown menu for nodes functions
+- Add queries for retrieving nodes descendants
+- Add clusterisation by neighbors
+- Add clusterisation by type
+
 # 4.3.0
 
 ## @ud-viz
