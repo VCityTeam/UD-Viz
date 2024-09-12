@@ -11,6 +11,7 @@ flowchart
   subgraph IDsrcView["view"]
    IDsrcViewD3GraphCanvas2ejs["D3GraphCanvas.js"]
    IDsrcViewJsonRenderer2ejs["JsonRenderer.js"]
+   IDsrcViewSparqlQuery2ejs["SparqlQuery.js"]
    IDsrcViewSparqlQueryWindow2ejs["SparqlQueryWindow.js"]
    IDsrcViewTable2ejs["Table.js"]
   end
@@ -26,5 +27,6 @@ IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcServiceSparqlEndpointResponseProv
 IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewD3GraphCanvas2ejs
 IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewTable2ejs
 IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewJsonRenderer2ejs
+IDsrcViewSparqlQueryWindow2ejs-.->|import|IDsrcViewSparqlQuery2ejs
 ```
 >This file has been generated using autoMermaid.js

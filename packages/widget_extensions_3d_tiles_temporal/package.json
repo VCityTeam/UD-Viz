@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_extensions_3d_tiles_temporal",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "widget slide show of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_extensions_3d_tiles_temporal",
   "peerDependencies": {
-    "@ud-viz/extensions_3d_tiles_temporal": "4.3.0",
+    "@ud-viz/extensions_3d_tiles_temporal": "4.4.0",
     "itowns": "2.41.1-next.9"
   }
 }
