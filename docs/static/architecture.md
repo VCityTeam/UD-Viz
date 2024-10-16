@@ -31,6 +31,7 @@ widget_legonizer
 widget_planar_controls
 widget_slide_show
 widget_sparql
+widget_versioning
 widget_workspace
 end
 extensions_3d_tiles_temporal-->utils_shared
@@ -90,6 +91,8 @@ widget_legonizer-->utils_browser
 widget_planar_controls-->utils_browser
 widget_slide_show-->utils_browser
 widget_sparql-->utils_browser
+widget_versioning-->utils_browser
+widget_versioning-->widget_sparql
 widget_workspace-->utils_browser
 widget_workspace-->widget_sparql
 ```
