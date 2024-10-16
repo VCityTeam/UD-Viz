@@ -245,7 +245,7 @@ export class SparqlQueryWindow {
   }
 
   toggleQueryTextArea() {
-    if (this.queryTextArea.style.display == 'none') {
+    if (!this.queryTextArea.style.display || this.queryTextArea.style.display == 'none') {
       this.queryTextArea.style.display = 'inherit';
       this.toggleQueryTextAreaButton.textContent = 'Hide the query ▼';
     } else {
@@ -366,6 +366,7 @@ export class SparqlQueryWindow {
     this.interfaceElement.className = 'box-section';
     this.domElement.appendChild(this.interfaceElement);
     this.initQueryTextAreaForm();
+    this.toggleQueryTextArea();
     this.initResultDisplay();
   }
 }
