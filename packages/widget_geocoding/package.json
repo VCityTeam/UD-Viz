@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_geocoding",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "widget geocoding of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_geocoding",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.4.0",
-    "@ud-viz/utils_shared": "4.4.0",
+    "@ud-viz/utils_browser": "4.5.0",
+    "@ud-viz/utils_shared": "4.5.0",
     "itowns": "2.41.1-next.9",
     "three": "0.154.0",
     "proj4": "2.8.0"

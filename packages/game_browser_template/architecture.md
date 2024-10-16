@@ -4,8 +4,8 @@ flowchart
   IDsrcCameraManager2ejs["CameraManager.js"]
   IDsrcControllerNativeCommandManager2ejs["ControllerNativeCommandManager.js"]
   IDsrcDomElement3DCube2ejs["DomElement3DCube.js"]
-  IDsrcIndex2ejs["index.js"]
   IDsrcMap2ejs["Map.js"]
+  IDsrcIndex2ejs["index.js"]
   IDsrcUtils2ejs["utils.js"]
   subgraph IDsrcDragAndDropAvatar["dragAndDropAvatar"]
    IDsrcDragAndDropAvatarDragAndDropAvatar2ejs["DragAndDropAvatar.js"]
@@ -22,8 +22,8 @@ flowchart
     IDsrcNoteSocketServiceStyle2ecss["style.css"]
    end
    subgraph IDsrcNoteUi["ui"]
-    IDsrcNoteUiStyle2ecss["style.css"]
     IDsrcNoteUiUI2ejs["UI.js"]
+    IDsrcNoteUiStyle2ecss["style.css"]
    end
   end
  end

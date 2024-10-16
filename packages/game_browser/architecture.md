@@ -4,28 +4,19 @@ flowchart
   IDsrcAssetManager2ejs["AssetManager.js"]
   IDsrcAudioController2ejs["AudioController.js"]
   IDsrcContext2ejs["Context.js"]
-  IDsrcIndex2ejs["index.js"]
   IDsrcInputManager2ejs["InputManager.js"]
   IDsrcMultiPlanarProcess2ejs["MultiPlanarProcess.js"]
   IDsrcRenderController2ejs["RenderController.js"]
   IDsrcSingleBaseProcess2ejs["SingleBaseProcess.js"]
   IDsrcSinglePlanarProcess2ejs["SinglePlanarProcess.js"]
   IDsrcSocketIOWrapper2ejs["SocketIOWrapper.js"]
+  IDsrcIndex2ejs["index.js"]
  end
 IDsrcAudioController2ejs-.->|import|IDsrcAssetManager2ejs
 IDsrcContext2ejs-.->|import|IDsrcRenderController2ejs
 IDsrcContext2ejs-.->|import|IDsrcAudioController2ejs
 IDsrcContext2ejs-.->|import|IDsrcAssetManager2ejs
 IDsrcContext2ejs-.->|import|IDsrcInputManager2ejs
-IDsrcIndex2ejs-.->|import|IDsrcAssetManager2ejs
-IDsrcIndex2ejs-.->|import|IDsrcAudioController2ejs
-IDsrcIndex2ejs-.->|import|IDsrcContext2ejs
-IDsrcIndex2ejs-.->|import|IDsrcInputManager2ejs
-IDsrcIndex2ejs-.->|import|IDsrcMultiPlanarProcess2ejs
-IDsrcIndex2ejs-.->|import|IDsrcRenderController2ejs
-IDsrcIndex2ejs-.->|import|IDsrcSinglePlanarProcess2ejs
-IDsrcIndex2ejs-.->|import|IDsrcSingleBaseProcess2ejs
-IDsrcIndex2ejs-.->|import|IDsrcSocketIOWrapper2ejs
 IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcSocketIOWrapper2ejs
 IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcInputManager2ejs
 IDsrcMultiPlanarProcess2ejs-.->|import|IDsrcAssetManager2ejs
@@ -37,5 +28,14 @@ IDsrcSingleBaseProcess2ejs-.->|import|IDsrcContext2ejs
 IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcAssetManager2ejs
 IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcInputManager2ejs
 IDsrcSinglePlanarProcess2ejs-.->|import|IDsrcContext2ejs
+IDsrcIndex2ejs-.->|import|IDsrcAssetManager2ejs
+IDsrcIndex2ejs-.->|import|IDsrcAudioController2ejs
+IDsrcIndex2ejs-.->|import|IDsrcContext2ejs
+IDsrcIndex2ejs-.->|import|IDsrcInputManager2ejs
+IDsrcIndex2ejs-.->|import|IDsrcMultiPlanarProcess2ejs
+IDsrcIndex2ejs-.->|import|IDsrcRenderController2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSinglePlanarProcess2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSingleBaseProcess2ejs
+IDsrcIndex2ejs-.->|import|IDsrcSocketIOWrapper2ejs
 ```
 >This file has been generated using autoMermaid.js

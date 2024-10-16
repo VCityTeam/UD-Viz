@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/game_shared_template",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "description": "Collection of script base on @ud-viz/game_shared",
   "main": "src",
   "scripts": {
@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/game_shared_template",
   "peerDependencies": {
-    "@ud-viz/game_shared": "4.4.0",
-    "@ud-viz/utils_shared": "4.4.0",
+    "@ud-viz/game_shared": "4.5.0",
+    "@ud-viz/utils_shared": "4.5.0",
     "three": "0.154.0"
   }
 }

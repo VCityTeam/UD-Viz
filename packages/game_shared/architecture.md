@@ -2,10 +2,10 @@
 flowchart
  subgraph IDsrc["src"]
   IDsrcCommand2ejs["Command.js"]
-  IDsrcConstant2ejs["constant.js"]
   IDsrcContext2ejs["Context.js"]
-  IDsrcIndex2ejs["index.js"]
   IDsrcObject3D2ejs["Object3D.js"]
+  IDsrcConstant2ejs["constant.js"]
+  IDsrcIndex2ejs["index.js"]
   subgraph IDsrcComponent["component"]
    IDsrcComponentAudio2ejs["Audio.js"]
    IDsrcComponentCollider2ejs["Collider.js"]
@@ -27,6 +27,11 @@ IDsrcContext2ejs-.->|import|IDsrcComponentGameScript2ejs
 IDsrcContext2ejs-.->|import|IDsrcObject3D2ejs
 IDsrcContext2ejs-.->|import|IDsrcStateState2ejs
 IDsrcContext2ejs-.->|import|IDsrcCommand2ejs
+IDsrcObject3D2ejs-.->|import|IDsrcComponentExternalScript2ejs
+IDsrcObject3D2ejs-.->|import|IDsrcComponentGameScript2ejs
+IDsrcObject3D2ejs-.->|import|IDsrcComponentCollider2ejs
+IDsrcObject3D2ejs-.->|import|IDsrcComponentAudio2ejs
+IDsrcObject3D2ejs-.->|import|IDsrcComponentRender2ejs
 IDsrcIndex2ejs-.->|import|IDsrcConstant2ejs
 IDsrcIndex2ejs-.->|import|IDsrcCommand2ejs
 IDsrcIndex2ejs-.->|import|IDsrcContext2ejs
@@ -41,11 +46,6 @@ IDsrcIndex2ejs-.->|import|IDsrcComponentExternalScript2ejs
 IDsrcIndex2ejs-.->|import|IDsrcComponentGameScript2ejs
 IDsrcIndex2ejs-.->|import|IDsrcComponentScript2ejs
 IDsrcIndex2ejs-.->|import|IDsrcComponentComponent2ejs
-IDsrcObject3D2ejs-.->|import|IDsrcComponentExternalScript2ejs
-IDsrcObject3D2ejs-.->|import|IDsrcComponentGameScript2ejs
-IDsrcObject3D2ejs-.->|import|IDsrcComponentCollider2ejs
-IDsrcObject3D2ejs-.->|import|IDsrcComponentAudio2ejs
-IDsrcObject3D2ejs-.->|import|IDsrcComponentRender2ejs
 IDsrcComponentAudio2ejs-.->|import|IDsrcComponentComponent2ejs
 IDsrcComponentCollider2ejs-.->|import|IDsrcComponentComponent2ejs
 IDsrcComponentComponent2ejs-.->|import|IDsrcObject3D2ejs

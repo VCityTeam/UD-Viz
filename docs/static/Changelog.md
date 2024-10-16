@@ -1,3 +1,17 @@
+# 4.5.0
+
+## @ud-viz
+
+- Add a new demo (versioning widget) to demo mosaic
+
+## @ud-viz/widget_versioning
+
+- Created widget_versioning
+
+## @ud-viz/widget_sparql
+
+- Improved customisation of the SPARQL endpoint response provider
+
 # 4.4.0
 
 ## @ud-viz
