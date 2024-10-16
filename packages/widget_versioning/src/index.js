@@ -169,7 +169,7 @@ export class SparqlVersioningQueryWindow extends SparqlQueryWindow {
         Object.entries(this.eventListeners).forEach(([event, listener]) => {
           this.d3Graph.addEventListener(event, listener);
         });
-        this.d3Graph.update(response);
+        this.d3Graph.init(response);
         this.dataView.append(this.d3Graph.canvas);
         break;
       case 'json':
