@@ -75,6 +75,20 @@ export class SparqlQueryWindow {
     this.d3Graph = new D3GraphCanvas(configSparqlWidget, handleZoom, undefined);
 
     /**
+     * The event listeners for the graphs.
+     *
+     * @type {object}
+     */
+    this.eventListeners = {};
+
+    /**
+     * The sparqlModule view configuration.
+     *
+     * @type {object}
+     */
+    this.configSparqlWidget = configSparqlWidget;
+
+    /**
      * Contains the D3 table to display RDF data.
      *
      * @type {Table}
@@ -186,6 +200,10 @@ export class SparqlQueryWindow {
     switch (view_type) {
       case 'graph':
         this.d3Graph.init(response);
+        Object.entries(this.eventListeners).forEach(([event, listener]) => {
+          this.d3Graph.addEventListener(event, listener);
+        });
+        this.d3Graph.update(response);
         this.dataView.append(this.d3Graph.canvas);
         this.dataView.style['height'] = this.d3Graph.height + 'px';
         this.dataView.style['width'] = this.d3Graph.width + 'px';
@@ -208,6 +226,15 @@ export class SparqlQueryWindow {
       default:
         console.error('This result format is not supported: ' + view_type);
     }
+  }
+
+  /**
+   * Add event listeners to the graphs
+   *
+   * @param {object} eventListeners An object containing event listeners to be added to the graph
+   */
+  addEventListeners(eventListeners) {
+    this.eventListeners = eventListeners;
   }
 
   /**
@@ -325,6 +352,7 @@ export class SparqlQueryWindow {
     this.resetButton.style.display = 'none';
     this.dataView = document.createElement('div');
     this.dataView.className = 'box-selection';
+    this.dataView.setAttribute('style', 'display:flex');
     this.interfaceElement.appendChild(this.dataView);
     this.interfaceElement.appendChild(this.resetButton);
   }

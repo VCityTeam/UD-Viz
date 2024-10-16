@@ -1,0 +1,53 @@
+{
+    "height": 500,
+    "width": 500,
+    "fontSize": 4,
+    "queries": [
+      {
+        "title": "Select all the versioned graphs",
+        "formats": {
+          "versioning": "Versioning",
+          "graph": "Graph",
+          "table": "Table",
+          "json": "JSON"
+        },
+        "filepath": "./assets/queries/versioning.rq"
+      },
+      {
+        "title": "Select the max note across all versioned graphs (BSBM)",
+        "formats": {
+          "table": "Table",
+          "json": "JSON"
+        },
+        "filepath": "./assets/queries/versioning-2.rq"
+      },
+      {
+        "title": "Select all the versioned graphs and the associated types",
+        "formats": {
+          "versioning": "Versioning",
+          "graph": "Graph",
+          "table": "Table",
+          "json": "JSON"
+        },
+        "filepath": "./assets/queries/versioning-3.rq"
+      }
+    ],
+    "namespaceLabels": {
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf",
+      "http://www.w3.org/2000/01/rdf-schema#": "rdfs",
+      "http://www.w3.org/2002/07/owl#": "owl",
+      "http://www.w3.org/2001/XMLSchema#": "xsd",
+      "https://w3id.org/list#": "list",
+      "http://www.w3.org/2004/02/skos/core#": "skos",
+      "http://www.opengis.net/gml#": "gml",
+      "http://www.opengis.net/ont/gml#": "gmlowl",
+      "http://www.opengis.net/def/uom/OGC/1.0/": "units",
+      "http://www.opengis.net/ont/geosparql#": "geo",
+      "http://www.opengis.net/def/function/geosparql/": "geof",
+      "http://strdf.di.uoa.gr/ontology#": "strdf",
+      "http://www.w3.org/1999/xlink#": "xlink",
+      "https://w3id.org/express#": "express",
+      "http://www.w3.org/2006/time#": "time",
+      "https://github.com/VCityTeam/ConVer-G/Version#": "vers"
+    }
+  }

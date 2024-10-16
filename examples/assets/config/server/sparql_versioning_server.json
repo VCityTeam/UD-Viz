@@ -1,0 +1,6 @@
+{
+  "url": "http://localhost:8081/rdf/query",
+  "options": {
+    "query": "body"
+  }
+}
