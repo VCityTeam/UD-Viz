@@ -20,6 +20,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
    */
   constructor(config, handleZoom, formatResponse) {
     super();
+    this.id = THREE.MathUtils.generateUUID();
     this.height = config.height || 800;
     this.width = config.width || 1500;
     this.fontSize = config.fontSize || 4;
@@ -35,7 +36,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
     this.svg = d3 // the svg in which the graph is displayed
       .create('svg')
       .attr('class', 'd3_graph')
-      .attr('id', 'svg')
+      .attr('id', this.id)
       .attr('viewBox', [0, 0, this.width, this.height])
       .style('display', 'hidden');
     this.data = new Graph();
@@ -840,7 +841,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Return a list of node IDs whose group is equal to groupIndex
    *
-   * @param {int} groupIndex the index of the group
+   * @param {number} groupIndex the index of the group
    * @returns {Array} the list
    */
   getNodeByGroup(groupIndex) {
@@ -1009,6 +1010,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       type: 'graph_initialized',
       message: 'd3Graph init finished',
       event: null,
+      graphId: this.id,
     });
   }
 
@@ -1109,6 +1111,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node click event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseover', (event, datum) => {
@@ -1155,6 +1158,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseover event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseout', (event, datum) => {
@@ -1181,6 +1185,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseout event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mousemove', (event, datum) => {
@@ -1192,6 +1197,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mousemove event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .merge(this.nodeCircle);
@@ -1232,6 +1238,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node click event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseover', (event, datum) => {
@@ -1265,6 +1272,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseover event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseout', (event, datum) => {
@@ -1281,6 +1289,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseout event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mousemove', (event, datum) => {
@@ -1292,6 +1301,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mousemove event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .merge(this.nodeCluster);
@@ -1344,6 +1354,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseover event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mouseout', (event, datum) => {
@@ -1353,6 +1364,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mouseout event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .on('mousemove', (event, datum) => {
@@ -1364,6 +1376,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
           message: 'node mousemove event',
           event: event,
           datum: datum,
+          graphId: this.id,
         });
       })
       .merge(this.link);
@@ -1451,6 +1464,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
       type: 'graph_updated',
       message: 'd3Graph update finished',
       event: null,
+      graphId: this.id,
     });
   }
 
