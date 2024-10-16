@@ -841,7 +841,7 @@ export class D3GraphCanvas extends THREE.EventDispatcher {
   /**
    * Return a list of node IDs whose group is equal to groupIndex
    *
-   * @param {int} groupIndex the index of the group
+   * @param {number} groupIndex the index of the group
    * @returns {Array} the list
    */
   getNodeByGroup(groupIndex) {
