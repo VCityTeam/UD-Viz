@@ -12,8 +12,8 @@ export * as smdb from '@ud-viz/smdb';
 // showroom
 export * as showRoom from '@ud-viz/show_room';
 
-// point cloud visualizer
-export * as pointCloudVisualizer from '@ud-viz/point_cloud_visualizer';
+// visualizer
+export * as visualizer from '@ud-viz/visualizer';
 
 // game
 export * as gameShared from '@ud-viz/game_shared';
@@ -46,7 +46,7 @@ export * as widgetLegonizer from '@ud-viz/widget_legonizer';
 import * as THREE from 'three';
 import * as itowns from 'itowns';
 import * as proj4 from 'proj4';
-import * as d3 from 'd3'; 
+import * as d3 from 'd3';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
