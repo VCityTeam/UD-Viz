@@ -4,10 +4,10 @@ import { RequestAnimationFrameProcess } from '@ud-viz/utils_browser';
 
 export class TargetOrbitControlMesh {
   constructor(orbitControls, camera3D, layerManager) {
-    /**@type {HTMLElement} */
+    /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
 
-    /**@type {OrbitControls} */
+    /** @type {OrbitControls} */
     this.orbitControls = orbitControls;
 
     /** @type {Mesh} */
@@ -52,6 +52,7 @@ export class TargetOrbitControlMesh {
 
   /**
    *
+   * @param camera3D
    * @param {Vector3} destPosition - destination position of the camera
    * @param {Vector3} destTarget - destination target of the orbit controls
    * @param {number} duration - duration in ms

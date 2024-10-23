@@ -2,6 +2,13 @@ import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 import { C3DTILES_LAYER_EVENTS } from 'itowns';
 import { createLocalStorageSlider } from '@ud-viz/utils_browser';
 
+/**
+ *
+ * @param domElement
+ * @param layers
+ * @param itownsView
+ * @param options
+ */
 export function setupLoadingUI(domElement, layers, itownsView, options) {
   const c3DTilesLoadingDomElement = document.createElement('div');
   if (options.c3DTilesLoadingDomElementClasses) {
@@ -79,6 +86,10 @@ export function setupLoadingUI(domElement, layers, itownsView, options) {
   return c3DTilesLoadingDomElement;
 }
 
+/**
+ *
+ * @param orbitControls
+ */
 export function setUpSpeedControls(orbitControls) {
   const domElementSpeedControls = document.createElement('div');
   const sliderSpeedControls = createLocalStorageSlider(

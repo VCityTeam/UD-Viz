@@ -1,0 +1,13 @@
+.label_3D {
+  z-index: 2;
+  width: fit-content;
+  background-color: black;
+  color: #ffffff;
+  border-radius: 2px;
+  position: absolute;
+  pointer-events: none;
+}
+
+.cursor_add {
+  cursor: crosshair;
+}
