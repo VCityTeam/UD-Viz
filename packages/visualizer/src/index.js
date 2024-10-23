@@ -118,7 +118,7 @@ export class Visualizer {
 
         window.addEventListener('keyup', (event) => {
           if (event.key == 'Escape') {
-            measure.leaveMeasureMode();
+            this.measure.leaveMeasureMode();
           }
         });
 
