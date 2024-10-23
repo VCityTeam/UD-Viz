@@ -25,7 +25,7 @@
           './assets/config/layer/elevation.json',
           './assets/config/layer/base_maps.json',
         ])
-        .then(async (configs) => {
+        .then((configs) => {
           udviz.proj4.default.defs(
             configs['crs'][0].name,
             configs['crs'][0].transform

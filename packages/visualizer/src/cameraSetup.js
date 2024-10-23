@@ -14,9 +14,9 @@ import { Visualizer } from '.';
  * @param {PlanarView} itownsView - iTowns view
  * @param {OrbitControls} orbitControls - Orbit controls for the camera.
  * @param {Array<Layer>} layers - layers in the scene.
- * @param {Object} [camOptions] - camera options.
- * @param {Object} [camOptions.default] - Default camera options.
- * @param {Object} [camOptions.default.position] - Default camera position coordinates.
+ * @param {object} [camOptions] - camera options.
+ * @param {object} [camOptions.default] - Default camera options.
+ * @param {object} [camOptions.default.position] - Default camera position coordinates.
  */
 export function setUpCameraDefaults(
   itownsView,

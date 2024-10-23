@@ -24,7 +24,7 @@ export class ClippingPlane {
     /** @type {Plane} */
     this.plane = new Plane();
 
-    /**@type {PlanarView} */
+    /** @type {PlanarView} */
     this.itownsView = itownsView;
 
     /** @type {HTMLDivElement} */
@@ -37,12 +37,12 @@ export class ClippingPlane {
     /** @type {HTMLInputElement}*/
     this.clippingEnable = null;
     /** @type {Array<HTMLButtonElement>}*/
-    this.buttons = [];
+    this.buttons = {};
 
-    /**@type {TransformControls} */
+    /** @type {TransformControls} */
     this.transformControls = null;
 
-    /**@type {Mesh} */
+    /** @type {Mesh} */
     this.quad = null;
 
     this.initUI();
@@ -72,8 +72,6 @@ export class ClippingPlane {
     );
 
     const mode = ['translate', 'rotate', 'scale'];
-    this.buttons = [];
-
     mode.forEach((m) => {
       const buttonMode = document.createElement('button');
       buttonMode.innerText = m;
@@ -142,11 +140,12 @@ export class ClippingPlane {
       this.itownsView.notifyChange();
     });
 
-    this.buttons.forEach((button) => {
+    for (const key in this.buttons) {
+      const button = this.buttons[key];
       button.addEventListener('click', () => {
         this.transformControls.setMode(button.mode);
         this.planeVisible.dispatchEvent(new Event('change'));
       });
-    });
+    }
   }
 }

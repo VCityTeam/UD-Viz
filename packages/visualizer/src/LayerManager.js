@@ -7,12 +7,11 @@ import {
 import {
   Box3,
   BoxGeometry,
-  DoubleSide,
+  Camera,
   Mesh,
   MeshBasicMaterial,
   PointsMaterial,
   Vector2,
-  Vector3,
   Raycaster,
 } from 'three';
 
@@ -20,7 +19,6 @@ export class LayerManager {
   constructor(layerConfigs, itownsView, pointsCloudMaterial, raycaster) {
     /** @type {Array<C3DTilesLayer>} */
     this.layers = [];
-
     /** @type {PointsMaterial} */
     this.pointsCloudMaterial = pointsCloudMaterial;
 
@@ -48,6 +46,7 @@ export class LayerManager {
         itownsView
       );
       c3dTilesLayer.isPointCloud = params.isPointCloud;
+
       this.setupLayersEvent(c3dTilesLayer);
 
       View.prototype.addLayer.call(itownsView, c3dTilesLayer);
@@ -72,20 +71,18 @@ export class LayerManager {
         }
       }
     );
-
     c3dTilesLayer.addEventListener(
       C3DTILES_LAYER_EVENTS.ON_TILE_CONTENT_LOADED,
-      (layer) => {
-        const newBB = layer.tileContent.boundingVolume.box.clone();
-        const target = layer.tileContent
-          .getWorldPosition(new Vector3())
-          .clone();
-        newBB.translate(target);
-        this.globalBB.union(newBB);
-
-        this.globalBBMesh.position.copy(this.globalBB.getCenter(new Vector3()));
+      () => {
+        let isGeometry = true;
+        c3dTilesLayer.object3d.traverse((child) => {
+          if (child.geometry) isGeometry = false;
+        });
+        if (isGeometry) return;
+        this.globalBB.expandByObject(c3dTilesLayer.object3d);
+        this.globalBB.getCenter(this.globalBBMesh.position);
         this.globalBBMesh.scale.copy(
-          this.globalBB.max.clone().sub(this.globalBB.min.clone())
+          this.globalBB.max.clone().sub(this.globalBB.min)
         );
         this.globalBBMesh.updateMatrixWorld();
       }
@@ -95,6 +92,7 @@ export class LayerManager {
   /**
    *
    * @param {Event} event - mouse event
+   * @param {Camera} camera3D - camera
    * @returns {object} - intersects object on pointcloud layers
    */
   eventTo3DTilesIntersect(event, camera3D) {
