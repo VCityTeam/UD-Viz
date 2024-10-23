@@ -1,8 +1,18 @@
-import { Mesh, MeshBasicMaterial, BoxGeometry } from 'three';
+import { Camera, Vector3, Mesh, MeshBasicMaterial, BoxGeometry } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { RequestAnimationFrameProcess } from '@ud-viz/utils_browser';
+import { LayerManager } from './LayerManager';
 
 export class TargetOrbitControlMesh {
+  /**
+   * Constructor to initialize the camera controller and related UI elements.
+   * Sets up the orbit controls, camera mesh, and initializes the UI for interaction.
+   * Adds an event listener on the orbit controls to update the mesh when changes occur.
+   *
+   * @param {OrbitControls} orbitControls - The orbit controls used to manipulate the camera.
+   * @param {Camera} camera3D - The 3D camera being controlled.
+   * @param {LayerManager} layerManager - A manager handling different layers in the scene.
+   */
   constructor(orbitControls, camera3D, layerManager) {
     /** @type {HTMLElement} */
     this.domElement = document.createElement('div');
@@ -27,6 +37,13 @@ export class TargetOrbitControlMesh {
     this.update();
   }
 
+  /**
+   * Initializes the UI, creating a draggable element that interacts with the 3D camera and layers.
+   * Adds drag-and-drop functionality to allow users to move the camera to a new position based on interaction.
+   *
+   * @param {Camera} camera3D - The camera that will be moved on drag end.
+   * @param {LayerManager} layerManager - The layer manager that handles intersections with 3D tiles.
+   */
   initUI(camera3D, layerManager) {
     const element = document.createElement('div');
     element.classList.add('drag_element');
@@ -41,6 +58,13 @@ export class TargetOrbitControlMesh {
     this.domElement.appendChild(element);
   }
 
+  /**
+   * Updates the position and scale of the mesh to reflect the current orbit target.
+   *
+   * This function ensures that the red target mesh follows the orbit control's target position.
+   * It also adjusts the scale of the mesh based on the camera's distance to the target,
+   * making the mesh appear proportional regardless of zoom level.
+   */
   update() {
     this.mesh.position.copy(this.orbitControls.target.clone());
     const scale =
@@ -51,12 +75,17 @@ export class TargetOrbitControlMesh {
   }
 
   /**
+   * Smoothly moves the camera to a specified position and target over a defined duration.
    *
-   * @param camera3D
-   * @param {Vector3} destPosition - destination position of the camera
-   * @param {Vector3} destTarget - destination target of the orbit controls
-   * @param {number} duration - duration in ms
-   * @returns {Promise} - promise resolving when the camera has moved
+   * @param {Camera} camera3D - The 3D camera object to move.
+   * @param {Vector3} destPosition - The destination position to move the camera to. If null, the current camera position will be used.
+   * @param {Vector3} destTarget - The destination target of the orbit controls (where the camera is looking). If null, the current orbit target will be used.
+   * @param {number} duration - The duration of the animation in milliseconds (default is 1500 ms).
+   * @returns {Promise} - A promise that resolves when the camera has finished moving to the destination.
+   *
+   * The function disables the camera's orbit controls during the transition, hides the mesh (presumably representing an object in the scene),
+   * and smoothly interpolates between the camera's current position and the destination. The transition is controlled using a `RequestAnimationFrameProcess`
+   * that updates every 30ms. When the transition is complete, the orbit controls are re-enabled, and the mesh is made visible again.
    */
   moveCamera(camera3D, destPosition, destTarget, duration = 1500) {
     if (!destPosition) destPosition = camera3D.position.clone();
