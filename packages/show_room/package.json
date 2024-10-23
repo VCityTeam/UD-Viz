@@ -23,6 +23,7 @@
     "@ud-viz/frame3d": "4.5.0",
     "@ud-viz/smdb": "4.5.0",
     "@ud-viz/utils_browser": "4.5.0",
+    "@ud-viz/visualizer": "4.5.0",
     "@ud-viz/widget_camera_positioner": "4.5.0",
     "@ud-viz/widget_geocoding": "4.5.0",
     "@ud-viz/widget_layer_choice": "4.5.0",

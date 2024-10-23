@@ -41,7 +41,7 @@
 
           const DEFAULT_POINT_SIZE = 0.1;
 
-          const app = new udviz.pointCloudVisualizer.PointCloudVisualizer(
+          const app = new udviz.visualizer.Visualizer(
             extent,
             configs['3DTiles_point_cloud'],
             {
@@ -137,12 +137,16 @@
               layerParams.push({ layer: layer });
             }
           });
-          app.pointCloudLayers.forEach((layer) => {
-            layerParams.push({
-              isPointCloud: true,
-              layer: layer,
-              defaultPointCloudSize: DEFAULT_POINT_SIZE,
-            });
+          app.layers.forEach((layer) => {
+            if (layer.isPointCloud) {
+              layerParams.push({
+                isPointCloud: true,
+                layer: layer,
+                defaultPointCloudSize: DEFAULT_POINT_SIZE,
+              });
+            } else {
+              layerParams.push({ layer: layer });
+            }
           });
           const widgetLayerChoice = new udviz.widgetLayerChoice.LayerChoice(
             app.itownsView,

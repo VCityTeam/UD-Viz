@@ -115,101 +115,98 @@ export class LayerChoice extends EventDispatcher {
           });
         };
       }
-
-      // opacity checkbox
-      const opacityInput = createLocalStorageSlider(
-        param.layer.id + '_layer_opacity',
-        'Opacité',
-        layerContainerDomElement,
-        param.layer.opacity
-      );
-
-      // sync opcity input with param.layer
-      param.layer.opacity = opacityInput.valueAsNumber;
-      opacityInput.onchange = () => {
-        param.layer.opacity = opacityInput.valueAsNumber;
-        this.view.notifyChange(this.view.camera.camera3D);
-      };
-
-      // order
-      if (param.layer.isColorLayer) {
-        const buttonDown = document.createElement('button');
-        buttonDown.innerText = 'v';
-        layerContainerDomElement.appendChild(buttonDown);
-
-        const buttonUp = document.createElement('button');
-        buttonUp.innerText = '^';
-        layerContainerDomElement.appendChild(buttonUp);
-
-        this.containerColorLayers.push({
-          container: layerContainerDomElement,
-          idLayer: param.layer.id,
-        });
-
-        const updateColorLayerContainers = () => {
-          const sequence = ImageryLayers.getColorLayersIdOrderedBySequence(
-            this.view.getLayers().filter((el) => el.isColorLayer)
-          );
-
-          this.containerColorLayers.sort((a, b) => {
-            const aIndexSequence = sequence.indexOf(a.idLayer);
-            const bIndexSequence = sequence.indexOf(b.idLayer);
-            return bIndexSequence - aIndexSequence;
-          });
-
-          // update html
-          this.containerColorLayers.forEach((el) => {
-            el.container.remove();
-          });
-
-          this.containerColorLayers.forEach((el) => {
-            this.colorLayersDomElement.appendChild(el.container);
-          });
-        };
-        updateColorLayerContainers();
-
-        buttonDown.onclick = () => {
-          ColorLayersOrdering.moveLayerDown(this.view, param.layer.id);
-          updateColorLayerContainers();
-        };
-        buttonUp.onclick = () => {
-          ColorLayersOrdering.moveLayerUp(this.view, param.layer.id);
-          updateColorLayerContainers();
-        };
-      }
-    }
-
-    if (param.isPointCloud) {
-      const pointCloudSize = createLocalStorageSlider(
-        param.layer.id + '_layer_pnts_size',
-        'Point size',
-        layerContainerDomElement,
-        {
-          step: 0.001,
-          max: 5,
-          min: 0.001,
-          defaultValue: param.defaultPointCloudSize || 0.03,
-        }
-      );
-
-      const updatePointsSize = () => {
-        // replace param.layer one for futur pnts requested
-        param.layer.material.size = pointCloudSize.valueAsNumber;
-
-        // replace in current pnts
-        param.layer.object3d.traverse((child) => {
-          if (child.material instanceof PointsMaterial) {
-            child.material.size = pointCloudSize.valueAsNumber;
+      if (param.isPointCloud) {
+        const pointCloudSize = createLocalStorageSlider(
+          param.layer.id + '_layer_pnts_size',
+          'Point size',
+          layerContainerDomElement,
+          {
+            step: 0.001,
+            max: 5,
+            min: 0.001,
+            defaultValue: param.defaultPointCloudSize || 0.03,
           }
-        });
+        );
 
-        this.view.notifyChange(this.view.camera.camera3D);
-      };
+        const updatePointsSize = () => {
+          // replace in current pnts
+          param.layer.object3d.traverse((child) => {
+            if (!child.material) return;
+            if (child.material instanceof PointsMaterial) {
+              child.material.size = pointCloudSize.valueAsNumber;
+            }
+          });
 
-      updatePointsSize();
+          this.view.notifyChange(this.view.camera.camera3D);
+        };
 
-      // change point cloud size
-      pointCloudSize.oninput = updatePointsSize;
+        updatePointsSize();
+
+        // change point cloud size
+        pointCloudSize.oninput = updatePointsSize;
+      } else {
+        // opacity checkbox
+        const opacityInput = createLocalStorageSlider(
+          param.layer.id + '_layer_opacity',
+          'Opacité',
+          layerContainerDomElement,
+          param.layer.opacity
+        );
+
+        // sync opcity input with param.layer
+        param.layer.opacity = opacityInput.valueAsNumber;
+        opacityInput.onchange = () => {
+          param.layer.opacity = opacityInput.valueAsNumber;
+          this.view.notifyChange(this.view.camera.camera3D);
+        };
+
+        // order
+        if (param.layer.isColorLayer) {
+          const buttonDown = document.createElement('button');
+          buttonDown.innerText = 'v';
+          layerContainerDomElement.appendChild(buttonDown);
+
+          const buttonUp = document.createElement('button');
+          buttonUp.innerText = '^';
+          layerContainerDomElement.appendChild(buttonUp);
+
+          this.containerColorLayers.push({
+            container: layerContainerDomElement,
+            idLayer: param.layer.id,
+          });
+
+          const updateColorLayerContainers = () => {
+            const sequence = ImageryLayers.getColorLayersIdOrderedBySequence(
+              this.view.getLayers().filter((el) => el.isColorLayer)
+            );
+
+            this.containerColorLayers.sort((a, b) => {
+              const aIndexSequence = sequence.indexOf(a.idLayer);
+              const bIndexSequence = sequence.indexOf(b.idLayer);
+              return bIndexSequence - aIndexSequence;
+            });
+
+            // update html
+            this.containerColorLayers.forEach((el) => {
+              el.container.remove();
+            });
+
+            this.containerColorLayers.forEach((el) => {
+              this.colorLayersDomElement.appendChild(el.container);
+            });
+          };
+          updateColorLayerContainers();
+
+          buttonDown.onclick = () => {
+            ColorLayersOrdering.moveLayerDown(this.view, param.layer.id);
+            updateColorLayerContainers();
+          };
+          buttonUp.onclick = () => {
+            ColorLayersOrdering.moveLayerUp(this.view, param.layer.id);
+            updateColorLayerContainers();
+          };
+        }
+      }
     }
 
     if (!param.layer.isTiledGeometryLayer) {

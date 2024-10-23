@@ -7,7 +7,7 @@
 
     const crs = 'EPSG:3857';
 
-    const instance = new udviz.pointCloudVisualizer.PointCloudVisualizer(
+    const instance = new udviz.visualizer.Visualizer(
       new udviz.itowns.Extent(crs, 0, 1, 0, 1)
     );
 
