@@ -1,5 +1,4 @@
 import { PlanarView } from 'itowns';
-import { Scene } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 export class ViewManager {
   constructor(extent, options) {

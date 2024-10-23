@@ -12,13 +12,12 @@ import {
   Vector3,
 } from 'three';
 
-import { MAIN_LOOP_EVENTS } from 'itowns';
+import { MAIN_LOOP_EVENTS, PlanarView } from 'itowns';
 import { LayerManager } from './LayerManager';
 
 /** @classdesc Measurement tool in a 3D visualization. Measure distances by clicking points in the scene and creating a path */
 export class Measure {
   /**
-   * @constructor
    * @param {PlanarView} itownsView - managing the 3D scene.
    * @param {LayerManager} layerManager -  handling 3D tiles and intersections.
    * @param {HTMLElement} viewerDiv - 3D viewer container.
@@ -36,7 +35,7 @@ export class Measure {
     /** @type {LayerManager} */
     this.layerManager = layerManager;
 
-    /** @type {Boolean} Flag if measure is active */
+    /** @type {boolean} Flag if measure is active */
     this.modeMeasure = false;
 
     /** @type {MeasurePath} */
@@ -63,6 +62,7 @@ export class Measure {
   /**
    * Initializes event callbacks for handling user interactions.
    * Handles point selection in the scene, toggling measure mode, and clearing the current path.
+   *
    * @param {HTMLElement} viewerDiv - 3D viewer container.
    * @param {PlanarView} itownsView - iTowns view instance.
    */
@@ -96,6 +96,7 @@ export class Measure {
 
   /**
    * Exits the measurement mode and updates the view accordingly.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    */
   leaveMeasureMode(itownsView) {
@@ -107,6 +108,7 @@ export class Measure {
 
   /**
    * Updates the UI and behavior based on the current measurement mode.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    */
   update(itownsView) {
@@ -125,6 +127,7 @@ export class Measure {
 
   /**
    * Creates a new measurement path and adds it to the group.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    * @returns {MeasurePath} - New instance of the MeasurePath class.
    */
@@ -149,21 +152,20 @@ export class Measure {
  */
 class MeasurePath {
   /**
-   * @constructor
    * @param {Group} parentMeasureObject - Group that contains the path.
    * @param {PlanarView} itownsView - iTowns view instance.
    * @param {MeshBasicMaterial} pointMaterial - Material for the sphere meshes.
    * @param {LineBasicMaterial} lineMaterial - Material for the lines.
    */
   constructor(parentMeasureObject, itownsView, pointMaterial, lineMaterial) {
-    /**@type {Object3D} */
+    /** @type {Object3D} */
     this.object3D = new Object3D();
 
     parentMeasureObject.add(this.object3D);
 
-    /**@type {MeshBasicMaterial} */
+    /** @type {MeshBasicMaterial} */
     this.pointMaterial = pointMaterial;
-    /**@type {LineBasicMaterial} */
+    /** @type {LineBasicMaterial} */
     this.lineMaterial = lineMaterial;
 
     /** @type {Array<Mesh>} array of spheres that representing points*/
@@ -183,6 +185,7 @@ class MeasurePath {
 
   /**
    * Updates the 3D objects representing the measurement path, including spheres and lines.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    */
   update(itownsView) {
@@ -257,6 +260,7 @@ class MeasurePath {
 
   /**
    * Updates the transform (scale) of spheres and labels based on camera distance.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    */
   updateTransform(itownsView) {
@@ -274,6 +278,7 @@ class MeasurePath {
 
   /**
    * Adds a new point to the measurement path.
+   *
    * @param {Vector3} vector - position of the point.
    * @param {PlanarView} itownsView - iTowns view instance.
    */
@@ -293,15 +298,14 @@ class MeasurePath {
  */
 class Label3D {
   /**
-   * @constructor
    * @param {Vector3} position - Position of the label.
    * @param {string} value - text value.
    */
   constructor(position, value) {
-    /**@type {Vector3} */
+    /** @type {Vector3} */
     this.position = position;
 
-    /**@type {HTMLDivElement} */
+    /** @type {HTMLDivElement} */
     this.domElement = document.createElement('div');
     this.domElement.classList.add('label_3D');
     this.domElement.innerText = value;
@@ -313,6 +317,7 @@ class Label3D {
 
   /**
    * Updates the position of the label on the screen based on the camera view.
+   *
    * @param {PlanarView} itownsView - iTowns view instance.
    */
   update(itownsView) {
