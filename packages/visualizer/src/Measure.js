@@ -25,18 +25,18 @@ export class Measure {
   constructor(itownsView, layerManager, viewerDiv) {
     this.domElement = createLocalStorageDetails('measure_details', 'Mesure');
 
-    /** @type {HTMLButtonElement} Toggling measure mode*/
-    this.pathButton = null;
-    /** @type {HTMLButtonElement} Clearing the current measure path */
-    this.clearMeasurePathButton = null;
+    /** @type {HTMLButtonElement} */
+    this.pathButton = null; // Toggling measure mode
+    /** @type {HTMLButtonElement}  */
+    this.clearMeasurePathButton = null; // Clearing the current measure path
     /** @type {HTMLDivElement} */
     this.infoPointCloudClicked = null;
 
     /** @type {LayerManager} */
     this.layerManager = layerManager;
 
-    /** @type {boolean} Flag if measure is active */
-    this.modeMeasure = false;
+    /** @type {boolean}  */
+    this.modeMeasure = false; // Flag if measure is active
 
     /** @type {MeasurePath} */
     this.currentMeasurePath = null;
@@ -168,19 +168,19 @@ class MeasurePath {
     /** @type {LineBasicMaterial} */
     this.lineMaterial = lineMaterial;
 
-    /** @type {Array<Mesh>} array of spheres that representing points*/
-    this.sphereMesh = [];
+    /** @type {Array<Mesh>} */
+    this.sphereMesh = []; // array of spheres that representing points
 
-    /** @type {Array<Label3D>} array of Label3D for distances between points*/
-    this.labelDomElements = [];
+    /** @type {Array<Label3D>} */
+    this.labelDomElements = []; // array of Label3D for distances between points
 
     // record a frame requester
     itownsView.addFrameRequester(MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE, () => {
       this.updateTransform(itownsView);
     });
 
-    /** @type {Array<Vector3>} Array of points*/
-    this.points = [];
+    /** @type {Array<Vector3>} */
+    this.points = []; // Array of points
   }
 
   /**
