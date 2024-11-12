@@ -13,12 +13,12 @@ game_node
 game_node_template
 game_shared
 game_shared_template
-point_cloud_visualizer
 show_room
 smdb
 utils_browser
 utils_node
 utils_shared
+visualizer
 widget_3d_tiles
 widget_base_map
 widget_bookmark
@@ -59,11 +59,10 @@ game_node_template-->game_shared_template
 game_shared-->utils_shared
 game_shared_template-->game_shared
 game_shared_template-->utils_shared
-point_cloud_visualizer-->utils_browser
-point_cloud_visualizer-->utils_shared
 show_room-->frame3d
 show_room-->smdb
 show_room-->utils_browser
+show_room-->visualizer
 show_room-->widget_camera_positioner
 show_room-->widget_geocoding
 show_room-->widget_layer_choice
@@ -81,6 +80,8 @@ smdb-->utils_shared
 smdb-->widget_camera_positioner
 utils_browser-->utils_shared
 utils_node-->utils_shared
+visualizer-->utils_browser
+visualizer-->utils_shared
 widget_3d_tiles-->utils_browser
 widget_extensions_3d_tiles_temporal-->extensions_3d_tiles_temporal
 widget_geocoding-->utils_browser

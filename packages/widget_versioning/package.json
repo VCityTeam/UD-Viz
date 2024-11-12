@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_versioning",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "description": "widget versioning of the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_versioning",
   "peerDependencies": {
-    "@ud-viz/utils_browser": "4.5.0",
-    "@ud-viz/widget_sparql": "4.5.0"
+    "@ud-viz/utils_browser": "4.5.1",
+    "@ud-viz/widget_sparql": "4.5.1"
   }
 }

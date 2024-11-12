@@ -1,3 +1,18 @@
+# 4.5.1
+
+## @ud-viz 
+
+  - Examples: (itowns_3d_tiles_pointcoud) replace source['url'] by source
+
+## @ud-viz/visualizer
+
+- New package which is a refacto of point_cloud_visualizer
+- Updates:
+  - `@ud-viz/point_cloud_visualizer` become `@ud-viz/visualizer`
+  - Update Readme
+  - Refacto -> split packages in few files by features
+
+
 # 4.5.0
 
 ## @ud-viz
