@@ -1,14 +1,17 @@
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
-import { C3DTILES_LAYER_EVENTS } from 'itowns';
+import { C3DTilesLayer, C3DTILES_LAYER_EVENTS, PlanarView } from 'itowns';
 import { createLocalStorageSlider } from '@ud-viz/utils_browser';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
+ * Sets up a loading UI for 3D tiles layers within a specified DOM element and iTowns view.
  *
- * @param domElement
- * @param layers
- * @param itownsView
- * @param options
+ * @param {HTMLElement} domElement - The container for the loading indicators.
+ * @param {C3DTilesLayer[]} layers - Array of 3D tiles layers to monitor for loading status.
+ * @param {PlanarView} itownsView - The iTowns view with scene and camera.
+ * @param {object} options - Additional options.
+ * @param {string[]} options.c3DTilesLoadingDomElementClasses - CSS classes for styling the loading UI.
+ * @returns {HTMLElement} The created loading UI element.
  */
 export function setupLoadingUI(domElement, layers, itownsView, options) {
   const c3DTilesLoadingDomElement = document.createElement('div');
