@@ -23,7 +23,7 @@ export class Measure {
    * @param {HTMLElement} viewerDiv - 3D viewer container.
    */
   constructor(itownsView, layerManager, viewerDiv) {
-    this.domElement = createLocalStorageDetails('measure_details', 'Mesure');
+    this.domElement = createLocalStorageDetails('measure_details', 'Measure');
 
     /** @type {HTMLButtonElement} */
     this.pathButton = null; // Toggling measure mode
@@ -52,7 +52,7 @@ export class Measure {
     this.domElement.appendChild(this.pathButton);
 
     this.clearMeasurePathButton = document.createElement('button');
-    this.clearMeasurePathButton.innerText = 'Supprimer mesure';
+    this.clearMeasurePathButton.innerText = 'Clear measure';
     this.domElement.appendChild(this.clearMeasurePathButton);
 
     this.infoPointCloudClicked = document.createElement('div');
@@ -113,8 +113,8 @@ export class Measure {
    */
   update(itownsView) {
     this.pathButton.innerText = this.modeMeasure
-      ? 'Arreter de  mesurer'
-      : 'Ajouter chemin de mesure';
+      ? 'Stop measure'
+      : 'Add measure path';
 
     if (this.modeMeasure) {
       this.domElement.classList.add('cursor_add');

@@ -1,6 +1,7 @@
 import { BoxGeometry, Color, Mesh, MeshBasicMaterial } from 'three';
 import { C3DTILES_LAYER_EVENTS } from 'itowns';
 import { createLocalStorageSlider } from '@ud-viz/utils_browser';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
  *
@@ -87,14 +88,19 @@ export function setupLoadingUI(domElement, layers, itownsView, options) {
 }
 
 /**
+ * The function setUpSpeedControls creates a set of speed controls for an OrbitControls object in a 3D
+ * scene.
  *
- * @param orbitControls
+ * @param {OrbitControls} orbitControls - Object that likely contains properties and methods
+ * related to controlling the orbit of a camera in a 3D scene.
+ * @returns {HTMLElement} returns the `domElementSpeedControls` which is a div
+ * element containing the speed controls slider for the OrbitControls.
  */
 export function setUpSpeedControls(orbitControls) {
   const domElementSpeedControls = document.createElement('div');
   const sliderSpeedControls = createLocalStorageSlider(
     'speed_orbit_controls',
-    'Controls vitesse',
+    'Speed controls',
     domElementSpeedControls,
     {
       min: 0.01,
