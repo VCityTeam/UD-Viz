@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "express": "4.21.1",
-    "reload": "^2.2.0"
+    "reload": "^3.3.0"
   }
 }
