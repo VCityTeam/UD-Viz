@@ -96,7 +96,7 @@ export class LegoMockupVisualizer {
       for (let i = 0; i < heightMapX.length; i++) {
         const value = heightMapX[i];
         if (value != 0) {
-          const geometry = new BoxGeometry(1, value, 1);
+          const geometry = new BoxGeometry(1, value * 1.230769230769231, 1); // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
           const material = new MeshPhongMaterial({ color: 'white' });
           const cube = new Mesh(geometry, material);
           cube.position.set(i, value / 2, -j);
