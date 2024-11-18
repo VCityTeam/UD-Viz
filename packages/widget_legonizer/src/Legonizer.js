@@ -23,7 +23,7 @@ import { LegoMockupVisualizer } from './LegoMockupVisualizer';
 import {
   createHeightMapFromBufferGeometry,
   generateCSVwithHeightMap,
-} from 'legonizer';
+} from './../../../../Legonizer';
 
 /**
  * Provides functionality for generating a Lego mockup based on user-defined coordinates and scales.
@@ -248,6 +248,22 @@ export class Legonizer {
 
     this.countLegoVec2Input = new Vector2Input('Count Lego', 1, 0);
 
+    this.countLegoVec2Input.x.input.addEventListener('change', (event) => {
+      const xValue = event.target.value;
+      this.boxSelector.scale.x = xValue * this.ratio * 32;
+      this.boxSelector.updateMatrixWorld();
+      this.transformCtrls.updateMatrixWorld();
+      this.view.notifyChange();
+    });
+
+    this.countLegoVec2Input.y.input.addEventListener('change', (event) => {
+      const yValue = event.target.value;
+      this.boxSelector.scale.y = yValue * this.ratio * 32;
+      this.boxSelector.updateMatrixWorld();
+      this.transformCtrls.updateMatrixWorld();
+      this.view.notifyChange();
+    });
+
     scalesSectionDomElement.appendChild(this.countLegoVec2Input);
     return scalesSectionDomElement;
   }
@@ -371,9 +387,10 @@ export class Legonizer {
     // Create a heightmap from the buffer geometry.
     const heightmap = createHeightMapFromBufferGeometry(
       mockUpObject.geometry,
-      32,
+      bufferBoxGeometry.boundingBox,
       xPlates,
-      yPlates
+      yPlates,
+      15
     );
 
     // Create a Lego mockup visualizer and add the Lego plate simulation.
@@ -382,7 +399,7 @@ export class Legonizer {
     this.legoMockupVisualizer = new LegoMockupVisualizer(
       this.domMockUpVisualizer
     );
-    this.legoMockupVisualizer.addLegoPlateSimulation(heightmap, 0, 0);
+    this.legoMockupVisualizer.addLegoPlateSimulation(heightmap);
 
     // Generate a CSV file with the heightmap.
     generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
