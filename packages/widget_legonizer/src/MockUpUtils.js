@@ -153,15 +153,12 @@ export function createMockUpObject(layers, area) {
     new BufferAttribute(new Float32Array(normalsMockUp), 3)
   );
 
-  // center geometryockUp on xy and put it at zero on z
+  // put geometryockUp at zero on z
   geometryMockUp.computeBoundingBox();
   const bbMockUp = geometryMockUp.boundingBox;
-  const centerMockUp = bbMockUp.min.clone().lerp(bbMockUp.max, 0.5);
   const geoPositionsMockUp = geometryMockUp.attributes.position.array;
   for (let index = 0; index < geoPositionsMockUp.length; index += 3) {
-    geoPositionsMockUp[index] -= centerMockUp.x;
-    geoPositionsMockUp[index + 1] -= centerMockUp.y;
-    geoPositionsMockUp[index + 2] -= bbMockUp.min.z; // so it's on the table
+    geoPositionsMockUp[index + 2] -= bbMockUp.min.z;
   }
 
   // create mesh
