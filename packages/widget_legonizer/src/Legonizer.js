@@ -52,7 +52,9 @@ export class Legonizer {
     /** @type {Vector2Input} */
     this.countLegoVec2Input = null;
     /** @type {{parent:HTMLDivElement,input:HTMLInputElement,label:HTMLLabelElement}} */
-    this.ratioParameterLabelInput = null;
+    this.scaleParameterLabelInput = null;
+    /** @type {{parent:HTMLDivElement,input:HTMLInputElement,label:HTMLLabelElement}} */
+    this.legoHeightParameterLabelInput = null;
     /** @type {HTMLButtonElement} */
     this.buttonSelectionAreaElement = null;
     /** @type {LegoMockupVisualizer} */
@@ -69,7 +71,10 @@ export class Legonizer {
     this.transformCtrls = null;
 
     /** @type {number} */
-    this.ratio = 3;
+    this.scale = 3;
+
+    /** @type {number} */
+    this.legoHeight = 10;
 
     this.inputManager = new InputManager();
 
@@ -232,25 +237,44 @@ export class Legonizer {
     scaleTitle.innerText = 'Scales Parameters';
     scalesSectionDomElement.appendChild(scaleTitle);
 
-    this.ratioParameterLabelInput = createLabelInput('Ratio', 'number');
-    this.ratioParameterLabelInput.input.value = 0;
-    this.ratioParameterLabelInput.input.addEventListener('change', (event) => {
+    this.scaleParameterLabelInput = createLabelInput('Scale', 'number');
+    this.scaleParameterLabelInput.input.value = 0;
+    this.scaleParameterLabelInput.input.addEventListener('change', (event) => {
       const value = event.target.value;
       if (value) {
-        this.ratio = this.ratioParameterLabelInput.input.value;
+        this.scale = this.scaleParameterLabelInput.input.value;
         this.boxSelector.updateMatrixWorld();
         this.transformCtrls.updateMatrixWorld();
         this.view.notifyChange();
       }
     });
 
-    scalesSectionDomElement.appendChild(this.ratioParameterLabelInput.parent);
+    scalesSectionDomElement.appendChild(this.scaleParameterLabelInput.parent);
+
+    this.legoHeightParameterLabelInput = createLabelInput(
+      'Lego Max height',
+      'number'
+    );
+    this.legoHeightParameterLabelInput.input.value = 10;
+    this.legoHeightParameterLabelInput.input.addEventListener(
+      'change',
+      (event) => {
+        const value = event.target.value;
+        if (value) {
+          this.legoHeight = this.legoHeightParameterLabelInput.input.value;
+        }
+      }
+    );
+
+    scalesSectionDomElement.appendChild(
+      this.legoHeightParameterLabelInput.parent
+    );
 
     this.countLegoVec2Input = new Vector2Input('Count Lego', 1, 0);
 
     this.countLegoVec2Input.x.input.addEventListener('change', (event) => {
       const xValue = event.target.value;
-      this.boxSelector.scale.x = xValue * this.ratio * 32;
+      this.boxSelector.scale.x = xValue * this.scale * 32;
       this.boxSelector.updateMatrixWorld();
       this.transformCtrls.updateMatrixWorld();
       this.view.notifyChange();
@@ -258,7 +282,7 @@ export class Legonizer {
 
     this.countLegoVec2Input.y.input.addEventListener('change', (event) => {
       const yValue = event.target.value;
-      this.boxSelector.scale.y = yValue * this.ratio * 32;
+      this.boxSelector.scale.y = yValue * this.scale * 32;
       this.boxSelector.updateMatrixWorld();
       this.transformCtrls.updateMatrixWorld();
       this.view.notifyChange();
@@ -305,9 +329,9 @@ export class Legonizer {
   createLegoPrevisualisation() {
     // calculate the dimensions of the Lego previsualization based on the ratio.
     const geometryLego = new BoxGeometry(
-      this.ratio,
-      this.ratio,
-      (this.ratio * 9.6) / 7.8 // Lego dimension
+      this.scale,
+      this.scale,
+      (this.scale * 9.6) / 7.8 // Lego dimension
     );
 
     const objectLego = new Mesh(
@@ -353,12 +377,12 @@ export class Legonizer {
     setVecInputFromVector(
       this.countLegoVec2Input,
       new Vector2(
-        Math.trunc(this.boxSelector.scale.x / this.ratio / 32),
-        Math.trunc(this.boxSelector.scale.y / this.ratio / 32)
+        Math.trunc(this.boxSelector.scale.x / this.scale / 32),
+        Math.trunc(this.boxSelector.scale.y / this.scale / 32)
       )
     );
 
-    this.ratioParameterLabelInput.input.value = this.ratio;
+    this.scaleParameterLabelInput.input.value = this.scale;
   }
 
   /**
@@ -390,7 +414,7 @@ export class Legonizer {
       bufferBoxGeometry.boundingBox,
       xPlates,
       yPlates,
-      15
+      this.legoHeight
     );
 
     // Create a Lego mockup visualizer and add the Lego plate simulation.
@@ -523,14 +547,14 @@ export class Legonizer {
 
         // Update scales with the size of a lego plates and the ratio chosen
         const nbPlatesX = Math.abs(
-          Math.trunc(selectAreaObject.scale.x / this.ratio / 32)
+          Math.trunc(selectAreaObject.scale.x / this.scale / 32)
         );
 
         const nbPlatesY = Math.abs(
-          Math.trunc(selectAreaObject.scale.y / this.ratio / 32)
+          Math.trunc(selectAreaObject.scale.y / this.scale / 32)
         );
-        this.boxSelector.scale.x = nbPlatesX * this.ratio * 32;
-        this.boxSelector.scale.y = nbPlatesY * this.ratio * 32;
+        this.boxSelector.scale.x = nbPlatesX * this.scale * 32;
+        this.boxSelector.scale.y = nbPlatesY * this.scale * 32;
         this.boxSelector.scale.z = Math.trunc(selectAreaObject.scale.z);
         this.legoPrevisualisation.position.x = selectAreaObject.position.x;
         this.legoPrevisualisation.position.y = selectAreaObject.position.y;
