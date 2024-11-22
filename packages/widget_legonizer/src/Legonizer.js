@@ -23,7 +23,7 @@ import { LegoMockupVisualizer } from './LegoMockupVisualizer';
 import {
   createHeightMapFromBufferGeometry,
   generateCSVwithHeightMap,
-} from './../../../../Legonizer';
+} from 'legonizer';
 
 /**
  * Provides functionality for generating a Lego mockup based on user-defined coordinates and scales.
