@@ -6,6 +6,7 @@
   - [Submiting Pull Request (PR)](#submiting-pull-request-pr)
     - [Prior to PR-submission](#prior-to-pr-submission)
     - [PR Submission](#pr-submission)
+    - [Troubleshooting](#troubleshooting)
 
 ## Coding style (Linter)
 
@@ -58,3 +59,11 @@ Once your PR is ready to be submitted here are the steps to follow:
 - Iterate over potential change requests until the PR is approved.
 - Click on `Rebase and merge` button
 - Delete the branch
+
+### Troubleshooting
+#### Running Puppeteer on WSL (Windows subsystem for Linux)
+The doc: https://pptr.dev/troubleshooting
+
+How to solved:
+1. Installing Chrome on WSL to install all dependencies
+2. Installing required dependencies manually: `sudo apt install libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2`.
