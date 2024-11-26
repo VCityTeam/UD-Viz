@@ -13,8 +13,10 @@ import {
   WireframeGeometry,
   LineSegments,
   LineBasicMaterial,
+  Vector3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
@@ -119,23 +121,57 @@ export class LegoMockupVisualizer {
       }
     }
 
+    // merging all voxel to a single geometry
+    const geoms = [];
+    const meshes = [];
+    mockUpLego.updateMatrixWorld(true, true);
+    mockUpLego.children.forEach((object3D) => {
+      object3D.traverse(
+        (e) =>
+          e.isMesh &&
+          meshes.push(e) &&
+          geoms.push(
+            e.geometry.index ? e.geometry.toNonIndexed() : e.geometry().clone()
+          )
+      );
+    });
+
+    geoms.forEach((g, i) => g.applyMatrix4(meshes[i].matrixWorld));
+    const gg = BufferGeometryUtils.mergeGeometries(geoms, true);
+    gg.applyMatrix4(mockUpLego.children[0].matrix.clone().invert());
+    const m = new MeshPhongMaterial({ color: 'white' });
+    const mesh = new Mesh(gg, m);
+
+    mesh.position.set(0, 0, 0);
+    mesh.geometry.computeBoundingBox();
+
     const geometry = new BoxGeometry(heightMap[0].length, 1, heightMap.length);
     const material = new MeshPhongMaterial({ color: 'brown' });
     const terrain = new Mesh(geometry, material);
 
-    terrain.position.set(heightMap[0].length / 2, -1, -heightMap.length / 2);
+    const centroid = new Vector3(
+      (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x) / 2,
+      mesh.geometry.boundingBox.min.y,
+      (mesh.geometry.boundingBox.max.z - mesh.geometry.boundingBox.min.z) / 2
+    );
+
+    terrain.position.set(
+      centroid.x + mesh.geometry.boundingBox.min.x,
+      centroid.y,
+      centroid.z + mesh.geometry.boundingBox.min.z
+    );
     terrain.updateMatrix();
     this.scene.add(terrain);
 
     const targetPosition = new Box3()
-      .setFromObject(mockUpLego.clone())
-      .getCenter(mockUpLego.clone().position);
+      .setFromObject(terrain.clone())
+      .getCenter(terrain.clone().position);
 
     this.orbit.target.copy(targetPosition);
     this.orbit.update();
 
     this.mockUpLego = mockUpLego;
-    this.scene.add(mockUpLego);
+    this.scene.add(mesh);
   }
 
   /**
@@ -149,7 +185,7 @@ export class LegoMockupVisualizer {
     const xplates = heightMap[0].length / 32;
     const yplates = heightMap.length / 32;
 
-    const frustumSize = 32;
+    const frustumSize = 30;
 
     const rtCamera = new OrthographicCamera(
       -frustumSize * xplates,
@@ -170,6 +206,9 @@ export class LegoMockupVisualizer {
     rtScene.add(light);
 
     const cloneMockup = this.mockUpLego.clone();
+    rtScene.add(cloneMockup);
+
+    // create wireframe for better visualization
     cloneMockup.children.forEach((mesh) => {
       const wireframe = new WireframeGeometry(mesh.geometry);
       const line = new LineSegments(
@@ -183,10 +222,13 @@ export class LegoMockupVisualizer {
       rtScene.add(line);
     });
 
-    rtScene.add(cloneMockup);
-
+    let scale = 1080;
     const renderer = new WebGLRenderer({ antialias: true });
-    renderer.setSize(heightMap[0].length * 50, heightMap.length * 50, false);
+    if (heightMap[0].length > heightMap.length)
+      scale = 1920 / (heightMap[0].length / 32);
+    else scale = 1920 / (heightMap.length / 32);
+
+    renderer.setSize(xplates * scale, yplates * scale, false);
     renderer.render(rtScene, rtCamera);
 
     // upload image
