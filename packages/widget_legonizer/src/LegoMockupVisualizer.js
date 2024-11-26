@@ -9,6 +9,9 @@ import {
   Mesh,
   Group,
   Box3,
+  OrthographicCamera,
+  WebGLRenderTarget,
+  PlaneGeometry,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
@@ -29,6 +32,11 @@ export class LegoMockupVisualizer {
     this.camera = null;
     /** @type {OrbitControls} */
     this.otbitControls = null;
+
+    /** @type {Scene} */
+    this.sceneCadastre = null;
+    /** @type {OrthographicCamera} */
+    this.cameraCadastre = null;
 
     this.createTHREEScene();
   }
@@ -121,7 +129,48 @@ export class LegoMockupVisualizer {
     this.orbit.update();
 
     this.scene.add(mockUpLego);
+
+    // Create cadastre scene
+    const rtScene = new Scene();
+    const rtAspect = heightMap[0].length / heightMap.length;
+    const frustumSize = 100;
+    const rtCamera = new OrthographicCamera(
+      (frustumSize * rtAspect) / -2,
+      (frustumSize * rtAspect) / 2,
+      frustumSize / 2,
+      frustumSize / -2,
+      1,
+      1000
+    );
+
+    rtScene.background = new Color('lightblue');
+
+    rtCamera.position.set(heightMap[0].length / 2, 15, -heightMap.length / 2);
+    rtCamera.lookAt(heightMap[0].length / 2, 0, -heightMap.length / 2);
+
+    const light = new DirectionalLight(0xffffff, 1);
+    light.position.set(-20, 20, 20);
+    rtScene.add(light);
+
+    const cloneMockup = mockUpLego.clone();
+    rtScene.add(cloneMockup);
+
+    const renderer = new WebGLRenderer({ antialias: true });
+    renderer.setSize(heightMap[0].length, heightMap.length, false);
+    renderer.render(rtScene, rtCamera);
+
+    // upload image
+    const strMime = 'image/jpeg';
+    const imgData = renderer.domElement.toDataURL(strMime);
+
+    const link = document.createElement('a');
+    document.body.appendChild(link);
+    link.download = 'calques.jpg';
+    link.href = imgData;
+    link.click();
   }
+
+  generateCadastre() {}
 
   /**
    * Clears the inner HTML of a DOM element and disposes of an orbit object.

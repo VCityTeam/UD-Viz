@@ -57,6 +57,8 @@ export class Legonizer {
     this.legoHeightParameterLabelInput = null;
     /** @type {HTMLButtonElement} */
     this.buttonSelectionAreaElement = null;
+    /** @type {HTMLButtonElement} */
+    this.buttonGenerateCSVElement = null;
     /** @type {LegoMockupVisualizer} */
     this.legoMockupVisualizer = null;
 
@@ -75,6 +77,9 @@ export class Legonizer {
 
     /** @type {number} */
     this.legoHeight = 10;
+
+    /** @type {any[]} */
+    this.heightmap = null;
 
     this.inputManager = new InputManager();
 
@@ -103,6 +108,23 @@ export class Legonizer {
     legonizerDomElement.appendChild(buttonGenerateMockupElement);
 
     this.domElement = legonizerDomElement;
+
+    // button Generate CSV Mockup.
+    this.buttonGenerateCSVElement = document.createElement('button');
+    this.buttonGenerateCSVElement.textContent = 'Generate CSV Mockup';
+    this.buttonGenerateCSVElement.onclick = () => {
+      // Generate a CSV file with the heightmap.
+      generateCSVwithHeightMap(
+        this.heightmap,
+        'legoPlates_' +
+          this.countLegoVec2Input.x.input.step +
+          '_' +
+          this.countLegoVec2Input.y.input.step +
+          '.csv'
+      );
+    };
+    legonizerDomElement.appendChild(this.buttonGenerateCSVElement);
+    this.buttonGenerateCSVElement.disabled = true;
 
     if (!this.domMockUpVisualizer) {
       const domMockUpVisualizer = document.createElement('div');
@@ -418,15 +440,18 @@ export class Legonizer {
     );
 
     // Create a Lego mockup visualizer and add the Lego plate simulation.
-    if (this.legoMockupVisualizer) this.legoMockupVisualizer.dispose();
+    if (this.legoMockupVisualizer) {
+      this.legoMockupVisualizer.dispose();
+      this.buttonGenerateCSVElement.disabled = true;
+    }
 
     this.legoMockupVisualizer = new LegoMockupVisualizer(
       this.domMockUpVisualizer
     );
     this.legoMockupVisualizer.addLegoPlateSimulation(heightmap);
 
-    // Generate a CSV file with the heightmap.
-    generateCSVwithHeightMap(heightmap, 'legoPlates_' + 0 + '_' + 0 + '.csv');
+    this.heightmap = heightmap;
+    this.buttonGenerateCSVElement.disabled = false;
   }
 
   /**
