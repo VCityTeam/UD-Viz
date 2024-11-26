@@ -449,6 +449,7 @@ export class Legonizer {
       this.domMockUpVisualizer
     );
     this.legoMockupVisualizer.addLegoPlateSimulation(heightmap);
+    this.legoMockupVisualizer.generateCadastre(heightmap);
 
     this.heightmap = heightmap;
     this.buttonGenerateCSVElement.disabled = false;

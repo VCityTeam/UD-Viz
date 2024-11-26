@@ -10,8 +10,9 @@ import {
   Group,
   Box3,
   OrthographicCamera,
-  WebGLRenderTarget,
-  PlaneGeometry,
+  WireframeGeometry,
+  LineSegments,
+  LineBasicMaterial,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
@@ -37,6 +38,9 @@ export class LegoMockupVisualizer {
     this.sceneCadastre = null;
     /** @type {OrthographicCamera} */
     this.cameraCadastre = null;
+
+    /** @type {Group<Object3DEventMap>} */
+    this.mockUpLego = null;
 
     this.createTHREEScene();
   }
@@ -98,6 +102,8 @@ export class LegoMockupVisualizer {
    * @param {Array<Array<number>>} heightMap 2D array representing the height values of the terrain.
    */
   addLegoPlateSimulation(heightMap) {
+    if (!heightMap.length) return;
+
     const mockUpLego = new Group();
     for (let j = 0; j < heightMap.length; j++) {
       const heightMapX = heightMap[j];
@@ -128,35 +134,59 @@ export class LegoMockupVisualizer {
     this.orbit.target.copy(targetPosition);
     this.orbit.update();
 
+    this.mockUpLego = mockUpLego;
     this.scene.add(mockUpLego);
+  }
 
+  /**
+   * Generate cadastre image from lego mockup
+   *
+   * @param {Array<Array<number>>} heightMap 2D array representing the height values of the terrain.
+   */
+  generateCadastre(heightMap) {
     // Create cadastre scene
     const rtScene = new Scene();
-    const rtAspect = heightMap[0].length / heightMap.length;
-    const frustumSize = 100;
+    const xplates = heightMap[0].length / 32;
+    const yplates = heightMap.length / 32;
+
+    const frustumSize = 32;
+
     const rtCamera = new OrthographicCamera(
-      (frustumSize * rtAspect) / -2,
-      (frustumSize * rtAspect) / 2,
-      frustumSize / 2,
-      frustumSize / -2,
+      -frustumSize * xplates,
+      frustumSize * xplates,
+      frustumSize * yplates,
+      -frustumSize * yplates,
       1,
       1000
     );
 
-    rtScene.background = new Color('lightblue');
+    rtScene.background = new Color('white');
 
-    rtCamera.position.set(heightMap[0].length / 2, 15, -heightMap.length / 2);
+    rtCamera.position.set(heightMap[0].length / 2, 11, -heightMap.length / 2);
     rtCamera.lookAt(heightMap[0].length / 2, 0, -heightMap.length / 2);
 
     const light = new DirectionalLight(0xffffff, 1);
     light.position.set(-20, 20, 20);
     rtScene.add(light);
 
-    const cloneMockup = mockUpLego.clone();
+    const cloneMockup = this.mockUpLego.clone();
+    cloneMockup.children.forEach((mesh) => {
+      const wireframe = new WireframeGeometry(mesh.geometry);
+      const line = new LineSegments(
+        wireframe,
+        new LineBasicMaterial({ color: 'black' })
+      );
+      line.material.depthTest = false;
+      line.material.opacity = 0.25;
+      line.material.transparent = true;
+      line.position.copy(mesh.position);
+      rtScene.add(line);
+    });
+
     rtScene.add(cloneMockup);
 
     const renderer = new WebGLRenderer({ antialias: true });
-    renderer.setSize(heightMap[0].length, heightMap.length, false);
+    renderer.setSize(heightMap[0].length * 50, heightMap.length * 50, false);
     renderer.render(rtScene, rtCamera);
 
     // upload image
@@ -169,8 +199,6 @@ export class LegoMockupVisualizer {
     link.href = imgData;
     link.click();
   }
-
-  generateCadastre() {}
 
   /**
    * Clears the inner HTML of a DOM element and disposes of an orbit object.
