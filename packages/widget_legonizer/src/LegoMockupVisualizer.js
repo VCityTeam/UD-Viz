@@ -185,21 +185,29 @@ export class LegoMockupVisualizer {
     const xplates = heightMap[0].length / 32;
     const yplates = heightMap.length / 32;
 
-    const frustumSize = 30;
+    const frustumSize = 32;
 
     const rtCamera = new OrthographicCamera(
-      -frustumSize * xplates,
-      frustumSize * xplates,
-      frustumSize * yplates,
-      -frustumSize * yplates,
+      -(frustumSize * xplates) / 2,
+      (frustumSize * xplates) / 2,
+      (frustumSize * yplates) / 2,
+      -(frustumSize * yplates) / 2,
       1,
       1000
     );
 
     rtScene.background = new Color('white');
 
-    rtCamera.position.set(heightMap[0].length / 2, 11, -heightMap.length / 2);
-    rtCamera.lookAt(heightMap[0].length / 2, 0, -heightMap.length / 2);
+    rtCamera.position.set(
+      (heightMap[0].length - 1) / 2,
+      11,
+      -(heightMap.length - 1) / 2
+    );
+    rtCamera.lookAt(
+      (heightMap[0].length - 1) / 2,
+      0,
+      -(heightMap.length - 1) / 2
+    );
 
     const light = new DirectionalLight(0xffffff, 1);
     light.position.set(-20, 20, 20);
@@ -222,11 +230,11 @@ export class LegoMockupVisualizer {
       rtScene.add(line);
     });
 
-    let scale = 1080;
+    let scale = 1920;
     const renderer = new WebGLRenderer({ antialias: true });
     if (heightMap[0].length > heightMap.length)
-      scale = 1920 / (heightMap[0].length / 32);
-    else scale = 1920 / (heightMap.length / 32);
+      scale /= heightMap[0].length / 32;
+    else scale /= heightMap.length / 32;
 
     renderer.setSize(xplates * scale, yplates * scale, false);
     renderer.render(rtScene, rtCamera);
@@ -237,7 +245,7 @@ export class LegoMockupVisualizer {
 
     const link = document.createElement('a');
     document.body.appendChild(link);
-    link.download = 'calques.jpg';
+    link.download = 'calqueTemplate.jpg';
     link.href = imgData;
     link.click();
   }
