@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/widget_bookmark",
-  "version": "4.5.1",
+  "version": "4.6.0",
   "description": "widget bookmark of the itowns framework",
   "main": "src",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@ud-viz/utils_browser",
-  "version": "4.5.1",
+  "version": "4.6.0",
   "description": "utils methods interpretable in a browser environment with the itowns framework",
   "main": "src",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/utils_browser",
   "peerDependencies": {
-    "@ud-viz/utils_shared": "4.5.1",
+    "@ud-viz/utils_shared": "4.6.0",
     "itowns": "2.41.1-next.9",
     "three": "0.154.0",
     "proj4": "2.8.0"
