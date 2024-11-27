@@ -1,3 +1,12 @@
+# v4.6.0
+## @ud-viz/widget_legonizer
+- Improved voxel view with the addition of the correct number of lego plates (voxel highlighted in white).
+- Slight optimisation of voxel creation in the view.
+- Change the ratio parameter to scale to clarify this parameter.
+- Maximum lego height parameter added to the UI.
+- Removal of data selection by cityObject. Selecting an area to voxelise has become simpler.
+- Add listeners to the xLegoPlates and yLegoPlates parameters that update the selection zone
+
 # 4.5.1
 
 ## @ud-viz 
