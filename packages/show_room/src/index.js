@@ -39,12 +39,11 @@ import {
 import { Legonizer } from '@ud-viz/widget_legonizer';
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-import { version } from '../package.json';
 
 import './style.css';
 
 export class ShowRoom {
-  constructor(extent, frame3DPlanarOptions) {
+  constructor(extent, frame3DPlanarOptions, version) {
     /** @type {itowns.Extent} */
     this.extent = extent; // ref it to add layers then
 
@@ -799,6 +798,7 @@ export class ShowRoom {
     // create a single planar process using drag and drop game template
     const singleProcessPlanar = new SinglePlanarProcess(
       new Object3D({
+        name: 'drag_and_drop_avatar_game',
         static: true,
         components: {
           GameScript: {
