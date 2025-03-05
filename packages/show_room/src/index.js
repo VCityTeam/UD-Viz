@@ -30,6 +30,7 @@ import { SinglePlanarProcess, InputManager } from '@ud-viz/game_browser';
 import {
   CameraManager,
   DragAndDropAvatar as ExternalDragAndDropAvatar,
+  ControllerNativeCommandManager,
 } from '@ud-viz/game_browser_template';
 import { Object3D } from '@ud-viz/game_shared';
 import {
@@ -802,19 +803,32 @@ export class ShowRoom {
         static: true,
         components: {
           GameScript: {
-            idScripts: [
-              DragAndDropAvatar.ID_SCRIPT,
-              NativeCommandManager.ID_SCRIPT,
+            scriptParams: [
+              {
+                id: DragAndDropAvatar.ID_SCRIPT,
+              },
+              {
+                id: NativeCommandManager.ID_SCRIPT,
+              },
             ],
             variables: {
               idRenderDataAvatar: idRenderDataAvatar,
               defaultSpeedRotate: 0.0005,
+              angleMin: -Math.PI / 10,
+              angleMax: Math.PI / 10,
             },
           },
           ExternalScript: {
-            idScripts: [
-              ExternalDragAndDropAvatar.ID_SCRIPT,
-              CameraManager.ID_SCRIPT,
+            scriptParams: [
+              {
+                id: ExternalDragAndDropAvatar.ID_SCRIPT,
+              },
+              {
+                id: CameraManager.ID_SCRIPT,
+              },
+              {
+                id: ControllerNativeCommandManager.ID_SCRIPT,
+              },
             ],
           },
         },
@@ -824,7 +838,11 @@ export class ShowRoom {
       new InputManager(),
       {
         gameScriptClass: [DragAndDropAvatar, NativeCommandManager],
-        externalGameScriptClass: [ExternalDragAndDropAvatar, CameraManager],
+        externalGameScriptClass: [
+          ExternalDragAndDropAvatar,
+          CameraManager,
+          ControllerNativeCommandManager,
+        ],
       }
     );
 
