@@ -51,6 +51,8 @@ export class ShowRoom {
     /** @type {Planar} */
     this.frame3DPlanar = new Planar(extent, frame3DPlanarOptions);
 
+    this.inputManager = new InputManager();
+
     // right click open a menu to copy position
     this.addContextMenu();
 
@@ -835,7 +837,7 @@ export class ShowRoom {
       }),
       this.frame3DPlanar,
       assetManager,
-      new InputManager(),
+      this.inputManager,
       {
         gameScriptClass: [DragAndDropAvatar, NativeCommandManager],
         externalGameScriptClass: [
@@ -879,6 +881,7 @@ export class ShowRoom {
   addWidgetLegonizer(pathIcon) {
     this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
       parentDomElement: this.frame3DPlanar.domElementUI,
+      inputManager: this.inputManager,
     });
 
     this.widgetLegonizer.domElement.remove();

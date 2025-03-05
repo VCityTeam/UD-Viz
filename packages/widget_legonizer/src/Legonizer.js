@@ -33,8 +33,8 @@ export class Legonizer {
    * Init properties and sets up the DOM elements and scene for a planar view.
    *
    * @param {PlanarView} view Represents the 3D view or scene. Objects will be displayed and manipulated.
-   * @param {{parentDomElement:HTMLElement,domMockUpVisualizer:HTMLElement}} [options] Optionals parameter. Represents the user interface element. If no `parentDomElement` parameter is provided, the
-   * `domElement` of widget is used. If no `domMockUpVisualizer` a default one is created
+   * @param {{parentDomElement:HTMLElement,domMockUpVisualizer:HTMLElement,inputManager:InputManager}} [options] Optionals parameter. Represents the user interface element. If no `parentDomElement` parameter is provided, the
+   * `domElement` of widget is used. If no `domMockUpVisualizer` a default one is created. `inputManager` can set or one will be created
    */
   constructor(view, options = {}) {
     /** @type {HTMLElement} */
@@ -81,7 +81,7 @@ export class Legonizer {
     /** @type {any[]} */
     this.heightmap = null;
 
-    this.inputManager = new InputManager();
+    this.inputManager = options.inputManager || new InputManager();
 
     this.initDomElement();
     this.initScene();
