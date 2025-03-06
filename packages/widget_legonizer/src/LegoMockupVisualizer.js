@@ -106,20 +106,22 @@ export class LegoMockupVisualizer {
   addLegoPlateSimulation(heightMap) {
     if (!heightMap.length) return;
 
+    const materialBuffer = new MeshPhongMaterial({ color: 'white' });
     const mockUpLego = new Group();
+    console.time('create voxels');
     for (let j = 0; j < heightMap.length; j++) {
       const heightMapX = heightMap[j];
       for (let i = 0; i < heightMapX.length; i++) {
         const value = heightMapX[i];
         if (value != 0) {
           const geometry = new BoxGeometry(1, value * 1.230769230769231, 1); // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
-          const material = new MeshPhongMaterial({ color: 'white' });
-          const cube = new Mesh(geometry, material);
+          const cube = new Mesh(geometry, materialBuffer);
           cube.position.set(i, value / 2, -j);
           mockUpLego.add(cube);
         }
       }
     }
+    console.timeEnd('create voxels');
 
     // merging all voxel to a single geometry
     const geoms = [];
@@ -137,7 +139,9 @@ export class LegoMockupVisualizer {
     });
 
     geoms.forEach((g, i) => g.applyMatrix4(meshes[i].matrixWorld));
+    console.time('mergeGeometries');
     const gg = BufferGeometryUtils.mergeGeometries(geoms, true);
+    console.timeEnd('mergeGeometries');
     gg.applyMatrix4(mockUpLego.children[0].matrix.clone().invert());
     const m = new MeshPhongMaterial({ color: 'white' });
     const mesh = new Mesh(gg, m);
