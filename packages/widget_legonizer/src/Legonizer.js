@@ -65,6 +65,8 @@ export class Legonizer {
     this.legoMockupVisualizer = null;
     /** @type {HTMLImageElement} */
     this.heightmapSelectedAreaImage = null;
+    /** @type {HTMLElement} */
+    this.loadingElement = null;
 
     /** @type {PlanarView} */
     this.view = view;
@@ -140,7 +142,12 @@ export class Legonizer {
     }
     this.domElement.appendChild(this.domMockUpVisualizer);
 
+    this.loadingElement = document.createElement('div');
+    this.loadingElement.innerText = 'BUILDING MOCK UP...';
+
     this.heightmapSelectedAreaImage = document.createElement('img');
+    this.heightmapSelectedAreaImage.style.padding = '5px';
+    this.heightmapSelectedAreaImage.style.width = '-webkit-fill-available';
     this.domElement.appendChild(this.heightmapSelectedAreaImage);
 
     return legonizerDomElement;
@@ -567,7 +574,7 @@ export class Legonizer {
         dragging
       );
 
-      const dragEnd = () => {
+      const dragEnd = async () => {
         if (!isDragging) return; // Was not dragging
 
         this.view.scene.remove(selectAreaObject);
@@ -596,137 +603,163 @@ export class Legonizer {
         selectAreaObject.updateMatrixWorld();
         this.boxSelector.updateMatrixWorld();
         this.legoPrevisualisation.updateMatrixWorld();
-        this.view.notifyChange(this.view.camera.camera3D);
 
-        this.computeMockUp();
+        await this.buildMockUp();
+
+        this.view.notifyChange(this.view.camera.camera3D);
       };
       this.inputManager.addMouseInput(this.view.domElement, 'mouseup', dragEnd);
     }
   }
 
-  computeMockUp() {
-    const camera = new OrthographicCamera(
-      -this.boxSelector.scale.y * 0.5,
-      this.boxSelector.scale.x * 0.5,
-      this.boxSelector.scale.y * 0.5,
-      -this.boxSelector.scale.x * 0.5
-    );
-
-    camera.position.copy(this.boxSelector.position);
-    camera.position.z += this.boxSelector.scale.z * 0.5;
-
-    // shader material
-    const heightmapMaterial = new ShaderMaterial({
-      uniforms: {
-        min: { value: null },
-        max: { value: null },
-      },
-
-      vertexShader: [
-        'varying float viewZ;',
-
-        'void main() {',
-
-        ' viewZ = -(modelViewMatrix * vec4(position.xyz, 1.)).z;',
-
-        '	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-
-        '}',
-      ].join('\n'),
-
-      fragmentShader: [
-        'varying float viewZ;',
-        'uniform float min;',
-        'uniform float max;',
-
-        'void main() {',
-
-        '	float heightValue = 1.0 - (viewZ)/(max - min);',
-        '	heightValue = clamp(heightValue, 0.0, 1.0);',
-        '	gl_FragColor = vec4( vec3(heightValue) , 1 );',
-
-        '}',
-      ].join('\n'),
-    });
-
-    this.boxSelector.visible = false;
-    this.legoPrevisualisation.visible = false;
-
-    heightmapMaterial.uniforms.max.value =
-      this.boxSelector.position.z + this.boxSelector.scale.z * 0.5;
-    heightmapMaterial.uniforms.min.value =
-      this.boxSelector.position.z - this.boxSelector.scale.z * 0.5;
-
-    console.time('rendering heightmap');
-    this.view.scene.overrideMaterial = heightmapMaterial;
-    this.view.renderer.render(this.view.scene, camera);
-    this.view.scene.overrideMaterial = null;
-    console.timeEnd('rendering heightmap');
-
-    this.heightmapSelectedAreaImage.onload = () => {
-      const hMin = heightmapMaterial.uniforms.min.value;
-      const hMax = heightmapMaterial.uniforms.max.value;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = this.heightmapSelectedAreaImage.width;
-      canvas.height = this.heightmapSelectedAreaImage.height;
-      const ctx = canvas.getContext('2d');
-
-      ctx.drawImage(this.heightmapSelectedAreaImage, 0, 0);
-      const imgDataHeight = ctx.getImageData(
-        0,
-        0,
-        this.heightmapSelectedAreaImage.width,
-        this.heightmapSelectedAreaImage.height
-      ).data;
-
-      let i = 0;
-      let j = 0;
-      const heightmap = new Array(this.heightmapSelectedAreaImage.height);
-      for (let k = 0; k < heightmap.length; k++) {
-        heightmap[k] = new Array(this.heightmapSelectedAreaImage.width);
-      }
-      console.log(
-        'heightmap size',
-        this.heightmapSelectedAreaImage.width,
-        this.heightmapSelectedAreaImage.height
+  async buildMockUp() {
+    //modify state of this
+    {
+      this.boxSelector.visible = false;
+      this.legoPrevisualisation.visible = false;
+      this.domElement.insertBefore(
+        this.loadingElement,
+        this.heightmapSelectedAreaImage
       );
-      for (let index = 0; index < imgDataHeight.length; index += 4) {
-        let heightValue = imgDataHeight[index] / 255;
-        heightValue = heightValue * (hMax - hMin);
+    }
 
-        j = Math.floor(index / 4 / this.heightmapSelectedAreaImage.width);
-        i = index / 4 - j * this.heightmapSelectedAreaImage.width;
+    // rendering heightmap
+    {
+      console.time('rendering heightmap');
 
-        heightmap[j][i] = heightValue;
-      }
-
-      // code copy paste from generateMockup
-      // Create a Lego mockup visualizer and add the Lego plate simulation.
-      if (this.legoMockupVisualizer) {
-        this.legoMockupVisualizer.dispose();
-        this.buttonGenerateCSVElement.disabled = true;
-      }
-
-      this.legoMockupVisualizer = new LegoMockupVisualizer(
-        this.domMockUpVisualizer
+      // ortho at the top of the box
+      const camera = new OrthographicCamera(
+        -this.boxSelector.scale.y * 0.5,
+        this.boxSelector.scale.x * 0.5,
+        this.boxSelector.scale.y * 0.5,
+        -this.boxSelector.scale.x * 0.5
       );
-      console.time('addLegoPlateSimulation');
-      this.legoMockupVisualizer.addLegoPlateSimulation(heightmap);
-      console.timeEnd('addLegoPlateSimulation');
-      // cadastre image is more or less the heightmap image ?
-      // console.time('generateCadastre');
-      // this.legoMockupVisualizer.generateCadastre(heightmap);
-      // console.timeEnd('generateCadastre');
+      camera.position.copy(this.boxSelector.position);
+      camera.position.z += this.boxSelector.scale.z * 0.5;
 
-      this.heightmap = heightmap;
-      this.buttonGenerateCSVElement.disabled = false;
-    };
+      // shader material
+      const heightmapMaterial = new ShaderMaterial({
+        uniforms: {
+          min: { value: null },
+          max: { value: null },
+        },
 
+        vertexShader: [
+          'varying float viewZ;',
+          'void main() {',
+          ' viewZ = -(modelViewMatrix * vec4(position.xyz, 1.)).z;',
+          '	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+          '}',
+        ].join('\n'),
+
+        fragmentShader: [
+          'varying float viewZ;',
+          'uniform float min;',
+          'uniform float max;',
+          'void main() {',
+          '	float heightValue = 1.0 - (viewZ)/(max - min);',
+          '	heightValue = clamp(heightValue, 0.0, 1.0);',
+          '	gl_FragColor = vec4( vec3(heightValue) , 1 );',
+          '}',
+        ].join('\n'),
+      });
+      // set uniforms material min and max
+      heightmapMaterial.uniforms.max.value =
+        this.boxSelector.position.z + this.boxSelector.scale.z * 0.5;
+      heightmapMaterial.uniforms.min.value =
+        this.boxSelector.position.z - this.boxSelector.scale.z * 0.5;
+
+      // custom render pass override current ones
+      this.view.scene.overrideMaterial = heightmapMaterial;
+      this.view.renderer.render(this.view.scene, camera);
+      this.view.scene.overrideMaterial = null;
+      console.timeEnd('rendering heightmap');
+    }
+
+    console.time('loading heightmap');
     this.heightmapSelectedAreaImage.src =
       this.view.renderer.domElement.toDataURL();
+    return new Promise((resolve, reject) => {
+      this.heightmapSelectedAreaImage.onload = () => {
+        console.timeEnd('loading heightmap');
 
-    this.boxSelector.visible = true;
-    this.legoPrevisualisation.visible = true;
+        console.info(
+          'heightmap size',
+          this.heightmapSelectedAreaImage.width,
+          this.heightmapSelectedAreaImage.height
+        );
+
+        // update this.heightmap from this.heightmapSelectedAreaImage
+        {
+          // convert image in imagedata
+          const canvas = document.createElement('canvas');
+          canvas.width = this.heightmapSelectedAreaImage.width;
+          canvas.height = this.heightmapSelectedAreaImage.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(this.heightmapSelectedAreaImage, 0, 0);
+          const imgDataHeight = ctx.getImageData(
+            0,
+            0,
+            this.heightmapSelectedAreaImage.width,
+            this.heightmapSelectedAreaImage.height
+          ).data;
+
+          // spacialize values in 2D
+          {
+            let i = 0;
+            let j = 0;
+            this.heightmap = new Array(this.heightmapSelectedAreaImage.height);
+            for (let k = 0; k < this.heightmap.length; k++) {
+              this.heightmap[k] = new Array(
+                this.heightmapSelectedAreaImage.width
+              );
+            }
+
+            for (let index = 0; index < imgDataHeight.length; index += 4) {
+              // heightmap array = (pixel value / 255) * box dim z
+              j = Math.floor(index / 4 / this.heightmapSelectedAreaImage.width);
+              i = index / 4 - j * this.heightmapSelectedAreaImage.width;
+              this.heightmap[j][i] =
+                (imgDataHeight[index] / 255) * this.boxSelector.scale.z;
+            }
+          }
+        }
+
+        // code copy paste from generateMockup
+
+        // Create a Lego mockup visualizer and add the Lego plate simulation.
+        {
+          if (this.legoMockupVisualizer) {
+            this.legoMockupVisualizer.dispose();
+            this.buttonGenerateCSVElement.disabled = true;
+          }
+
+          this.legoMockupVisualizer = new LegoMockupVisualizer(
+            this.domMockUpVisualizer
+          );
+          console.time('addLegoPlateSimulation');
+          this.legoMockupVisualizer.addLegoPlateSimulation(this.heightmap); // maybe this.visualizer should have this.heightmap as member ?
+          console.timeEnd('addLegoPlateSimulation');
+
+          // cadastre image is more or less the heightmap image ?
+          // console.time('generateCadastre');
+          // this.legoMockupVisualizer.generateCadastre(heightmap);
+          // console.timeEnd('generateCadastre');
+
+          this.buttonGenerateCSVElement.disabled = false;
+        }
+
+        // remove building ui
+        this.loadingElement.remove();
+
+        resolve(true);
+      };
+
+      this.heightmapSelectedAreaImage.onerror = reject;
+
+      // modify state of this
+      this.boxSelector.visible = true;
+      this.legoPrevisualisation.visible = true;
+    });
   }
 }
