@@ -202,7 +202,11 @@ export class ShowRoom {
     this.frame3DPlanar.domElement.addEventListener('click', closeContextMenu);
 
     this.frame3DPlanar.domElement.oncontextmenu = (event) => {
-      if (closeContextMenu()) return;
+      if (
+        closeContextMenu() ||
+        checkParentChild(event.target, this.panMenuSideBar.domElement) // avoid clicking through the pan
+      )
+        return;
 
       this.frame3DPlanar.itownsView.controls.enabled = false; // disable controls while context menu
       forceNoneStatePlanarControls();
