@@ -35,8 +35,11 @@ export class Legonizer {
    * Init properties and sets up the DOM elements and scene for a planar view.
    *
    * @param {PlanarView} view Represents the 3D view or scene. Objects will be displayed and manipulated.
-   * @param {{parentDomElement:HTMLElement,domMockUpVisualizer:HTMLElement,inputManager:InputManager}} [options] Optionals parameter. Represents the user interface element. If no `parentDomElement` parameter is provided, the
-   * `domElement` of widget is used. If no `domMockUpVisualizer` a default one is created. `inputManager` can set or one will be created
+   * @param {Object} options - options
+   * @param {HTMLElement} options.parentDomElement - If no `parentDomElement` parameter is provided, the `domElement` of widget is used.
+   * @param {HTMLElement} options.domMockUpVisualizer - If no `domMockUpVisualizer` a default one is created.
+   * @param {InputManager} options.inputManager - can be set or one will be created
+   * @param {String} options.workerMockupVisualizerScriptURL - can be set to threadify the mockup computation url to where is the worker script
    */
   constructor(view, options = {}) {
     /** @type {HTMLElement} */
@@ -86,6 +89,10 @@ export class Legonizer {
 
     /** @type {any[]} */
     this.heightmap = null;
+
+    /** @type {String} - can be use to threadify the computation of the mockup */
+    this.workerMockupVisualizerScriptURL =
+      options.workerMockupVisualizerScriptURL || null;
 
     this.inputManager = options.inputManager || new InputManager();
 
@@ -628,7 +635,7 @@ export class Legonizer {
     {
       console.time('rendering heightmap');
       // TODO: compute the box based on the 3DTiles for max precision
-      // ortho at the top of the box 
+      // ortho at the top of the box
       const camera = new OrthographicCamera(
         -this.boxSelector.scale.y * 0.5,
         this.boxSelector.scale.x * 0.5,
@@ -740,23 +747,28 @@ export class Legonizer {
           }
 
           this.legoMockupVisualizer = new LegoMockupVisualizer(
-            this.domMockUpVisualizer
+            this.domMockUpVisualizer,
+            { workerScriptURL: this.workerMockupVisualizerScriptURL }
           );
 
-          this.legoMockupVisualizer.addLegoPlateSimulation(this.heightmap); // maybe this.visualizer should have this.heightmap as member ?
+          // maybe this.visualizer should have this.heightmap as member ?
+          this.legoMockupVisualizer
+            .addLegoPlateSimulation(this.heightmap)
+            .then((success) => {
+              if (success) {
+                // computation not interrupted by another legonizervisualizer
+                this.buttonGenerateCSVElement.disabled = false;
+                // remove building ui
+                this.loadingElement.remove();
+              }
+              resolve(success);
+            });
 
           // cadastre image is more or less the heightmap image ?
           // console.time('generateCadastre');
           // this.legoMockupVisualizer.generateCadastre(heightmap);
           // console.timeEnd('generateCadastre');
-
-          this.buttonGenerateCSVElement.disabled = false;
         }
-
-        // remove building ui
-        this.loadingElement.remove();
-
-        resolve(true);
       };
 
       this.heightmapSelectedAreaImage.onerror = reject;

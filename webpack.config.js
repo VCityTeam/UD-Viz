@@ -2,10 +2,13 @@ const path = require('path');
 const BundleAnalyzerPlugin =
   require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const entry = process.env.ENTRY;
+if (!entry) throw new Error('webpack: no entry point');
+
 const result = {
-  entry: './bin/indexExamples.js',
+  entry: entry,
   output: {
-    filename: 'bundle.js',
+    filename: process.env.NAME + '.js',
     library: 'udviz',
     libraryTarget: 'umd',
     umdNamedDefine: true,

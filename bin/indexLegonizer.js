@@ -1,0 +1,1 @@
+export {extrudeHeightMap} from "@ud-viz/legonizer"

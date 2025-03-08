@@ -882,10 +882,11 @@ export class ShowRoom {
     this.addCustomHtml(pathIcon, this.widgetBookmark.domElement, 'Bookmark');
   }
 
-  addWidgetLegonizer(pathIcon) {
+  addWidgetLegonizer(pathIcon, workerMockupVisualizerScriptURL = null) {
     this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
       parentDomElement: this.frame3DPlanar.domElementUI,
       inputManager: this.inputManager,
+      workerMockupVisualizerScriptURL: workerMockupVisualizerScriptURL,
     });
 
     this.widgetLegonizer.domElement.remove();

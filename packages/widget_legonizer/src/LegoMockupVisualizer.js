@@ -14,9 +14,12 @@ import {
   LineSegments,
   LineBasicMaterial,
   Vector3,
+  BufferGeometryLoader,
+  Vector2,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { extrudeHeightMap } from '@ud-viz/legonizer';
+import { cameraFitRectangleXZ } from '@ud-viz/utils_browser';
 
 /** Creates a Three.js scene for visualizing Lego mockups */
 export class LegoMockupVisualizer {
@@ -24,8 +27,10 @@ export class LegoMockupVisualizer {
    * Sets up a Three.js scene to visualize the lego mock up.
    *
    * @param {HTMLElement} domElement - HTML element that will be used as the container for the Three.js scene.
+   * @param {Object} options - options
+   * @param {String} options.workerScriptURL - can be use to threadify the computation of the mockup
    */
-  constructor(domElement) {
+  constructor(domElement, options = {}) {
     /** @type {HTMLDivElement} */
     this.domElement = domElement;
 
@@ -33,6 +38,8 @@ export class LegoMockupVisualizer {
     this.scene = null;
     /** @type {PerspectiveCamera} */
     this.camera = null;
+    /** @type {WebGLRenderer} */
+    this.renderer = null;
     /** @type {OrbitControls} */
     this.orbit = null;
 
@@ -43,6 +50,15 @@ export class LegoMockupVisualizer {
 
     /** @type {Group<Object3DEventMap>} */
     this.mockUpLego = null; // TODO really necessary ?
+
+    /** @type {String} - can be use to threadify the computation of the mockup */
+    this.workerScriptURL = options.workerScriptURL || null;
+
+    /** @type {Worker} */
+    this.worker = null;
+
+    /** @type {Function} */
+    this.workerResolve = null;
 
     this.createTHREEScene();
   }
@@ -96,6 +112,7 @@ export class LegoMockupVisualizer {
     });
 
     renderer.render(this.scene, this.camera);
+    this.renderer = renderer;
   }
 
   /**
@@ -103,94 +120,65 @@ export class LegoMockupVisualizer {
    *
    * @param {Array<Array<number>>} heightMap 2D array representing the height values of the terrain.
    */
-  addLegoPlateSimulation(heightMap) {
-    const mockupMesh = this.extrudeHeightMap(heightMap);
-    this.scene.add(mockupMesh);
-
-    // compute terrain and update controls
-    {
-      const heightMapWidth = heightMap[0].length;
-      const heightMapHeight = heightMap.length;
-
-      //terrain
-      const geometry = new BoxGeometry(heightMapWidth, 1, heightMapHeight);
-      const material = new MeshPhongMaterial({ color: 'brown' });
-      const terrain = new Mesh(geometry, material);
-
-      const bb = new Box3().setFromObject(mockupMesh);
-
-      const centroid = new Vector3(
-        (bb.max.x - bb.min.x) / 2,
-        bb.min.y,
-        (bb.max.z - bb.min.z) / 2
-      );
-
-      terrain.position.set(
-        centroid.x + bb.min.x,
-        centroid.y,
-        centroid.z + bb.min.z
-      );
-      terrain.updateMatrix();
-      this.scene.add(terrain);
-
-      // update controls
-      const targetPosition = new Box3()
-        .setFromObject(terrain.clone())
-        .getCenter(terrain.clone().position);
-
-      this.orbit.target.copy(targetPosition);
-      this.orbit.update();
-    }
-
-    // this.mockUpLego = mockUpLego; look like it is only use in generateCadastre
-  }
-
-  extrudeHeightMap(heightMap) {
-    if (!heightMap.length) {
-      console.debug('no heightmap');
-      return;
-    }
+  async addLegoPlateSimulation(heightMap) {
+    const mockupMaterial = new MeshPhongMaterial({ color: 'white' });
+    const mockUpMesh = new Group();
+    this.scene.add(mockUpMesh);
 
     const heightMapWidth = heightMap[0].length;
     const heightMapHeight = heightMap.length;
 
-    console.time('create voxels'); // they are not real voxel (!= size) TODO find a better name
-    const voxelGeometries = [];
-    // lego ratio y dimension (when x = y = 1) not perfect cube but perfect square
-    const magicNumber = 1.230769230769231; // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
-    for (let j = 0; j < heightMapHeight; j++) {
-      for (let i = 0; i < heightMapWidth; i++) {
-        const legoCountedInHeightmapValue = Math.floor(
-          heightMap[j][i] / magicNumber
-        );
-        if (legoCountedInHeightmapValue == 0) continue;
-        const height = magicNumber * legoCountedInHeightmapValue; // put lego as much to not go bigger than heightmap value
-        const voxelGeo = new BoxGeometry(1, height, 1);
-        // spatialize on xz  (why not being in the same referential as itowns in LegoMockupVisualizer ?)
-        voxelGeo.translate(
-          i,
-          height * 0.5, // origin at y = 0
-          j
-        ); //  geometrie in heightmap ref
-        voxelGeometries.push(voxelGeo);
+    // TODO do a proper function
+    cameraFitRectangleXZ(
+      this.camera,
+      new Vector2(0, 0),
+      new Vector2(heightMapWidth, heightMapHeight)
+    );
+    const geometry = new BoxGeometry(heightMapWidth, 1, heightMapHeight);
+    const material = new MeshPhongMaterial({
+      color: 'brown',
+    });
+    const terrain = new Mesh(geometry, material);
+    const box3 = new Box3(
+      new Vector3(0, 0, 0),
+      new Vector3(heightMapWidth, 0, heightMapHeight)
+    );
+    box3.getCenter(terrain.position);
+    terrain.updateMatrix();
+    this.scene.add(terrain);
+    // update controls
+    this.orbit.target.copy(box3.getCenter(new Vector3()));
+    this.orbit.update();
+
+    return new Promise((resolve, reject) => {
+      // ref to dispose properly
+      this.workerResolve = resolve;
+
+      if (window.Worker && this.workerScriptURL) {
+        // new thread to avoid freeze
+        this.worker = new window.Worker(this.workerScriptURL);
+        const loader = new BufferGeometryLoader();
+        this.worker.postMessage([heightMap]);
+        this.worker.onmessage = (e) => {
+          // TODO make a message structure system
+          if (e.data == 'close') {
+            this.workerResolve = null;
+            this.worker = null;
+            resolve(true);
+          } else {
+            mockUpMesh.add(new Mesh(loader.parse(e.data), mockupMaterial));
+            this.renderer.render(this.scene, this.camera); // to see meshes addition
+          }
+        };
+      } else {
+        const geometries = extrudeHeightMap(heightMap);
+        geometries.forEach((g) => mockUpMesh.add(new Mesh(g, mockupMaterial)));
+        this.workerResolve = null;
+        resolve(true);
       }
-    }
-    console.info('count voxel ', voxelGeometries.length);
-    console.timeEnd('create voxels');
+    });
 
-    console.time('create mesh');
-    const result = new Group({ name: 'mockup' });
-    if (voxelGeometries.length) {
-      const mesh = new Mesh(
-        BufferGeometryUtils.mergeGeometries(voxelGeometries, false),
-        new MeshPhongMaterial({ color: 'white' })
-      );
-      mesh.geometry.computeBoundingBox();
-      result.add(mesh);
-    }
-    console.timeEnd('create mesh');
-
-    return result;
+    // this.mockUpLego = mockUpLego; look like it is only use in generateCadastre
   }
 
   /**
@@ -273,7 +261,9 @@ export class LegoMockupVisualizer {
    * Clears the inner HTML of a DOM element and disposes of an orbit object.
    */
   dispose() {
-    this.domElement.innerHTML = null;
+    if (this.worker) this.worker.terminate();
+    if (this.workerResolve) this.workerResolve(false); // false indicate computation didnt go to the end
+    while (this.domElement.firstChild) this.domElement.firstChild.remove(); // clear canvas
     this.orbit.dispose();
   }
 }
