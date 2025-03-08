@@ -604,7 +604,7 @@ export class Legonizer {
         this.boxSelector.updateMatrixWorld();
         this.legoPrevisualisation.updateMatrixWorld();
 
-        await this.buildMockUp();
+        await this.loadMockUp();
 
         this.view.notifyChange(this.view.camera.camera3D);
       };
@@ -612,9 +612,10 @@ export class Legonizer {
     }
   }
 
-  async buildMockUp() {
-    //modify state of this
+  async loadMockUp() {
+    // modify state of this
     {
+      // ui
       this.boxSelector.visible = false;
       this.legoPrevisualisation.visible = false;
       this.domElement.insertBefore(
@@ -626,8 +627,8 @@ export class Legonizer {
     // rendering heightmap
     {
       console.time('rendering heightmap');
-
-      // ortho at the top of the box
+      // TODO: compute the box based on the 3DTiles for max precision
+      // ortho at the top of the box 
       const camera = new OrthographicCamera(
         -this.boxSelector.scale.y * 0.5,
         this.boxSelector.scale.x * 0.5,
@@ -685,40 +686,44 @@ export class Legonizer {
 
         console.info(
           'heightmap size',
-          this.heightmapSelectedAreaImage.width,
-          this.heightmapSelectedAreaImage.height
+          this.heightmapSelectedAreaImage.naturalWidth,
+          this.heightmapSelectedAreaImage.naturalHeight
         );
 
         // update this.heightmap from this.heightmapSelectedAreaImage
         {
           // convert image in imagedata
           const canvas = document.createElement('canvas');
-          canvas.width = this.heightmapSelectedAreaImage.width;
-          canvas.height = this.heightmapSelectedAreaImage.height;
+          canvas.width = this.heightmapSelectedAreaImage.naturalWidth;
+          canvas.height = this.heightmapSelectedAreaImage.naturalHeight;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(this.heightmapSelectedAreaImage, 0, 0);
           const imgDataHeight = ctx.getImageData(
             0,
             0,
-            this.heightmapSelectedAreaImage.width,
-            this.heightmapSelectedAreaImage.height
+            this.heightmapSelectedAreaImage.naturalWidth,
+            this.heightmapSelectedAreaImage.naturalHeight
           ).data;
 
           // spacialize values in 2D
           {
             let i = 0;
             let j = 0;
-            this.heightmap = new Array(this.heightmapSelectedAreaImage.height);
+            this.heightmap = new Array(
+              this.heightmapSelectedAreaImage.naturalHeight
+            );
             for (let k = 0; k < this.heightmap.length; k++) {
               this.heightmap[k] = new Array(
-                this.heightmapSelectedAreaImage.width
+                this.heightmapSelectedAreaImage.naturalWidth
               );
             }
 
             for (let index = 0; index < imgDataHeight.length; index += 4) {
               // heightmap array = (pixel value / 255) * box dim z
-              j = Math.floor(index / 4 / this.heightmapSelectedAreaImage.width);
-              i = index / 4 - j * this.heightmapSelectedAreaImage.width;
+              j = Math.floor(
+                index / 4 / this.heightmapSelectedAreaImage.naturalWidth
+              );
+              i = index / 4 - j * this.heightmapSelectedAreaImage.naturalWidth;
               this.heightmap[j][i] =
                 (imgDataHeight[index] / 255) * this.boxSelector.scale.z;
             }
@@ -737,9 +742,8 @@ export class Legonizer {
           this.legoMockupVisualizer = new LegoMockupVisualizer(
             this.domMockUpVisualizer
           );
-          console.time('addLegoPlateSimulation');
+
           this.legoMockupVisualizer.addLegoPlateSimulation(this.heightmap); // maybe this.visualizer should have this.heightmap as member ?
-          console.timeEnd('addLegoPlateSimulation');
 
           // cadastre image is more or less the heightmap image ?
           // console.time('generateCadastre');

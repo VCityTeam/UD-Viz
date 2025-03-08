@@ -34,7 +34,7 @@ export class LegoMockupVisualizer {
     /** @type {PerspectiveCamera} */
     this.camera = null;
     /** @type {OrbitControls} */
-    this.otbitControls = null;
+    this.orbit = null;
 
     /** @type {Scene} */
     this.sceneCadastre = null;
@@ -42,7 +42,7 @@ export class LegoMockupVisualizer {
     this.cameraCadastre = null;
 
     /** @type {Group<Object3DEventMap>} */
-    this.mockUpLego = null;
+    this.mockUpLego = null; // TODO really necessary ?
 
     this.createTHREEScene();
   }
@@ -56,7 +56,7 @@ export class LegoMockupVisualizer {
       75,
       this.domElement.clientWidth / this.domElement.clientHeight,
       0.1,
-      1000
+      2000
     );
 
     this.scene.background = new Color('lightblue');
@@ -104,78 +104,93 @@ export class LegoMockupVisualizer {
    * @param {Array<Array<number>>} heightMap 2D array representing the height values of the terrain.
    */
   addLegoPlateSimulation(heightMap) {
-    if (!heightMap.length) return;
+    const mockupMesh = this.extrudeHeightMap(heightMap);
+    this.scene.add(mockupMesh);
 
-    const materialBuffer = new MeshPhongMaterial({ color: 'white' });
-    const mockUpLego = new Group();
-    console.time('create voxels');
-    for (let j = 0; j < heightMap.length; j++) {
-      const heightMapX = heightMap[j];
-      for (let i = 0; i < heightMapX.length; i++) {
-        const value = heightMapX[i];
-        if (value != 0) {
-          const geometry = new BoxGeometry(1, value * 1.230769230769231, 1); // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
-          const cube = new Mesh(geometry, materialBuffer);
-          cube.position.set(i, value / 2, -j);
-          mockUpLego.add(cube);
-        }
+    // compute terrain and update controls
+    {
+      const heightMapWidth = heightMap[0].length;
+      const heightMapHeight = heightMap.length;
+
+      //terrain
+      const geometry = new BoxGeometry(heightMapWidth, 1, heightMapHeight);
+      const material = new MeshPhongMaterial({ color: 'brown' });
+      const terrain = new Mesh(geometry, material);
+
+      const bb = new Box3().setFromObject(mockupMesh);
+
+      const centroid = new Vector3(
+        (bb.max.x - bb.min.x) / 2,
+        bb.min.y,
+        (bb.max.z - bb.min.z) / 2
+      );
+
+      terrain.position.set(
+        centroid.x + bb.min.x,
+        centroid.y,
+        centroid.z + bb.min.z
+      );
+      terrain.updateMatrix();
+      this.scene.add(terrain);
+
+      // update controls
+      const targetPosition = new Box3()
+        .setFromObject(terrain.clone())
+        .getCenter(terrain.clone().position);
+
+      this.orbit.target.copy(targetPosition);
+      this.orbit.update();
+    }
+
+    // this.mockUpLego = mockUpLego; look like it is only use in generateCadastre
+  }
+
+  extrudeHeightMap(heightMap) {
+    if (!heightMap.length) {
+      console.debug('no heightmap');
+      return;
+    }
+
+    const heightMapWidth = heightMap[0].length;
+    const heightMapHeight = heightMap.length;
+
+    console.time('create voxels'); // they are not real voxel (!= size) TODO find a better name
+    const voxelGeometries = [];
+    // lego ratio y dimension (when x = y = 1) not perfect cube but perfect square
+    const magicNumber = 1.230769230769231; // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
+    for (let j = 0; j < heightMapHeight; j++) {
+      for (let i = 0; i < heightMapWidth; i++) {
+        const legoCountedInHeightmapValue = Math.floor(
+          heightMap[j][i] / magicNumber
+        );
+        if (legoCountedInHeightmapValue == 0) continue;
+        const height = magicNumber * legoCountedInHeightmapValue; // put lego as much to not go bigger than heightmap value
+        const voxelGeo = new BoxGeometry(1, height, 1);
+        // spatialize on xz  (why not being in the same referential as itowns in LegoMockupVisualizer ?)
+        voxelGeo.translate(
+          i,
+          height * 0.5, // origin at y = 0
+          j
+        ); //  geometrie in heightmap ref
+        voxelGeometries.push(voxelGeo);
       }
     }
+    console.info('count voxel ', voxelGeometries.length);
     console.timeEnd('create voxels');
 
-    // merging all voxel to a single geometry
-    const geoms = [];
-    const meshes = [];
-    mockUpLego.updateMatrixWorld(true, true);
-    mockUpLego.children.forEach((object3D) => {
-      object3D.traverse(
-        (e) =>
-          e.isMesh &&
-          meshes.push(e) &&
-          geoms.push(
-            e.geometry.index ? e.geometry.toNonIndexed() : e.geometry().clone()
-          )
+    console.time('create mesh');
+    const result = new Group({ name: 'mockup' });
+    if (voxelGeometries.length) {
+      const mesh = new Mesh(
+        BufferGeometryUtils.mergeGeometries(voxelGeometries, false),
+        new MeshPhongMaterial({ color: 'white' })
       );
-    });
+      mesh.geometry.computeBoundingBox();
+      result.add(mesh);
+    }
+    console.timeEnd('create mesh');
 
-    geoms.forEach((g, i) => g.applyMatrix4(meshes[i].matrixWorld));
-    console.time('mergeGeometries');
-    const gg = BufferGeometryUtils.mergeGeometries(geoms, true);
-    console.timeEnd('mergeGeometries');
-    gg.applyMatrix4(mockUpLego.children[0].matrix.clone().invert());
-    const m = new MeshPhongMaterial({ color: 'white' });
-    const mesh = new Mesh(gg, m);
-
-    mesh.position.set(0, 0, 0);
-    mesh.geometry.computeBoundingBox();
-
-    const geometry = new BoxGeometry(heightMap[0].length, 1, heightMap.length);
-    const material = new MeshPhongMaterial({ color: 'brown' });
-    const terrain = new Mesh(geometry, material);
-
-    const centroid = new Vector3(
-      (mesh.geometry.boundingBox.max.x - mesh.geometry.boundingBox.min.x) / 2,
-      mesh.geometry.boundingBox.min.y,
-      (mesh.geometry.boundingBox.max.z - mesh.geometry.boundingBox.min.z) / 2
-    );
-
-    terrain.position.set(
-      centroid.x + mesh.geometry.boundingBox.min.x,
-      centroid.y,
-      centroid.z + mesh.geometry.boundingBox.min.z
-    );
-    terrain.updateMatrix();
-    this.scene.add(terrain);
-
-    const targetPosition = new Box3()
-      .setFromObject(terrain.clone())
-      .getCenter(terrain.clone().position);
-
-    this.orbit.target.copy(targetPosition);
-    this.orbit.update();
-
-    this.mockUpLego = mockUpLego;
-    this.scene.add(mesh);
+    return result;
   }
 
   /**
