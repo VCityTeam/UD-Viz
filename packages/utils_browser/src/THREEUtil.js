@@ -253,6 +253,33 @@ export function cameraFitRectangle(camera, min, max, altitude = 0) {
   camera.rotation.set(0, 0, -Math.PI / 2);
   camera.updateProjectionMatrix();
 }
+
+/**
+ * TODO modify cameraFitRectangle ONLY HERE FOR LEGONIZER BECAUSE NOT SAME REFERENTIAL Move camera transform so the rectangle define by min & max (in the xy plane) fit the entire screen
+ *
+ * @param {THREE.PerspectiveCamera} camera - camera to update
+ * @param {THREE.Vector2} min - min coord of the rectangle
+ * @param {THREE.Vector2} max - max coord of the rectangle
+ * @param {number} altitude - altitude of the rectangle
+ * @todo rectangle is not force to be in xy plane
+ */
+export function cameraFitRectangleXZ(camera, min, max, altitude = 0) {
+  const center = min.clone().lerp(max, 0.5);
+  const width = max.x - min.x;
+  const height = max.y - min.y;
+  const fov = camera.fov * (Math.PI / 180); // fov radian
+  const fovh = 2 * Math.atan(Math.tan(fov / 2) * camera.aspect);
+  const dx = Math.abs(height / 2 / Math.tan(fovh / 2));
+  const dz = Math.abs(width / 2 / Math.tan(fov / 2));
+  const distance = Math.max(dx, dz);
+
+  camera.position.x = center.x;
+  camera.position.z = center.y;
+  camera.position.y = distance + altitude;
+  camera.lookAt(new THREE.Vector3(center.x, 0, center.y));
+  camera.updateProjectionMatrix();
+}
+
 /**
  * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe
  *

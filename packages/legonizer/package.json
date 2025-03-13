@@ -1,10 +1,10 @@
 {
-  "name": "@ud-viz/widget_legonizer",
+  "name": "@ud-viz/legonizer",
   "version": "4.6.0",
-  "description": "widget layer choice of the itowns framework",
+  "description": "extrude an heightmap",
   "main": "src",
   "scripts": {
-    "test": "node ../../bin/browserTest.js ./test disable-third-party",
+    "test": "node ../../bin/nodeTest.js ./test",
     "dev": "nodemon --trace-warnings --verbose --watch test --watch src --delay 2500ms ../../bin/devPackage.js -e js"
   },
   "files": [
@@ -18,12 +18,8 @@
   "bugs": {
     "url": "https://github.com/VCityTeam/UD-Viz/issues"
   },
-  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/widget_legonizer",
+  "homepage": "https://github.com/VCityTeam/UD-Viz/tree/master/packages/legonizer",
   "peerDependencies": {
-    "@ud-viz/game_browser": "4.6.0",
-    "@ud-viz/legonizer": "^4.6.0",
-    "@ud-viz/utils_browser": "4.6.0",
-    "itowns": "2.41.1-next.9",
     "three": "0.154.0"
   }
 }

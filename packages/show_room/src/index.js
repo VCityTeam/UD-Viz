@@ -30,6 +30,7 @@ import { SinglePlanarProcess, InputManager } from '@ud-viz/game_browser';
 import {
   CameraManager,
   DragAndDropAvatar as ExternalDragAndDropAvatar,
+  ControllerNativeCommandManager,
 } from '@ud-viz/game_browser_template';
 import { Object3D } from '@ud-viz/game_shared';
 import {
@@ -39,17 +40,18 @@ import {
 import { Legonizer } from '@ud-viz/widget_legonizer';
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-import { version } from '../package.json';
 
 import './style.css';
 
 export class ShowRoom {
-  constructor(extent, frame3DPlanarOptions) {
+  constructor(extent, frame3DPlanarOptions, version) {
     /** @type {itowns.Extent} */
     this.extent = extent; // ref it to add layers then
 
     /** @type {Planar} */
     this.frame3DPlanar = new Planar(extent, frame3DPlanarOptions);
+
+    this.inputManager = new InputManager();
 
     // right click open a menu to copy position
     this.addContextMenu();
@@ -200,7 +202,11 @@ export class ShowRoom {
     this.frame3DPlanar.domElement.addEventListener('click', closeContextMenu);
 
     this.frame3DPlanar.domElement.oncontextmenu = (event) => {
-      if (closeContextMenu()) return;
+      if (
+        closeContextMenu() ||
+        checkParentChild(event.target, this.panMenuSideBar.domElement) // avoid clicking through the pan
+      )
+        return;
 
       this.frame3DPlanar.itownsView.controls.enabled = false; // disable controls while context menu
       forceNoneStatePlanarControls();
@@ -799,32 +805,50 @@ export class ShowRoom {
     // create a single planar process using drag and drop game template
     const singleProcessPlanar = new SinglePlanarProcess(
       new Object3D({
+        name: 'drag_and_drop_avatar_game',
         static: true,
         components: {
           GameScript: {
-            idScripts: [
-              DragAndDropAvatar.ID_SCRIPT,
-              NativeCommandManager.ID_SCRIPT,
+            scriptParams: [
+              {
+                id: DragAndDropAvatar.ID_SCRIPT,
+              },
+              {
+                id: NativeCommandManager.ID_SCRIPT,
+              },
             ],
             variables: {
               idRenderDataAvatar: idRenderDataAvatar,
               defaultSpeedRotate: 0.0005,
+              angleMin: -Math.PI / 10,
+              angleMax: Math.PI / 10,
             },
           },
           ExternalScript: {
-            idScripts: [
-              ExternalDragAndDropAvatar.ID_SCRIPT,
-              CameraManager.ID_SCRIPT,
+            scriptParams: [
+              {
+                id: ExternalDragAndDropAvatar.ID_SCRIPT,
+              },
+              {
+                id: CameraManager.ID_SCRIPT,
+              },
+              {
+                id: ControllerNativeCommandManager.ID_SCRIPT,
+              },
             ],
           },
         },
       }),
       this.frame3DPlanar,
       assetManager,
-      new InputManager(),
+      this.inputManager,
       {
         gameScriptClass: [DragAndDropAvatar, NativeCommandManager],
-        externalGameScriptClass: [ExternalDragAndDropAvatar, CameraManager],
+        externalGameScriptClass: [
+          ExternalDragAndDropAvatar,
+          CameraManager,
+          ControllerNativeCommandManager,
+        ],
       }
     );
 
@@ -858,9 +882,11 @@ export class ShowRoom {
     this.addCustomHtml(pathIcon, this.widgetBookmark.domElement, 'Bookmark');
   }
 
-  addWidgetLegonizer(pathIcon) {
+  addWidgetLegonizer(pathIcon, workerMockupVisualizerScriptURL = null) {
     this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
       parentDomElement: this.frame3DPlanar.domElementUI,
+      inputManager: this.inputManager,
+      workerMockupVisualizerScriptURL: workerMockupVisualizerScriptURL,
     });
 
     this.widgetLegonizer.domElement.remove();
