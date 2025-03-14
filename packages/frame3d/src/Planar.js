@@ -97,12 +97,14 @@ export class Planar extends Base {
       // by default itownsView is rendering
 
       // requester compute near far
+      const bb = new THREE.Box3();
+      const throttleComputeNearFar = throttle(() => {
+        bb.setFromObject(this.scene);
+        computeNearFarCamera(this.camera, bb.min, bb.max);
+      }, 2000);
       this.itownsView.addFrameRequester(
         itowns.MAIN_LOOP_EVENTS.AFTER_CAMERA_UPDATE,
-        () => {
-          const bb = new THREE.Box3().setFromObject(this.scene);
-          computeNearFarCamera(this.camera, bb.min, bb.max);
-        }
+        throttleComputeNearFar
       );
     }
   }
