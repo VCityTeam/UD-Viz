@@ -1,1 +1,1 @@
-export {extrudeHeightMap} from "@ud-viz/legonizer"
+export { extrudeHeightMap } from '@ud-viz/legonizer';
