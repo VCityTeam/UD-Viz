@@ -48,7 +48,8 @@
           document.body.appendChild(viewDomElement);
           const view = new udviz.itowns.PlanarView(viewDomElement, extent);
 
-          loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
+          if ('RUN_MODE' == 'production')
+            loadingScreen(view, ['UD-VIZ', 'UDVIZ_VERSION']);
 
           // init scene 3D
           udviz.initScene(
@@ -127,29 +128,30 @@
 
           // //// LEGONIZER MODULE
 
-          const domMockUpVisualizer = document.createElement('div');
-          domMockUpVisualizer.id = 'widget_legonizer_lego_visualizer';
-          domMockUpVisualizer.title = 'double click to zoom';
-          let zoom = false;
-          domMockUpVisualizer.addEventListener('dblclick', () => {
-            if (!domMockUpVisualizer.querySelector('canvas')) return;
-            zoom = !zoom;
-            if (zoom) {
-              domMockUpVisualizer.title = 'double click to unzoom';
-              domMockUpVisualizer.classList.add('modal');
-            } else {
-              domMockUpVisualizer.title = 'double click to zoom';
-              domMockUpVisualizer.classList.remove('modal');
-            }
-          });
+          //what to do with that ?
+          // const domMockUpVisualizer = document.createElement('div');
+          // domMockUpVisualizer.id = 'widget_legonizer_lego_visualizer';
+          // domMockUpVisualizer.title = 'double click to zoom';
+          // let zoom = false;
+          // domMockUpVisualizer.addEventListener('dblclick', () => {
+          //   if (!domMockUpVisualizer.querySelector('canvas')) return;
+          //   zoom = !zoom;
+          //   if (zoom) {
+          //     domMockUpVisualizer.title = 'double click to unzoom';
+          //     domMockUpVisualizer.classList.add('modal');
+          //   } else {
+          //     domMockUpVisualizer.title = 'double click to zoom';
+          //     domMockUpVisualizer.classList.remove('modal');
+          //   }
+          // });
 
           const legonizer = new udviz.widgetLegonizer.Legonizer(view, {
-            parentDomElement: uiDomElement,
-            domMockUpVisualizer: domMockUpVisualizer,
+            workerScriptURL: './assets/js/workerLegonizerMockupMesh.js',
+            minZ: 100,
+            maxZ: 500,
           });
-
-          legonizer.domElement.id = 'widget_legonizer';
-          uiDomElement.appendChild(legonizer.domElement);
+          legonizer.id = 'widget_legonizer';
+          uiDomElement.appendChild(legonizer);
         });
     </script>
     SCRIPT_TAG_RELOAD

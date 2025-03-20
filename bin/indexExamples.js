@@ -41,6 +41,7 @@ export * as widgetWorkspace from '@ud-viz/widget_workspace';
 export * as widgetVersioning from '@ud-viz/widget_versioning';
 export * as widgetGuidedTour from '@ud-viz/widget_guided_tour';
 export * as widgetLegonizer from '@ud-viz/widget_legonizer';
+export * as widgetBox3Select from '@ud-viz/widget_box3_select';
 
 // peerDep
 import * as THREE from 'three';

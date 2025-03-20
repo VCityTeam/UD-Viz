@@ -6,7 +6,6 @@ flowchart
   IDsrcLegonizer2ejs["Legonizer.js"]
   IDsrcMockUpUtils2ejs["MockUpUtils.js"]
  end
-IDsrcIndex2ejs-.->|import|IDsrcLegonizer2ejs
 IDsrcLegonizer2ejs-.->|import|IDsrcMockUpUtils2ejs
 IDsrcLegonizer2ejs-.->|import|IDsrcLegoMockupVisualizer2ejs
 ```
