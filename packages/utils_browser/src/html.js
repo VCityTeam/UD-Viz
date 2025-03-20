@@ -1,4 +1,6 @@
-import { MathUtils } from 'three';
+import { isNumeric } from '@ud-viz/utils_shared';
+import { Extent } from 'itowns';
+import { MathUtils, Box3 } from 'three';
 
 /**
  * Check if an html element belong to another one recursively
@@ -290,3 +292,167 @@ export class Vector4Input extends HTMLElement {
   }
 }
 window.customElements.define('vector4-input', Vector4Input); // mandatory to extends HTMLElement
+
+export class HeightmapElement extends HTMLElement {
+  constructor() {
+    super();
+
+    this.img = document.createElement('img');
+    this.appendChild(this.img);
+
+    this.boxInfo = document.createElement('div');
+    this.appendChild(this.boxInfo);
+
+    this.minDomElement = document.createElement('div');
+    this.appendChild(this.minDomElement);
+    this.maxDomElement = document.createElement('div');
+    this.appendChild(this.maxDomElement);
+  }
+
+  set min(value) {
+    this.minDomElement.innerText = 'min: ' + value;
+  }
+
+  set max(value) {
+    this.maxDomElement.innerText = 'max: ' + value;
+  }
+
+  /**
+   *
+   * @param {Box3} value
+   */
+  set box3(value) {
+    this.boxInfo.innerText = 'min:';
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'x: ' + value.min.x;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'y: ' + value.min.y;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'z: ' + value.min.z;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'max:';
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'x: ' + value.max.x;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'y: ' + value.max.y;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'z: ' + value.max.z;
+    this.boxInfo.innerText += '\n';
+    const dimZ = value.max.z - value.min.z;
+    this.boxInfo.innerText += 'size Z: ' + dimZ;
+    this.boxInfo.innerText += '\n';
+    this.boxInfo.innerText += 'précision: ' + dimZ / 255 + 'm';
+  }
+}
+
+window.customElements.define('heightmap-element', HeightmapElement); // mandatory to extends HTMLElement
+
+export class ExtentInputElement extends HTMLElement {
+  /**
+   *
+   * @param {String} crs
+   * @param {Object} options
+   * @param {Number} options.west
+   * @param {Number} options.east
+   * @param {Number} options.north
+   * @param {Number} options.south
+   */
+  constructor(crs, options = {}) {
+    super();
+
+    this.crs = crs;
+
+    const crsLabel = document.createElement('label');
+    crsLabel.innerText = 'CRS: ' + crs;
+    this.appendChild(crsLabel);
+
+    this.extent = new Extent(
+      crs,
+      isNumeric(options.west) ? options.west : 0,
+      isNumeric(options.east) ? options.east : 0,
+      isNumeric(options.south) ? options.south : 0,
+      isNumeric(options.north) ? options.north : 0
+    );
+
+    const updateExtent = () => {
+      this.extent.west = this.westInput.valueAsNumber;
+      this.extent.east = this.eastInput.valueAsNumber;
+      this.extent.north = this.northInput.valueAsNumber;
+      this.extent.south = this.southInput.valueAsNumber;
+    };
+
+    // west
+    {
+      const { input, parent } = createLabelInput('west', 'number');
+      this.appendChild(parent);
+      this.westInput = input;
+      this.westInput.valueAsNumber = this.extent.west;
+      this.westInput.onchange = updateExtent;
+    }
+
+    // east
+    {
+      const { input, parent } = createLabelInput('east', 'number');
+      this.appendChild(parent);
+      this.eastInput = input;
+      this.eastInput.valueAsNumber = this.extent.east;
+      this.eastInput.onchange = updateExtent;
+    }
+
+    // north
+    {
+      const { input, parent } = createLabelInput('north', 'number');
+      this.appendChild(parent);
+      this.northInput = input;
+      this.northInput.valueAsNumber = this.extent.north;
+      this.northInput.onchange = updateExtent;
+    }
+
+    // south
+    {
+      const { input, parent } = createLabelInput('south', 'number');
+      this.appendChild(parent);
+      this.southInput = input;
+      this.southInput.valueAsNumber = this.extent.south;
+      this.southInput.onchange = updateExtent;
+    }
+  }
+
+  set west(value) {
+    this.extent.west = value;
+    this.westInput.valueAsNumber = value;
+  }
+
+  set east(value) {
+    this.extent.east = value;
+    this.eastInput.valueAsNumber = value;
+  }
+
+  set north(value) {
+    this.extent.north = value;
+    this.northInput.valueAsNumber = value;
+  }
+
+  set south(value) {
+    this.extent.south = value;
+    this.southInput.valueAsNumber = value;
+  }
+
+  get west() {
+    return this.extent.west;
+  }
+
+  get east() {
+    return this.extent.east;
+  }
+
+  get north() {
+    return this.extent.north;
+  }
+
+  get south() {
+    return this.extent.south;
+  }
+}
+
+window.customElements.define('extent-input-element', ExtentInputElement); // mandatory to extends HTMLElement

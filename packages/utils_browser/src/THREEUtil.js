@@ -222,6 +222,11 @@ export function computeNearFarCamera(camera, min, max) {
     if (maxDist < dist) maxDist = dist;
   });
 
+  if (maxDist == -Infinity || minDist == Infinity) {
+    console.warn('near or far wrong values');
+    return;
+  }
+
   const epsilon = 10;
   camera.near = Math.max(minDist - epsilon, 0.000001);
   camera.far = maxDist + epsilon;
@@ -248,11 +253,13 @@ export function cameraFitRectangle(camera, min, max, altitude = 0) {
   const dy = Math.abs(width / 2 / Math.tan(fov / 2));
   const distance = Math.max(dx, dy);
 
-  camera.position.copy(center);
+  camera.position.x = center.x;
+  camera.position.y = center.y;
   camera.position.z = distance + altitude;
   camera.rotation.set(0, 0, -Math.PI / 2);
   camera.updateProjectionMatrix();
 }
+
 /**
  * Traverse a THREE.Object3D and append in each Object3D children a THREE.LineSegment geometry  representing its wireframe
  *
@@ -443,4 +450,14 @@ export function createSpriteFromString(string, options = {}) {
   );
   label.material.sizeAttenuation = false;
   return label;
+}
+
+export function makeVisible(object) {
+  object.traverse((c) => (c.visible = true)); // down hierarchy
+  let current = object;
+  // up hierarchy
+  while (current.parent) {
+    current = current.parent;
+    current.visible = true;
+  }
 }

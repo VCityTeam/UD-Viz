@@ -1,0 +1,13 @@
+.default_widget_container {
+  background-color: #313336bb;
+  color: white;
+  padding: 5px;
+  max-width: 330px;
+  z-index: 2;
+  position: absolute;
+  height: auto;
+}
+
+.default_widget_container img {
+  width: -webkit-fill-available;
+}

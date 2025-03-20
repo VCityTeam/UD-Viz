@@ -18,6 +18,8 @@ export class DragAndDropAvatar extends ScriptBase {
     this.controllerNativeCommandManager = this.context.findExternalScriptWithID(
       ControllerNativeCommandManager.ID_SCRIPT
     );
+    if (!this.controllerNativeCommandManager)
+      console.warn('no ControllerNativeCommandManager found');
 
     /**
      * camera manager
@@ -161,7 +163,8 @@ export class DragAndDropAvatar extends ScriptBase {
 
           this.controllerNativeCommandManager.controls(
             this.avatar.uuid,
-            ControllerNativeCommandManager.MODE[2]
+            ControllerNativeCommandManager.MODE[2],
+            { withMap: false }
           );
 
           // add ui to switch back to planar controls

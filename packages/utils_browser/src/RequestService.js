@@ -87,7 +87,11 @@ export function RequestService() {
         req.responseType = responseType;
       }
 
-      req.send(body);
+      try {
+        req.send(body);
+      } catch (e) {
+        console.error(e);
+      }
 
       req.onload = () => {
         if (req.status >= 200 && req.status < 300) {

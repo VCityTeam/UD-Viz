@@ -13,6 +13,7 @@ game_node
 game_node_template
 game_shared
 game_shared_template
+legonizer
 show_room
 smdb
 utils_browser
@@ -22,6 +23,7 @@ visualizer
 widget_3d_tiles
 widget_base_map
 widget_bookmark
+widget_box3_select
 widget_camera_positioner
 widget_extensions_3d_tiles_temporal
 widget_geocoding
@@ -88,7 +90,9 @@ widget_geocoding-->utils_browser
 widget_geocoding-->utils_shared
 widget_layer_choice-->utils_browser
 widget_legonizer-->game_browser
+widget_legonizer-->legonizer
 widget_legonizer-->utils_browser
+widget_legonizer-->widget_box3_select
 widget_planar_controls-->utils_browser
 widget_slide_show-->utils_browser
 widget_sparql-->utils_browser
