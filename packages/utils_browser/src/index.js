@@ -13,3 +13,7 @@ export * from './RequestService';
 export * from './THREEUtil';
 
 export * from './url';
+
+export * from './canvas';
+
+export * from './Heightmap';

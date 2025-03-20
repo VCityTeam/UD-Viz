@@ -882,16 +882,18 @@ export class ShowRoom {
     this.addCustomHtml(pathIcon, this.widgetBookmark.domElement, 'Bookmark');
   }
 
-  addWidgetLegonizer(pathIcon, workerMockupVisualizerScriptURL = null) {
+  addWidgetLegonizer(
+    pathIcon,
+    workerScriptURL = null,
+    dimZInterval
+  ) {
     this.widgetLegonizer = new Legonizer(this.frame3DPlanar.itownsView, {
-      parentDomElement: this.frame3DPlanar.domElementUI,
-      inputManager: this.inputManager,
-      workerMockupVisualizerScriptURL: workerMockupVisualizerScriptURL,
+      workerScriptURL: workerScriptURL,
+      minZ: dimZInterval.x,
+      maxZ: dimZInterval.y,
     });
 
-    this.widgetLegonizer.domElement.remove();
-
-    this.addCustomHtml(pathIcon, this.widgetLegonizer.domElement, 'Legonizer');
+    this.addCustomHtml(pathIcon, this.widgetLegonizer, 'Legonizer');
   }
 }
 
