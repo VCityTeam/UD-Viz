@@ -29,7 +29,7 @@
     "three": "0.154.0"
   },
   "dependencies": {
-    "express": "4.21.1",
+    "express": "4.21.2",
     "reload": "^3.3.0"
   }
 }
