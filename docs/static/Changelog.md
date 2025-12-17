@@ -1,3 +1,7 @@
+# v4.6.1
+## @ud-viz/widget_versioning
+- Updated widget-versioning to support the prov ontology
+
 # v4.6.0
 ## @ud-viz/widget_legonizer
 - Improved voxel view with the addition of the correct number of lego plates (voxel highlighted in white).

@@ -14,6 +14,7 @@ import {
   LineSegments,
   LineBasicMaterial,
   Vector3,
+  Object3DEventMap,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';

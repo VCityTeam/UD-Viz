@@ -200,8 +200,7 @@ export class SparqlVersioningQueryWindow extends SparqlQueryWindow {
     const table = document.createElement('table');
     table.setAttribute('style', 'border-collapse:collapse;border:1px solid;');
     const caption = document.createElement('caption');
-    caption.innerText =
-      'Prefix: prov = http://www.w3.org/ns/prov#';
+    caption.innerText = 'Prefix: prov = http://www.w3.org/ns/prov#';
     table.appendChild(caption);
     return table;
   }
