@@ -1,12 +1,12 @@
-PREFIX vers: <https://github.com/VCityTeam/ConVer-G/Version#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
 
 SELECT * WHERE {
     GRAPH ?versionedGraph { 
         ?subject  ?predicate  ?object .
     }
     
-    ?versionedGraph vers:is-version-of ?graph ;
-        vers:is-in-version ?version .
+    ?versionedGraph prov:specializationOf ?graph ;
+        prov:atLocation ?version .
 
     ?subject  a ?subjectType .
     ?object a ?objectType .

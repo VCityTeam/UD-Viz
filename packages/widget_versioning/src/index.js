@@ -134,7 +134,7 @@ export class SparqlVersioningQueryWindow extends SparqlQueryWindow {
         distinctVersion.forEach((version) => {
           const th = document.createElement('th');
           th.setAttribute('style', 'border:1px solid;');
-          th.innerText = 'vers:' + version.split('#').pop();
+          th.innerText = version;
           tr.appendChild(th);
         });
         thead.appendChild(tr);
@@ -201,7 +201,7 @@ export class SparqlVersioningQueryWindow extends SparqlQueryWindow {
     table.setAttribute('style', 'border-collapse:collapse;border:1px solid;');
     const caption = document.createElement('caption');
     caption.innerText =
-      'Prefix: vers = https://github.com/VCityTeam/ConVer-G/Version#';
+      'Prefix: prov = http://www.w3.org/ns/prov#';
     table.appendChild(caption);
     return table;
   }
