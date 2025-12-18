@@ -222,7 +222,12 @@ export function computeNearFarCamera(camera, min, max) {
     if (maxDist < dist) maxDist = dist;
   });
 
-  if (maxDist == -Infinity || minDist == Infinity) {
+  if (
+    maxDist == -Infinity ||
+    minDist == Infinity ||
+    maxDist == NaN ||
+    minDist == NaN
+  ) {
     console.warn('near or far wrong values');
     return;
   }

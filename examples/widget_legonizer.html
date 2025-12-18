@@ -128,23 +128,6 @@
 
           // //// LEGONIZER MODULE
 
-          //what to do with that ?
-          // const domMockUpVisualizer = document.createElement('div');
-          // domMockUpVisualizer.id = 'widget_legonizer_lego_visualizer';
-          // domMockUpVisualizer.title = 'double click to zoom';
-          // let zoom = false;
-          // domMockUpVisualizer.addEventListener('dblclick', () => {
-          //   if (!domMockUpVisualizer.querySelector('canvas')) return;
-          //   zoom = !zoom;
-          //   if (zoom) {
-          //     domMockUpVisualizer.title = 'double click to unzoom';
-          //     domMockUpVisualizer.classList.add('modal');
-          //   } else {
-          //     domMockUpVisualizer.title = 'double click to zoom';
-          //     domMockUpVisualizer.classList.remove('modal');
-          //   }
-          // });
-
           const legonizer = new udviz.widgetLegonizer.Legonizer(view, {
             workerScriptURL: './assets/js/workerLegonizerMockupMesh.js',
             minZ: 100,

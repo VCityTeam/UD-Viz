@@ -10,9 +10,9 @@ export function extrudeHeightMap(heightMap, chunkSize = Infinity) {
   const heightMapWidth = heightMap[0].length;
   const heightMapHeight = heightMap.length;
 
-  console.time('create voxels'); // they are not real voxel (!= size) TODO find a better name
+  console.time('create voxels');
   let voxelGeometries = [];
-  // lego ratio y dimension (when x = y = 1) not perfect cube but perfect square
+  // lego ratio z dimension (when x = y = 1) not perfect cube but perfect square
   const magicNumber = 1.230769230769231; // a lego brick is not a perfect cube. this number is calculated to have a dimension to a real lego
   for (let j = 0; j < heightMapHeight; j++) {
     for (let i = 0; i < heightMapWidth; i++) {

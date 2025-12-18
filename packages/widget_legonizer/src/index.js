@@ -174,7 +174,7 @@ export class Legonizer extends HTMLElement {
 
       // minimal resolution = 1 lego plate (32*32 lego square) on min size and max resolution is minSize * maxLegoPlateCount
       this.legoPlateSize =
-        (this.resolutionSlider.valueAsNumber / 100) *
+        Math.sqrt(this.resolutionSlider.valueAsNumber / 100) *
           (minSize / maxLegoPlateCount - minSize) +
         minSize;
 
@@ -189,7 +189,7 @@ export class Legonizer extends HTMLElement {
       );
 
       legoPlatesGroup.position.copy(box3.min);
-      legoPlatesGroup.position.z = box3.max.z;
+      legoPlatesGroup.position.z = box3.max.z + 2; // avoid z fighting
 
       for (let countX = 0; countX < this.countPlateX; countX++) {
         for (let countY = 0; countY < this.countPlateY; countY++) {
