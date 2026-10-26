@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  checks:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Lint code sources
+            command: npm run eslint
+          - name: Unit test
+            command: npm run test-unit
+          - name: Functional test
+            command: npm run test-functional
+          - name: Lightweight dependencies security audit
+            command: npm audit --audit-level=critical
+          - name: Markdown link checks
+            command: npm run test-links
+          - name: Documentation generation
+            command: node ./test/docs.js
+
+    steps:
+      - uses: actions/checkout@v7
+      - name: Use Node.js lts
+        uses: actions/setup-node@v7
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+      - run: npm --version
+      - run: sudo apt-get update && sudo apt-get install -y imagemagick graphicsmagick
+      - run: npm install
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.command }}
